@@ -1,0 +1,9 @@
+gitlabUrl: https://gitlab.com/
+
+runnerRegistrationToken: "2nd1CsnmaQuM8LUz36ai"
+runners:
+  image: ubuntu:18.04
+  privileged: true
+  envVars:
+    - name: RUNNER_EXECUTOR
+      value: kubernetes

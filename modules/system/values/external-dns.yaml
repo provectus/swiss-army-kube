@@ -1,0 +1,9 @@
+provider: aws
+policy: upsert-only
+domainFilters:
+  - sakdev.cc
+sources:
+  - ingress
+  - service
+rbac:
+  create: true
