@@ -1,7 +1,7 @@
 provider: aws
 policy: upsert-only
 domainFilters:
-  - sakdev.cc
+  - local
 sources:
   - ingress
   - service
