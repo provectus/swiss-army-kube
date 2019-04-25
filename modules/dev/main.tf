@@ -1,19 +1,7 @@
-terraform {
-  backend "s3" {
-    bucket = "sak-dev-tf-states"
-    key    = "k8s/dev/states"
-    region = "us-west-2"
-    dynamodb_table = "terraform-lock"
-  }
-}
-
-provider "helm" {}
-provider "aws" {}
-
 data "aws_region" "current" {}
 
 resource "aws_iam_user" "harbor_storage" {
-  name = "harbor_storage"
+  name = "${var.cluster_name}_harbor_storage"
 }
 
 resource "aws_iam_user_policy" "harbor_storage" {
@@ -59,18 +47,16 @@ resource "kubernetes_namespace" "dev" {
     }
 }
 
-resource "helm_repository" "sak_public" {
-  name = "sak_public"
-  url = "https://s3-us-west-2.amazonaws.com/sak-pub-charts/"
+data "helm_repository" "gitlab" {
+  name = "gitlab"
+  url = "https://charts.gitlab.io/"
 }
 
 resource "helm_release" "harbor" {
   depends_on = ["kubernetes_namespace.dev"]
 
   name       = "harbor"
-  repository = "sak_public"
-  chart      = "harbor"
-  version    = "1.0.0"
+  chart      = "../../charts/harbor"
   namespace  = "${var.namespace_name}"
   recreate_pods = "true"
 
@@ -99,8 +85,18 @@ resource "helm_release" "harbor" {
   }
 
   set {
-    name  = "rbac.create"
-    value = "${var.rbac_enabled}"
+    name  = "expose.ingress.hosts.core"
+    value = "harbor.${var.cluster_name}.${var.domain}"
+  }
+
+  set {
+    name  = "expose.ingress.hosts.notary"
+    value = "notary.harbor.${var.cluster_name}.${var.domain}"
+  }
+
+  set {
+    name  = "externalURL"
+    value = "http://harbor.${var.cluster_name}.${var.domain}"
   }
 }
 
@@ -108,17 +104,12 @@ resource "helm_release" "gitlab_runner" {
   depends_on = ["kubernetes_namespace.dev"]
 
   name       = "gitlab-runner"
-  repository = "sak_public"
+  repository = "gitlab"
   chart      = "gitlab-runner"
-  version    = "0.2.0"
+  version    = "0.3.0"
   namespace  = "${var.namespace_name}"
 
   values = [
     "${file("${path.module}/values/runner.yaml")}"
   ]
-
-  set {
-    name  = "rbac.create"
-    value = "${var.rbac_enabled}"
-  }
 }

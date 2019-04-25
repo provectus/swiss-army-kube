@@ -1,6 +1,6 @@
 notary:
   enabled: false
-harborAdminPassword: cd83e95f8e1d9b3a684a87f72a4b9188
+harborAdminPassword: apsswrod 
 expose:
   type: ingress
   tls:
@@ -12,9 +12,9 @@ expose:
       kubernetes.io/tls-acme: "true"
       kubernetes.io/ingress.class: nginx
     hosts:
-      core: harbor.sakdev.cc
-      notary: notary.harbor.sakdev.cc
-externalURL: http://harbor.sakdev.cc
+      core: harbor.local
+      notary: notary.harbor.local
+externalURL: http://harbor.local
 persistence:
   imageChartStorage:
     type: s3

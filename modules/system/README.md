@@ -1,5 +1,7 @@
 # System
-This module install set of services which provide ability to launch ingress inside of AWS EKS cluster:
-- `cert-manager` - https://github.com/helm/charts/tree/master/stable/cert-manager 
-- `external-dns` - https://github.com/helm/charts/tree/master/stable/external-dns
-- `nginx-ingress` - https://github.com/helm/charts/tree/master/stable/nginx-ingress
+A module to configure EKS cluster:
+
+- `cert-manager` - official [documentation](https://github.com/helm/charts/tree/master/stable/cert-manager)
+- `external-dns` - official [documentation](https://github.com/helm/charts/tree/master/stable/external-dns)
+- `nginx-ingress` - official [documentation](https://github.com/helm/charts/tree/master/stable/nginx-ingress)
+- `prometheus-operator` - official [documentation](https://github.com/helm/charts/tree/master/stable/prometheus-operator)

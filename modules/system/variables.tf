@@ -2,10 +2,14 @@ variable "namespace_name" {
   default = "system"
 }
 
-variable "rbac_enabled" {
-  default = "true"
+variable "cluster_name" {
+  type = "string"
 }
 
-variable "cluster_name" {
-  default = "dev_cluster"
+variable "config_path" {
+  type = "string"
+}
+
+variable "domain" {
+  type = "string"
 }

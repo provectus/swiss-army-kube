@@ -1,24 +1,11 @@
-terraform {
-  backend "s3" {
-    bucket = "sak-dev-tf-states"
-    key    = "k8s/system/states"
-    region = "us-west-2"
-    dynamodb_table = "terraform-lock"
-  }
-}
-
-provider "kubernetes" {}
-provider "helm" {}
-provider "aws" {}
-
-resource "helm_repository" "incubator" {
+data "helm_repository" "incubator" {
     name = "incubator"
     url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
 }
 
 resource "null_resource" "cert-manager-crd" {
   provisioner "local-exec" {
-    command = "kubectl apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.6/deploy/manifests/00-crds.yaml"
+    command = "kubectl --kubeconfig ${var.config_path} apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.6/deploy/manifests/00-crds.yaml"
   }
 }
 
@@ -36,7 +23,7 @@ resource "kubernetes_namespace" "system" {
 resource "helm_release" "issuers" {
   depends_on = ["kubernetes_namespace.system","null_resource.cert-manager-crd"]
   name       = "issuers"
-  chart      = "${path.module}/../../charts/issuers"
+  chart      = "../../charts/issuers"
   namespace  = "${var.namespace_name}"
 
   set {
@@ -50,17 +37,22 @@ resource "helm_release" "issuers" {
   }
 
   set {
+    name = "secretAccessKey"
+    value = "${base64encode("${aws_iam_access_key.cert_manager.secret}")}"
+  }
+
+  set {
     name  = "region"
     value = "${data.aws_region.current.name}"
   }
 }
 
 resource "aws_iam_user" "cert_manager" {
-  name = "cert_manager"
+  name = "${var.cluster_name}_cert_manager"
 }
 
 resource "aws_iam_user_policy" "cert_manager" {
-  name = "route53_access"
+  name = "${var.cluster_name}_route53_access"
   user = "${aws_iam_user.cert_manager.name}"
 
   policy = <<EOF
@@ -91,60 +83,19 @@ resource "aws_iam_access_key" "cert_manager" {
   user = "${aws_iam_user.cert_manager.name}"
 }
 
-resource "kubernetes_secret" "cert_manager" {
-  "metadata" {
-    name = "route53-config"
-    namespace = "${var.namespace_name}"
-  }
-
-  data {
-    secret-access-key = "${aws_iam_access_key.cert_manager.secret}"
-  }
-}
-
 resource "helm_release" "cert-manager" {
   depends_on = ["helm_release.issuers"]
 
   name       = "cert-manager"
   repository = "stable"
   chart      = "cert-manager"
-  version    = "v0.6.5"
+  version    = "v0.6.6"
   namespace  = "${var.namespace_name}"
   recreate_pods = true
  
   values = [
-    "${file("values/cert-manager.yaml")}"
+    "${file("${path.module}/values/cert-manager.yaml")}"
   ]
-
-  set {
-    name  = "webhook.enabled"
-    value = "true"
-  }
-
-  set {
-    name  = "rbac.create"
-    value = "${var.rbac_enabled}"
-  }
-
-  set {
-    name  = "ingressShim.defaultACMEChallengeType"
-    value = "dns01"
-  }
-
-  set {
-    name  = "ingressShim.defaultACMEDNS01ChallengeProvider"
-    value = "route53"
-  }
-
-  set {
-    name = "ingressShim.defaultIssuerKind"
-    value = "ClusterIssuer"
-  }
-
-  set {
-    name = "ingressShim.defaultIssuerName"
-    value = "letsencrypt-staging" 
-  }
 }
 
 resource "helm_release" "nginx-ingress" {
@@ -157,13 +108,8 @@ resource "helm_release" "nginx-ingress" {
   namespace  = "${var.namespace_name}"
 
   values = [
-    "${file("values/nginx-ingress.yaml")}"
+    "${file("${path.module}/values/nginx-ingress.yaml")}"
   ]
-
-  set {
-    name  = "rbac.create"
-    value = "${var.rbac_enabled}"
-  }
 }
 
 resource "helm_release" "external-dns" {
@@ -176,11 +122,33 @@ resource "helm_release" "external-dns" {
   namespace  = "${var.namespace_name}"
 
   values = [
-    "${file("values/external-dns.yaml")}"
-  ]  
+    "${file("${path.module}/values/external-dns.yaml")}"
+  ]
 
   set {
-    name  = "rbac.create"
-    value = "${var.rbac_enabled}"
+    name  = "domainFilters[0]"
+    value = "${var.domain}"
+  }
+}
+
+resource "helm_release" "monitoring" {
+  name       = "prometheus-operator"
+  repository = "stable"
+  chart      = "prometheus-operator"
+  version    = "5.0.10"
+  namespace  = "monitoring"
+
+  values = [
+    "${file("${path.module}/values/prometheus.yaml")}"
+  ]
+
+  set {
+    name  = "grafana.ingress.hosts[0]"
+    value = "grafana.${var.cluster_name}.${var.domain}"
+  }
+
+  set {
+    name  = "grafana.ingress.tls[0].hosts[0]"
+    value = "grafana.${var.cluster_name}.${var.domain}"
   }
 }

@@ -1,9 +1,10 @@
 # issuer
-Chart for create cert-manager issuers
+Chart for creating certificate issuer which implements DNS-01 challenge mechanism, to read more about cert-manager processes follow to [cert-manager](https://docs.cert-manager.io/en/latest/tutorials/acme/quick-start/index.html#step-5-deploy-cert-manager)
 
 ## Configuration
 Parameter | Description | Default
 --- | --- | ---
-`email`| email for receiving notifications about certificate expire|`""`
-`accessKeyID`|Access Key for issuer to access route53|`""`
-`region`|AWS Region|`""`
+| `accessKeyID`                           | | ``                                                |
+| `secretAccessKey`                       | | ``                                                |
+| `email`                                 | | ``                                                |
+| `region`                                | | ``                                                |

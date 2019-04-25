@@ -2,14 +2,14 @@ variable "namespace_name" {
   default = "dev"
 }
 
-variable "rbac_enabled" {
-  default = "true"
+variable "bucket_name" {
+  type = "string"
 }
 
 variable "cluster_name" {
-  default = "dev_cluster"
+  type = "string"
 }
 
-variable "bucket_name" {
-  default = "sak-harbor-storage"
+variable "domain" {
+  type = "string"
 }

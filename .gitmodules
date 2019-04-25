@@ -1,0 +1,4 @@
+[submodule "harbor"]
+	path = charts/harbor
+	url = git@github.com:goharbor/harbor-helm.git
+	branch = 1.0.0
