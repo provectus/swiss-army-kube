@@ -23,9 +23,11 @@ Swiss Army Kube lets you deploy essential AWS services in a hassle-free manner v
 1. Make your environment configuration file, look at the following example `environments/staging/example.main.tf`
 2. cd to environment folder
 3. run:
-  - terraform init
-  - terraform plan
-  - terraform apply
+```
+terraform init
+terraform plan
+terraform apply
+ ``` 
 
 ## Kubernetes system modules
 - oauth2
