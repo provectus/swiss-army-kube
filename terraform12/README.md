@@ -47,3 +47,4 @@ terraform apply
 
 ### Diagram
 
+![](https://raw.githubusercontent.com/provectus/swiss-army-kube/sergey/terraform12/terraform12/SwissArmyKube.jpg)
