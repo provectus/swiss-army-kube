@@ -1,4 +1,38 @@
-config-map-aws-auth_*.yaml
-kubeconfig_*
-.terraform
 local
+
+# Local .terraform directories
+terraform/**/.terraform/*
+
+# Planning files
+terraform/*.tfplan
+
+# .tfstate files
+terraform/*.tfstate
+terraform/*.tfstate.*
+
+# Crash log files
+terraform/crash.log
+
+
+# Ignore any .tfvars files that are generated automatically for each Terraform run. Most
+# .tfvars files are managed as part of configuration and so should be included in
+# version control.
+#
+terraform/secret.auto.tfvars
+
+# Terraform files
+.terraform
+terraform.tfstate
+terraform.tfvars
+*.tfstate*
+
+# OS X files
+.history
+.DS_Store
+
+### kube configs
+kubeconfig_*
+config-map-aws-auth_*
+
+### tmp
+tmp

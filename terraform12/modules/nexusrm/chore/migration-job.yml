@@ -1,0 +1,31 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: migration
+spec:
+  template:
+    metadata:
+      name: migration
+    spec:
+      containers:
+        - name: migration
+          image: alpine
+          command: ["/bin/sh"]
+          args:
+            - -c
+            - apk add rsync && rsync -av --delete /old/ /new/ && ls -la /new
+          volumeMounts:
+            - name: old-volume
+              mountPath: /old
+              readOnly: true
+            - name: new-volume
+              mountPath: /new
+      volumes:
+        - name: old-volume
+          persistentVolumeClaim:
+            claimName: nexusrm-sonatype-nexus-data
+        - name: new-volume
+          persistentVolumeClaim:
+            claimName: nexus-efs-pvc
+      restartPolicy: Never
+  backoffLimit: 0

@@ -1,0 +1,58 @@
+statefulset:
+  enabled: false
+
+nexusProxy:
+  env:
+    nexusDockerHost: container.DOMAIN.com
+    nexusHttpHost: nexus.DOMAIN.com
+
+# nexusBackup:
+#   enabled: false
+#   imageName: quay.io/travelaudience/docker-nexus-backup
+#   imageTag: 1.5.0
+#   imagePullPolicy: IfNotPresent
+#   env:
+#     targetBucket: "s3://"
+#   nexusAdminPassword: ""
+
+ingress:
+  enabled: true
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/ssl-redirect: true
+    certmanager.k8s.io/cluster-issuer: "letsencrypt-prod"
+    certmanager.k8s.io/acme-challenge-type: http01
+  tls:
+    enabled: true
+    secretName: nexus-tls
+
+persistence:
+  enabled: true
+  accessMode: ReadWriteOnce
+  ## If defined, storageClass: <storageClass>
+  ## If set to "-", storageClass: "", which disables dynamic provisioning
+  ## If undefined (the default) or set to null, no storageClass spec is
+  ##   set, choosing the default provisioner.  (gp2 on AWS, standard on
+  ##   GKE, AWS & OpenStack)
+  ##
+  existingClaim: nexus-efs-pvc
+  # annotations:
+  #  "helm.sh/resource-policy": keep
+  # storageSize: 50Gi
+  # If PersistentDisk already exists you can create a PV for it by including the 2 following keypairs.
+  # pdName: nexus-data-disk
+  # fsType: ext4
+
+resources:
+  requests:
+    cpu: 2000m
+    # Based on https://support.sonatype.com/hc/en-us/articles/115006448847#mem
+    # and https://twitter.com/analytically/status/894592422382063616:
+    #   Xms == Xmx
+    #   Xmx <= 4G
+    #   MaxDirectMemory >= 2G
+    #   Xmx + MaxDirectMemory <= RAM * 2/3 (hence the request for 4800Mi)
+    #   MaxRAMFraction=1 is not being set as it would allow the heap
+    #     to use all the available memory.
+    memory: 4800Mi
+

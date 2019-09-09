@@ -1,0 +1,8 @@
+provider: aws
+policy: upsert-only
+sources:
+  - ingress
+  - service
+rbac:
+  create: true
+logLevel: info
