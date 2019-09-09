@@ -1,18 +1,15 @@
 # Swiss Army Kube
 
-## What is it ? Reasons
+![](https://raw.githubusercontent.com/provectus/swiss-army-kube/749c8bc2ddb0fb16e394dbc0b46e46f753ecb9db/logo.png?token=AC2LBA4XETSMFM64IMX2H3S5P74GC)
 
-```
-Preconfigured templates and modules, terraform and Kubernetes manifests
-Infrastructure deployment and lifecycle management should be automated, auditable, and easy to understand.
-```
+Swiss Army Kube lets you deploy essential AWS services in a hassle-free manner via a simple yet powerful configuration of Terraform and Kubernetes manifests. You can pick prereconfigured templates and modules and deploy your infrastructure, that is automated, auditable, and easy to understand.
 
-## AWS resources:
+## Suppors following AWS services
 - VPC
 - VPC peering
 - IGW
 - Nat Gateway
-- Subnets (private,)
+- Subnets (private & public)
 - EKS
 - Route53
 - RDS
@@ -29,7 +26,6 @@ Infrastructure deployment and lifecycle management should be automated, auditabl
   - terraform init
   - terraform plan
   - terraform apply
-
 
 ## Kubernetes system modules
 - oauth2
