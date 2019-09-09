@@ -47,4 +47,4 @@ terraform apply
 
 ### Diagram
 
-![](https://raw.githubusercontent.com/provectus/swiss-army-kube/sergey/terraform12/terraform12/SwissArmyKube.jpg)
+![](https://raw.githubusercontent.com/provectus/swiss-army-kube/sergey/terraform12/terraform12/SwissArmyKube.jpg?token=AAMOWAVR3HPHFWAJA4XYTSC5P77J4)
