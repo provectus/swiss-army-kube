@@ -13,6 +13,8 @@ Swiss Army Kube lets you deploy essential AWS services in a hassle-free manner v
 - EKS
 - Route53
 - RDS
+- EC2 Spot & On-demand
+- Autoscaling groups
 
 ## Requirements
 - AWS account (programmatic access)
@@ -22,7 +24,7 @@ Swiss Army Kube lets you deploy essential AWS services in a hassle-free manner v
 ## How to use
 1. Make your environment configuration file, look at the following example `environments/staging/example.main.tf`
 2. cd to environment folder
-3. run:
+3. run
 ```
 terraform init
 terraform plan
