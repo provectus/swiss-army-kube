@@ -3,13 +3,14 @@ variable "namespace_name" {
 }
 
 variable "bucket_name" {
-  type = "string"
+  type = string
 }
 
 variable "cluster_name" {
-  type = "string"
+  type = string
 }
 
 variable "domain" {
-  type = "string"
+  type = string
 }
+
