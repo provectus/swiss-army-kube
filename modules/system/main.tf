@@ -1,11 +1,7 @@
-data "helm_repository" "incubator" {
-    name = "incubator"
-    url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
-}
-
 resource "null_resource" "cert-manager-crd" {
+  count = var.cert_manager.enabled == true ? 1 : 0
   provisioner "local-exec" {
-    command = "kubectl --kubeconfig ${var.config_path} apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.6/deploy/manifests/00-crds.yaml"
+    command = "kubectl --kubeconfig ${var.config_path} apply -f https://github.com/jetstack/cert-manager/releases/download/v0.11.0/cert-manager.yaml"
   }
 }
 
@@ -13,47 +9,36 @@ data "aws_region" "current" {}
 
 resource "kubernetes_namespace" "system" {
   metadata {
-    labels {
-      "certmanager.k8s.io/disable-validation" = "true"
-    }
-    name = "${var.namespace_name}"
+    name = var.namespace_name
   }
 }
 
 resource "helm_release" "issuers" {
-  depends_on = ["kubernetes_namespace.system","null_resource.cert-manager-crd"]
+  count      = var.cert_manager.enabled == true ? 1 : 0
+  depends_on = ["kubernetes_namespace.system", "null_resource.cert-manager-crd"]
   name       = "issuers"
   chart      = "../../charts/issuers"
   namespace  = "${var.namespace_name}"
 
-  set {
-    name  = "email"
-    value = "rgimadiev@provectus.com"
-  }
+  dynamic set {
+    for_each = var.cert_manager.parameters
 
-  set {
-    name  = "accessKeyID"
-    value = "${aws_iam_access_key.cert_manager.id}"
-  }
-
-  set {
-    name = "secretAccessKey"
-    value = "${base64encode("${aws_iam_access_key.cert_manager.secret}")}"
-  }
-
-  set {
-    name  = "region"
-    value = "${data.aws_region.current.name}"
+    content {
+      name  = set.key
+      value = set.value
+    }
   }
 }
 
 resource "aws_iam_user" "cert_manager" {
-  name = "${var.cluster_name}_cert_manager"
+  count = var.cert_manager.enabled == true ? 1 : 0
+  name  = "${var.cluster_name}_cert_manager"
 }
 
 resource "aws_iam_user_policy" "cert_manager" {
-  name = "${var.cluster_name}_route53_access"
-  user = "${aws_iam_user.cert_manager.name}"
+  count = var.cert_manager.enabled == true ? 1 : 0
+  name  = "${var.cluster_name}_route53_access"
+  user  = aws_iam_user.cert_manager[0].name
 
   policy = <<EOF
 {
@@ -80,32 +65,35 @@ EOF
 }
 
 resource "aws_iam_access_key" "cert_manager" {
-  user = "${aws_iam_user.cert_manager.name}"
+  count = var.cert_manager.enabled == true ? 1 : 0
+  user  = aws_iam_user.cert_manager[0].name
 }
 
 resource "helm_release" "cert-manager" {
+  count      = var.cert_manager.enabled == true ? 1 : 0
   depends_on = ["helm_release.issuers"]
 
-  name       = "cert-manager"
-  repository = "stable"
-  chart      = "cert-manager"
-  version    = "v0.6.6"
-  namespace  = "${var.namespace_name}"
+  name          = "cert-manager"
+  repository    = "stable"
+  chart         = "cert-manager"
+  version       = "v0.6.6"
+  namespace     = var.namespace_name
   recreate_pods = true
- 
+
   values = [
     "${file("${path.module}/values/cert-manager.yaml")}"
   ]
 }
 
 resource "helm_release" "nginx-ingress" {
+  count      = var.nginx_ingress.enabled == true ? 1 : 0
   depends_on = ["kubernetes_namespace.system"]
 
   name       = "nginx"
   repository = "stable"
   chart      = "nginx-ingress"
-  version    = "1.3.1"
-  namespace  = "${var.namespace_name}"
+  version    = "1.24.3"
+  namespace  = var.namespace_name
 
   values = [
     "${file("${path.module}/values/nginx-ingress.yaml")}"
@@ -113,13 +101,14 @@ resource "helm_release" "nginx-ingress" {
 }
 
 resource "helm_release" "external-dns" {
+  count      = var.external_dns.enabled == true ? 1 : 0
   depends_on = ["kubernetes_namespace.system"]
 
   name       = "dns"
   repository = "stable"
   chart      = "external-dns"
-  version    = "1.6.1"
-  namespace  = "${var.namespace_name}"
+  version    = "2.9.0"
+  namespace  = var.namespace_name
 
   values = [
     "${file("${path.module}/values/external-dns.yaml")}"
@@ -127,15 +116,16 @@ resource "helm_release" "external-dns" {
 
   set {
     name  = "domainFilters[0]"
-    value = "${var.domain}"
+    value = var.domain
   }
 }
 
 resource "helm_release" "monitoring" {
+  count      = var.monitoring.enabled ? 1 : 0
   name       = "prometheus-operator"
   repository = "stable"
   chart      = "prometheus-operator"
-  version    = "5.0.10"
+  version    = "6.18.0"
   namespace  = "monitoring"
 
   values = [
