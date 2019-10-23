@@ -55,7 +55,9 @@ module "eks" {
     "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
   ]
   worker_groups = [
-    for subnet in module.vpc.private_subnets :
+    for index, subnet in module.vpc.private_subnets :
+    {
+      asg_min_size        = index == 0 ? 1 : 0
     {
       asg_min_size        = 1
       asg_max_size        = var.cluster_size
