@@ -1,31 +1,24 @@
 data "aws_availability_zones" "available" {}
 
 locals {
-  zones = coalescelist(var.cluster_zones, data.aws_availability_zones.available.names)
-}
-
-data "template_file" "private" {
-  count    = length(local.zones)
-  template = "10.${var.network}.${count.index}.0/24"
-}
-
-data "template_file" "public" {
-  count    = length(local.zones)
-  template = "10.${var.network}.10${count.index}.0/24"
+  zones            = coalescelist(var.cluster_zones, data.aws_availability_zones.available.names)
+  private_net      = [for i, z in local.zones : cidrsubnet(var.network, var.network_delim, i)]
+  public_net       = [for i, z in local.zones : cidrsubnet(var.network, var.network_delim, 255 - i)]
+  additional_users = [for arn in var.admin_arns : zipmap(["group", "user_arn", "username"], ["system:masters", arn, "{{UserID}}"])]
 }
 
 module "vpc" {
-  azs             = local.zones
-  cidr = "10.${var.network}.0.0/16"
+  azs                = local.zones
+  cidr               = var.network
   enable_nat_gateway = true
-  name = "${var.cluster_name}-cluster"
-  private_subnets = data.template_file.private.*.rendered
-  public_subnets  = data.template_file.public.*.rendered
+  name               = var.cluster_name
+  private_subnets    = local.private_net
+  public_subnets     = local.public_net
   single_nat_gateway = true
-  source = "terraform-aws-modules/vpc/aws"
+  source             = "terraform-aws-modules/vpc/aws"
 
   public_subnet_tags = {
-    KubernetesCluster        = "${var.cluster_name}-cluster"
+    KubernetesCluster        = var.cluster_name
     "kubernetes.io/role/elb" = ""
   }
 
@@ -45,8 +38,8 @@ resource "null_resource" "map_users" {
 }
 
 module "eks" {
-  cluster_name = "${var.cluster_name}-cluster"
-  map_users = null_resource.map_users.*.triggers
+  cluster_name = var.cluster_name
+  map_users    = local.additional_users
   source       = "terraform-aws-modules/eks/aws"
   subnets      = module.vpc.private_subnets
   vpc_id       = module.vpc.vpc_id
@@ -58,11 +51,9 @@ module "eks" {
     for index, subnet in module.vpc.private_subnets :
     {
       asg_min_size        = index == 0 ? 1 : 0
-    {
-      asg_min_size        = 1
       asg_max_size        = var.cluster_size
       autoscaling_enabled = true
-      instance_type       = "t3.medium"
+      instance_type       = var.instance_type
       spot_price          = var.spot_price
       subnets             = list(subnet)
     }
