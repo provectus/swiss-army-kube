@@ -22,18 +22,18 @@ variable "spot_price" {
 
 variable "instance_type" {
   type        = string
-  description = "Number would be used to template CIDR 10.X.0.0/16."
-  default     = "t3,medium"
+  description = "Instance type for instances for Kubernetes workes nodes"
+  default     = "t3.medium"
 }
 
 variable "network" {
   type        = string
-  description = "Number would be used to template CIDR 10.X.0.0/16."
+  description = "CIDR block for vpc"
   default     = "10.0.0.0/16"
 }
 
 variable "network_delim" {
-  description = "Number would be used to template CIDR 10.X.0.0/16."
+  description = "Number of additional bits with which to extend the network"
   default     = 8
 }
 
