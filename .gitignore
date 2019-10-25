@@ -2,3 +2,7 @@ config-map-aws-auth_*.yaml
 kubeconfig_*
 .terraform
 local
+.idea
+
+# direnv.net config
+.envrc

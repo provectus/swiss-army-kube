@@ -1,4 +1,6 @@
-apiVersion: certmanager.k8s.io/v1alpha1
+{{- $hostedZoneID := .Values.hostedZoneID | default "" -}}
+
+apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-staging
@@ -8,17 +10,20 @@ spec:
     email: {{ .Values.email }}
     privateKeySecretRef:
       name: letsencrypt-staging
-    dns01:
-      providers:
-      - name: route53
-        route53:
-          accessKeyID: {{ .Values.accessKeyID }}
-          region: {{ .Values.region }}
-          secretAccessKeySecretRef:
-            key: secret-access-key
-            name: route53-config
+    solvers:
+      - dns01:
+          route53:
+            region: {{ .Values.region }}
+            accessKeyID: {{ .Values.accessKeyID }}
+            secretAccessKeySecretRef:
+              name: route53-config
+              key: secret-access-key
+{{- if ne $hostedZoneID "" }}
+            hostedZoneID: {{ .Values.hostedZoneID }}
+{{- end}}
+
 ---
-apiVersion: certmanager.k8s.io/v1alpha1
+apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
   name: letsencrypt-prod
@@ -28,12 +33,14 @@ spec:
     email: {{ .Values.email }}
     privateKeySecretRef:
       name: letsencrypt-prod
-    dns01:
-      providers:
-      - name: route53
-        route53:
-          accessKeyID: {{ .Values.accessKeyID }}
-          region: {{ .Values.region }}
-          secretAccessKeySecretRef:
-            key: secret-access-key
-            name: route53-config
+    solvers:
+      - dns01:
+          route53:
+            region: {{ .Values.region }}
+            accessKeyID: {{ .Values.accessKeyID }}
+            secretAccessKeySecretRef:
+              name: route53-config
+              key: secret-access-key
+{{- if ne $hostedZoneID "" }}
+            hostedZoneID: {{ .Values.hostedZoneID }}
+{{- end}}
