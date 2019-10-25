@@ -27,25 +27,16 @@ module "vpc" {
   }
 }
 
-resource "null_resource" "map_users" {
-  count = length(var.admin_arns)
-
-  triggers = {
-    group    = "system:masters"
-    user_arn = element(var.admin_arns, count.index)
-    username = "{{UserID}}"
-  }
-}
-
 module "eks" {
   cluster_name = var.cluster_name
   map_users    = local.additional_users
   source       = "terraform-aws-modules/eks/aws"
   subnets      = module.vpc.private_subnets
   vpc_id       = module.vpc.vpc_id
+  # future-request: switch to using AWS IRSA
   workers_additional_policies = [
     "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess",
-    "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
+    "arn:aws:iam::aws:policy/AmazonRoute53FullAccess"
   ]
   worker_groups = [
     for index, subnet in module.vpc.private_subnets :

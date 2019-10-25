@@ -5,12 +5,13 @@ variable "cluster_name" {
 }
 
 variable "cluster_size" {
-  type        = string
+  type        = number
   description = "Number of desired instances."
-  default     = "5"
+  default     = 5
 }
 
 variable "cluster_zones" {
+  type        = list(string)
   description = "Availlability zones for EKS"
   default     = []
 }
@@ -33,6 +34,7 @@ variable "network" {
 }
 
 variable "network_delim" {
+  type        = number
   description = "Number of additional bits with which to extend the network"
   default     = 8
 }

@@ -35,11 +35,3 @@ variable "nginx_ingress" {
      parameters = []
    }
 }
-
-
-variable "monitoring" {
-   default = {
-     enabled = true
-     parameters []
-   }
-}

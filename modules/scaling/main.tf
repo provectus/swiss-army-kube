@@ -1,6 +1,19 @@
+data "aws_region" "current" {}
+
 resource "kubernetes_namespace" "this" {
+  count = var.namespace_name == "kube-system" ? 0 : 1
   metadata {
     name = var.namespace_name
+  }
+}
+
+locals {
+  cluster_autoscaler_defaults = {
+    "autoDiscovery.clusterName"             = var.cluster_name,
+    "awsRegion"                             = data.aws_region.current.name,
+    "extraArgs.balance-similar-node-groups" = true,
+    "rbac.create"                           = true,
+    "rbac.pspEnabled"                       = true,
   }
 }
 
@@ -10,30 +23,14 @@ resource "helm_release" "cluster_autoscaler" {
   repository = "stable"
   chart      = "cluster-autoscaler"
   version    = "6.0.0"
-  namespace  = "var.namespace_name"
+  namespace  = var.namespace_name
 
-  set {
-    name  = "autoDiscovery.clusterName"
-    value = var.cluster_name
-  }
+  dynamic set {
+    for_each = merge(local.cluster_autoscaler_defaults, var.cluster_autoscaler.parameters)
 
-  set {
-    name  = "rbac.create"
-    value = true
-  }
-  
-  set {
-    name  = "rbac.pspEnabled"
-    value = true
-  }
-
-  set {
-    name = "awsRegion"
-    value = true
-  }
-  
-  set {
-    name  = "extraArgs.balance-similar-node-groups"
-    value = true
+    content {
+      name  = set.key
+      value = set.value
+    }
   }
 }

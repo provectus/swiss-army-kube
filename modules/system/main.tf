@@ -119,26 +119,3 @@ resource "helm_release" "external-dns" {
     value = var.domain
   }
 }
-
-resource "helm_release" "monitoring" {
-  count      = var.monitoring.enabled ? 1 : 0
-  name       = "prometheus-operator"
-  repository = "stable"
-  chart      = "prometheus-operator"
-  version    = "6.18.0"
-  namespace  = "monitoring"
-
-  values = [
-    "${file("${path.module}/values/prometheus.yaml")}"
-  ]
-
-  set {
-    name  = "grafana.ingress.hosts[0]"
-    value = "grafana.${var.cluster_name}.${var.domain}"
-  }
-
-  set {
-    name  = "grafana.ingress.tls[0].hosts[0]"
-    value = "grafana.${var.cluster_name}.${var.domain}"
-  }
-}

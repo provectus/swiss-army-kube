@@ -1,12 +1,13 @@
 variable "namespace_name" {
-  default = "kube-system"
+  type = "string"
+  default = "monitoring"
 }
 
 variable "cluster_name" {
   type = "string"
 }
 
-variable "cluster_autoscaler" {
+variable "monitoring" {
   default = {
     enabled    = true
     parameters = {}
