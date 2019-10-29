@@ -1,5 +1,7 @@
 {{- $hostedZoneID := .Values.hostedZoneID | default "" -}}
 
+{{- if .Values.letsencrypt.staging.enabled }}
+---
 apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
 metadata:
@@ -21,7 +23,9 @@ spec:
 {{- if ne $hostedZoneID "" }}
             hostedZoneID: {{ .Values.hostedZoneID }}
 {{- end}}
+{{- end}}
 
+{{- if .Values.letsencrypt.prod.enabled }}
 ---
 apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
@@ -43,4 +47,5 @@ spec:
               key: secret-access-key
 {{- if ne $hostedZoneID "" }}
             hostedZoneID: {{ .Values.hostedZoneID }}
+{{- end}}
 {{- end}}

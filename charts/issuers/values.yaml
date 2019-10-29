@@ -13,3 +13,9 @@ region: ""
 
 # (optional) Namespace for secret holding secretAccessKey
 #secretNamespace: cert-manager
+
+letsencrypt:
+  staging:
+    enabled: true
+  prod:
+    enabled: false

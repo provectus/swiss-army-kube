@@ -28,6 +28,16 @@ Parameter | Description | Default
 | `secretNamespace`                       | Namespace for secret holding `secretAccessKey` (optional) | `cert-manager`                                    |
 | `hostedZoneID`                          | Route53 zone ID for managed zone (optional) | `` |
 
+### Per-issuer configuration:
+
+**Warning:** don't enable issuer that you don't need yet. Otherwise if you reinstall the chart you will not be able to use that issuer.
+
+Parameter | Description | Default
+--- | --- | ---
+| `letsencrypt.staging.enabled`                        | | `false`                                                |
+| `letsencrypt.prod.enabled`                           | | `false`                                                |
+
+
 ## Provided resources
 
 `ClusterIssuer` resources provided:
