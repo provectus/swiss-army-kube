@@ -4,7 +4,7 @@ locals {
   zones            = coalescelist(var.cluster_zones, data.aws_availability_zones.available.names)
   private_net      = [for i, z in local.zones : cidrsubnet(var.network, var.network_delim, i)]
   public_net       = [for i, z in local.zones : cidrsubnet(var.network, var.network_delim, 255 - i)]
-  additional_users = [for arn in var.admin_arns : zipmap(["group", "user_arn", "username"], ["system:masters", arn, "{{UserID}}"])]
+  additional_users = [for arn in var.admin_arns : zipmap(["userarn", "username", "groups"], [arn, "{{UserID}}", ["system:masters"]])]
 }
 
 module "vpc" {
