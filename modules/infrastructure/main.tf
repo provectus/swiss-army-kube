@@ -63,7 +63,7 @@ module "eks" {
   worker_groups = [
     {
       spot_price    = var.spot_price
-      instance_type = "m5.large"
+      instance_type = var.eks_instance_size
       asg_max_size  = var.cluster_size
     },
   ]

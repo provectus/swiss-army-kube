@@ -27,3 +27,8 @@ variable "admin_arns" {
   default     = []
 }
 
+variable "eks_instance_size" {
+  type = string
+  description = "Instance type to use for running EKS"
+  default = "m5.large"
+}
