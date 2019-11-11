@@ -1,28 +1,29 @@
 variable "cluster_name" {
-  type    = "string"
+  type        = string
   description = "Name of cluster."
-  default = "test"
+  default     = "test"
 }
 
 variable "cluster_size" {
-  type    = "string"
+  type        = string
   description = "Number of desired instances."
-  default = "1"
+  default     = "1"
 }
 
 variable "spot_price" {
-  type    = "string"
+  type    = string
   default = ""
 }
 
 variable "network" {
-  type    = "string"
+  type        = string
   description = "Number would be used to template CIDR 10.X.0.0/16."
-  default = "256"
+  default     = "256"
 }
 
 variable "admin_arns" {
-  type    = "list"
+  type        = list(string)
   description = "ARNs of users which would have admin permissions."
-  default = []
+  default     = []
 }
+

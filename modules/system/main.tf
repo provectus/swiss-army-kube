@@ -1,6 +1,6 @@
 data "helm_repository" "incubator" {
-    name = "incubator"
-    url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
+  name = "incubator"
+  url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
 }
 
 resource "null_resource" "cert-manager-crd" {
@@ -9,22 +9,26 @@ resource "null_resource" "cert-manager-crd" {
   }
 }
 
-data "aws_region" "current" {}
+data "aws_region" "current" {
+}
 
 resource "kubernetes_namespace" "system" {
   metadata {
-    labels {
+    labels = {
       "certmanager.k8s.io/disable-validation" = "true"
     }
-    name = "${var.namespace_name}"
+    name = var.namespace_name
   }
 }
 
 resource "helm_release" "issuers" {
-  depends_on = ["kubernetes_namespace.system","null_resource.cert-manager-crd"]
-  name       = "issuers"
-  chart      = "../../charts/issuers"
-  namespace  = "${var.namespace_name}"
+  depends_on = [
+    kubernetes_namespace.system,
+    null_resource.cert-manager-crd,
+  ]
+  name      = "issuers"
+  chart     = "../../charts/issuers"
+  namespace = var.namespace_name
 
   set {
     name  = "email"
@@ -33,17 +37,17 @@ resource "helm_release" "issuers" {
 
   set {
     name  = "accessKeyID"
-    value = "${aws_iam_access_key.cert_manager.id}"
+    value = aws_iam_access_key.cert_manager.id
   }
 
   set {
-    name = "secretAccessKey"
-    value = "${base64encode("${aws_iam_access_key.cert_manager.secret}")}"
+    name  = "secretAccessKey"
+    value = base64encode(aws_iam_access_key.cert_manager.secret)
   }
 
   set {
     name  = "region"
-    value = "${data.aws_region.current.name}"
+    value = data.aws_region.current.name
   }
 }
 
@@ -53,7 +57,7 @@ resource "aws_iam_user" "cert_manager" {
 
 resource "aws_iam_user_policy" "cert_manager" {
   name = "${var.cluster_name}_route53_access"
-  user = "${aws_iam_user.cert_manager.name}"
+  user = aws_iam_user.cert_manager.name
 
   policy = <<EOF
 {
@@ -77,57 +81,58 @@ resource "aws_iam_user_policy" "cert_manager" {
     ]
 }   
 EOF
+
 }
 
 resource "aws_iam_access_key" "cert_manager" {
-  user = "${aws_iam_user.cert_manager.name}"
+  user = aws_iam_user.cert_manager.name
 }
 
 resource "helm_release" "cert-manager" {
-  depends_on = ["helm_release.issuers"]
+  depends_on = [helm_release.issuers]
 
-  name       = "cert-manager"
-  repository = "stable"
-  chart      = "cert-manager"
-  version    = "v0.6.6"
-  namespace  = "${var.namespace_name}"
+  name          = "cert-manager"
+  repository    = "stable"
+  chart         = "cert-manager"
+  version       = "v0.6.6"
+  namespace     = var.namespace_name
   recreate_pods = true
- 
+
   values = [
-    "${file("${path.module}/values/cert-manager.yaml")}"
+    file("${path.module}/values/cert-manager.yaml"),
   ]
 }
 
 resource "helm_release" "nginx-ingress" {
-  depends_on = ["kubernetes_namespace.system"]
+  depends_on = [kubernetes_namespace.system]
 
   name       = "nginx"
   repository = "stable"
   chart      = "nginx-ingress"
   version    = "1.3.1"
-  namespace  = "${var.namespace_name}"
+  namespace  = var.namespace_name
 
   values = [
-    "${file("${path.module}/values/nginx-ingress.yaml")}"
+    file("${path.module}/values/nginx-ingress.yaml"),
   ]
 }
 
 resource "helm_release" "external-dns" {
-  depends_on = ["kubernetes_namespace.system"]
+  depends_on = [kubernetes_namespace.system]
 
   name       = "dns"
   repository = "stable"
   chart      = "external-dns"
   version    = "1.6.1"
-  namespace  = "${var.namespace_name}"
+  namespace  = var.namespace_name
 
   values = [
-    "${file("${path.module}/values/external-dns.yaml")}"
+    file("${path.module}/values/external-dns.yaml"),
   ]
 
   set {
     name  = "domainFilters[0]"
-    value = "${var.domain}"
+    value = var.domain
   }
 }
 
@@ -139,7 +144,7 @@ resource "helm_release" "monitoring" {
   namespace  = "monitoring"
 
   values = [
-    "${file("${path.module}/values/prometheus.yaml")}"
+    file("${path.module}/values/prometheus.yaml"),
   ]
 
   set {
@@ -152,3 +157,4 @@ resource "helm_release" "monitoring" {
     value = "grafana.${var.cluster_name}.${var.domain}"
   }
 }
+
