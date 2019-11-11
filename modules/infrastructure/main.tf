@@ -3,12 +3,16 @@ data "aws_availability_zones" "available" {
 
 data "template_file" "private" {
   count    = length(data.aws_availability_zones.available.names)
-  template = "10.${var.network}.${count.index}.0/24"
+  template = cidrsubnet(local.network, 8, count.index)
 }
 
 data "template_file" "public" {
   count    = length(data.aws_availability_zones.available.names)
-  template = "10.${var.network}.10${count.index}.0/24"
+  template = cidrsubnet(local.network, 8, count.index + 100)
+}
+
+locals {
+  network = cidrsubnet("10.0.0.0/8", 8, var.network)
 }
 
 module "vpc" {
@@ -16,12 +20,12 @@ module "vpc" {
 
   name = "${var.cluster_name}-cluster"
 
-  cidr = "10.${var.network}.0.0/16"
+  cidr = local.network
 
   azs             = data.aws_availability_zones.available.names
   private_subnets = data.template_file.private.*.rendered
   public_subnets  = data.template_file.public.*.rendered
-  
+
   enable_nat_gateway = true
   single_nat_gateway = true
 

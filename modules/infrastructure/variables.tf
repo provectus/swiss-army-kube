@@ -18,7 +18,7 @@ variable "spot_price" {
 variable "network" {
   type        = string
   description = "Number would be used to template CIDR 10.X.0.0/16."
-  default     = "256"
+  default = 10
 }
 
 variable "admin_arns" {
