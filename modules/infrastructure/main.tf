@@ -68,3 +68,11 @@ module "eks" {
     },
   ]
 }
+
+output "vpc_id" {
+  value = module.vpc.vpc_id
+}
+
+output "eks_id" {
+  value = module.eks.cluster_id
+}
