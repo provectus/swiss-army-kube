@@ -21,9 +21,7 @@ module "vpc" {
   azs             = data.aws_availability_zones.available.names
   private_subnets = data.template_file.private.*.rendered
   public_subnets  = data.template_file.public.*.rendered
-
-  assign_generated_ipv6_cidr_block = true
-
+  
   enable_nat_gateway = true
   single_nat_gateway = true
 
@@ -54,12 +52,10 @@ module "eks" {
   vpc_id       = module.vpc.vpc_id
 
   map_users       = null_resource.map_users.*.triggers
-  map_users_count = length(var.admin_arns)
   workers_additional_policies = [
     "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess",
     "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
   ]
-  workers_additional_policies_count = 2
   worker_groups = [
     {
       spot_price    = var.spot_price
