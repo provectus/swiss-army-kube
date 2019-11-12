@@ -9,6 +9,9 @@ More info about cert-manager processes: [cert-manager](https://docs.cert-manager
 To use this chart you need helm chart for cert-manager installed in its own namespace:
 
 ```
+# Install CRDs -- do this only once for cluster
+kubectl apply --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.11/deploy/manifests/00-crds.yaml
+
 helm install --name cert-manager \
              --namespace cert-manager \
              --version v0.11.0 \
