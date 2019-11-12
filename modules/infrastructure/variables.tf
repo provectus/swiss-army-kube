@@ -18,7 +18,7 @@ variable "spot_price" {
 variable "network" {
   type        = string
   description = "Number would be used to template CIDR 10.X.0.0/16."
-  default     = "256"
+  default = 10
 }
 
 variable "admin_arns" {
@@ -27,3 +27,8 @@ variable "admin_arns" {
   default     = []
 }
 
+variable "eks_instance_size" {
+  type = string
+  description = "Instance type to use for running EKS"
+  default = "m5.large"
+}

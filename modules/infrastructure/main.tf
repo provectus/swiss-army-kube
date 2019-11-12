@@ -3,12 +3,16 @@ data "aws_availability_zones" "available" {
 
 data "template_file" "private" {
   count    = length(data.aws_availability_zones.available.names)
-  template = "10.${var.network}.${count.index}.0/24"
+  template = cidrsubnet(local.network, 8, count.index)
 }
 
 data "template_file" "public" {
   count    = length(data.aws_availability_zones.available.names)
-  template = "10.${var.network}.10${count.index}.0/24"
+  template = cidrsubnet(local.network, 8, count.index + 100)
+}
+
+locals {
+  network = cidrsubnet("10.0.0.0/8", 8, var.network)
 }
 
 module "vpc" {
@@ -16,13 +20,11 @@ module "vpc" {
 
   name = "${var.cluster_name}-cluster"
 
-  cidr = "10.${var.network}.0.0/16"
+  cidr = local.network
 
   azs             = data.aws_availability_zones.available.names
   private_subnets = data.template_file.private.*.rendered
   public_subnets  = data.template_file.public.*.rendered
-
-  assign_generated_ipv6_cidr_block = true
 
   enable_nat_gateway = true
   single_nat_gateway = true
@@ -41,7 +43,7 @@ resource "null_resource" "map_users" {
   count = length(var.admin_arns)
 
   triggers = {
-    user_arn = element(var.admin_arns, count.index)
+    user_arn = var.admin_arns[count.index]
     username = "{{UserID}}"
     group    = "system:masters"
   }
@@ -54,17 +56,23 @@ module "eks" {
   vpc_id       = module.vpc.vpc_id
 
   map_users       = null_resource.map_users.*.triggers
-  map_users_count = length(var.admin_arns)
   workers_additional_policies = [
     "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess",
     "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
   ]
-  workers_additional_policies_count = 2
   worker_groups = [
     {
       spot_price    = var.spot_price
-      instance_type = "m5.large"
+      instance_type = var.eks_instance_size
       asg_max_size  = var.cluster_size
     },
   ]
+}
+
+output "vpc_id" {
+  value = module.vpc.vpc_id
+}
+
+output "eks_id" {
+  value = module.eks.cluster_id
 }
