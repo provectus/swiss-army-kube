@@ -17,7 +17,9 @@ kubectl --namespace kube-system patch deploy tiller-deploy -p '{"spec":{"templat
 This snippet configures Tiller with full cluster access.
 For production setups reduced privileges are recommended.
 
-See https://helm.sh/docs/rbac/#role-based-access-control for detailed production-grade configuration.
+## Links
 
-See https://github.com/helm/helm/issues/5100 for explanation of some errors while installing helm.
+* Detailed production-grade configuration: https://helm.sh/docs/rbac/#role-based-access-control
+* One more article on how to configure Tiller properly https://medium.com/@elijudah/configuring-minimal-rbac-permissions-for-helm-and-tiller-e7d792511d10
+* Explanation of some errors while installing helm: https://github.com/helm/helm/issues/5100
 
