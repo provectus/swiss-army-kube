@@ -28,6 +28,7 @@ module "vpc" {
 
   enable_nat_gateway = true
   single_nat_gateway = true
+  enable_dns_hostnames = true
 
   public_subnet_tags = {
     KubernetesCluster        = "${var.cluster_name}-cluster"
