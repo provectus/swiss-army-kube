@@ -7,6 +7,31 @@ resource "kubernetes_namespace" "this" {
   }
 }
 
+resource "kubernetes_limit_range" "this" {
+  count = var.namespace_name == "kube-system" ? 0 : 1
+  metadata {
+    name      = "default-limits"
+    namespace = var.namespace_name
+  }
+  spec {
+    limit {
+      type = "Container"
+      max = {
+        cpu    = "1"
+        memory = "2G"
+      }
+      default = {
+        cpu    = "500m"
+        memory = "1G"
+      }
+      default_request = {
+        cpu    = "50m"
+        memory = "128M"
+      }
+    }
+  }
+}
+
 resource "random_password" "password" {
   length = 8
 }

@@ -1,7 +1,7 @@
 output "vpc" {
-  value       = module.vpc
+  value = module.vpc
 }
 
 output "eks" {
-  value       = module.eks
+  value = module.eks
 }

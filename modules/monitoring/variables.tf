@@ -1,5 +1,5 @@
 variable "namespace_name" {
-  type = "string"
+  type    = "string"
   default = "monitoring"
 }
 

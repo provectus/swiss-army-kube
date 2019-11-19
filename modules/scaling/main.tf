@@ -7,6 +7,30 @@ resource "kubernetes_namespace" "this" {
   }
 }
 
+resource "kubernetes_limit_range" "this" {
+  metadata {
+    name      = "default-limits"
+    namespace = var.namespace_name
+  }
+  spec {
+    limit {
+      type = "Container"
+      max = {
+        cpu    = "500m"
+        memory = "1G"
+      }
+      default = {
+        cpu    = "200m"
+        memory = "512M"
+      }
+      default_request = {
+        cpu    = "50m"
+        memory = "128M"
+      }
+    }
+  }
+}
+
 locals {
   cluster_autoscaler_defaults = {
     "autoDiscovery.clusterName"             = var.cluster_name,

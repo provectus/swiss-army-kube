@@ -6,9 +6,6 @@ variable "cluster_name" {
   type = "string"
 }
 
-variable "config_path" {
-  type = "string"
-}
 
 variable "domain" {
   type = "string"
@@ -16,22 +13,22 @@ variable "domain" {
 
 
 variable "cert_manager" {
-   default = {
-     enabled = true
-     parameters = []
-   }
+  default = {
+    enabled    = true
+    parameters = {}
+  }
 }
 
 variable "external_dns" {
-   default = {
-     enabled = true
-     parameters = []
-   }
+  default = {
+    enabled    = true
+    parameters = {}
+  }
 }
 
 variable "nginx_ingress" {
-   default = {
-     enabled = true
-     parameters = []
-   }
+  default = {
+    enabled    = true
+    parameters = {}
+  }
 }

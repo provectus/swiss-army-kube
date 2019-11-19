@@ -1,4 +1,6 @@
-provider "aws" {}
+provider "aws" {
+  region = "us-east-1"
+}
 
 module "infra" {
   source        = "../../modules/infrastructure"
@@ -61,11 +63,24 @@ provider "helm" {
 }
 
 module "scaling" {
-  source        = "../../modules/scaling"
-  cluster_name  = module.infra.eks.cluster_id
+  source       = "../../modules/scaling"
+  cluster_name = module.infra.eks.cluster_id
+}
+
+module "network" {
+  source       = "../../modules/system"
+  cluster_name = module.infra.eks.cluster_id
+  domain       = "squadex.devopskzn.ru"
+  cert_manager = {
+    enabled = true
+    parameters = {
+      "webhook.enabled"    = "false"
+      "cainjector.enabled" = "false"
+    }
+  }
 }
 
 module "monitoring" {
-  source        = "../../modules/monitoring"
-  cluster_name  = module.infra.eks.cluster_id
+  source       = "../../modules/monitoring"
+  cluster_name = module.infra.eks.cluster_id
 }

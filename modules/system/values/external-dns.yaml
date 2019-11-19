@@ -1,9 +1,0 @@
-provider: aws
-policy: upsert-only
-domainFilters:
-  - local
-sources:
-  - ingress
-  - service
-rbac:
-  create: true
