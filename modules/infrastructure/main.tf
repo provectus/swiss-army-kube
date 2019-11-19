@@ -1,4 +1,5 @@
-data "aws_availability_zones" "available" {}
+data "aws_availability_zones" "available" {
+}
 
 locals {
   zones            = coalescelist(var.cluster_zones, data.aws_availability_zones.available.names)
@@ -36,7 +37,7 @@ module "eks" {
   # future-request: switch to using AWS IRSA
   workers_additional_policies = [
     "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess",
-    "arn:aws:iam::aws:policy/AmazonRoute53FullAccess"
+    "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
   ]
   worker_groups = [
     for index, subnet in module.vpc.private_subnets :
@@ -49,4 +50,12 @@ module "eks" {
       subnets             = list(subnet)
     }
   ]
+}
+
+output "vpc_id" {
+  value = module.vpc.vpc_id
+}
+
+output "eks_id" {
+  value = module.eks.cluster_id
 }

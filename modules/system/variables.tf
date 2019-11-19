@@ -3,12 +3,12 @@ variable "namespace_name" {
 }
 
 variable "cluster_name" {
-  type = "string"
+  type = string
 }
 
 
 variable "domain" {
-  type = "string"
+  type = string
 }
 
 

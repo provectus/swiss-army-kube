@@ -5,3 +5,4 @@ output "vpc" {
 output "eks" {
   value = module.eks
 }
+

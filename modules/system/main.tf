@@ -5,7 +5,8 @@ resource "null_resource" "cert-manager-crd" {
   }
 }
 
-data "aws_region" "current" {}
+data "aws_region" "current" {
+}
 
 resource "kubernetes_namespace" "system" {
   count = var.namespace_name == "kube-system" ? 0 : 1
@@ -55,6 +56,7 @@ resource "aws_iam_user_policy" "cert_manager" {
     ]
 }   
 EOF
+
 }
 
 resource "aws_iam_access_key" "cert_manager" {
@@ -137,3 +139,4 @@ resource "helm_release" "external-dns" {
     }
   }
 }
+
