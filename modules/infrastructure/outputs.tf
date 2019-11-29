@@ -16,6 +16,16 @@ output "cluster_endpoint" {
   value       = module.eks.cluster_endpoint
 }
 
+output "cluster_ca" {
+  description = "CA kubernetes cluster"
+  value       = data.aws_eks_cluster.cluster.certificate_authority.0.data
+}
+
+output "cluster_token" {
+  description = "Token kubernetes cluster"
+  value       = data.aws_eks_cluster_auth.cluster.token
+}
+
 output "cluster_security_group_id" {
   description = "Security group ids attached to the cluster control plane."
   value       = module.eks.cluster_security_group_id

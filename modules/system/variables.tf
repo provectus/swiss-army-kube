@@ -10,7 +10,6 @@ variable "cluster_name" {
 variable "config_path" {
   description = "location of the kubeconfig file"
   default     = "~/.kube/config"
-  
 }
 
 variable "domain" {

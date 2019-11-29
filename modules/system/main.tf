@@ -3,6 +3,17 @@ data "helm_repository" "incubator" {
   url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
 }
 
+resource "null_resource" "tiller-rbac" {
+  provisioner "local-exec" {
+    command = <<EOT
+      kubectl --kubeconfig ${var.config_path} create serviceaccount -n kube-system tiller;
+      kubectl --kubeconfig ${var.config_path} create clusterrolebinding tiller-cluster-admin --clusterrole=cluster-admin --serviceaccount=kube-system:tiller;
+      kubectl --kubeconfig ${var.config_path} --namespace kube-system patch deploy tiller-deploy -p '{"spec":{"template":{"spec":{"serviceAccount":"tiller"}}}}';
+      helm --kubeconfig ${var.config_path} init --service-account tiller --upgrade
+    EOT
+  }
+}
+
 resource "null_resource" "cert-manager-crd" {
   provisioner "local-exec" {
     command = "kubectl --kubeconfig ${var.config_path} apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.6/deploy/manifests/00-crds.yaml"
@@ -25,6 +36,7 @@ resource "helm_release" "issuers" {
   depends_on = [
     kubernetes_namespace.system,
     null_resource.cert-manager-crd,
+    null_resource.tiller-rbac
   ]
   name      = "issuers"
   chart     = "../../charts/issuers"
@@ -89,7 +101,7 @@ resource "aws_iam_access_key" "cert_manager" {
 }
 
 resource "helm_release" "cert-manager" {
-  depends_on = [helm_release.issuers]
+  depends_on = [helm_release.issuers,null_resource.tiller-rbac]
 
   name          = "cert-manager"
   repository    = "stable"
@@ -104,7 +116,7 @@ resource "helm_release" "cert-manager" {
 }
 
 resource "helm_release" "nginx-ingress" {
-  depends_on = [kubernetes_namespace.system]
+  depends_on = [kubernetes_namespace.system,null_resource.tiller-rbac]
 
   name       = "nginx"
   repository = "stable"
@@ -118,7 +130,7 @@ resource "helm_release" "nginx-ingress" {
 }
 
 resource "helm_release" "external-dns" {
-  depends_on = [kubernetes_namespace.system]
+  depends_on = [kubernetes_namespace.system,null_resource.tiller-rbac]
 
   name       = "dns"
   repository = "stable"
@@ -137,6 +149,8 @@ resource "helm_release" "external-dns" {
 }
 
 resource "helm_release" "monitoring" {
+  depends_on = [kubernetes_namespace.system,null_resource.tiller-rbac]
+    
   name       = "prometheus-operator"
   repository = "stable"
   chart      = "prometheus-operator"
