@@ -1,16 +1,21 @@
 variable "namespace_name" {
-  default = "system"
+  description = "Name of namespace where install charts"
+  default     = "system"
 }
 
 variable "cluster_name" {
-  type = string
+  description = "Name of kubernetes cluster"
+  default     = "example-cluster"
 }
 
 variable "config_path" {
-  type = string
+  description = "location of kubeconfig file"
+  default     = "~/.kube/config"
+  
 }
 
 variable "domain" {
-  type = string
+  description = "domain name for ingress"
+  default     = "example.com"
 }
 

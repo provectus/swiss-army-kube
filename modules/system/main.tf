@@ -1,3 +1,9 @@
+provider "helm" {
+  kubernetes {
+    config_path = var.config_path
+  }
+}
+
 data "helm_repository" "incubator" {
   name = "incubator"
   url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
