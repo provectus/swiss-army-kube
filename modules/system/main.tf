@@ -4,12 +4,6 @@ data "helm_repository" "incubator" {
   url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
 }
 
-#Loki chart repo
-data "helm_repository" "loki" {
-  name = "loki"
-  url  = "https://grafana.github.io/loki/charts"
-}
-
 #Cert-manager chart repo
 data "helm_repository" "jetstack" {
   name = "jetstack"
@@ -161,42 +155,3 @@ resource "helm_release" "external-dns" {
     value = var.domain
   }
 }
-
-//TODO: при удалении выгрызать crd
-resource "helm_release" "monitoring" {
-  depends_on = [kubernetes_namespace.system,null_resource.tiller-rbac]
-    
-  name       = "prometheus-operator"
-  repository = "stable"
-  chart      = "prometheus-operator"
-  version    = "8.2.4"
-  namespace  = "monitoring"
-
-  values = [
-    file("${path.module}/values/prometheus.yaml"),
-  ]
-
-  set {
-    name  = "grafana.ingress.hosts[0]"
-    value = "grafana.${var.cluster_name}.${var.domain}"
-  }
-
-  set {
-    name  = "grafana.ingress.tls[0].hosts[0]"
-    value = "grafana.${var.cluster_name}.${var.domain}"
-  }
-}
-
-resource "helm_release" "loki-stack" {
-  depends_on = [kubernetes_namespace.system,null_resource.tiller-rbac]
-
-  name       = "loki"
-  repository = "loki"
-  chart      = "loki-stack"
-  version    = "0.20.0"
-  namespace  = "logging"
-
-  values = [
-    file("${path.module}/values/loki-stack.yaml"),
-  ]    
-} 

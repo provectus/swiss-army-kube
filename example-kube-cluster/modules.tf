@@ -11,5 +11,21 @@ module "system" {
 
   cluster_name = "${var.cluster_name}"
   domain = "${var.domain}"
-  config_path = "./kubeconfig_${var.cluster_name}"
+  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+}
+
+module "prometheus" {
+  source = "../modules/monitoring/prometheus"
+
+  cluster_name = "${var.cluster_name}"
+  domain = "${var.domain}"
+  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+}
+
+module "loki" {
+  source = "../modules/logging/loki"
+
+  cluster_name = "${var.cluster_name}"
+  domain = "${var.domain}"
+  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
 }
