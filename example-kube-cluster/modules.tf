@@ -14,6 +14,13 @@ module "system" {
   config_path = "${path.module}/kubeconfig_${var.cluster_name}"
 }
 
+module "nginx" {
+  source = "../modules/ingress/nginx"
+
+  cluster_name = "${var.cluster_name}"
+  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+}
+
 module "prometheus" {
   source = "../modules/monitoring/prometheus"
 
