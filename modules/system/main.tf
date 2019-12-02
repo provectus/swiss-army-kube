@@ -53,7 +53,7 @@ resource "helm_release" "issuers" {
     null_resource.tiller-rbac
   ]
   name      = "issuers"
-  chart     = "../swiss-army-kube/charts/issuers"
+  chart     = "../charts/issuers"
   namespace = "cert-manager"
 
   set {

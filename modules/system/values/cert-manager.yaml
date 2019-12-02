@@ -1,7 +1,7 @@
 global:
   leaderElection:
     # Override the namespace used to store the ConfigMap for leader election
-    namespace: "system"
+    namespace: "cert-manager"
 rbac:
   create: true
 

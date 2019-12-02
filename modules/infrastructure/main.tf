@@ -1,6 +1,8 @@
 # Declare the data source
 data "aws_availability_zones" "available" {}
 
+data "aws_region" "current" {}
+
 data "template_file" "private" {
   count    = length(data.aws_availability_zones.available.names)
   template = cidrsubnet(local.network, 8, count.index)
@@ -68,7 +70,7 @@ module "eks" {
 
   workers_additional_policies = [
     "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess",
-    "arn:aws:iam::aws:policy/AmazonRoute53FullAccess"
+    "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
   ]
   worker_groups = [
     {

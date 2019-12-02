@@ -33,5 +33,5 @@ output "cluster_security_group_id" {
 
 output "region" {
   description = "AWS region."
-  value       = var.region
+  value       = data.aws_region.current
 }
