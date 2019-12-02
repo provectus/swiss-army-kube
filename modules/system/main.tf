@@ -1,6 +1,23 @@
+#Global helm chart repo
 data "helm_repository" "incubator" {
   name = "incubator"
   url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
+}
+
+#Loki chart repo
+data "helm_repository" "loki" {
+  name = "loki"
+  url  = "https://grafana.github.io/loki/charts"
+}
+
+#Cert-manager chart repo
+data "helm_repository" "jetstack" {
+  name = "jetstack"
+  url  = "https://charts.jetstack.io"
+}
+
+data "aws_region" "current" {
+
 }
 
 resource "null_resource" "tiller-rbac" {
@@ -16,11 +33,8 @@ resource "null_resource" "tiller-rbac" {
 
 resource "null_resource" "cert-manager-crd" {
   provisioner "local-exec" {
-    command = "kubectl --kubeconfig ${var.config_path} apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.6/deploy/manifests/00-crds.yaml"
+    command = "kubectl --kubeconfig ${var.config_path} apply --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.11/deploy/manifests/00-crds.yaml"
   }
-}
-
-data "aws_region" "current" {
 }
 
 resource "kubernetes_namespace" "system" {
@@ -39,8 +53,8 @@ resource "helm_release" "issuers" {
     null_resource.tiller-rbac
   ]
   name      = "issuers"
-  chart     = "../../charts/issuers"
-  namespace = var.namespace_name
+  chart     = "../swiss-army-kube/charts/issuers"
+  namespace = "cert-manager"
 
   set {
     name  = "email"
@@ -104,10 +118,10 @@ resource "helm_release" "cert-manager" {
   depends_on = [helm_release.issuers,null_resource.tiller-rbac]
 
   name          = "cert-manager"
-  repository    = "stable"
+  repository    = "jetstack"
   chart         = "cert-manager"
-  version       = "v0.6.6"
-  namespace     = var.namespace_name
+  version       = "v0.11.1"
+  namespace     = "cert-manager"
   recreate_pods = true
 
   values = [
@@ -121,7 +135,7 @@ resource "helm_release" "nginx-ingress" {
   name       = "nginx"
   repository = "stable"
   chart      = "nginx-ingress"
-  version    = "1.3.1"
+  version    = "1.26.1"
   namespace  = var.namespace_name
 
   values = [
@@ -135,7 +149,7 @@ resource "helm_release" "external-dns" {
   name       = "dns"
   repository = "stable"
   chart      = "external-dns"
-  version    = "1.6.1"
+  version    = "2.11.0"
   namespace  = var.namespace_name
 
   values = [
@@ -148,13 +162,14 @@ resource "helm_release" "external-dns" {
   }
 }
 
+//TODO: при удалении выгрызать crd
 resource "helm_release" "monitoring" {
   depends_on = [kubernetes_namespace.system,null_resource.tiller-rbac]
     
   name       = "prometheus-operator"
   repository = "stable"
   chart      = "prometheus-operator"
-  version    = "5.0.10"
+  version    = "8.2.4"
   namespace  = "monitoring"
 
   values = [
@@ -171,3 +186,17 @@ resource "helm_release" "monitoring" {
     value = "grafana.${var.cluster_name}.${var.domain}"
   }
 }
+
+resource "helm_release" "loki-stack" {
+  depends_on = [kubernetes_namespace.system,null_resource.tiller-rbac]
+
+  name       = "loki"
+  repository = "loki"
+  chart      = "loki-stack"
+  version    = "0.20.0"
+  namespace  = "logging"
+
+  values = [
+    file("${path.module}/values/loki-stack.yaml"),
+  ]    
+} 

@@ -27,7 +27,7 @@ module "vpc" {
   source = "terraform-aws-modules/vpc/aws"
   version = ">= v2.21.0"
 
-  name = "${var.cluster_name}-cluster"
+  name = "${var.cluster_name}"
 
   cidr = local.network
 
@@ -40,12 +40,12 @@ module "vpc" {
   enable_dns_hostnames = true
 
   public_subnet_tags = {
-    KubernetesCluster        = "${var.cluster_name}-cluster"
-    "kubernetes.io/role/elb" = "1"
+    KubernetesCluster        = "${var.cluster_name}"
+    "kubernetes.io/role/elb" = ""
   }
   private_subnet_tags = {
-    KubernetesCluster        = "${var.cluster_name}-cluster"
-    "kubernetes.io/role/internal-elb" = "1"
+    KubernetesCluster        = "${var.cluster_name}"
+    "kubernetes.io/role/internal-elb" = ""
   }
 
   tags = {
@@ -56,7 +56,7 @@ module "vpc" {
 module "eks" {
   source       = "terraform-aws-modules/eks/aws"
   version = ">= v7.0.0"  
-  cluster_name = "${var.cluster_name}-cluster"
+  cluster_name = "${var.cluster_name}"
   subnets      = module.vpc.private_subnets
   vpc_id       = module.vpc.vpc_id
 

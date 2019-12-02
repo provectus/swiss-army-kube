@@ -1,13 +1,13 @@
+global:
+  leaderElection:
+    # Override the namespace used to store the ConfigMap for leader election
+    namespace: "system"
 rbac:
   create: true
 
 ingressShim:
-  defaultACMEChallengeType: dns01
-  defaultACMEDNS01ChallengeProvider: route53
   defaultIssuerKind: ClusterIssuer
   defaultIssuerName: letsencrypt-staging
 
 webhook:
   enabled: true
-  image:
-    tag: v0.6.2
