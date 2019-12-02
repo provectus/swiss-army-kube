@@ -22,7 +22,9 @@ brew install terraform
 Change example.tfvars, chose modules in main.tf and run:
 Prepare and downloads module
 `terraform init`
+
 Plan and test deployment
 `terraform plan -var-file=example.tfvars`
+
 Deploy cluster and helm chart
 `terraform apply -var-file=example.tfvars`
