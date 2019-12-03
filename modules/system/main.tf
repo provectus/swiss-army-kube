@@ -123,18 +123,16 @@ resource "helm_release" "cert-manager" {
   ]
 }
 
-resource "helm_release" "nginx-ingress" {
-  depends_on = [kubernetes_namespace.system,null_resource.tiller-rbac]
+resource "helm_release" "kube-state-metrics" {
+  depends_on = [helm_release.issuers,null_resource.tiller-rbac]
 
-  name       = "nginx"
-  repository = "stable"
-  chart      = "nginx-ingress"
-  version    = "1.26.1"
-  namespace  = var.namespace_name
+  name          = "state"
+  repository    = "stable"
+  chart         = "kube-state-metrics"
+  version       = "2.4.1"
+  namespace     = var.namespace_name
+  recreate_pods = true
 
-  values = [
-    file("${path.module}/values/nginx-ingress.yaml"),
-  ]
 }
 
 resource "helm_release" "external-dns" {
