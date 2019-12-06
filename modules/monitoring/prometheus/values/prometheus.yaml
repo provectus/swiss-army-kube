@@ -13,3 +13,4 @@ grafana:
       - secretName: prometheus-grafana-tls-secret
         hosts:
           - grafana.local
+      

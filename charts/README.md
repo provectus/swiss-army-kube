@@ -1,4 +1,4 @@
 # Charts
 ## Available charts
 The next charts are used for CI:
-- `runner` - gitlab-runner chart
+- `cluster-issuers` - cert-manager crd. Get certificate from letsencrypt for ingress controller 

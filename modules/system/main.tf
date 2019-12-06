@@ -1,34 +1,99 @@
+#Global helm chart repo
 data "helm_repository" "incubator" {
   name = "incubator"
   url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
 }
 
-resource "null_resource" "cert-manager-crd" {
-  provisioner "local-exec" {
-    command = "kubectl --kubeconfig ${var.config_path} apply -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.6/deploy/manifests/00-crds.yaml"
-  }
+#Cert-manager chart repo
+data "helm_repository" "jetstack" {
+  name = "jetstack"
+  url  = "https://charts.jetstack.io"
 }
 
 data "aws_region" "current" {
+
 }
 
-resource "kubernetes_namespace" "system" {
+resource "kubernetes_service_account" "tiller" {
+  metadata {
+    name      = "tiller"
+    namespace = "kube-system"
+  }
+
+  automount_service_account_token = true
+}
+
+resource "kubernetes_cluster_role_binding" "tiller" {
+  depends_on = [kubernetes_service_account.tiller]
+  metadata {
+    name = "tiller-binding"
+  }
+
+  subject {
+    kind      = "ServiceAccount"
+    name      = "tiller"
+    namespace = "kube-system"
+    api_group = ""
+  }
+
+  role_ref {
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+    api_group = "rbac.authorization.k8s.io"
+  }
+}
+
+resource "null_resource" "helm_init" {
+  provisioner "local-exec" {
+    command = <<EOT
+      kubectl --kubeconfig ${var.config_path} init --upgrade;
+      sleep 15
+    EOT  
+  }
+}
+
+resource "helm_release" "external-dns" {
+  depends_on = [kubernetes_cluster_role_binding.tiller]
+
+  name       = "dns"
+  repository = "stable"
+  chart      = "external-dns"
+  version    = "2.11.0"
+  namespace  = "kube-system"
+
+  values = [
+    file("${path.module}/values/external-dns.yaml"),
+  ]
+
+  set {
+    name  = "domainFilters[0]"
+    value = var.domain
+  }
+}
+
+resource "null_resource" "cert-manager-crd" {
+  depends_on = [kubernetes_cluster_role_binding.tiller]
+  provisioner "local-exec" {
+    command = "kubectl --kubeconfig ${var.config_path} apply --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.11/deploy/manifests/00-crds.yaml"
+  }
+}
+
+resource "kubernetes_namespace" "cert-manager" {
+  depends_on = [null_resource.cert-manager-crd]
   metadata {
     labels = {
       "certmanager.k8s.io/disable-validation" = "true"
     }
-    name = var.namespace_name
+
+    name = "cert-manager"
   }
 }
 
 resource "helm_release" "issuers" {
-  depends_on = [
-    kubernetes_namespace.system,
-    null_resource.cert-manager-crd,
-  ]
+  depends_on = [null_resource.cert-manager-crd,kubernetes_namespace.cert-manager]
   name      = "issuers"
-  chart     = "../../charts/issuers"
-  namespace = var.namespace_name
+  chart     = "../charts/cluster-issuers"
+  namespace = kubernetes_namespace.cert-manager.metadata[0].name
 
   set {
     name  = "email"
@@ -89,13 +154,13 @@ resource "aws_iam_access_key" "cert_manager" {
 }
 
 resource "helm_release" "cert-manager" {
-  depends_on = [helm_release.issuers]
+  depends_on = [helm_release.issuers,kubernetes_namespace.cert-manager,kubernetes_cluster_role_binding.tiller]
 
   name          = "cert-manager"
-  repository    = "stable"
+  repository    = "jetstack"
   chart         = "cert-manager"
-  version       = "v0.6.6"
-  namespace     = var.namespace_name
+  version       = "v0.11.1"
+  namespace     = kubernetes_namespace.cert-manager.metadata[0].name
   recreate_pods = true
 
   values = [
@@ -103,58 +168,28 @@ resource "helm_release" "cert-manager" {
   ]
 }
 
-resource "helm_release" "nginx-ingress" {
-  depends_on = [kubernetes_namespace.system]
+resource "helm_release" "kube-state-metrics" {
+  depends_on = [helm_release.issuers,helm_release.cert-manager,kubernetes_cluster_role_binding.tiller]
 
-  name       = "nginx"
-  repository = "stable"
-  chart      = "nginx-ingress"
-  version    = "1.3.1"
-  namespace  = var.namespace_name
+  name          = "state"
+  repository    = "stable"
+  chart         = "kube-state-metrics"
+  version       = "2.4.1"
+  namespace     = "kube-system"
+  recreate_pods = true
 
-  values = [
-    file("${path.module}/values/nginx-ingress.yaml"),
-  ]
 }
 
-resource "helm_release" "external-dns" {
-  depends_on = [kubernetes_namespace.system]
-
-  name       = "dns"
-  repository = "stable"
-  chart      = "external-dns"
-  version    = "1.6.1"
-  namespace  = var.namespace_name
-
-  values = [
-    file("${path.module}/values/external-dns.yaml"),
-  ]
-
-  set {
-    name  = "domainFilters[0]"
-    value = var.domain
-  }
-}
-
-resource "helm_release" "monitoring" {
-  name       = "prometheus-operator"
-  repository = "stable"
-  chart      = "prometheus-operator"
-  version    = "5.0.10"
-  namespace  = "monitoring"
+resource "helm_release" "sealed-secrets" {
+  depends_on = [kubernetes_cluster_role_binding.tiller]
+  name          = "sealed-secrets"
+  repository    = "stable"
+  chart         = "sealed-secrets"
+  version       = "1.4.0"
+  namespace     = "kube-system"
+  recreate_pods = true
 
   values = [
-    file("${path.module}/values/prometheus.yaml"),
+    "${file("${path.module}/values/sealed-secrets.yaml")}",
   ]
-
-  set {
-    name  = "grafana.ingress.hosts[0]"
-    value = "grafana.${var.cluster_name}.${var.domain}"
-  }
-
-  set {
-    name  = "grafana.ingress.tls[0].hosts[0]"
-    value = "grafana.${var.cluster_name}.${var.domain}"
-  }
 }
-

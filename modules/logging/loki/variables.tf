@@ -1,7 +1,6 @@
-#Deploy environment name
-variable "environment" {
-  type        = string
-  description = "Deploy environment name"
+variable "namespace_name" {
+  description = "Name of the namespace where install charts"
+  default     = "system"
 }
 
 variable "cluster_name" {
@@ -15,9 +14,4 @@ variable "config_path" {
 
 variable "domain" {
   description = "domain name for ingress"
-}
-
-variable "cluster_size" {
-  type        = number
-  description = "Number of desired instances."
 }

@@ -12,4 +12,4 @@ region: ""
 #hostedZoneID: ""
 
 # (optional) Namespace for secret holding secretAccessKey
-#secretNamespace: cert-manager
+secretNamespace: cert-manager
