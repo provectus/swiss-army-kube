@@ -89,33 +89,6 @@ resource "kubernetes_namespace" "cert-manager" {
   }
 }
 
-resource "helm_release" "issuers" {
-  depends_on = [null_resource.cert-manager-crd,kubernetes_namespace.cert-manager]
-  name      = "issuers"
-  chart     = "../charts/cluster-issuers"
-  namespace = kubernetes_namespace.cert-manager.metadata[0].name
-
-  set {
-    name  = "email"
-    value = "rgimadiev@provectus.com"
-  }
-
-  set {
-    name  = "accessKeyID"
-    value = aws_iam_access_key.cert_manager.id
-  }
-
-  set {
-    name  = "secretAccessKey"
-    value = base64encode(aws_iam_access_key.cert_manager.secret)
-  }
-
-  set {
-    name  = "region"
-    value = data.aws_region.current.name
-  }
-}
-
 resource "aws_iam_user" "cert_manager" {
   name = "${var.cluster_name}_cert_manager"
 }
@@ -150,11 +123,39 @@ EOF
 }
 
 resource "aws_iam_access_key" "cert_manager" {
+  depends_on = [aws_iam_user_policy.cert_manager]
   user = aws_iam_user.cert_manager.name
 }
 
+resource "helm_release" "issuers" {
+  depends_on = [null_resource.cert-manager-crd,kubernetes_namespace.cert-manager,aws_iam_user_policy.cert_manager]
+  name      = "issuers"
+  chart     = "../charts/cluster-issuers"
+  namespace = kubernetes_namespace.cert-manager.metadata[0].name
+
+  set {
+    name  = "email"
+    value = "rgimadiev@provectus.com"
+  }
+
+  set {
+    name  = "accessKeyID"
+    value = aws_iam_access_key.cert_manager.id
+  }
+
+  set {
+    name  = "secretAccessKey"
+    value = base64encode(aws_iam_access_key.cert_manager.secret)
+  }
+
+  set {
+    name  = "region"
+    value = data.aws_region.current.name
+  }
+}
+
 resource "helm_release" "cert-manager" {
-  depends_on = [helm_release.issuers,kubernetes_namespace.cert-manager,kubernetes_cluster_role_binding.tiller]
+  depends_on = [helm_release.issuers,kubernetes_namespace.cert-manager,kubernetes_cluster_role_binding.tiller,aws_iam_user_policy.cert_manager]]
 
   name          = "cert-manager"
   repository    = "jetstack"
