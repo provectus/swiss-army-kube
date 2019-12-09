@@ -93,7 +93,15 @@ resource "aws_iam_user" "cert_manager" {
   name = "${var.cluster_name}_cert_manager"
 }
 
-resource "aws_iam_user_policy" "cert_manager" {
+resource "aws_iam_access_key" "cert_manager" {
+  user = aws_iam_user.cert_manager.name
+}
+
+resource "aws_iam_role" "cert_manager" {
+  name = "${var.cluster_name}_dns_manager"
+}
+
+resource "aws_iam_policy" "cert_manager" {
   name = "${var.cluster_name}_route53_access"
   user = aws_iam_user.cert_manager.name
 
@@ -125,31 +133,6 @@ resource "aws_iam_user_policy" "cert_manager" {
 
 }
 
-resource "aws_iam_role" "dns-manager" {
-  name = "${var.cluster_name}_dns_manager"
-  user = aws_iam_user.cert_manager.name
-
-  policy = <<EOF
-  {
-    "Version": "2012-10-17",
-    "Statement": [
-      {
-        "Effect": "Allow",
-        "Principal": {
-          "AWS": "aws_iam_user.cert_manager.name.arn"
-        },
-        "Action": "sts:AssumeRole"
-      }
-    ]
-  }
-  EOF
-}
-
-resource "aws_iam_access_key" "cert_manager" {
-  depends_on = [aws_iam_user_policy.cert_manager]
-  user = aws_iam_user.cert_manager.name
-}
-
 resource "helm_release" "issuers" {
   depends_on = [null_resource.cert-manager-crd,kubernetes_namespace.cert-manager,aws_iam_user_policy.cert_manager]
   name      = "issuers"
@@ -178,7 +161,7 @@ resource "helm_release" "issuers" {
 
   set {
     name  = "role"
-    value = aws_iam_role.dns_manager.arn
+    value = aws_iam_role.cert_manager.arn
   }
 
   set {

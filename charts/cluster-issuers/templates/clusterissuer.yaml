@@ -15,13 +15,12 @@ spec:
       - dns01:
           route53:
             region: {{ .Values.region }}
-            accessKeyID: {{ .Values.accessKeyID }}
-{{- if ne $role "" }}
-            role: {{ .Values.role }}
-{{- else }}              
+            accessKeyID: {{ .Values.accessKeyID }}           
             secretAccessKeySecretRef:
               name: route53-config
-              key: secret-access-key
+              key: secret-access-key             
+{{- if ne $role "" }}
+            role: {{ .Values.role }}
 
 {{- end}}              
 {{- if ne $hostedZoneID "" }}
@@ -44,12 +43,11 @@ spec:
           route53:
             region: {{ .Values.region }}
             accessKeyID: {{ .Values.accessKeyID }}
-{{- if ne $role "" }}
-              role: {{ .Values.role }}
-{{- else }}              
             secretAccessKeySecretRef:
               name: route53-config
-              key: secret-access-key              
+              key: secret-access-key 
+{{- if ne $role "" }}
+            role: {{ .Values.role }}             
 {{- end}}                
 {{- if ne $hostedZoneID "" }}
             hostedZoneID: {{ .Values.hostedZoneID }}
