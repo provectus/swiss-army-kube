@@ -23,12 +23,12 @@ variable "cluster_size" {
 }
 
 #Cert-manager
-variable "cert-manage-email" {
+variable "cert_manage_email" {
   type        = string
   description = "Email to cert-manager"
 }
 
-variable "cert-manager-zoneid" {
+variable "cert_manager_zoneid" {
   type        = string
   description = "Route53 hosted zone ID for manage at cert-manager"
 }

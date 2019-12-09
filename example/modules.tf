@@ -35,6 +35,8 @@ module "system" {
   cluster_size = var.cluster_size
   domain       = var.domain
   config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
+  cert_manager_email = var.cert_manager_email
+  cert_manager_zoneid = var.cert_manager_zoneid
 }
 
 module "nginx" {

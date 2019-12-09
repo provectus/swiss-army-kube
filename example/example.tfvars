@@ -35,5 +35,5 @@ spot_instance_type    = "m5.large"
 cluster_version = "1.14"
 
 #Cert-manager
-cert-manage-email = "dkharlamov@provectus.com"
-cert-manager-zoneid = "ZYMN6BWSD7TUV"
+cert_manage_email = "dkharlamov@provectus.com"
+cert_manager_zoneid = "ZYMN6BWSD7TUV"

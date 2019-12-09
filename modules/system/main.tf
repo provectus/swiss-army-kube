@@ -135,7 +135,7 @@ resource "helm_release" "issuers" {
 
   set {
     name  = "email"
-    value = var.cert-manager-email
+    value = var.cert_manager_email
   }
 
   set {
@@ -155,7 +155,7 @@ resource "helm_release" "issuers" {
 
   set {
     name  = "hostedZoneID"
-    value = var.cert-manager-zoneid
+    value = var.cert_manager_zoneid
   }
 }
 
