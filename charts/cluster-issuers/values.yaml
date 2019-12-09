@@ -1,9 +1,7 @@
 # E-mail to use in cert generation
 email: "noreply@provectus.com"
 
-# AWS IAM credentials
-accessKeyID: ""
-secretAccessKey: ""
+# AWS IAM role
 role: ""
 
 # AWS Region

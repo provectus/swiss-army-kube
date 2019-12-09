@@ -89,14 +89,6 @@ resource "kubernetes_namespace" "cert-manager" {
   }
 }
 
-resource "aws_iam_user" "cert_manager" {
-  name = "${var.cluster_name}_cert_manager"
-}
-
-resource "aws_iam_access_key" "cert_manager" {
-  user = aws_iam_user.cert_manager.name
-}
-
 resource "aws_iam_role" "cert_manager" {
   name = "${var.cluster_name}_dns_manager"
   description = "Role for manage dns by cert-manager"
@@ -127,39 +119,8 @@ resource "aws_iam_role" "cert_manager" {
  EOF
 }
 
-resource "aws_iam_policy" "cert_manager" {
-  name = "${var.cluster_name}_route53_access"
-
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": "route53:GetChange",
-            "Resource": "arn:aws:route53:::change/*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-              "route53:ChangeResourceRecordSets",
-              "route53:ListResourceRecordSets"
-            ],
-            "Resource": "arn:aws:route53:::hostedzone/*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "route53:ListHostedZonesByName",
-            "Resource": "*"
-        }
-    ]
- }   
- EOF
-
-}
-
 resource "helm_release" "issuers" {
-  depends_on = [null_resource.cert-manager-crd,kubernetes_namespace.cert-manager,aws_iam_user_policy.cert_manager]
+  depends_on = [null_resource.cert-manager-crd,kubernetes_namespace.cert-manager,aws_iam_role.cert_manager]
   name      = "issuers"
   chart     = "../charts/cluster-issuers"
   namespace = kubernetes_namespace.cert-manager.metadata[0].name
@@ -167,16 +128,6 @@ resource "helm_release" "issuers" {
   set {
     name  = "email"
     value = var.cert_manager_email
-  }
-
-  set {
-    name  = "accessKeyID"
-    value = aws_iam_access_key.cert_manager.id
-  }
-
-  set {
-    name  = "secretAccessKey"
-    value = base64encode(aws_iam_access_key.cert_manager.secret)
   }
 
   set {
@@ -196,7 +147,7 @@ resource "helm_release" "issuers" {
 }
 
 resource "helm_release" "cert-manager" {
-  depends_on = [helm_release.issuers,kubernetes_namespace.cert-manager,kubernetes_cluster_role_binding.tiller,aws_iam_user_policy.cert_manager]
+  depends_on = [helm_release.issuers,kubernetes_namespace.cert-manager,kubernetes_cluster_role_binding.tiller]
 
   name          = "cert-manager"
   repository    = "jetstack"
