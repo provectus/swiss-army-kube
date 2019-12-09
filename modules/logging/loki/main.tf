@@ -5,13 +5,16 @@ data "helm_repository" "loki" {
 }
 
 # For depends_on queqe
-resource "null_resource" "depends_on" {
+resource "null_resource" "module_depends_on" {
   triggers {
-    depends_on = "${join("", var.depends_on)}"
+    depends_on = join("", var.module_depends_on)
   }
 }
 
 resource "helm_release" "loki-stack" {
+  depends_on = [
+    null_resource.module_depends_on
+  ]   
 
   name       = "loki"
   repository = "loki"
@@ -21,8 +24,5 @@ resource "helm_release" "loki-stack" {
 
   values = [
     file("${path.module}/values/loki-stack.yaml"),
-  ]  
-  depends_on = [
-    "null_resource.depends_on"
   ]    
 } 

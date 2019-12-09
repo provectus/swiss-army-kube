@@ -15,15 +15,15 @@ data "aws_region" "current" {
 }
 
 # For depends_on queqe
-resource "null_resource" "depends_on" {
+resource "null_resource" "module_depends_on" {
   triggers {
-    depends_on = "${join("", var.depends_on)}"
+    depends_on = join("", var.module_depends_on)
   }
 }
 
 resource "kubernetes_service_account" "tiller" {
   depends_on = [
-    "null_resource.depends_on"
+    null_resource.module_depends_on
   ]
 
   metadata {
@@ -36,8 +36,8 @@ resource "kubernetes_service_account" "tiller" {
 
 resource "kubernetes_cluster_role_binding" "tiller" {
   depends_on = [
-    "kubernetes_service_account.tiller",
-    "null_resource.depends_on"    
+    kubernetes_service_account.tiller,
+    null_resource.module_depends_on    
     ]
   metadata {
     name = "tiller-binding"
@@ -59,7 +59,7 @@ resource "kubernetes_cluster_role_binding" "tiller" {
 
 resource "null_resource" "helm_init" {
   depends_on = [
-    "null_resource.depends_on"
+    null_resource.module_depends_on
   ]  
   provisioner "local-exec" {
     command = <<EOT
@@ -71,8 +71,8 @@ resource "null_resource" "helm_init" {
 
 resource "helm_release" "external-dns" {
   depends_on = [
-    "null_resource.depends_on",
-    "kubernetes_cluster_role_binding.tiller"
+    null_resource.module_depends_on,
+    kubernetes_cluster_role_binding.tiller
   ]
 
   name       = "dns"
@@ -93,8 +93,8 @@ resource "helm_release" "external-dns" {
 
 resource "null_resource" "cert-manager-crd" {
   depends_on = [
-  "kubernetes_cluster_role_binding.tiller",
-  "null_resource.depends_on"
+  kubernetes_cluster_role_binding.tiller,
+  null_resource.module_depends_on
   ]
   provisioner "local-exec" {
     command = "kubectl --kubeconfig ${var.config_path} apply --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.11/deploy/manifests/00-crds.yaml"
@@ -103,8 +103,8 @@ resource "null_resource" "cert-manager-crd" {
 
 resource "kubernetes_namespace" "cert-manager" {
   depends_on = [
-    "null_resource.cert-manager-crd",
-    "null_resource.depends_on"
+    null_resource.cert-manager-crd,
+    null_resource.module_depends_on
     ]
   metadata {
     labels = {
@@ -117,7 +117,7 @@ resource "kubernetes_namespace" "cert-manager" {
 
 resource "aws_iam_policy" "cert_manager" {
   depends_on = [
-    "null_resource.depends_on"
+    null_resource.module_depends_on
     ]  
   name = "${var.cluster_name}_route53_dns_manager"
   policy = <<EOF
@@ -149,7 +149,7 @@ resource "aws_iam_policy" "cert_manager" {
 
 resource "aws_iam_role" "cert_manager" {
   depends_on = [
-    "null_resource.depends_on"
+    null_resource.module_depends_on
     ]  
   name = "${var.cluster_name}_dns_manager"
   description = "Role for manage dns by cert-manager"
@@ -172,7 +172,7 @@ EOF
 
 resource "aws_iam_role_policy_attachment" "cert_manager" {
   depends_on = [
-    "null_resource.depends_on"
+    null_resource.module_depends_on
     ]  
   role       = aws_iam_role.cert_manager.name
   policy_arn = aws_iam_policy.cert_manager.arn
@@ -180,10 +180,10 @@ resource "aws_iam_role_policy_attachment" "cert_manager" {
 
 resource "helm_release" "issuers" {
   depends_on = [
-    "null_resource.cert-manager-crd",
-    "kubernetes_namespace.cert-manager",
-    "aws_iam_role.cert_manager",
-    "null_resource.depends_on"
+    null_resource.cert-manager-crd,
+    kubernetes_namespace.cert-manager,
+    aws_iam_role.cert_manager,
+    null_resource.module_depends_on
     ]
   name      = "issuers"
   chart     = "../charts/cluster-issuers"
@@ -212,10 +212,10 @@ resource "helm_release" "issuers" {
 
 resource "helm_release" "cert-manager" {
   depends_on = [
-    "helm_release.issuers",
-    "kubernetes_namespace.cert-manager",
-    "kubernetes_cluster_role_binding.tiller",
-    "null_resource.depends_on"
+    helm_release.issuers,
+    kubernetes_namespace.cert-manager,
+    kubernetes_cluster_role_binding.tiller,
+    null_resource.module_depends_on
     ]
 
   name          = "cert-manager"
@@ -232,10 +232,10 @@ resource "helm_release" "cert-manager" {
 
 resource "helm_release" "kube-state-metrics" {
   depends_on = [
-    "helm_release.issuers",
-    "helm_release.cert-manager",
-    "kubernetes_cluster_role_binding.tiller",
-    "null_resource.depends_on"
+    helm_release.issuers,
+    helm_release.cert-manager,
+    kubernetes_cluster_role_binding.tiller,
+    null_resource.module_depends_on
     ]
 
   name          = "state"
@@ -249,8 +249,8 @@ resource "helm_release" "kube-state-metrics" {
 
 resource "helm_release" "sealed-secrets" {
   depends_on = [
-    "kubernetes_cluster_role_binding.tiller",
-    "null_resource.depends_on"
+    kubernetes_cluster_role_binding.tiller,
+    null_resource.module_depends_on
   ]
   name          = "sealed-secrets"
   repository    = "stable"

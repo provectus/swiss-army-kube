@@ -1,4 +1,5 @@
 module "kubernetes" {
+  depends_on = ["${module.network.vpc_id}"]
   source = "github.com/provectus/swiss-army-kube//modules/kubernetes?ref=poc"
 
   environment  = var.environment
@@ -28,6 +29,7 @@ module "network" {
 }
 
 module "system" {
+  depends_on = [module.network.vpc_id,module.kubernetes.cluster_name]
   source = "github.com/provectus/swiss-army-kube//modules/system?ref=poc"
 
   environment  = var.environment
@@ -40,6 +42,7 @@ module "system" {
 }
 
 module "nginx" {
+  depends_on = [module.system.kubernetes_service_account]
   source = "github.com/provectus/swiss-army-kube//modules/ingress/nginx?ref=poc"
 
   #environment  = var.environment
@@ -48,6 +51,7 @@ module "nginx" {
 }
 
 module "prometheus" {
+  depends_on = [module.system.kubernetes_service_account]
   source = "github.com/provectus/swiss-army-kube//modules/monitoring/prometheus?ref=poc"
 
   #environment  = var.environment
@@ -57,6 +61,7 @@ module "prometheus" {
 }
 
 module "loki" {
+  depends_on = [module.system.kubernetes_service_account]
   source = "github.com/provectus/swiss-army-kube//modules/logging/loki?ref=poc"
 
   #environment  = var.environment

@@ -5,16 +5,16 @@ data "helm_repository" "incubator" {
 }
 
 # For depends_on queqe
-resource "null_resource" "depends_on" {
+resource "null_resource" "module_depends_on" {
   triggers {
-    depends_on = "${join("", var.depends_on)}"
+    depends_on = join("", var.module_depends_on)
   }
 }
 
 //TODO: при удалении выгрызать crd
 resource "helm_release" "monitoring" {
   depends_on = [
-    "null_resource.depends_on"
+    null_resource.module_depends_on
   ]   
   name       = "prometheus-operator"
   repository = "stable"

@@ -1,5 +1,5 @@
 # For depends_on queqe
-variable "depends_on" {
+variable "module_depends_on" {
   default = []
 }
 

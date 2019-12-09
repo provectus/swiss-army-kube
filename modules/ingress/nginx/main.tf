@@ -5,14 +5,16 @@ data "helm_repository" "incubator" {
 }
 
 # For depends_on queqe
-resource "null_resource" "depends_on" {
+resource "null_resource" "module_depends_on" {
   triggers {
-    depends_on = "${join("", var.depends_on)}"
+    depends_on = join("", var.module_depends_on)
   }
 }
 
 resource "helm_release" "nginx-ingress" {
-
+  depends_on = [
+    null_resource.module_depends_on
+  ]   
   name       = "nginx"
   repository = "stable"
   chart      = "nginx-ingress"
