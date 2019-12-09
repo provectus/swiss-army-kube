@@ -100,7 +100,31 @@ resource "aws_iam_access_key" "cert_manager" {
 resource "aws_iam_role" "cert_manager" {
   name = "${var.cluster_name}_dns_manager"
   description = "Role for manage dns by cert-manager"
-  assume_role_policy = "aws_aim_policy.cert_manager.name"
+  assume_role_policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "route53:GetChange",
+            "Resource": "arn:aws:route53:::change/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+              "route53:ChangeResourceRecordSets",
+              "route53:ListResourceRecordSets"
+            ],
+            "Resource": "arn:aws:route53:::hostedzone/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "route53:ListHostedZonesByName",
+            "Resource": "*"
+        }
+    ]
+ }   
+ EOF
 }
 
 resource "aws_iam_policy" "cert_manager" {
