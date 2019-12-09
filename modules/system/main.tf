@@ -99,11 +99,12 @@ resource "aws_iam_access_key" "cert_manager" {
 
 resource "aws_iam_role" "cert_manager" {
   name = "${var.cluster_name}_dns_manager"
+  description = "Role for manage dns by cert-manager"
+  assume_role_policy = "aws_aim_policy.cert_manager.name"
 }
 
 resource "aws_iam_policy" "cert_manager" {
   name = "${var.cluster_name}_route53_access"
-  user = aws_iam_user.cert_manager.name
 
   policy = <<EOF
 {
