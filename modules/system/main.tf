@@ -121,19 +121,20 @@ resource "aws_iam_policy" "cert_manager" {
 resource "aws_iam_role" "cert_manager" {
   name = "${var.cluster_name}_dns_manager"
   description = "Role for manage dns by cert-manager"
-  policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
+  assume_role_policy = <<EOF
     {
-      "Action": [
-        "ec2:Describe*"
-      ],
-      "Effect": "Allow",
-      "Resource": "*"
+      "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Action": "sts:AssumeRole",
+          "Principal": {
+            "Service": "ec2.amazonaws.com"
+          },
+          "Effect": "Allow",
+          "Sid": ""
+        }
+      ]
     }
-  ]
-}
 EOF
 }
 
