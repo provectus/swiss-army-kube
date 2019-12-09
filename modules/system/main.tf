@@ -89,10 +89,9 @@ resource "kubernetes_namespace" "cert-manager" {
   }
 }
 
-resource "aws_iam_role" "cert_manager" {
-  name = "${var.cluster_name}_dns_manager"
-  description = "Role for manage dns by cert-manager"
-  assume_role_policy = <<EOF
+resource "aws_iam_policy" "cert_manager" {
+  name = "${var.cluster_name}_route53_dns_manager"
+  policy = <<EOF
 {
     "Version": "2012-10-17",
     "Statement": [
@@ -117,6 +116,30 @@ resource "aws_iam_role" "cert_manager" {
     ]
  }   
  EOF
+}
+
+resource "aws_iam_role" "cert_manager" {
+  name = "${var.cluster_name}_dns_manager"
+  description = "Role for manage dns by cert-manager"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "ec2:Describe*"
+      ],
+      "Effect": "Allow",
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "cert_manager" {
+  role       = "${aws_iam_role.cert_manager.name}"
+  policy_arn = "${aws_iam_policy.cert_manager.arn}"
 }
 
 resource "helm_release" "issuers" {
