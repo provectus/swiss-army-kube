@@ -1,28 +1,9 @@
-#resource "aws_iam_policy" "cluster_autoscaler" {
-#  name        = "cluster_autoscaler"
-#  path        = "/"
-#  description = "Kubernetes autoscaler policy"
-#
-#  policy = <<EOF
-#{
-#    "Version": "2012-10-17",
-#    "Statement": [
-#        {
-#            "Effect": "Allow",
-#            "Action": [
-#                "autoscaling:DescribeAutoScalingGroups",
-#                "autoscaling:DescribeAutoScalingInstances",
-#                "autoscaling:DescribeLaunchConfigurations",
-#                "autoscaling:SetDesiredCapacity",
-#                "autoscaling:DescribeTags",
-#                "autoscaling:TerminateInstanceInAutoScalingGroup"
-#            ],
-#            "Resource": "*"
-#        }
-#    ]
-#}
-#EOF
-#}
+# For depends_on queqe
+resource "null_resource" "depends_on" {
+  triggers {
+    depends_on = "${join("", var.depends_on)}"
+  }
+}
 
 # Set admin arns
 resource "null_resource" "map_users" {
@@ -33,4 +14,8 @@ resource "null_resource" "map_users" {
     username = "{{UserID}}"
     group    = "system:masters"
   }
+
+  depends_on = [
+    "null_resource.depends_on"
+  ]
 }

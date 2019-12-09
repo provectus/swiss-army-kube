@@ -1,3 +1,8 @@
+# For depends_on queqe
+variable "depends_on" {
+  default = []
+}
+
 #Deploy environment name
 variable "environment" {
   type        = string

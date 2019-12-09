@@ -1,3 +1,8 @@
+# For depends_on queqe
+variable "depends_on" {
+  default = []
+}
+
 variable "namespace_name" {
   description = "Name of the namespace where install charts"
   default     = "system"

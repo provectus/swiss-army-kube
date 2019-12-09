@@ -4,6 +4,13 @@ data "helm_repository" "incubator" {
   url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
 }
 
+# For depends_on queqe
+resource "null_resource" "depends_on" {
+  triggers {
+    depends_on = "${join("", var.depends_on)}"
+  }
+}
+
 resource "helm_release" "nginx-ingress" {
 
   name       = "nginx"

@@ -66,6 +66,11 @@ variable "spot_price" {
   description = "Price per/hour in $"
 }
 
+# For depends_on queqe
+variable "depends_on" {
+  default = []
+}
+
 # This variable is intended to lock creation of modules before kubernetes_cluster_role_binding.tiller
 variable deps {
   default = []
