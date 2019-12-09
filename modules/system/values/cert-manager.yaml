@@ -5,9 +5,19 @@ global:
 rbac:
   create: true
 
+  serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::xxx:role/my-role
+
 ingressShim:
   defaultIssuerKind: ClusterIssuer
   defaultIssuerName: letsencrypt-staging
+
+securityContext:
+  enabled: true
+  fsGroup: 1001
 
 webhook:
   enabled: true

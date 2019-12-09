@@ -14,6 +14,7 @@ data "aws_region" "current" {
 
 }
 
+//TODO: нужен таймаут после создания екс - секунд 30 (не успевают стартануть api). Попробовать создавать другие штуки вроде aws_iam_policy
 resource "kubernetes_service_account" "tiller" {
   depends_on = [
     var.module_depends_on
@@ -183,6 +184,11 @@ resource "helm_release" "issuers" {
   namespace = kubernetes_namespace.cert-manager.metadata[0].name
 
   set {
+    name  = "eks.amazonaws.com/role-arn"
+    value = aws_iam_role.cert_manager.arn
+  }
+
+  set {
     name  = "email"
     value = var.cert_manager_email
   }
@@ -190,11 +196,6 @@ resource "helm_release" "issuers" {
   set {
     name  = "region"
     value = data.aws_region.current.name
-  }
-
-  set {
-    name  = "role"
-    value = aws_iam_role.cert_manager.arn
   }
 
   set {

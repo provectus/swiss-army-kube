@@ -31,10 +31,10 @@ Prepare and downloads module
 `terraform init --upgrade=true`
 
 Plan and test deployment
-`terraform plan -var-file=example.tfvars`
+`terraform plan -var-file=example.tfvars -out plan`
 
 Deploy cluster and helm chart
-`terraform apply -var-file=example.tfvars`
+`terraform apply plan`
 
 ## Work with cluster
 

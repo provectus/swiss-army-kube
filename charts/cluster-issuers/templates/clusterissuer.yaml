@@ -1,5 +1,4 @@
 {{- $hostedZoneID := .Values.hostedZoneID | default "" -}}
-{{- $role := .Values.role | default "" -}}
 
 apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer
@@ -14,12 +13,7 @@ spec:
     solvers:
       - dns01:
           route53:
-            region: {{ .Values.region }}
-            accessKeyID: {{ .Values.accessKeyID }}                      
-{{- if ne $role "" }}
-            role: {{ .Values.role }}
-
-{{- end}}              
+            region: {{ .Values.region }}             
 {{- if ne $hostedZoneID "" }}
             hostedZoneID: {{ .Values.hostedZoneID }}
 {{- end}}
@@ -38,11 +32,7 @@ spec:
     solvers:
       - dns01:
           route53:
-            region: {{ .Values.region }}
-            accessKeyID: {{ .Values.accessKeyID }}
-{{- if ne $role "" }}
-            role: {{ .Values.role }}             
-{{- end}}                
+            region: {{ .Values.region }}             
 {{- if ne $hostedZoneID "" }}
             hostedZoneID: {{ .Values.hostedZoneID }}
 {{- end}}

@@ -5,10 +5,10 @@ aws_region = "us-west-2"
 availability_zones = ["us-west-2b","us-west-2a","us-west-2c"]
 
 # Name of kubernetes cluster. It's tag for cluster and peace of fqdn domain xxx.<cluster_name>.<domain_name>
-cluster_name = "test"
+cluster_name = "poc"
 
 # Deploy environment name
-environment = "test"
+environment = "poc"
 
 # Name of domain
 domain = "test.hydrosphere.io"
@@ -17,10 +17,10 @@ domain = "test.hydrosphere.io"
 cluster_size = 2
 
 # The kubernetes config file path
-config_path = "kubeconfig_test"
+config_path = "kubeconfig_poc"
 
 # Number would be used to template CIDR 10.X.0.0/16.
-network = 5
+network = 10
 
 # ARNs of users which would have admin permissions. list(strings)
 admin_arns = []
