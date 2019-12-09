@@ -18,6 +18,9 @@ spec:
             secretAccessKeySecretRef:
               name: route53-config
               key: secret-access-key
+{{- if ne $role "" }}
+              role: {{ .Values.role }}
+{{- end}}              
 {{- if ne $hostedZoneID "" }}
             hostedZoneID: {{ .Values.hostedZoneID }}
 {{- end}}
@@ -41,6 +44,9 @@ spec:
             secretAccessKeySecretRef:
               name: route53-config
               key: secret-access-key
+{{- if ne $role "" }}
+              role: {{ .Values.role }}
+{{- end}}                
 {{- if ne $hostedZoneID "" }}
             hostedZoneID: {{ .Values.hostedZoneID }}
 {{- end}}

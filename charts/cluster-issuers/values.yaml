@@ -4,6 +4,7 @@ email: "noreply@provectus.com"
 # AWS IAM credentials
 accessKeyID: ""
 secretAccessKey: ""
+role: ""
 
 # AWS Region
 region: ""
