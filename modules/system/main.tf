@@ -114,7 +114,7 @@ resource "aws_iam_policy" "cert_manager" {
             "Resource": "*"
         }
     ]
- }   
+}   
  EOF
 }
 
@@ -122,25 +122,25 @@ resource "aws_iam_role" "cert_manager" {
   name = "${var.cluster_name}_dns_manager"
   description = "Role for manage dns by cert-manager"
   assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
     {
-      "Version": "2012-10-17",
-      "Statement": [
-        {
-          "Action": "sts:AssumeRole",
-          "Principal": {
-            "Service": "ec2.amazonaws.com"
-          },
-          "Effect": "Allow",
-          "Sid": ""
-        }
-      ]
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
     }
+  ]
+}
 EOF
 }
 
 resource "aws_iam_role_policy_attachment" "cert_manager" {
-  role       = "${aws_iam_role.cert_manager.name}"
-  policy_arn = "${aws_iam_policy.cert_manager.arn}"
+  role       = aws_iam_role.cert_manager.name
+  policy_arn = aws_iam_policy.cert_manager.arn
 }
 
 resource "helm_release" "issuers" {
