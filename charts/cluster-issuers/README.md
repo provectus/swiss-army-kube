@@ -25,6 +25,7 @@ Parameter | Description | Default
 | `secretAccessKey`                       | | ``                                                |
 | `email`                                 | E-mail to use in cert generation | `noreply@provectus.com`                                                |
 | `region`                                | | ``                                                |
+| `role`                                  | IAM policies name |
 | `secretNamespace`                       | Namespace for secret holding `secretAccessKey` (optional) | `cert-manager`                                    |
 | `hostedZoneID`                          | Route53 zone ID for managed zone (optional) | `` |
 

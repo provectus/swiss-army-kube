@@ -1,4 +1,5 @@
 {{- $hostedZoneID := .Values.hostedZoneID | default "" -}}
+{{- $role := .Values.role | default "" -}}
 
 apiVersion: cert-manager.io/v1alpha2
 kind: ClusterIssuer

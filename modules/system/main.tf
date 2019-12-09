@@ -108,7 +108,10 @@ resource "aws_iam_user_policy" "cert_manager" {
         },
         {
             "Effect": "Allow",
-            "Action": "route53:ChangeResourceRecordSets",
+            "Action": [
+              "route53:ChangeResourceRecordSets",
+              "route53:ListResourceRecordSets"
+            ],
             "Resource": "arn:aws:route53:::hostedzone/*"
         },
         {
@@ -117,9 +120,29 @@ resource "aws_iam_user_policy" "cert_manager" {
             "Resource": "*"
         }
     ]
-}   
-EOF
+ }   
+ EOF
 
+}
+
+resource "aws_iam_role" "dns-manager" {
+  name = "${var.cluster_name}_dns_manager"
+  user = aws_iam_user.cert_manager.name
+
+  policy = <<EOF
+  {
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Principal": {
+          "AWS": "aws_iam_user.cert_manager.name.arn"
+        },
+        "Action": "sts:AssumeRole"
+      }
+    ]
+  }
+  EOF
 }
 
 resource "aws_iam_access_key" "cert_manager" {
@@ -155,7 +178,7 @@ resource "helm_release" "issuers" {
 
   set {
     name  = "role"
-    value = aws_iam_user_policy.cert_manager.name
+    value = aws_iam_role.dns_manager.arn
   }
 
   set {
