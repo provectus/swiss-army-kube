@@ -160,7 +160,7 @@ resource "helm_release" "issuers" {
 }
 
 resource "helm_release" "cert-manager" {
-  depends_on = [helm_release.issuers,kubernetes_namespace.cert-manager,kubernetes_cluster_role_binding.tiller,aws_iam_user_policy.cert_manager]]
+  depends_on = [helm_release.issuers,kubernetes_namespace.cert-manager,kubernetes_cluster_role_binding.tiller,aws_iam_user_policy.cert_manager]
 
   name          = "cert-manager"
   repository    = "jetstack"

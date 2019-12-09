@@ -1,5 +1,5 @@
 module "kubernetes" {
-  source = "github.com/provectus/swiss-army-kube//modules/kubernetes?ref=hydrosphera"
+  source = "github.com/provectus/swiss-army-kube//modules/kubernetes?ref=poc"
 
   environment  = var.environment
   cluster_name = var.cluster_name
@@ -19,7 +19,7 @@ module "kubernetes" {
 }
 
 module "network" {
-  source = "github.com/provectus/swiss-army-kube//modules/network?ref=hydrosphera"
+  source = "github.com/provectus/swiss-army-kube//modules/network?ref=poc"
 
   availability_zones = var.availability_zones
   environment  = var.environment
@@ -28,7 +28,7 @@ module "network" {
 }
 
 module "system" {
-  source = "github.com/provectus/swiss-army-kube//modules/system?ref=hydrosphera"
+  source = "github.com/provectus/swiss-army-kube//modules/system?ref=poc"
 
   environment  = var.environment
   cluster_name = var.cluster_name
@@ -38,7 +38,7 @@ module "system" {
 }
 
 module "nginx" {
-  source = "github.com/provectus/swiss-army-kube//modules/ingress/nginx?ref=hydrosphera"
+  source = "github.com/provectus/swiss-army-kube//modules/ingress/nginx?ref=poc"
 
   #environment  = var.environment
   cluster_name = var.cluster_name
@@ -46,7 +46,7 @@ module "nginx" {
 }
 
 module "prometheus" {
-  source = "github.com/provectus/swiss-army-kube//modules/monitoring/prometheus?ref=hydrosphera"
+  source = "github.com/provectus/swiss-army-kube//modules/monitoring/prometheus?ref=poc"
 
   #environment  = var.environment
   cluster_name = var.cluster_name
@@ -55,7 +55,7 @@ module "prometheus" {
 }
 
 module "loki" {
-  source = "github.com/provectus/swiss-army-kube//modules/logging/loki?ref=hydrosphera"
+  source = "github.com/provectus/swiss-army-kube//modules/logging/loki?ref=poc"
 
   #environment  = var.environment
   cluster_name = var.cluster_name
