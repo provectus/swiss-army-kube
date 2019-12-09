@@ -155,7 +155,7 @@ resource "helm_release" "issuers" {
 
   set {
     name  = "role"
-    value = aws_iam_user_policy.cert_manager_zoneid.name
+    value = aws_iam_user_policy.cert_manager.name
   }
 
   set {
