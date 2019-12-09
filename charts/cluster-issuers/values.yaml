@@ -9,7 +9,7 @@ secretAccessKey: ""
 region: ""
 
 # (optional) Route53 zone ID for managed zone
-#hostedZoneID: ""
+hostedZoneID: ""
 
 # (optional) Namespace for secret holding secretAccessKey
 secretNamespace: cert-manager

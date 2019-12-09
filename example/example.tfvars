@@ -33,3 +33,7 @@ spot_max_cluster_size = "6"
 spot_desired_capacity = "2"
 spot_instance_type    = "m5.large"
 cluster_version = "1.14"
+
+#Cert-manager
+cert-manage-email = "dkharlamov@provectus.com"
+cert-manager-zoneid = "ZYMN6BWSD7TUV"

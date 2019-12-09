@@ -21,3 +21,14 @@ variable "cluster_size" {
   type        = number
   description = "Number of desired instances."
 }
+
+#Cert-manager
+variable "cert-manage-email" {
+  type        = string
+  description = "Email to cert-manager"
+}
+
+variable "cert-manager-zoneid" {
+  type        = string
+  description = "Route53 hosted zone ID for manage at cert-manager"
+}

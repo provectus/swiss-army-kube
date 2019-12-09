@@ -81,3 +81,13 @@ variable "spot_price" {
   default = "0.5"
 }
 
+#Cert-manager
+variable "cert-manage-email" {
+  type        = string
+  description = "Email to cert-manager"
+}
+
+variable "cert-manager-zoneid" {
+  type        = string
+  description = "Route53 hosted zone ID for manage at cert-manager"
+}

@@ -135,7 +135,7 @@ resource "helm_release" "issuers" {
 
   set {
     name  = "email"
-    value = "rgimadiev@provectus.com"
+    value = var.cert-manager-email
   }
 
   set {
@@ -151,6 +151,11 @@ resource "helm_release" "issuers" {
   set {
     name  = "region"
     value = data.aws_region.current.name
+  }
+
+  set {
+    name  = "hostedZoneID"
+    value = var.cert-manager-zoneid
   }
 }
 
