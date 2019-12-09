@@ -23,7 +23,7 @@ variable "cluster_size" {
 }
 
 #Cert-manager
-variable "cert_manage_email" {
+variable "cert_manager_email" {
   type        = string
   description = "Email to cert-manager"
 }
