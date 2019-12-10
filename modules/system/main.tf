@@ -274,7 +274,7 @@ resource "helm_release" "issuers" {
 
   set {
     name  = "hostedZoneID"
-    value = aws_route53_zone.cluster.zone_iD
+    value = aws_route53_zone.cluster.zone_id
   }
 }
 
