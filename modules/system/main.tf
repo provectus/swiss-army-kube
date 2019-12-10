@@ -14,6 +14,13 @@ data "aws_region" "current" {
 
 }
 
+# OIDC cluster EKS settings
+resource "aws_iam_openid_connect_provider" "cluster" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["9E99A48A9960B14926BB7F3B02E22DA2B0AB7280"]
+  url             = var.cluster_oidc_url
+}
+
 # Enabling IAM Roles for Service Accounts 
 data "aws_caller_identity" "current" {}
 
@@ -24,21 +31,15 @@ data "aws_iam_policy_document" "external_dns_assume_role_policy" {
 
     condition {
       test     = "StringEquals"
-      variable = "${replace(module.kubernetes.cluster_oidc_url, "https://", "")}:sub"
+      variable = "${replace(var.cluster_oidc_url, "https://", "")}:sub"
       values   = ["system:serviceaccount:kube-system:external-dns"]
     }
 
     principals {
-      identifiers = [aws_iam_openid_connect_provider.external_dns.arn]
+      identifiers = [aws_iam_openid_connect_provider.cluster.arn]
       type        = "Federated"
     }
   }
-}
-
-resource "aws_iam_openid_connect_provider" "external_dns" {
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = ["9E99A48A9960B14926BB7F3B02E22DA2B0AB7280"]
-  url             = module.kubernetes.cluster_oidc_url
 }
 
 resource "aws_iam_role" "external_dns" {
