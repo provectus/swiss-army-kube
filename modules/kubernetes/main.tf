@@ -21,6 +21,7 @@ module "eks" {
   workers_additional_policies = [
     "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess",
     "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
+    "arn:aws:iam::aws:policy/AmazonRoute53AutoNamingFullAccess",
     "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess",
     "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess",    
   ]

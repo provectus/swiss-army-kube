@@ -222,7 +222,7 @@ resource "helm_release" "issuers" {
 
   set {
     name  = "hostedZoneID"
-    value = var.cert_manager_zoneid
+    value = aws_service_discovery_public_dns_namespace.cluster.hosted_zone
   }
 }
 
@@ -231,6 +231,7 @@ resource "helm_release" "cert-manager" {
     helm_release.issuers,
     kubernetes_namespace.cert-manager,
     kubernetes_cluster_role_binding.tiller,
+    aws_service_discovery_public_dns_namespace.cluster,
     var.module_depends_on
     ]
 
