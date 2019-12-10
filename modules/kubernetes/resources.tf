@@ -13,7 +13,7 @@ resource "null_resource" "map_users" {
 
 resource "aws_iam_openid_connect_provider" "cluster" {
   client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = []
+  thumbprint_list = ["9E99A48A9960B14926BB7F3B02E22DA2B0AB7280"]
   url             = module.eks.cluster_oidc_issuer_url
 }
 
