@@ -139,7 +139,7 @@ resource "aws_service_discovery_public_dns_namespace" "cluster" {
 
   ]    
   name        = var.domain
-  hostedzone  = var.cert_manager_zoneid
+  hosted_zone  = var.cert_manager_zoneid
   description = "Public dns zone in route53"
 }
 
