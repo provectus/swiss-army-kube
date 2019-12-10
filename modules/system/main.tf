@@ -130,16 +130,30 @@ resource "null_resource" "helm_init" {
   }
 }
 
+# AWS servicediscovery zone public-dns
+resource "aws_service_discovery_public_dns_namespace" "cluster" {
+  depends_on = [
+    var.module_depends_on,
+    aws_iam_policy.cert_manager,
+    aws_iam_role.cert_manager    
+
+  ]    
+  name        = var.domain
+  hostedzone  = var.cert_manager_zoneid
+  description = "Public dns zone in route53"
+}
+
 resource "helm_release" "external-dns" {
   depends_on = [
     var.module_depends_on,
+    aws_iam_role.cert_manager,
     kubernetes_cluster_role_binding.tiller
   ]
 
   name       = "external-dns"
   repository = "stable"
   chart      = "external-dns"
-  version    = "v2.6.1"
+  version    = "v2.11.0"
   namespace  = "kube-system"
 
   values = [
@@ -149,11 +163,6 @@ resource "helm_release" "external-dns" {
   set {
     name  = "domainFilters[0]"
     value = var.domain
-  }
-
-  set {
-    name  = "aws.assumeRoleArn"
-    value = aws_iam_role.cert_manager.arn
   }
 
   set {
