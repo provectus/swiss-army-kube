@@ -119,7 +119,8 @@ resource "kubernetes_cluster_role_binding" "tiller" {
 
 resource "null_resource" "helm_init" {
   depends_on = [
-    var.module_depends_on
+    var.module_depends_on,
+    kubernetes_cluster_role_binding.tiller
   ]  
   provisioner "local-exec" {
     command = <<EOT
@@ -135,10 +136,10 @@ resource "helm_release" "external-dns" {
     kubernetes_cluster_role_binding.tiller
   ]
 
-  name       = "dns"
+  name       = "external-dns"
   repository = "stable"
   chart      = "external-dns"
-  version    = "2.11.0"
+  version    = "v2.6.1"
   namespace  = "kube-system"
 
   values = [
