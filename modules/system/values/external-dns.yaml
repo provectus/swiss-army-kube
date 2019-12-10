@@ -1,5 +1,9 @@
 provider: aws
 policy: upsert-only
+
+aws.region: us-east-1
+aws.assumeRoleArn: setarns
+
 domainFilters:
   - local
 sources:
@@ -7,3 +11,5 @@ sources:
   - service
 rbac:
   create: true
+securityContext:
+  fsGroup: 65534 # For ExternalDNS to be able to read Kubernetes and AWS token files

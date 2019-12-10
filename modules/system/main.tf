@@ -14,10 +14,76 @@ data "aws_region" "current" {
 
 }
 
+resource "aws_iam_policy" "cert_manager" {
+  depends_on = [
+    var.module_depends_on
+    ]  
+  name = "${var.cluster_name}_route53_dns_manager"
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Effect": "Allow",
+            "Action": "route53:GetChange",
+            "Resource": "arn:aws:route53:::change/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": [
+              "route53:ChangeResourceRecordSets",
+              "route53:ListResourceRecordSets"
+            ],
+            "Resource": "arn:aws:route53:::hostedzone/*"
+        },
+        {
+            "Effect": "Allow",
+            "Action": "route53:ListHostedZonesByName",
+            "Resource": "*"
+        }
+    ]
+}   
+ EOF
+}
+
+resource "aws_iam_role" "cert_manager" {
+  depends_on = [
+    var.module_depends_on
+    ]  
+  name = "${var.cluster_name}_dns_manager"
+  description = "Role for manage dns by cert-manager"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "cert_manager" {
+  depends_on = [
+    var.module_depends_on,
+    aws_iam_policy.cert_manager
+    ]  
+  role       = aws_iam_role.cert_manager.name
+  policy_arn = aws_iam_policy.cert_manager.arn
+}
+
 //TODO: нужен таймаут после создания екс - секунд 30 (не успевают стартануть api). Попробовать создавать другие штуки вроде aws_iam_policy
 resource "kubernetes_service_account" "tiller" {
   depends_on = [
-    var.module_depends_on
+    var.module_depends_on,
+    aws_iam_policy.cert_manager
+    aws_iam_role.cert_manager
   ]
 
   metadata {
@@ -83,6 +149,16 @@ resource "helm_release" "external-dns" {
     name  = "domainFilters[0]"
     value = var.domain
   }
+
+  set {
+    name  = "aws.assumeRoleArn"
+    value = aws_iam_role.cert_manager.arn
+  }
+
+  set {
+    name  = "aws.region"
+    value = data.aws_region.current.name
+  }
 }
 
 resource "null_resource" "cert-manager-crd" {
@@ -107,69 +183,6 @@ resource "kubernetes_namespace" "cert-manager" {
 
     name = "cert-manager"
   }
-}
-
-resource "aws_iam_policy" "cert_manager" {
-  depends_on = [
-    var.module_depends_on
-    ]  
-  name = "${var.cluster_name}_route53_dns_manager"
-  policy = <<EOF
-{
-    "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Effect": "Allow",
-            "Action": "route53:GetChange",
-            "Resource": "arn:aws:route53:::change/*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": [
-              "route53:ChangeResourceRecordSets",
-              "route53:ListResourceRecordSets"
-            ],
-            "Resource": "arn:aws:route53:::hostedzone/*"
-        },
-        {
-            "Effect": "Allow",
-            "Action": "route53:ListHostedZonesByName",
-            "Resource": "*"
-        }
-    ]
-}   
- EOF
-}
-
-resource "aws_iam_role" "cert_manager" {
-  depends_on = [
-    var.module_depends_on
-    ]  
-  name = "${var.cluster_name}_dns_manager"
-  description = "Role for manage dns by cert-manager"
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Action": "sts:AssumeRole",
-      "Principal": {
-        "Service": "ec2.amazonaws.com"
-      },
-      "Effect": "Allow",
-      "Sid": ""
-    }
-  ]
-}
-EOF
-}
-
-resource "aws_iam_role_policy_attachment" "cert_manager" {
-  depends_on = [
-    var.module_depends_on
-    ]  
-  role       = aws_iam_role.cert_manager.name
-  policy_arn = aws_iam_policy.cert_manager.arn
 }
 
 resource "helm_release" "issuers" {
