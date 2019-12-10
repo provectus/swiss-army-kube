@@ -82,7 +82,7 @@ resource "aws_iam_role_policy_attachment" "cert_manager" {
 resource "kubernetes_service_account" "tiller" {
   depends_on = [
     var.module_depends_on,
-    aws_iam_policy.cert_manager
+    aws_iam_policy.cert_manager,
     aws_iam_role.cert_manager
   ]
 
