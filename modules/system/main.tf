@@ -14,6 +14,39 @@ data "aws_region" "current" {
 
 }
 
+# Enabling IAM Roles for Service Accounts 
+data "aws_caller_identity" "current" {}
+
+data "aws_iam_policy_document" "external_dns_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    effect  = "Allow"
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(module.kubernetes.cluster_oidc_url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:kube-system:external-dns"]
+    }
+
+    principals {
+      identifiers = [aws_iam_openid_connect_provider.external_dns.arn]
+      type        = "Federated"
+    }
+  }
+}
+
+resource "aws_iam_openid_connect_provider" "external_dns" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["9E99A48A9960B14926BB7F3B02E22DA2B0AB7280"]
+  url             = module.kubernetes.cluster_oidc_url
+}
+
+resource "aws_iam_role" "external_dns" {
+  assume_role_policy = data.aws_iam_policy_document.external_dns_assume_role_policy.json
+  name               = var.cluster_name
+}
+
+# Create policy for cert_manager
 resource "aws_iam_policy" "cert_manager" {
   depends_on = [
     var.module_depends_on
