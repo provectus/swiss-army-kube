@@ -18,7 +18,7 @@ data "aws_iam_policy_document" "assume_role_policy" {
     }
 
     principals {
-      identifiers = [module.eks.cluster_iam_role_arn]
+      identifiers = [aws_iam_openid_connect_provider.cluster.arn]
       type        = "Federated"
     }
   }
