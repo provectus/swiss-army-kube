@@ -16,6 +16,9 @@ data "aws_region" "current" {
 
 # OIDC cluster EKS settings
 resource "aws_iam_openid_connect_provider" "cluster" {
+ depends_on = [
+    var.module_depends_on
+    ]  
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = ["9E99A48A9960B14926BB7F3B02E22DA2B0AB7280"]
   url             = var.cluster_oidc_url
@@ -43,6 +46,9 @@ data "aws_iam_policy_document" "external_dns_assume_role_policy" {
 }
 
 resource "aws_iam_role" "external_dns" {
+ depends_on = [
+    var.module_depends_on
+    ]  
   assume_role_policy = data.aws_iam_policy_document.external_dns_assume_role_policy.json
   name               = var.cluster_name
 }
@@ -109,6 +115,16 @@ resource "aws_iam_role_policy_attachment" "cert_manager" {
     aws_iam_policy.cert_manager
     ]  
   role       = aws_iam_role.cert_manager.name
+  policy_arn = aws_iam_policy.cert_manager.arn
+}
+
+resource "aws_iam_role_policy_attachment" "external_dns" {
+  depends_on = [
+    var.module_depends_on,
+    aws_iam_policy.cert_manager,
+    aws_iam_role.external_dns
+    ]  
+  role       = aws_iam_role.external_dns.name
   policy_arn = aws_iam_policy.cert_manager.arn
 }
 
