@@ -14,6 +14,15 @@ data "aws_region" "current" {
 
 }
 
+# Route53 hostedzone
+resource "aws_route53_zone" "cluster" {
+  name = var.domain
+
+  tags = {
+    Environment = var.environment
+  }
+}
+
 # OIDC cluster EKS settings
 resource "aws_iam_openid_connect_provider" "cluster" {
  depends_on = [
@@ -80,7 +89,12 @@ resource "aws_iam_policy" "cert_manager" {
             "Effect": "Allow",
             "Action": "route53:ListHostedZonesByName",
             "Resource": "*"
-        }
+        },
+        {
+            "Effect": "Allow",
+            "Action": "route53:ListHostedZones",
+            "Resource": "*"
+        }        
     ]
 }   
  EOF
