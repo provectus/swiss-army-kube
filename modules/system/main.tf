@@ -194,18 +194,6 @@ resource "null_resource" "helm_init" {
   }
 }
 
-# AWS servicediscovery zone public-dns
-resource "aws_service_discovery_public_dns_namespace" "cluster" {
-  depends_on = [
-    var.module_depends_on,
-    aws_iam_policy.cert_manager,
-    aws_iam_role.cert_manager    
-
-  ]    
-  name        = var.domain
-  description = "Public dns zone in route53"
-}
-
 resource "helm_release" "external-dns" {
   depends_on = [
     var.module_depends_on,
@@ -286,7 +274,7 @@ resource "helm_release" "issuers" {
 
   set {
     name  = "hostedZoneID"
-    value = aws_service_discovery_public_dns_namespace.cluster.hosted_zone
+    value = aws_route53_zone.cluster.zone_iD
   }
 }
 
