@@ -283,7 +283,6 @@ resource "helm_release" "cert-manager" {
     helm_release.issuers,
     kubernetes_namespace.cert-manager,
     kubernetes_cluster_role_binding.tiller,
-    aws_service_discovery_public_dns_namespace.cluster,
     var.module_depends_on
     ]
 
