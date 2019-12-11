@@ -1,0 +1,10 @@
+autoscalingGroups:
+  - name: example-asg
+    maxSize: 10
+    minSize: 1
+
+awsRegion: us-east-1
+
+skipNodes:
+  withLocalStorage: false
+  withSystemPods: true

@@ -1,0 +1,14 @@
+# E-mail to use in cert generation
+email: "noreply@provectus.com"
+
+# AWS IAM role
+role: ""
+
+# AWS Region
+region: ""
+
+# (optional) Route53 zone ID for managed zone
+hostedZoneID: ""
+
+# (optional) Namespace for secret holding secretAccessKey
+secretNamespace: cert-manager

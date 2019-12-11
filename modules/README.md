@@ -1,10 +1,11 @@
 # Modules
 
-## How to use
-```
-AWS_PROFILE=<profile-name> KUBECONFIG=<path-to-your-kubeconfig> terraform init <module-name>
-AWS_PROFILE=<profile-name> KUBECONFIG=<path-to-your-kubeconfig> terraform plan <module-name>
-AWS_PROFILE=<profile-name> KUBECONFIG=<path-to-your-kubeconfig> terraform apply <module-name>
+## How to contributes
 
-```
+
+
+## How to use
+Include some module in your project, set variables and deploy it!
+
+See example folder
 

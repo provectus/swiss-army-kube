@@ -1,13 +1,23 @@
+global:
+  leaderElection:
+    # Override the namespace used to store the ConfigMap for leader election
+    namespace: cert-manager
 rbac:
   create: true
 
+  serviceAccount:
+  # Specifies whether a service account should be created
+  create: true
+  annotations:
+    eks.amazonaws.com/role-arn: arn:aws:iam::xxx:role/my-role
+
 ingressShim:
-  defaultACMEChallengeType: dns01
-  defaultACMEDNS01ChallengeProvider: route53
   defaultIssuerKind: ClusterIssuer
   defaultIssuerName: letsencrypt-staging
 
+securityContext:
+  enabled: true
+  fsGroup: 1001
+
 webhook:
   enabled: true
-  image:
-    tag: v0.6.2

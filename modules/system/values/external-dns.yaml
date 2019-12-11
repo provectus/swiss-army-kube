@@ -1,5 +1,8 @@
 provider: aws
 policy: upsert-only
+
+aws.region: us-east-1
+
 domainFilters:
   - local
 sources:
@@ -7,3 +10,4 @@ sources:
   - service
 rbac:
   create: true
+  

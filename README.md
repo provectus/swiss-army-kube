@@ -20,5 +20,6 @@ Also by using this configuration you simplify the process of feature backporting
 
 ## Structure
 This repository provides the minimal set of resources, which may be required for starting comfortably developing the process of new IaC project:
- - `modules` - Terraform modules
- - `charts` - local helm repository for charts which could not be retrieved from public repositories
+ - `modules` - Terraform modules.
+ - `charts`  - Local helm repository for charts which could not be retrieved from public repositories.
+ - `example` - Example project, include some modules and variables for deploy kubernetes EKS and install charts. Use as template.
