@@ -106,13 +106,12 @@ resource "aws_iam_policy" "cert_manager" {
         }        
     ]
 }   
- EOF
+EOF
 
   tags = {
     Environment   = var.environment
     Project       = var.project
   }
-
 }
 
 # Create role for cert_manager
