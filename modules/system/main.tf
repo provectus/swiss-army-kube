@@ -15,6 +15,7 @@ data "aws_region" "current" {
 }
 
 # Route53 hostedzone
+# TODO: need create ns records in main zone
 resource "aws_route53_zone" "cluster" {
   name = var.domain
 
@@ -54,6 +55,7 @@ data "aws_iam_policy_document" "external_dns_assume_role_policy" {
   }
 }
 
+# Create role for external_dns
 resource "aws_iam_role" "external_dns" {
  depends_on = [
     var.module_depends_on
@@ -100,6 +102,7 @@ resource "aws_iam_policy" "cert_manager" {
  EOF
 }
 
+# Create role for cert_manager
 resource "aws_iam_role" "cert_manager" {
   depends_on = [
     var.module_depends_on
@@ -123,6 +126,7 @@ resource "aws_iam_role" "cert_manager" {
 EOF
 }
 
+# Attach policy cert_manager to role cert_manager
 resource "aws_iam_role_policy_attachment" "cert_manager" {
   depends_on = [
     var.module_depends_on,
@@ -132,6 +136,7 @@ resource "aws_iam_role_policy_attachment" "cert_manager" {
   policy_arn = aws_iam_policy.cert_manager.arn
 }
 
+# Attach policy external_dns to role external_dns
 resource "aws_iam_role_policy_attachment" "external_dns" {
   depends_on = [
     var.module_depends_on,
@@ -143,6 +148,7 @@ resource "aws_iam_role_policy_attachment" "external_dns" {
 }
 
 //TODO: нужен таймаут после создания екс - секунд 30 (не успевают стартануть api). Попробовать создавать другие штуки вроде aws_iam_policy
+# Create service account for tiller
 resource "kubernetes_service_account" "tiller" {
   depends_on = [
     var.module_depends_on,
@@ -181,6 +187,7 @@ resource "kubernetes_cluster_role_binding" "tiller" {
   }
 }
 
+# Init helm for update tiller
 resource "null_resource" "helm_init" {
   depends_on = [
     var.module_depends_on,
@@ -194,6 +201,7 @@ resource "null_resource" "helm_init" {
   }
 }
 
+# Deploy external_dns to manage route53 domain zone
 resource "helm_release" "external-dns" {
   depends_on = [
     var.module_depends_on,
@@ -222,6 +230,7 @@ resource "helm_release" "external-dns" {
   }
 }
 
+# Deploy custom resources for cert-manager
 resource "null_resource" "cert-manager-crd" {
   depends_on = [
   kubernetes_cluster_role_binding.tiller,
@@ -232,6 +241,7 @@ resource "null_resource" "cert-manager-crd" {
   }
 }
 
+# Create namespace cert-manager
 resource "kubernetes_namespace" "cert-manager" {
   depends_on = [
     null_resource.cert-manager-crd,
@@ -246,6 +256,7 @@ resource "kubernetes_namespace" "cert-manager" {
   }
 }
 
+# Deploy clusterissuer with route53 dns challenge
 resource "helm_release" "issuers" {
   depends_on = [
     null_resource.cert-manager-crd,
@@ -278,6 +289,7 @@ resource "helm_release" "issuers" {
   }
 }
 
+# Deploy cert-manager (ingress certificate manager)
 resource "helm_release" "cert-manager" {
   depends_on = [
     helm_release.issuers,
@@ -298,6 +310,7 @@ resource "helm_release" "cert-manager" {
   ]
 }
 
+# Deploy kube-state-metrics chart
 resource "helm_release" "kube-state-metrics" {
   depends_on = [
     helm_release.issuers,
@@ -315,6 +328,7 @@ resource "helm_release" "kube-state-metrics" {
 
 }
 
+# Deploy saled-secrets
 resource "helm_release" "sealed-secrets" {
   depends_on = [
     kubernetes_cluster_role_binding.tiller,
