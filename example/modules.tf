@@ -1,5 +1,5 @@
 module "kubernetes" {
-  source = "github.com/provectus/swiss-army-kube//modules/kubernetes?ref=poc"
+  source = "github.com/provectus/swiss-army-kube//modules/kubernetes?ref=v0.0.1"
 
   environment  = var.environment
   project      = var.project
@@ -20,7 +20,7 @@ module "kubernetes" {
 }
 
 module "network" {
-  source = "github.com/provectus/swiss-army-kube//modules/network?ref=poc"
+  source = "github.com/provectus/swiss-army-kube//modules/network?ref=v0.0.1"
 
   availability_zones = var.availability_zones
   environment  = var.environment
@@ -31,7 +31,7 @@ module "network" {
 
 module "system" {
   module_depends_on = [module.network.vpc_id,module.kubernetes.cluster_name]
-  source = "github.com/provectus/swiss-army-kube//modules/system?ref=poc"
+  source = "github.com/provectus/swiss-army-kube//modules/system?ref=v0.0.1"
 
   environment  = var.environment
   project      = var.project
@@ -46,7 +46,7 @@ module "system" {
 
 module "nginx" {
   module_depends_on = [module.system.kubernetes_service_account]
-  source = "github.com/provectus/swiss-army-kube//modules/ingress/nginx?ref=poc"
+  source = "github.com/provectus/swiss-army-kube//modules/ingress/nginx?ref=v0.0.1"
 
   #environment  = var.environment
   cluster_name = var.cluster_name
@@ -55,7 +55,7 @@ module "nginx" {
 
 module "prometheus" {
   module_depends_on = [module.system.kubernetes_service_account]
-  source = "github.com/provectus/swiss-army-kube//modules/monitoring/prometheus?ref=poc"
+  source = "github.com/provectus/swiss-army-kube//modules/monitoring/prometheus?ref=v0.0.1"
 
   #environment  = var.environment
   cluster_name = var.cluster_name
@@ -65,7 +65,7 @@ module "prometheus" {
 
 module "loki" {
   module_depends_on = [module.system.kubernetes_service_account]
-  source = "github.com/provectus/swiss-army-kube//modules/logging/loki?ref=poc"
+  source = "github.com/provectus/swiss-army-kube//modules/logging/loki?ref=v0.0.1"
 
   #environment  = var.environment
   cluster_name = var.cluster_name
