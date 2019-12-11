@@ -1,4 +1,7 @@
 # k8s
+
+![Swiss-army-kube](https://raw.githubusercontent.com/provectus/swiss-army-kube/master/logo-swiss-army.png)
+
 ## Usage
 
 Preferably make a fork of Provectus repository, but in case of unavailability of this variant may use the next local git repository configuration:
