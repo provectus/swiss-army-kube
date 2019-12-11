@@ -14,7 +14,13 @@ variable "availability_zones" {
 #Deploy environment name
 variable "environment" {
   type        = string
-  description = "Deploy environment name"
+  description = "Environment Use in tags and annotations for identify EKS cluster"
+}
+
+#Deploy project name
+variable "project" {
+  type        = string
+  description = "Project Use in tags and annotations for identify EKS cluster"
 }
 
 variable "config_path" {

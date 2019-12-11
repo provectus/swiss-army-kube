@@ -2,6 +2,7 @@ module "kubernetes" {
   source = "github.com/provectus/swiss-army-kube//modules/kubernetes?ref=poc"
 
   environment  = var.environment
+  project      = var.project
   cluster_name = var.cluster_name
   aws_region      = var.aws_region
   vpc_id          = module.network.vpc_id
@@ -23,6 +24,7 @@ module "network" {
 
   availability_zones = var.availability_zones
   environment  = var.environment
+  project      = var.project
   cluster_name = var.cluster_name
   network      = var.network 
 }
@@ -32,6 +34,7 @@ module "system" {
   source = "github.com/provectus/swiss-army-kube//modules/system?ref=poc"
 
   environment  = var.environment
+  project      = var.project
   cluster_name = var.cluster_name
   cluster_size = var.cluster_size
   domain       = var.domain

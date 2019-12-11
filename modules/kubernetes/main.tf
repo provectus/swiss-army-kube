@@ -15,7 +15,8 @@ module "eks" {
   map_users       = null_resource.map_users.*.triggers
 
   tags = {
-    Environment   = var.cluster_name
+    Environment   = var.environment
+    Project       = var.project
   }
 
   workers_additional_policies = [

@@ -6,7 +6,12 @@ variable "network" {
 
 variable "environment" {
   type        = string
-  description = "Environment"
+  description = "Environment Use in tags and annotations for identify EKS cluster"
+}
+
+variable "project" {
+  type        = string
+  description = "Project Use in tags and annotations for identify EKS cluster"
 }
 
 variable "cluster_name" {

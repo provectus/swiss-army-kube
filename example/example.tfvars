@@ -8,7 +8,10 @@ availability_zones = ["us-west-2b","us-west-2a","us-west-2c"]
 cluster_name = "poc"
 
 # Deploy environment name
-environment = "poc"
+environment = "dev"
+
+# Deploy project name
+project = "EDUCATION"
 
 # Name of domain
 domain = "test.hydrosphere.io"

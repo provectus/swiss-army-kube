@@ -16,3 +16,4 @@ https://aws.amazon.com/ru/about-aws/whats-new/2019/09/amazon-eks-adds-support-to
 # TODO
 
 - Add NS records to main dns zone for created domain
+- Add cluster autoscaler helm chart

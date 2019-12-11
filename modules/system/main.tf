@@ -20,7 +20,8 @@ resource "aws_route53_zone" "cluster" {
   name = var.domain
 
   tags = {
-    Environment = var.environment
+    Environment   = var.environment
+    Project       = var.project
   }
 }
 
@@ -57,11 +58,17 @@ data "aws_iam_policy_document" "external_dns_assume_role_policy" {
 
 # Create role for external_dns
 resource "aws_iam_role" "external_dns" {
- depends_on = [
+  depends_on = [
     var.module_depends_on
     ]  
   assume_role_policy = data.aws_iam_policy_document.external_dns_assume_role_policy.json
   name               = var.cluster_name
+
+  tags = {
+    Environment   = var.environment
+    Project       = var.project
+  }
+
 }
 
 # Create policy for cert_manager
@@ -100,6 +107,12 @@ resource "aws_iam_policy" "cert_manager" {
     ]
 }   
  EOF
+
+  tags = {
+    Environment   = var.environment
+    Project       = var.project
+  }
+
 }
 
 # Create role for cert_manager
@@ -124,6 +137,11 @@ resource "aws_iam_role" "cert_manager" {
   ]
 }
 EOF
+
+  tags = {
+    Environment   = var.environment
+    Project       = var.project
+  }
 }
 
 # Attach policy cert_manager to role cert_manager

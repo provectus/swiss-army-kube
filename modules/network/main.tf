@@ -30,6 +30,8 @@ module "vpc" {
   public_subnet_tags = {
     Name                     = "${var.environment}-${var.cluster_name}-public"
     KubernetesCluster        = "${var.cluster_name}"
+    Environment   = var.environment
+    Project       = var.project     
     "kubernetes.io/role/elb" = ""
     "kubernetes.io/cluster/${var.cluster_name}" = "owned"
   }
@@ -38,12 +40,10 @@ module "vpc" {
     Name = "${var.environment}-${var.cluster_name}-private"
   }
 
-  # public_subnet_suffix = "public"
-  # private_subnet_suffix = "private"
-
   tags = {
     Name = "${var.environment}-${var.cluster_name}"
-    Environment = "${var.environment}"
+    Environment   = var.environment
+    Project       = var.project 
     Terraform = "true"
   }
 }
