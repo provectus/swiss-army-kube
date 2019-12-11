@@ -1,6 +1,6 @@
 # k8s
 
-![Swiss-army-kube](https://raw.githubusercontent.com/provectus/swiss-army-kube/master/logo-swiss-army.png)
+![Swiss-army-kube](https://raw.githubusercontent.com/provectus/swiss-army-kube/poc/logo-swiss-army.png)
 
 ## Usage
 
