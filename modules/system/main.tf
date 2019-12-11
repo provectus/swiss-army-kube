@@ -137,10 +137,6 @@ resource "aws_iam_role" "cert_manager" {
 }
 EOF
 
-  tags = {
-    Environment   = var.environment
-    Project       = var.project
-  }
 }
 
 # Attach policy cert_manager to role cert_manager
