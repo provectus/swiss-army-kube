@@ -10,10 +10,14 @@ terraform - `brew install terraform`
 
 # Structure
   main.tf - data from modules
+
   modules.tf - list of modules and their redefined values
+
   providers.tf - list of providers and their values
+
   variables.tf - variables used in modules
-  example.tfvars - list of values for variables
+
+  example.tfvars - list of values for variables. Customize it for your project data !!!
 
 # Deploy cluster
 Change example.tfvars, chose modules in main.tf and run:

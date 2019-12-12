@@ -44,31 +44,63 @@ module "system" {
   cluster_oidc_url = module.kubernetes.cluster_oidc_url
 }
 
+# Ingress
 module "nginx" {
   module_depends_on = [module.system.kubernetes_service_account]
   source = "github.com/provectus/swiss-army-kube//modules/ingress/nginx?ref=v0.0.1"
 
-  #environment  = var.environment
   cluster_name = var.cluster_name
   config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
 }
 
+# Monitoring
 module "prometheus" {
   module_depends_on = [module.system.kubernetes_service_account]
   source = "github.com/provectus/swiss-army-kube//modules/monitoring/prometheus?ref=v0.0.1"
 
-  #environment  = var.environment
   cluster_name = var.cluster_name
   domain       = var.domain
   config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
 }
 
+# Logging
 module "loki" {
   module_depends_on = [module.system.kubernetes_service_account]
   source = "github.com/provectus/swiss-army-kube//modules/logging/loki?ref=v0.0.1"
 
-  #environment  = var.environment
   cluster_name = var.cluster_name
   domain       = var.domain
   config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
+}
+
+#ARGO CD
+module "argo-cd" {
+  module_depends_on = [module.system.kubernetes_service_account]
+  source = "../modules/cicd/argo-cd"
+
+  domain       = var.domain
+}
+
+module "argo-artifacts" {
+  module_depends_on = [module.system.kubernetes_service_account,module.argo-events.argo_events_namespace]
+  source = "../modules/cicd/argo-artifacts"
+
+  aws_region       = var.aws_region
+  cluster_name = var.cluster_name
+  environment  = var.environment
+  project      = var.project
+  argo_events_namespace = module.argo-events.argo_events_namespace
+}
+
+module "argo-events" {
+  module_depends_on = [module.system.kubernetes_service_account]
+  source = "../modules/cicd/argo-events"
+}
+
+module "argo-workflow" {
+  module_depends_on = [module.system.kubernetes_service_account]
+  source = "../modules/cicd/argo-workflow"
+
+  aws_region    = var.aws_region
+  aws_s3_bucket = module.argo-artifacts.aws_s3_bucket
 }

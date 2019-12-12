@@ -1,0 +1,180 @@
+images:
+  namespace: argoproj
+  controller: workflow-controller
+  ui: argoui
+  executor: argoexec
+  pullPolicy: Always
+  tag: v2.4.2
+
+crdVersion: v1alpha1
+installCRD: true
+
+init:
+  # By default the installation will not set an explicit one, which will mean it uses `default` for the namespace the chart is
+  # being deployed to.  In RBAC clusters, that will almost certainly fail.  See the NOTES: section of the readme for more info.
+  serviceAccount: ""
+
+createAggregateRoles: true
+
+controller:
+  image:
+    # Overrides .images.tag if defined.
+    tag: ""
+  # podAnnotations is an optional map of annotations to be applied to the controller Pods
+  podAnnotations: {}
+  # Optional labels to add to the controller pods
+  podLabels: {}
+  # podPortName: http
+  metricsConfig:
+    enabled: false
+    path: /metrics
+    port: 8080
+    persistence: {}
+    #  connectionPool:
+    #    maxIdleConns: 100
+    #    maxOpenConns: 0
+    #  # save the entire workflow into etcd and DB
+    #  nodeStatusOffLoad: false
+    #  postgresql:
+    #    host: localhost
+    #    port: 5432
+    #    database: postgres
+    #    tableName: argo_workflows
+    #    # the database secrets must be in the same namespace of the controller
+    #    userNameSecret:
+    #      name: argo-postgres-config
+    #      key: username
+    #    passwordSecret:
+    #      name: argo-postgres-config
+    #      key: password
+  telemetryConfig:
+    enabled: false
+    path: /telemetry
+    port: 8081
+  serviceMonitor:
+    enabled: false
+    additionalLabels: {}
+  serviceAccount: argo
+  name: workflow-controller
+  workflowNamespaces:
+    - default
+  containerRuntimeExecutor: docker
+  instanceID:
+    # `instanceID.enabled` configures the controller to filter workflow submissions
+    # to only those which have a matching instanceID attribute.
+    enabled: false
+    # NOTE: If `instanceID.enabled` is set to `true` then either `instanceID.userReleaseName`
+    # or `instanceID.explicitID` must be defined.
+    # useReleaseName: true
+    # explicitID: unique-argo-controller-identifier
+  logging:
+    level: info
+    globallevel: "0"
+  serviceType: ClusterIP
+  metricsServicePort: 8080
+  metricsServicePortName: metrics
+  telemetryServicePort: 8081
+  telemetryServicePortName: telemetry
+  # Annotations to be applied to the controller Service
+  serviceAnnotations: {}
+  # Optional labels to add to the controller Service
+  serviceLabels: {}
+  # Source ranges to allow access to service from. Only applies to
+  # service type `LoadBalancer`
+  loadBalancerSourceRanges: []
+  resources: {}
+  replicas: 1
+  pdb:
+    enabled: false
+    # minAvailable: 1
+    # maxUnavailable: 1
+
+executor:
+  image:
+    # Overrides .images.tag if defined.
+    tag: ""
+
+ui:
+  enabled: true
+  # only show workflows where UI installed
+  forceNamespaceIsolation: false
+  image:
+    # Overrides .images.tag if defined.
+    tag: ""
+  # optional map of annotations to be applied to the ui Pods
+  podAnnotations: {}
+  # Optional labels to add to the UI pods
+  podLabels: {}
+  name: ui
+  serviceType: ClusterIP
+  servicePort: 80
+  # servicePortName: http
+  serviceAccount: argo-ui
+  # Annotations to be applied to the UI Service
+  serviceAnnotations: {}
+  # Optional labels to add to the UI Service
+  serviceLabels: {}
+  # Static IP address to assign to loadBalancer
+  # service type `LoadBalancer`
+  loadBalancerIP: ""
+  # Source ranges to allow access to service from. Only applies to
+  # service type `LoadBalancer`
+  loadBalancerSourceRanges: []
+  resources: {}
+  replicas: 1
+  pdb:
+    enabled: false
+    # minAvailable: 1
+    # maxUnavailable: 1
+
+  ## Ingress configuration.
+  ## ref: https://kubernetes.io/docs/user-guide/ingress/
+  ##
+  ingress:
+    enabled: false
+
+    ## Annotations to be added to the web ingress.
+    ##
+    # annotations:
+    #   kubernetes.io/ingress.class: nginx
+    #   kubernetes.io/tls-acme: "true"
+
+    ## Hostnames.
+    ## Must be provided if Ingress is enabled.
+    ##
+    # hosts:
+    #   - argo.domain.com
+
+    ## TLS configuration.
+    ## Secrets must be manually created in the namespace.
+    ##
+    # tls:
+    #   - secretName: argo-ui-tls
+    #     hosts:
+    #       - argo.domain.com
+
+# Influences the creation of the ConfigMap for the workflow-controller itself.
+useDefaultArtifactRepo: true
+useStaticCredentials: true
+
+artifactRepository:
+  archiveLogs: true
+  s3:
+    bucket: staging-ci-cluster-argo-artifacts
+    endpoint: s3.us-east-2.amazonaws.com
+    region: us-east-2
+    insecure: false
+    accessKeySecret:
+      name: argo-artifacts
+      key: accesskey
+    secretKeySecret:
+      name: argo-artifacts
+      key: secretkey
+
+# NOTE: These are setting attributes for the `minio` optional dependency
+minio:
+  # If set to true then chart installs minio and generate according artifactRepository section in workflow controller config map
+  install: false
+  defaultBucket:
+    enabled: true
+    name: argo-artifacts
