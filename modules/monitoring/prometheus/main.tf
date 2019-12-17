@@ -28,4 +28,14 @@ resource "helm_release" "monitoring" {
     name  = "grafana.ingress.tls[0].hosts[0]"
     value = "grafana.${var.domain}"
   }
+
+  set {
+    name  = "prometheus.ingress.hosts[0]"
+    value = "prometheus.${var.domain}"
+  }
+
+  set {
+    name  = "prometheus.ingress.tls[0].hosts[0]"
+    value = "prometheus.${var.domain}"
+  }  
 }

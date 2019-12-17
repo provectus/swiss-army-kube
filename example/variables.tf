@@ -2,6 +2,7 @@ variable "aws_region" {
   description = "Name the aws region (us-central-1, us-west-2 and etc.)"
 }
 
+# Name of EKS cluster (Not use underscore in naming. S3 backet name issue)
 variable "cluster_name" {
   description = "Name of cluster"
 }
@@ -29,10 +30,6 @@ variable "config_path" {
 
 variable "domain" {
   description = "domain name for ingress"
-}
-
-variable "cluster_size" {
-  description = "Number of desired instances."
 }
 
 variable "network" {

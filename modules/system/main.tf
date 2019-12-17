@@ -203,7 +203,7 @@ resource "null_resource" "helm_init" {
   ]  
   provisioner "local-exec" {
     command = <<EOT
-      kubectl --kubeconfig ${var.config_path} init --upgrade;
+      helm --kubeconfig ${var.config_path} init --upgrade;
       sleep 15
     EOT  
   }
