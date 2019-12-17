@@ -9,14 +9,14 @@ module "kubernetes" {
   private_subnets = module.network.private_subnets
   admin_arns      = var.admin_arns
   domain             = var.domain
-  cert_manager_email = "dkharlamov@provectus.com"
-  on_demand_max_cluster_size = "3"
-  on_demand_desired_capacity = "2"
-  on_demand_instance_type    = "m5.large"
-  spot_max_cluster_size = "6"
-  spot_desired_capacity = "2"
-  spot_instance_type    = "m5.large"
-  cluster_version = "1.14"  
+  cert_manager_email = var.cert_manager_email
+  on_demand_max_cluster_size = var.on_demand_max_cluster_size
+  on_demand_desired_capacity = var.on_demand_desired_capacity
+  on_demand_instance_type    = var.on_demand_instance_type
+  spot_max_cluster_size = var.spot_max_cluster_size
+  spot_desired_capacity = var.spot_desired_capacity
+  spot_instance_type    = var.spot_instance_type
+  cluster_version = var.cluster_version 
 }
 
 module "network" {
@@ -36,7 +36,6 @@ module "system" {
   environment  = var.environment
   project      = var.project
   cluster_name = var.cluster_name
-  cluster_size = var.cluster_size
   domain       = var.domain
   config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
   cert_manager_email = var.cert_manager_email
@@ -85,7 +84,7 @@ module "argo-artifacts" {
   module_depends_on = [module.system.kubernetes_service_account,module.argo-events.argo_events_namespace]
   source = "github.com/provectus/swiss-army-kube//modules/cicd/argo-artifacts?ref=master"
 
-  aws_region       = var.aws_region
+  aws_region   = var.aws_region
   cluster_name = var.cluster_name
   environment  = var.environment
   project      = var.project
@@ -98,7 +97,7 @@ module "argo-events" {
 }
 
 module "argo-workflow" {
-  module_depends_on = [module.system.kubernetes_service_account]
+  module_depends_on = [module.system.kubernetes_service_account,module.system.cert-manager]
   source = "github.com/provectus/swiss-army-kube//modules/cicd/argo-workflow?ref=master"
 
   aws_region    = var.aws_region

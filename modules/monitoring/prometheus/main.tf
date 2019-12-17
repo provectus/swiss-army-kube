@@ -8,7 +8,7 @@ data "helm_repository" "incubator" {
 resource "helm_release" "monitoring" {
   depends_on = [
     var.module_depends_on
-  ]   
+  ]
   name       = "prometheus-operator"
   repository = "stable"
   chart      = "prometheus-operator"
@@ -27,5 +27,15 @@ resource "helm_release" "monitoring" {
   set {
     name  = "grafana.ingress.tls[0].hosts[0]"
     value = "grafana.${var.domain}"
+  }
+
+  set {
+    name  = "prometheus.ingress.hosts[0]"
+    value = "prometheus.${var.domain}"
+  }
+
+  set {
+    name  = "prometheus.ingress.tls[0].hosts[0]"
+    value = "prometheus.${var.domain}"
   }
 }

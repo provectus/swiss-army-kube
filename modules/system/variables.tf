@@ -27,11 +27,6 @@ variable "domain" {
   description = "domain name for ingress"
 }
 
-variable "cluster_size" {
-  type        = number
-  description = "Number of desired instances."
-}
-
 #Cert-manager
 variable "cert_manager_email" {
   type        = string

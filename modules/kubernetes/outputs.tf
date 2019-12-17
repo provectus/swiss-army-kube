@@ -4,11 +4,11 @@ output "kubeconfig_filename" {
 }
 
 output "cluster_name" {
-  value = module.eks.cluster_id
+  value       = module.eks.cluster_id
   description = "Name of eks cluster deploy"
 }
 
 output "cluster_oidc_url" {
-  value = module.eks.cluster_oidc_issuer_url
+  value       = module.eks.cluster_oidc_issuer_url
   description = "Oidc issuer url for EKS cluster"
 }

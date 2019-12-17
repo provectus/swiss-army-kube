@@ -16,9 +16,6 @@ project = "EDUCATION"
 # Name of domain
 domain = "test.hydrosphere.io"
 
-# Number instance for max autoscaling
-cluster_size = 2
-
 # The kubernetes config file path
 config_path = "kubeconfig_poc"
 

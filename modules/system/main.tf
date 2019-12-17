@@ -20,16 +20,16 @@ resource "aws_route53_zone" "cluster" {
   name = var.domain
 
   tags = {
-    Environment   = var.environment
-    Project       = var.project
+    Environment = var.environment
+    Project     = var.project
   }
 }
 
 # OIDC cluster EKS settings
 resource "aws_iam_openid_connect_provider" "cluster" {
- depends_on = [
+  depends_on = [
     var.module_depends_on
-    ]  
+  ]
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = ["9E99A48A9960B14926BB7F3B02E22DA2B0AB7280"]
   url             = var.cluster_oidc_url
@@ -60,13 +60,13 @@ data "aws_iam_policy_document" "external_dns_assume_role_policy" {
 resource "aws_iam_role" "external_dns" {
   depends_on = [
     var.module_depends_on
-    ]  
+  ]
   assume_role_policy = data.aws_iam_policy_document.external_dns_assume_role_policy.json
   name               = var.cluster_name
 
   tags = {
-    Environment   = var.environment
-    Project       = var.project
+    Environment = var.environment
+    Project     = var.project
   }
 
 }
@@ -75,8 +75,8 @@ resource "aws_iam_role" "external_dns" {
 resource "aws_iam_policy" "cert_manager" {
   depends_on = [
     var.module_depends_on
-    ]  
-  name = "${var.cluster_name}_route53_dns_manager"
+  ]
+  name   = "${var.cluster_name}_route53_dns_manager"
   policy = <<EOF
 {
     "Version": "2012-10-17",
@@ -113,9 +113,9 @@ EOF
 resource "aws_iam_role" "cert_manager" {
   depends_on = [
     var.module_depends_on
-    ]  
-  name = "${var.cluster_name}_dns_manager"
-  description = "Role for manage dns by cert-manager"
+  ]
+  name               = "${var.cluster_name}_dns_manager"
+  description        = "Role for manage dns by cert-manager"
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
@@ -139,7 +139,7 @@ resource "aws_iam_role_policy_attachment" "cert_manager" {
   depends_on = [
     var.module_depends_on,
     aws_iam_policy.cert_manager
-    ]  
+  ]
   role       = aws_iam_role.cert_manager.name
   policy_arn = aws_iam_policy.cert_manager.arn
 }
@@ -150,7 +150,7 @@ resource "aws_iam_role_policy_attachment" "external_dns" {
     var.module_depends_on,
     aws_iam_policy.cert_manager,
     aws_iam_role.external_dns
-    ]  
+  ]
   role       = aws_iam_role.external_dns.name
   policy_arn = aws_iam_policy.cert_manager.arn
 }
@@ -175,8 +175,8 @@ resource "kubernetes_service_account" "tiller" {
 resource "kubernetes_cluster_role_binding" "tiller" {
   depends_on = [
     kubernetes_service_account.tiller,
-    var.module_depends_on    
-    ]
+    var.module_depends_on
+  ]
   metadata {
     name = "tiller-binding"
   }
@@ -200,10 +200,10 @@ resource "null_resource" "helm_init" {
   depends_on = [
     var.module_depends_on,
     kubernetes_cluster_role_binding.tiller
-  ]  
+  ]
   provisioner "local-exec" {
     command = <<EOT
-      kubectl --kubeconfig ${var.config_path} init --upgrade;
+      helm --kubeconfig ${var.config_path} init --upgrade;
       sleep 15
     EOT  
   }
@@ -241,8 +241,8 @@ resource "helm_release" "external-dns" {
 # Deploy custom resources for cert-manager
 resource "null_resource" "cert-manager-crd" {
   depends_on = [
-  kubernetes_cluster_role_binding.tiller,
-  var.module_depends_on
+    kubernetes_cluster_role_binding.tiller,
+    var.module_depends_on
   ]
   provisioner "local-exec" {
     command = "kubectl --kubeconfig ${var.config_path} apply --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.11/deploy/manifests/00-crds.yaml"
@@ -254,7 +254,7 @@ resource "kubernetes_namespace" "cert-manager" {
   depends_on = [
     null_resource.cert-manager-crd,
     var.module_depends_on
-    ]
+  ]
   metadata {
     labels = {
       "certmanager.k8s.io/disable-validation" = "true"
@@ -271,7 +271,7 @@ resource "helm_release" "issuers" {
     kubernetes_namespace.cert-manager,
     aws_iam_role.cert_manager,
     var.module_depends_on
-    ]
+  ]
   name      = "issuers"
   chart     = "../charts/cluster-issuers"
   namespace = kubernetes_namespace.cert-manager.metadata[0].name
@@ -304,7 +304,7 @@ resource "helm_release" "cert-manager" {
     kubernetes_namespace.cert-manager,
     kubernetes_cluster_role_binding.tiller,
     var.module_depends_on
-    ]
+  ]
 
   name          = "cert-manager"
   repository    = "jetstack"
@@ -325,7 +325,7 @@ resource "helm_release" "kube-state-metrics" {
     helm_release.cert-manager,
     kubernetes_cluster_role_binding.tiller,
     var.module_depends_on
-    ]
+  ]
 
   name          = "state"
   repository    = "stable"
