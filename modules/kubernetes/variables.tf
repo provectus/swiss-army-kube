@@ -38,7 +38,7 @@ variable "on_demand_max_cluster_size" {
   description = "Max number of on demand instances in EKS autoscaling group"
   default     = "2"
 }
- 
+
 variable "spot_max_cluster_size" {
   type        = string
   description = "Max number of spot instances in EKS autoscaling group"
@@ -66,8 +66,8 @@ variable "spot_instance_type" {
 }
 
 variable "spot_price" {
-  type    = string
-  default = "0.5"
+  type        = string
+  default     = "0.5"
   description = "Price per/hour in $"
 }
 
@@ -78,9 +78,9 @@ variable "admin_arns" {
 }
 
 variable "domain" {
-  type    = string
+  type        = string
   description = "Domain name for Extarnal DNS service"
-  default = "set_domain"
+  default     = "set_domain"
 }
 
 variable "cert_manager_email" {

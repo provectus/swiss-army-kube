@@ -6,17 +6,17 @@ data "aws_region" "current" {}
 # EKS - aws kubernetes cluster
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = ">= v7.0.0"  
+  version         = ">= v7.0.0"
   cluster_version = var.cluster_version
   cluster_name    = var.cluster_name
   subnets         = var.private_subnets
-  vpc_id          = var.vpc_id 
+  vpc_id          = var.vpc_id
 
-  map_users       = null_resource.map_users.*.triggers
+  map_users = null_resource.map_users.*.triggers
 
   tags = {
-    Environment   = var.environment
-    Project       = var.project
+    Environment = var.environment
+    Project     = var.project
   }
 
   workers_additional_policies = [
@@ -24,7 +24,7 @@ module "eks" {
     "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
     "arn:aws:iam::aws:policy/AmazonRoute53AutoNamingFullAccess",
     "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess",    
+    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess",
   ]
   worker_groups = [
     {

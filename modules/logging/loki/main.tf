@@ -7,7 +7,7 @@ data "helm_repository" "loki" {
 resource "helm_release" "loki-stack" {
   depends_on = [
     var.module_depends_on
-  ]   
+  ]
 
   name       = "loki"
   repository = "loki"
@@ -17,5 +17,5 @@ resource "helm_release" "loki-stack" {
 
   values = [
     file("${path.module}/values/loki-stack.yaml"),
-  ]    
+  ]
 } 
