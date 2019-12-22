@@ -12,7 +12,7 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  version = "~> 0.10"
+  version         = "~> 0.10"
   install_tiller  = "true"
   service_account = module.system.kubernetes_service_account.metadata.0.name
   namespace       = module.system.kubernetes_service_account.metadata.0.namespace

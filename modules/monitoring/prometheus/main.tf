@@ -38,4 +38,14 @@ resource "helm_release" "monitoring" {
     name  = "prometheus.ingress.tls[0].hosts[0]"
     value = "prometheus.${var.domain}"
   }
+
+  set {
+    name  = "prometheus.ingress.annotations.ingress.kubernetes.io/auth-url"
+    value = "https://oauth2.${var.domain}/oauth2/auth"
+  }
+
+  set {
+    name  = "prometheus.ingress.annotations.ingress.kubernetes.io/auth-signin"
+    value = "https://oauth2.${var.domain}/oauth2/start?rd=https://$host$request_uri$is_args$args"
+  }
 }

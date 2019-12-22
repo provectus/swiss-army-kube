@@ -2,7 +2,7 @@
 aws_region = "us-west-2"
 
 # List of aws region availability_zones
-availability_zones = ["us-west-2b","us-west-2a","us-west-2c"]
+availability_zones = ["us-west-2b", "us-west-2a", "us-west-2c"]
 
 # Name of kubernetes cluster. It's tag for cluster and peace of fqdn domain xxx.<cluster_name>.<domain_name>
 cluster_name = "poc"
@@ -29,11 +29,17 @@ admin_arns = []
 on_demand_max_cluster_size = "3"
 on_demand_desired_capacity = "3"
 on_demand_instance_type    = "m5.large"
-spot_max_cluster_size = "6"
-spot_desired_capacity = "2"
-spot_instance_type    = "m5.large"
-cluster_version = "1.14"
+spot_max_cluster_size      = "6"
+spot_desired_capacity      = "2"
+spot_instance_type         = "m5.large"
+cluster_version            = "1.14"
 
 #Cert-manager
-cert_manager_email = "dkharlamov@provectus.com"
+cert_manager_email  = "dkharlamov@provectus.com"
 cert_manager_zoneid = "ZYMN6BWSD7TUV"
+
+#Ingress github auth setting
+github-auth          = "false"
+github-client-id     = ""
+github-client-secret = ""
+cookie-secret        = "1fWkwIpMskU4miQYcCZZUw=="
