@@ -38,8 +38,9 @@ cluster_version            = "1.14"
 cert_manager_email  = "dkharlamov@provectus.com"
 cert_manager_zoneid = "ZYMN6BWSD7TUV"
 
-#Ingress github auth setting
+#Ingress github auth setting (client id and secret in base64 from https://github.com/settings/applications/new )
 github-auth          = "false"
 github-client-id     = ""
 github-client-secret = ""
+# random_string make gen command python -c 'import os,base64; print base64.b64encode(os.urandom(16))'
 cookie-secret        = "1fWkwIpMskU4miQYcCZZUw=="

@@ -18,3 +18,7 @@ An Ingress Controller is a daemon, deployed as a Kubernetes Pod, that watches th
 Is a reverse proxy and static file server that provides authentication using Providers (Google, GitHub, and others) to validate accounts by email, domain or group.
 
 see example in [here](https://alikhil.github.io/2018/05/oauth2-proxy-for-kubernetes-services/)
+
+Create new app on [github](https://github.com/settings/applications/new) and generate cookie-secret
+
+cookie-secret make gen command `python -c 'import os,base64; print base64.b64encode(os.urandom(16))'`

@@ -27,9 +27,10 @@ resource "kubernetes_secret" "oauth2-proxy" {
     var.module_depends_on,
     helm_release.nginx-ingress
   ]
-
+  
   metadata {
     name = "oauth-proxy-secret"
+    namespace = "ingress-system" 
   }
 
   data = {
