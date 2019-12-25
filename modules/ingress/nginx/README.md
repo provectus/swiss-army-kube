@@ -25,6 +25,6 @@ cookie-secret make gen command `python -c 'import os,base64; print base64.b64enc
 
 For ingress where need authorization add annotations:
 `
-      ingress.kubernetes.io/auth-url: https://oauth2.example.com/oauth2/auth
-      ingress.kubernetes.io/auth-signin: https://oauth2.example.com/oauth2/start?rd=https://$host$request_uri$is_args$args
+      nginx.ingress.kubernetes.io/auth-url: https://oauth2.example.com/oauth2/auth
+      nginx.ingress.kubernetes.io/auth-signin: https://oauth2.example.com/oauth2/start?rd=https://$host$request_uri$is_args$args
 `
