@@ -46,7 +46,7 @@ module "system" {
 # Ingress
 module "nginx" {
   module_depends_on = [module.system.kubernetes_service_account]
-  source            = "github.com/provectus/swiss-army-kube//modules/ingress/nginx?ref=master"
+  source = "../modules/ingress/nginx"
 
   cluster_name = var.cluster_name
   domain       = var.domain
@@ -55,6 +55,7 @@ module "nginx" {
   #Need oauth2-proxy github auth? Use id and secret in base64
   github-auth          = var.github-auth
   github-client-id     = var.github-client-id
+  github-org           = var.github-org
   github-client-secret = var.github-client-secret
   cookie-secret        = var.cookie-secret
 }

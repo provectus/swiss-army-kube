@@ -44,3 +44,4 @@ github-client-id     = ""
 github-client-secret = ""
 # random_string make gen command python -c 'import os,base64; print base64.b64encode(os.urandom(16))'
 cookie-secret        = "1fWkwIpMskU4miQYcCZZUw=="
+github-org = ""

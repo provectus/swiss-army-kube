@@ -34,3 +34,8 @@ variable "cookie-secret" {
   default     = ""
   description = "random_string make gen command python -c 'import os,base64; print base64.b64encode(os.urandom(16))'"
 }
+
+variable "github-org" {
+  default     = ""
+  description = "Github organization"
+}

@@ -22,3 +22,9 @@ see example in [here](https://alikhil.github.io/2018/05/oauth2-proxy-for-kuberne
 Create new app on [github](https://github.com/settings/applications/new) and generate cookie-secret
 
 cookie-secret make gen command `python -c 'import os,base64; print base64.b64encode(os.urandom(16))'`
+
+For ingress where need authorization add annotations:
+`
+      ingress.kubernetes.io/auth-url: https://oauth2.example.com/oauth2/auth
+      ingress.kubernetes.io/auth-signin: https://oauth2.example.com/oauth2/start?rd=https://$host$request_uri$is_args$args
+`

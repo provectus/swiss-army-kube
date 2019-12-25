@@ -71,6 +71,11 @@ resource "helm_release" "oauth2-proxy" {
   }
 
   set {
+    name  = "extraArgs.github-org"
+    value = var.github-org
+  }
+  
+  set {
     name  = "ingress.hosts[0]"
     value = "oauth2.${var.domain}"
   }
