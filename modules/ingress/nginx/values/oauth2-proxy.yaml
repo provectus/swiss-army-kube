@@ -1,0 +1,35 @@
+config:
+  # # Create a new cookieSecret with the following command
+  # # python -c 'import os,base64; print base64.b64encode(os.urandom(16))'
+
+  ### oauth2-proxy-secrets - is kubernetes secret, created manually
+  existingSecret: "oauth2-proxy-secrets"
+  configFile: |-
+    pass_basic_auth = false
+    pass_access_token = true
+    set_authorization_header = true
+    pass_authorization_header = true
+
+extraArgs:
+  provider: "github"
+  email-domain: "*"
+  cookie-domain: ".DOMAIN.com"
+  whitelist-domain: ".DOMAIN.com"
+  upstream: "file:///dev/null"
+  http-address: "0.0.0.0:4180"
+
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+    path: /
+  hosts:
+    - oauth2.DOMAIN.com
+  tls:
+    - secretName: oauth2-noc-tls
+      hosts:
+        - oauth2.DOMAIN.com
