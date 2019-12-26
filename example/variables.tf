@@ -119,3 +119,9 @@ variable "github-org" {
   default     = ""
   description = "Github organization"
 }
+
+#Kibana preference
+variable "elasticDataSize" {
+  description = "Size of pvc for elastic data"
+  default     = "30Gi"
+}

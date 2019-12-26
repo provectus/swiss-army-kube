@@ -80,6 +80,15 @@ module "loki" {
   config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
 }
 
+#module "efk" {
+#  module_depends_on = [module.system.kubernetes_service_account]
+#  source            = "github.com/provectus/swiss-army-kube//modules/logging/efk?ref=master"
+#  cluster_name     = var.cluster_name
+#  domain           = var.domain
+#  config_path      = "${path.module}/kubeconfig_${var.cluster_name}"
+#  elasticDataSize  = var.elasticDataSize
+#}
+
 #ARGO CD
 module "argo-cd" {
   module_depends_on = [module.system.kubernetes_service_account]

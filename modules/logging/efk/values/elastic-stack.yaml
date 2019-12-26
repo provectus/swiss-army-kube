@@ -1,0 +1,214 @@
+# Default values for elk.
+# This is a YAML-formatted file.
+# Declare variables to be passed into your templates.
+elasticsearch:
+  enabled: true
+  cluster:
+    name: "elasticsearch"
+  client:
+    heapSize: "512m"
+    nodeAffinity: {}
+    nodeSelector: {}
+    tolerations: []
+  ingress:
+    enabled: false
+    # user: NAME
+    # password: PASSWORD
+    annotations: {}
+      # kubernetes.io/ingress.class: nginx
+      # kubernetes.io/tls-acme: "true"
+    path: /
+    hosts:
+      - chart-example.local
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local 
+  #master node config   
+  master:
+    name: master
+    exposeHttp: false
+    replicas: 3
+    heapSize: "512m"
+    additionalJavaOpts: "-XX:MaxRAM=512m"
+    persistence:
+      enabled: true
+      accessMode: ReadWriteOnce
+      name: data
+      size: "4Gi"
+  #Worker node config    
+  data:
+    name: data
+    exposeHttp: false
+    replicas: 2
+    heapSize: "1536m"
+    additionalJavaOpts: "-XX:MaxRAM=1536m"
+    persistence:
+      enabled: true
+      accessMode: ReadWriteOnce
+      name: data
+      size: "30Gi"
+      # storageClass: "ssd"  
+
+kibana:
+  enabled: true
+  env:
+    ELASTICSEARCH_HOSTS: http://{{ .Release.Name }}-elasticsearch-client:9200
+  ingress:
+    enabled: true
+    hosts:
+      - kibana.localhost.localdomain
+      # - localhost.localdomain/kibana
+    annotations:
+      nginx.ingress.kubernetes.io/ssl-redirect: "true"
+      certmanager.k8s.io/cluster-issuer: letsencrypt-prod
+      kubernetes.io/tls-acme: "true"
+      kubernetes.io/ingress.class: nginx
+      nginx.ingress.kubernetes.io/auth-url: https://oauth2.example.com/oauth2/auth
+      nginx.ingress.kubernetes.io/auth-signin: https://oauth2.example.com/oauth2/start?rd=https://$host$request_uri$is_args$args
+    tls:
+      - secretName: chart-example-tls
+        hosts:
+          - chart-example.local
+
+
+logstash:
+  enabled: false
+  # elasticsearch:
+  #   host: elastic-stack-elasticsearch-client
+
+filebeat:
+  enabled: true
+  config:
+    filebeat.config:
+      modules:
+        path: ${path.config}/modules.d/*.yml
+        # Reload module configs as they change:
+        reload.enabled: false
+  
+    processors:
+      - add_cloud_metadata:
+  
+    filebeat.inputs:
+      - type: log
+        enabled: true
+        paths:
+          - /var/log/*.log
+          - /var/log/messages
+          - /var/log/syslog
+      - type: docker
+        containers.ids:
+        - "*"
+        processors:
+          - add_kubernetes_metadata:
+              in_cluster: true
+          - drop_event:
+              when:
+                equals:
+                  kubernetes.container.name: "filebeat"
+  
+    output.file:
+      path: "/usr/share/filebeat/data"
+      filename: filebeat
+      rotate_every_kb: 10000
+      number_of_files: 5
+
+  indexTemplateLoad:
+    - {{ .Release.Name }}-elasticsearch-client:9200
+
+fluentd:
+  enabled: false
+
+fluent-bit:
+  enabled: false
+
+fluentd-elasticsearch:
+  enabled: false
+
+nginx-ldapauth-proxy:
+  enabled: false
+  # Example config to get it working with ELK. Adjust as you need to.
+  # proxy:
+  #   port: 5601
+  #   # This is the internal hostname for the kibana service
+  #   host: "elk-kibana.default.svc.cluster.local"
+  #   authName: "ELK:Infrastructure:LDAP"
+  #   ldapHost: "ldap.example.com"
+  #   ldapDN: "dc=example,dc=com"
+  #   ldapFilter: "objectClass=organizationalPerson"
+  #   ldapBindDN: "cn=reader,dc=example,dc=com"
+  #   requires:
+  #     - name: "ELK-USER"
+  #       filter: "cn=elkuser,ou=groups,dc=example,dc=com"
+  # ingress:
+  #   enabled: true
+  #   hosts:
+  #     - "elk.example.com"
+  #   annotations:
+  #     kubernetes.io/ingress.class: nginx
+  #   tls:
+  #     - hosts:
+  #       - elk.example.com
+  #       secretName: example-elk-tls
+  # secrets:
+  #   ldapBindPassword: PASSWORD
+elasticsearch-curator:
+  enabled: true
+  cronjob:
+    # At 01:00 every day
+    schedule: "0 1 * * *"
+    annotations: {}
+    labels: {}
+    concurrencyPolicy: ""
+    failedJobsHistoryLimit: ""
+    successfulJobsHistoryLimit: ""
+    jobRestartPolicy: Never
+
+    configMaps:
+      # Delete indices older than 7 days
+      action_file_yml: |-
+        ---
+        actions:
+          1:
+            action: delete_indices
+            description: "Clean up ES by deleting old indices"
+            options:
+              timeout_override:
+              continue_if_exception: False
+              disable_action: False
+              ignore_empty_list: True
+            filters:
+            - filtertype: age
+              source: name
+              direction: older
+              timestring: '%Y.%m.%d'
+              unit: days
+              unit_count: 7
+              field:
+              stats_result:
+              epoch:
+              exclude: False
+              
+      config_yml: |-
+        ---
+        client:
+          hosts:
+            - {{ .Release.Name }}-elasticsearch-client
+          port: 9200
+          # url_prefix:
+          # use_ssl: True
+          # certificate:
+          # client_cert:
+          # client_key:
+          # ssl_no_validate: True
+          # http_auth:
+          # timeout: 30
+          # master_only: False
+        # logging:
+        #   loglevel: INFO
+        #   logfile:
+        #   logformat: default
+        #   blacklist: ['elasticsearch', 'urllib3']              
+
+elasticsearch-exporter:
+  enabled: false
