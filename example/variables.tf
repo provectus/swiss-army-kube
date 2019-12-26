@@ -121,6 +121,21 @@ variable "github-org" {
 }
 
 #Kibana preference
+variable "logstash" {
+  description = "logstash"
+  default     = "false"
+}
+
+variable "filebeat" {
+  description = "Enable filebeat"
+  default     = "true"
+}
+
+variable "elasticsearch-curator" {
+  description = "Enable elasticsearch-curator"
+  default     = "true"
+}
+
 variable "elasticDataSize" {
   description = "Size of pvc for elastic data"
   default     = "30Gi"
