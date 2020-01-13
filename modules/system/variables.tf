@@ -23,8 +23,8 @@ variable "config_path" {
   default     = "~/.kube/config"
 }
 
-variable "domain" {
-  description = "domain name for ingress"
+variable "domains" {
+  description = "domain name for ingress, set as coma-sepparate list"
 }
 
 #Cert-manager

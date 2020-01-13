@@ -6,8 +6,8 @@ data "helm_repository" "argo" {
 resource "helm_release" "argo-cd" {
   depends_on = [
     var.module_depends_on
-  ]   
-  
+  ]
+
   name          = "argo-cd"
   repository    = "argo"
   chart         = "argo-cd"
@@ -20,31 +20,35 @@ resource "helm_release" "argo-cd" {
     value = true
   }
 
-  set {
-    name  = "server.ingress.hosts[0]"
-    value = "argo-cd.${var.domain}"
+  dynamic "set" {
+    for_each = var.domains
+    content {
+      name  = "server.ingress.hosts[${set.key}]"
+      value = "argo-cd.${set.value}"
+    }
   }
 
-  set {
-    name  = "server.ingress.tls[0].hosts[0]"
-    value = "argo-cd.${var.domain}"
+  dynamic "set" {
+    for_each = var.domains
+    content {
+      name  = "server.ingress.tls[${set.key}].secretName"
+      value = "argo-cd-${set.value}-tls"
+    }
   }
 
-  set {
-    name  = "server.ingress.tls[0].secretName"
-    value = "argo-cd-com-tls"
-  }
-
-  set {
-    name  = "server.ingress.tls[0].hosts[0]"
-    value = "argo-cd.${var.domain}"
+  dynamic "set" {
+    for_each = var.domains
+    content {
+      name  = "server.ingress.tls[${set.key}].hosts[0]"
+      value = "argo-cd.${set.value}"
+    }
   }
 
   set {
     name  = "server.config.url"
-    value = "https://argo-cd.${var.domain}"
+    value = "https://argo-cd.${var.domains[0]}"
   }
-  
+
   values = [
     file("${path.module}/values.yml")
   ]

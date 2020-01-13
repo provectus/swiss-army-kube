@@ -28,8 +28,8 @@ variable "config_path" {
   description = "The kubernetes config file path"
 }
 
-variable "domain" {
-  description = "domain name for ingress"
+variable "domains" {
+  description = "domains name for ingress"
 }
 
 variable "network" {

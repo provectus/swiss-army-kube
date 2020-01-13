@@ -17,7 +17,8 @@ data "aws_region" "current" {
 # Route53 hostedzone
 # TODO: need create ns records in main zone
 resource "aws_route53_zone" "cluster" {
-  name = var.domain
+  count = "${length(var.domains)}"
+  name  = "${element(var.domain, count.index)}"
 
   tags = {
     Environment = var.environment
@@ -227,9 +228,12 @@ resource "helm_release" "external-dns" {
     file("${path.module}/values/external-dns.yaml"),
   ]
 
-  set {
-    name  = "domainFilters[0]"
-    value = var.domain
+  dynamic "set" {
+    for_each = var.domains
+    content {
+      name  = "domainFilters[${set.key}]"
+      value = "${set.value}"
+    }
   }
 
   set {

@@ -8,8 +8,6 @@ module "kubernetes" {
   vpc_id                     = module.network.vpc_id
   private_subnets            = module.network.private_subnets
   admin_arns                 = var.admin_arns
-  domain                     = var.domain
-  cert_manager_email         = var.cert_manager_email
   on_demand_max_cluster_size = var.on_demand_max_cluster_size
   on_demand_desired_capacity = var.on_demand_desired_capacity
   on_demand_instance_type    = var.on_demand_instance_type
@@ -36,7 +34,7 @@ module "system" {
   environment         = var.environment
   project             = var.project
   cluster_name        = var.cluster_name
-  domain              = var.domain
+  domains             = var.domains
   config_path         = "${path.module}/kubeconfig_${var.cluster_name}"
   cert_manager_email  = var.cert_manager_email
   cert_manager_zoneid = var.cert_manager_zoneid
@@ -46,10 +44,10 @@ module "system" {
 # Ingress
 module "nginx" {
   module_depends_on = [module.system.kubernetes_service_account]
-  source = "../modules/ingress/nginx"
+  source            = "github.com/provectus/swiss-army-kube//modules/ingress/nginx?ref=master"
 
   cluster_name = var.cluster_name
-  domain       = var.domain
+  domains      = var.domains
   config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
 
   #Need oauth2-proxy github auth? Use id and secret in base64
@@ -66,7 +64,7 @@ module "prometheus" {
   source            = "github.com/provectus/swiss-army-kube//modules/monitoring/prometheus?ref=master"
 
   cluster_name = var.cluster_name
-  domain       = var.domain
+  domains      = var.domains
   config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
 }
 
@@ -76,7 +74,7 @@ module "loki" {
   source            = "github.com/provectus/swiss-army-kube//modules/logging/loki?ref=master"
 
   cluster_name = var.cluster_name
-  domain       = var.domain
+  domains      = var.domains
   config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
 }
 
@@ -84,7 +82,7 @@ module "loki" {
 #  module_depends_on     = [module.system.kubernetes_service_account]
 #  source                = "github.com/provectus/swiss-army-kube//modules/logging/efk?ref=master"
 #  cluster_name          = var.cluster_name
-#  domain                = var.domain
+#  domains                = var.domains
 #  config_path           = "${path.module}/kubeconfig_${var.cluster_name}"
 #  elasticsearch-curator = var.elasticsearch-curator
 #  logstash              = var.logstash
@@ -97,7 +95,7 @@ module "argo-cd" {
   module_depends_on = [module.system.kubernetes_service_account]
   source            = "github.com/provectus/swiss-army-kube//modules/cicd/argo-cd?ref=master"
 
-  domain = var.domain
+  domains = var.domains
 }
 
 module "argo-artifacts" {

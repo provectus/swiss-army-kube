@@ -4,7 +4,7 @@ aws_region = "us-west-2"
 # List of aws region availability_zones
 availability_zones = ["us-west-2b", "us-west-2a", "us-west-2c"]
 
-# Name of kubernetes cluster. It's tag for cluster and peace of fqdn domain xxx.<cluster_name>.<domain_name>
+# Name of kubernetes cluster. It's tag for cluster
 cluster_name = "poc"
 
 # Deploy environment name
@@ -14,7 +14,7 @@ environment = "dev"
 project = "EDUCATION"
 
 # Name of domain
-domain = "test.hydrosphere.io"
+domains = ["dev.example.com", "demo.example.com"]
 
 # The kubernetes config file path
 config_path = "kubeconfig_poc"
@@ -35,15 +35,15 @@ spot_instance_type         = "m5.large"
 cluster_version            = "1.14"
 
 #Cert-manager
-cert_manager_email  = "dkharlamov@provectus.com"
+cert_manager_email = "dkharlamov@provectus.com"
 
 #Ingress github auth setting (client id and secret in base64 from https://github.com/settings/applications/new )
 github-auth          = "false"
 github-client-id     = ""
 github-client-secret = ""
 # random_string make gen command python -c 'import os,base64; print base64.b64encode(os.urandom(16))'
-cookie-secret        = "1fWkwIpMskU4miQYcCZZUw=="
-github-org           = ""
+cookie-secret = "1fWkwIpMskU4miQYcCZZUw=="
+github-org    = ""
 
 #Kibana
-elasticDataSize      = "30Gi"
+elasticDataSize = "30Gi"

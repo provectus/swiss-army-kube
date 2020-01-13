@@ -27,7 +27,7 @@ resource "helm_release" "elastic-stack" {
   set {
     name  = "kibana.ingress.tls[0].hosts[0]"
     value = "kibana.${var.domain}"
-  }  
+  }
 
   set {
     name  = "kibana.ingress.annotations.ingress.kubernetes.io/auth-url"
@@ -42,8 +42,8 @@ resource "helm_release" "elastic-stack" {
   set {
     name  = "logstash.enabled"
     value = "${var.logstash}"
-  }  
- 
+  }
+
   set {
     name  = "filebeat.enabled"
     value = "${var.filebeat}"
@@ -52,10 +52,10 @@ resource "helm_release" "elastic-stack" {
   set {
     name  = "elasticsearch-curator"
     value = "${var.elasticsearch-curator}"
-  }  
+  }
 
   set {
     name  = "elasticsearch.data.persistence.size"
     value = "${var.elasticDataSize}"
   }
-} 
+}
