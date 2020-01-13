@@ -6,8 +6,8 @@ data "helm_repository" "argo" {
 resource "helm_release" "argo-events" {
   depends_on = [
     var.module_depends_on
-  ]   
-  
+  ]
+
   name          = "argo-events"
   repository    = "argo"
   chart         = "argo-events"

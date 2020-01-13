@@ -76,14 +76,3 @@ variable "admin_arns" {
   description = "ARNs of users which would have admin permissions."
   default     = []
 }
-
-variable "domain" {
-  type        = string
-  description = "Domain name for Extarnal DNS service"
-  default     = "set_domain"
-}
-
-variable "cert_manager_email" {
-  type        = string
-  description = "Set email for Cert manager notifications"
-}

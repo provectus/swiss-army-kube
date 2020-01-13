@@ -1,10 +1,10 @@
 resource "aws_s3_bucket" "argo-artifacts" {
   depends_on = [
     var.module_depends_on
-  ]     
+  ]
   bucket = "${var.cluster_name}-argo-artifacts"
   acl    = "private"
-  region   = var.aws_region  
+  region = var.aws_region
 
   tags = {
     Name        = "${var.cluster_name}-argo-artifacts"
@@ -20,7 +20,7 @@ output "aws_s3_bucket" {
 }
 
 ### User: system-argo-artifacts
-resource "aws_iam_user" "system_argo_artifacts" {  
+resource "aws_iam_user" "system_argo_artifacts" {
   name = "system-argo-artifacts-${var.cluster_name}"
 }
 
@@ -56,9 +56,9 @@ resource "aws_iam_access_key" "system_argo_artifacts" {
 resource "kubernetes_secret" "argo-artifacts" {
   depends_on = [
     var.module_depends_on
-  ]   
+  ]
   metadata {
-    name = "argo-artifacts"
+    name      = "argo-artifacts"
     namespace = "argo-events"
   }
 

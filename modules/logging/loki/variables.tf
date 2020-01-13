@@ -17,6 +17,6 @@ variable "config_path" {
   default     = "~/.kube/config"
 }
 
-variable "domain" {
+variable "domains" {
   description = "domain name for ingress"
 }

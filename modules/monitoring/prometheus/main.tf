@@ -19,33 +19,45 @@ resource "helm_release" "monitoring" {
     file("${path.module}/values/prometheus.yaml"),
   ]
 
+  dynamic "set" {
+    for_each = var.domains
+    content {
+      name  = "grafana.ingress.hosts[${set.key}]"
+      value = "grafana.${set.value}"
+    }
+  }
+
+  dynamic "set" {
+    for_each = var.domains
+    content {
+      name  = "grafana.ingress.tls[${set.key}].hosts[${set.key}]"
+      value = "grafana.${set.value}"
+    }
+  }
+
+  dynamic "set" {
+    for_each = var.domains
+    content {
+      name  = "prometheus.ingress.hosts[${set.key}]"
+      value = "prometheus.${set.value}"
+    }
+  }
+  dynamic "set" {
+    for_each = var.domains
+    content {
+      name  = "prometheus.ingress.tls[${set.key}].hosts[0]"
+      value = "prometheus.${set.value}"
+    }
+  }
+
+  //TODO: Need make do disabled
   set {
-    name  = "grafana.ingress.hosts[0]"
-    value = "grafana.${var.domain}"
+    name  = "prometheus.ingress.annotations.nginx.ingress.kubernetes.io/auth-signin"
+    value = "https://oauth2.${var.domains[0]}/oauth2/start?rd=https://$host$request_uri$is_args$args"
   }
 
   set {
-    name  = "grafana.ingress.tls[0].hosts[0]"
-    value = "grafana.${var.domain}"
-  }
-
-  set {
-    name  = "prometheus.ingress.hosts[0]"
-    value = "prometheus.${var.domain}"
-  }
-
-  set {
-    name  = "prometheus.ingress.tls[0].hosts[0]"
-    value = "prometheus.${var.domain}"
-  }
-
-  set {
-    name  = "prometheus.ingress.annotations.ingress.kubernetes.io/auth-url"
-    value = "https://oauth2.${var.domain}/oauth2/auth"
-  }
-
-  set {
-    name  = "prometheus.ingress.annotations.ingress.kubernetes.io/auth-signin"
-    value = "https://oauth2.${var.domain}/oauth2/start?rd=https://$host$request_uri$is_args$args"
+    name  = "prometheus.ingress.annotations.nginx.ingress.kubernetes.io/auth-url"
+    value = "https://oauth2.${var.domains[0]}/oauth2/auth"
   }
 }

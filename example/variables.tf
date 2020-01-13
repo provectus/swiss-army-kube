@@ -28,8 +28,8 @@ variable "config_path" {
   description = "The kubernetes config file path"
 }
 
-variable "domain" {
-  description = "domain name for ingress"
+variable "domains" {
+  description = "domains name for ingress"
 }
 
 variable "network" {
@@ -118,4 +118,25 @@ variable "cookie-secret" {
 variable "github-org" {
   default     = ""
   description = "Github organization"
+}
+
+#Kibana preference
+variable "logstash" {
+  description = "logstash"
+  default     = "false"
+}
+
+variable "filebeat" {
+  description = "Enable filebeat"
+  default     = "true"
+}
+
+variable "elasticsearch-curator" {
+  description = "Enable elasticsearch-curator"
+  default     = "true"
+}
+
+variable "elasticDataSize" {
+  description = "Size of pvc for elastic data"
+  default     = "30Gi"
 }

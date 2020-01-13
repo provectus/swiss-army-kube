@@ -6,8 +6,8 @@ data "helm_repository" "argo" {
 resource "helm_release" "argo-workflow" {
   depends_on = [
     var.module_depends_on
-  ]   
-  
+  ]
+
   name          = "argo-workflow"
   repository    = "argo"
   chart         = "argo"
@@ -33,7 +33,7 @@ resource "helm_release" "argo-workflow" {
   set {
     name  = "artifactRepository.s3.region"
     value = var.aws_region
-  }    
+  }
 
   values = [
     file("${path.module}/values.yml")

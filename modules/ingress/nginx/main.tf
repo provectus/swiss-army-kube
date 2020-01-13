@@ -27,10 +27,10 @@ resource "kubernetes_secret" "oauth2-proxy" {
     var.module_depends_on,
     helm_release.nginx-ingress
   ]
-  
+
   metadata {
-    name = "oauth-proxy-secret"
-    namespace = "ingress-system" 
+    name      = "oauth-proxy-secret"
+    namespace = "ingress-system"
   }
 
   data = {
@@ -62,31 +62,37 @@ resource "helm_release" "oauth2-proxy" {
 
   set {
     name  = "extraArgs.cookie-domain"
-    value = ".${var.domain}"
+    value = join(", ", var.domains)
   }
 
   set {
     name  = "extraArgs.whitelist-domain"
-    value = ".${var.domain}"
+    value = join(", ", var.domains)
   }
 
   set {
     name  = "extraArgs.github-org"
     value = var.github-org
   }
-  
-  set {
-    name  = "ingress.hosts[0]"
-    value = "oauth2.${var.domain}"
+  dynamic "set" {
+    for_each = var.domains
+    content {
+      name  = "ingress.hosts[${set.key}]"
+      value = "oauth2.${set.value}"
+    }
   }
-
-  set {
-    name  = "ingress.tls[0].secretName"
-    value = "oauth2-noc-tls"
+  dynamic "set" {
+    for_each = var.domains
+    content {
+      name  = "ingress.tls[${set.key}].secretName"
+      value = "oauth2-${set.key}-tls"
+    }
   }
-
-  set {
-    name  = "ingress.tls[0].hosts[0]"
-    value = "oauth2.${var.domain}"
+  dynamic "set" {
+    for_each = var.domains
+    content {
+      name  = "ingress.tls[${set.key}].hosts[0]"
+      value = "oauth2.${set.value}"
+    }
   }
 }

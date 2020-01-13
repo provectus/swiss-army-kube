@@ -3,6 +3,6 @@ variable "module_depends_on" {
   default = []
 }
 
-variable "domain" {
+variable "domains" {
   description = "domain name for ingress"
 }
