@@ -12,7 +12,7 @@ resource "helm_release" "monitoring" {
   name       = "prometheus-operator"
   repository = "stable"
   chart      = "prometheus-operator"
-  version    = "8.2.4"
+  version    = "8.5.14"
   namespace  = "monitoring"
 
   values = [
@@ -30,34 +30,8 @@ resource "helm_release" "monitoring" {
   dynamic "set" {
     for_each = var.domains
     content {
-      name  = "grafana.ingress.tls[${set.key}].hosts[${set.key}]"
+      name  = "grafana.ingress.tls[${set.key}].hosts[0]"
       value = "grafana.${set.value}"
     }
-  }
-
-  dynamic "set" {
-    for_each = var.domains
-    content {
-      name  = "prometheus.ingress.hosts[${set.key}]"
-      value = "prometheus.${set.value}"
-    }
-  }
-  dynamic "set" {
-    for_each = var.domains
-    content {
-      name  = "prometheus.ingress.tls[${set.key}].hosts[0]"
-      value = "prometheus.${set.value}"
-    }
-  }
-
-  //TODO: Need make do disabled
-  set {
-      name  = "prometheus.ingress.annotations.nginx.ingress.kubernetes.io/auth-signin"
-      value = "https://oauth2.${var.domains[0]}/oauth2/start?rd=https://$host$request_uri$is_args$args"
-    }
-
-  set {
-      name  = "prometheus.ingress.annotations.nginx.ingress.kubernetes.io/auth-url"
-      value = "https://oauth2.${var.domains[0]}/oauth2/auth"  
   }
 }

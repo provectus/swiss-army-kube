@@ -76,3 +76,9 @@ prometheus:
           - source_labels: [__meta_kubernetes_service_name]
             action: drop
             regex: 'node-exporter'
+
+alertmanager:
+
+  ## Deploy alertmanager
+  ##
+  enabled: true
