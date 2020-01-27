@@ -52,12 +52,12 @@ resource "helm_release" "monitoring" {
 
   //TODO: Need make do disabled
   set {
-      name  = "prometheus.ingress.annotations[5]"
-      value = "nginx.ingress.kubernetes.io/auth-signin: https://oauth2.${var.domains[0]}/oauth2/start?rd=https://$host$request_uri$is_args$args"
+      name  = "prometheus.ingress.annotations.nginx.ingress.kubernetes.io/auth-signin"
+      value = "https://oauth2.${var.domains[0]}/oauth2/start?rd=https://$host$request_uri$is_args$args"
     }
 
   set {
-      name  = "prometheus.ingress.annotations[6]"
-      value = "nginx.ingress.kubernetes.io/auth-url: https://oauth2.${var.domains[0]}/oauth2/auth"  
+      name  = "prometheus.ingress.annotations.nginx.ingress.kubernetes.io/auth-url"
+      value = "https://oauth2.${var.domains[0]}/oauth2/auth"  
   }
 }
