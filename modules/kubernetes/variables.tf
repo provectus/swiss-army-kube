@@ -72,7 +72,11 @@ variable "spot_price" {
 }
 
 variable "admin_arns" {
-  type        = list(string)
-  description = "ARNs of users which would have admin permissions."
+  description = "Additional IAM users to add to the aws-auth configmap."
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
   default     = []
 }
