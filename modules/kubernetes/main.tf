@@ -31,6 +31,7 @@ module "eks" {
       name                 = "on-demand-1"
       instance_type        = var.on_demand_instance_type
       asg_max_size         = var.on_demand_max_cluster_size
+      asg_min_size         = var.on_demand_min_cluster_size
       asg_desired_capacity = var.on_demand_desired_capacity
       asg_min_size         = "2"
       autoscaling_enabled  = true
@@ -42,6 +43,7 @@ module "eks" {
       spot_price           = var.spot_price
       instance_type        = var.spot_instance_type
       asg_max_size         = var.spot_max_cluster_size
+      asg_min_size         = var.spot_min_cluster_size
       asg_desired_capacity = var.spot_desired_capacity
       asg_min_size         = "1"
       autoscaling_enabled  = true

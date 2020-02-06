@@ -37,8 +37,12 @@ variable "network" {
 }
 
 variable "admin_arns" {
-  type        = list(string)
-  description = "ARNs of users which would have admin permissions."
+  description = "Additional IAM users to add to the aws-auth configmap."
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
   default     = []
 }
 
@@ -53,7 +57,19 @@ variable "on_demand_max_cluster_size" {
   default     = 2
 }
 
+variable "on_demand_min_cluster_size" {
+  type        = number
+  description = "Number of max instances."
+  default     = 2
+}
+
 variable "spot_max_cluster_size" {
+  type        = string
+  description = "Number of max instances."
+  default     = "2"
+}
+
+variable "spot_min_cluster_size" {
   type        = string
   description = "Number of max instances."
   default     = "2"

@@ -9,9 +9,11 @@ module "kubernetes" {
   private_subnets            = module.network.private_subnets
   admin_arns                 = var.admin_arns
   on_demand_max_cluster_size = var.on_demand_max_cluster_size
+  on_demand_min_cluster_size = var.on_demand_min_cluster_size
   on_demand_desired_capacity = var.on_demand_desired_capacity
   on_demand_instance_type    = var.on_demand_instance_type
   spot_max_cluster_size      = var.spot_max_cluster_size
+  spot_min_cluster_size      = var.spot_min_cluster_size
   spot_desired_capacity      = var.spot_desired_capacity
   spot_instance_type         = var.spot_instance_type
   cluster_version            = var.cluster_version
