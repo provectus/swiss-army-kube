@@ -232,7 +232,7 @@ resource "helm_release" "external-dns" {
     for_each = var.domains
     content {
       name  = "domainFilters[${set.key}]"
-      value = "${set.value}"
+      value = set.value
     }
   }
 

@@ -39,7 +39,19 @@ variable "on_demand_max_cluster_size" {
   default     = "2"
 }
 
+variable "on_demand_min_cluster_size" {
+  type        = string
+  description = "Max number of on demand instances in EKS autoscaling group"
+  default     = "2"
+}
+
 variable "spot_max_cluster_size" {
+  type        = string
+  description = "Max number of spot instances in EKS autoscaling group"
+  default     = "2"
+}
+
+variable "spot_min_cluster_size" {
   type        = string
   description = "Max number of spot instances in EKS autoscaling group"
   default     = "2"

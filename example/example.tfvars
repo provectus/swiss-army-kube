@@ -33,9 +33,11 @@ admin_arns = [
 
 # Type and number of worker node
 on_demand_max_cluster_size = "3"
+on_demand_min_cluster_size = "3"
 on_demand_desired_capacity = "3"
 on_demand_instance_type    = "x5.large"
 spot_max_cluster_size      = "6"
+spot_min_cluster_size      = "2"
 spot_desired_capacity      = "2"
 spot_instance_type         = "x5.large"
 cluster_version            = "1.14"

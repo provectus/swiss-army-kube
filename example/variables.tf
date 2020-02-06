@@ -57,7 +57,19 @@ variable "on_demand_max_cluster_size" {
   default     = 2
 }
 
+variable "on_demand_min_cluster_size" {
+  type        = number
+  description = "Number of max instances."
+  default     = 2
+}
+
 variable "spot_max_cluster_size" {
+  type        = string
+  description = "Number of max instances."
+  default     = "2"
+}
+
+variable "spot_min_cluster_size" {
   type        = string
   description = "Number of max instances."
   default     = "2"
