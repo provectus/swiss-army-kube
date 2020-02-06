@@ -39,7 +39,6 @@ module "system" {
   domains             = var.domains
   config_path         = "${path.module}/kubeconfig_${var.cluster_name}"
   cert_manager_email  = var.cert_manager_email
-  cert_manager_zoneid = var.cert_manager_zoneid
   cluster_oidc_url    = module.kubernetes.cluster_oidc_url
 }
 

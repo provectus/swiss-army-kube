@@ -106,11 +106,6 @@ variable "cert_manager_email" {
   description = "Email to cert-manager"
 }
 
-variable "cert_manager_zoneid" {
-  type        = string
-  description = "Route53 hosted zone ID for manage at cert-manager"
-}
-
 #Ingress github auth settings
 variable "github-auth" {
   description = "Trigger for enable or disable deploy oauth2-proxy"

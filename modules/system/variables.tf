@@ -33,11 +33,6 @@ variable "cert_manager_email" {
   description = "Email to cert-manager"
 }
 
-variable "cert_manager_zoneid" {
-  type        = string
-  description = "Route53 hosted zone ID for manage at cert-manager"
-}
-
 variable "cluster_oidc_url" {
   type        = string
   description = "OIDC EKS cluster endpoint"

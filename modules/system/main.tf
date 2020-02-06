@@ -14,11 +14,12 @@ data "aws_region" "current" {
 
 }
 
+
 # Route53 hostedzone
 # TODO: need create ns records in main zone
 resource "aws_route53_zone" "cluster" {
   count = "${length(var.domains)}"
-  name  = "${element(var.domain, count.index)}"
+  name  = "${element(var.domains, count.index)}"
 
   tags = {
     Environment = var.environment
@@ -232,7 +233,7 @@ resource "helm_release" "external-dns" {
     for_each = var.domains
     content {
       name  = "domainFilters[${set.key}]"
-      value = set.value
+      value = "${set.value}"
     }
   }
 
@@ -293,11 +294,6 @@ resource "helm_release" "issuers" {
   set {
     name  = "region"
     value = data.aws_region.current.name
-  }
-
-  set {
-    name  = "hostedZoneID"
-    value = aws_route53_zone.cluster.zone_id
   }
 }
 
