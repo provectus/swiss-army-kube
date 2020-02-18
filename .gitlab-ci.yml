@@ -32,12 +32,24 @@ stages:
 validate:
   stage: validate
   script:
-    - cd example && terraform validate
+    - terraform validate
+    - terraform fmt -check=true
 
 plan:
   stage: build
   script:
-    - cd example && terraform plan -var-file=$VARS -out=$PLAN
+    - terraform plan -var-file=$VARS -out=$PLAN
+    - echo \`\`\`diff > plan.txt
+    - terraform show -no-color ${PLAN} | tee -a plan.txt
+    - echo \`\`\` >> plan.txt
+    - sed -i -e 's/  +/+/g' plan.txt
+    - sed -i -e 's/  ~/~/g' plan.txt
+    - sed -i -e 's/  -/-/g' plan.txt
+    - MESSAGE=$(cat plan.txt)
+    - >-
+      curl -X POST -g -H "PRIVATE-TOKEN: ${GITLAB_TOKEN}"
+      --data-urlencode "body=${MESSAGE}"
+      "${CI_API_V4_URL}/projects/${CI_PROJECT_ID}/merge_requests/${CI_MERGE_REQUEST_IID}/discussions"    
   artifacts:
     name: plan
     paths:
