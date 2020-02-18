@@ -43,7 +43,7 @@ plan:
     paths:
       - $PLAN
 
-merge review:
+merge_review:
   stage: plan
   script:
     - terraform plan -out=$PLAN
