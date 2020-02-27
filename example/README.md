@@ -6,6 +6,8 @@ kubectl - `brew install kubernetes-cli`
 
 awscli - `brew install awscli`
 
+aws-iam-authenticator - `brew install aws-iam-authenticator`
+
 terraform - `brew install terraform`
 
 # Structure

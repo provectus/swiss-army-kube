@@ -34,4 +34,9 @@ resource "helm_release" "monitoring" {
       value = "grafana.${set.value}"
     }
   }
+
+  set {
+    name  = "grafana.adminPassword"
+    value = var.grafana_password 
+  }
 }

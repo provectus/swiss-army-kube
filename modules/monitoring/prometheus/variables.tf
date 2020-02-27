@@ -20,3 +20,9 @@ variable "config_path" {
 variable "domains" {
   description = "domain name for ingress"
 }
+
+#Grafana
+variable "grafana_password" {
+  description = "Password for grafana admin"
+  default     = "password"
+}
