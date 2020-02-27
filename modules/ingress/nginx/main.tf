@@ -11,7 +11,7 @@ resource "helm_release" "nginx-ingress" {
   name       = "nginx"
   repository = "stable"
   chart      = "nginx-ingress"
-  version    = "1.26.1"
+  version    = "1.33.0" 
   namespace  = "ingress-system"
 
   values = [
