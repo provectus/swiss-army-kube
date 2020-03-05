@@ -151,3 +151,15 @@ variable "elasticDataSize" {
   description = "Size of pvc for elastic data"
   default     = "30Gi"
 }
+
+#Jenkins
+variable "jenkins_password" {
+  description = "Password for jenkins admin"
+  default     = "password"
+}
+
+#Grafana
+variable "grafana_password" {
+  description = "Password for grafana admin"
+  default     = "password"
+}

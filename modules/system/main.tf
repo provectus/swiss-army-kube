@@ -206,7 +206,7 @@ resource "null_resource" "helm_init" {
   provisioner "local-exec" {
     command = <<EOT
       helm --kubeconfig ${var.config_path} init --upgrade;
-      sleep 15
+      sleep 30
     EOT  
   }
 }
@@ -309,7 +309,7 @@ resource "helm_release" "cert-manager" {
   name          = "cert-manager"
   repository    = "jetstack"
   chart         = "cert-manager"
-  version       = "v0.11.1"
+  version       = "v0.13.1"
   namespace     = kubernetes_namespace.cert-manager.metadata[0].name
   recreate_pods = true
 

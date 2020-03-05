@@ -6,7 +6,7 @@ data "aws_region" "current" {}
 # EKS - aws kubernetes cluster
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = ">= v7.0.0"
+  version         = "v8.0.0"
   cluster_version = var.cluster_version
   cluster_name    = var.cluster_name
   subnets         = var.private_subnets
