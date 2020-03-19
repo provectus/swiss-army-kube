@@ -19,10 +19,10 @@ terraform - `brew install terraform`
 
   variables.tf - variables used in modules
 
-  example.tfvars - list of values for variables. Customize it for your project data !!!
+  terraform.tfvars - list of values for variables. Customize it for your project data !!!
 
 # Deploy cluster
-Change example.tfvars, chose modules in main.tf and run:
+Change terraform.tfvars, chose modules in main.tf and run:
 
 Prepare and downloads module
 
@@ -30,7 +30,7 @@ Prepare and downloads module
 
 Plan and test deployment
 
-`terraform plan -var-file=example.tfvars -out plan`
+`terraform plan -out plan`
 
 Deploy cluster and helm chart
 
@@ -40,5 +40,5 @@ Deploy cluster and helm chart
 
 For destroy some module just remove it from modules.tf and run 
 
-`terraform plan -var-file=example.tfvars -out plan && terraform apply plan`
+`terraform plan -out plan && terraform apply plan`
 
