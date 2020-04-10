@@ -65,7 +65,7 @@ variable "on_demand_desired_capacity" {
 variable "spot_desired_capacity" {
   type        = string
   description = "Desired number of spot instances in EKS autoscaling group"
-  default     = "1"
+  default     = "0"
 }
 
 variable "on_demand_instance_type" {
