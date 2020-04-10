@@ -1,15 +1,10 @@
-# Declare the data source
-data "aws_availability_zones" "available" {}
-
-data "aws_region" "current" {}
-
 # EKS - aws kubernetes cluster
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "v8.0.0"
   cluster_version = var.cluster_version
   cluster_name    = var.cluster_name
-  subnets         = var.private_subnets
+  subnets         = var.subnets
   vpc_id          = var.vpc_id
 
   map_users = var.admin_arns
