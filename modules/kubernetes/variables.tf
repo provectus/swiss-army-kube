@@ -7,7 +7,7 @@ variable "environment" {
 variable "project" {
   type        = string
   description = "Project Use in tags and annotations for identify EKS cluster"
-  default     = "EDUACTION"
+  default     = "EDUCATION"
 }
 
 variable "cluster_name" {
