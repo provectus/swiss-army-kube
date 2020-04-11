@@ -12,3 +12,8 @@ output "cluster_oidc_url" {
   value       = module.eks.cluster_oidc_issuer_url
   description = "Oidc issuer url for EKS cluster"
 }
+
+output "this" {
+  value       = module.eks
+  description = "TBD"
+}

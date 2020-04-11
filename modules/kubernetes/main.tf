@@ -1,15 +1,9 @@
-# Declare the data source
-data "aws_availability_zones" "available" {}
-
-data "aws_region" "current" {}
-
-# EKS - aws kubernetes cluster
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "v8.0.0"
+  version         = "v8.2.0"
   cluster_version = var.cluster_version
   cluster_name    = var.cluster_name
-  subnets         = var.private_subnets
+  subnets         = var.subnets
   vpc_id          = var.vpc_id
 
   map_users = var.admin_arns
@@ -20,12 +14,18 @@ module "eks" {
   }
 
   workers_additional_policies = [
+    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
     "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess",
     "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
     "arn:aws:iam::aws:policy/AmazonRoute53AutoNamingFullAccess",
     "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess",
     "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess",
   ]
+
+  workers_group_defaults = {
+     additional_userdata = "sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm && sudo systemctl enable amazon-ssm-agent && sudo systemctl start amazon-ssm-agent"
+  }
+
   worker_groups = [
     {
       name                 = "on-demand-1"
@@ -33,7 +33,7 @@ module "eks" {
       asg_max_size         = var.on_demand_max_cluster_size
       asg_min_size         = var.on_demand_min_cluster_size
       asg_desired_capacity = var.on_demand_desired_capacity
-      autoscaling_enabled  = true
+      autoscaling_enabled  = false
       kubelet_extra_args   = "--node-labels=kubernetes.io/lifecycle=normal"
       suspended_processes  = ["AZRebalance"]
     },
