@@ -12,7 +12,7 @@ image:
 
 # Default output file for Terraform plan
 variables:
-  PLAN: plan.tfplan
+  PLAN: example/plan.tfplan
   
 stages:
   - validate
@@ -30,7 +30,7 @@ validate:
     - unzip tflint.zip
     - rm tflint.zip  
   script:
-    - terraform fmt modules
+    - terraform fmt -recursive -diff modules
     - terraform validate example
     - TFLINT_LOG=info ./tflint --deep --force --module --format=checkstyle --var-file example/example.tfvars .   
 
@@ -52,6 +52,9 @@ plan:
 #  stage: deploy
 #  environment:
 #    name: production
+#  before_script:
+#    - cd example
+#    - terraform init
 #  script:
 #    - terraform apply -input=false $PLAN
 #  dependencies:
