@@ -41,10 +41,10 @@ plan:
     - terraform init
   script:
     - terraform plan -var-file example.tfvars -out=$PLAN
-  artifacts:
-    name: plan
-    paths:
-      - $PLAN
+#  artifacts:
+#    name: plan
+#    paths:
+#      - $PLAN
 
 # Separate apply job for manual launching Terraform as it can be destructive
 # action.
