@@ -34,7 +34,7 @@ validate:
   script:
     - terraform fmt modules
     - terraform validate example
-    - TFLINT_LOG=info ./tflint --deep --force --module --format=checkstyle --var-file example.tfvars example    
+    - TFLINT_LOG=info ./tflint --deep --force --module --format=checkstyle --var-file example/example.tfvars .   
 
 plan:
   stage: build
