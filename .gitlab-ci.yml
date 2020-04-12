@@ -13,16 +13,7 @@ image:
 # Default output file for Terraform plan
 variables:
   PLAN: plan.tfplan
-
-before_script:
-  - apk add curl
-  - terraform --version
-  - terraform init example
-  - curl -L "$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip
-  - unzip tflint.zip
-  - rm tflint.zip
   
-
 stages:
   - validate
   - build
@@ -31,6 +22,13 @@ stages:
 
 validate:
   stage: validate
+  before_script:
+    - apk add curl
+    - terraform --version
+    - terraform init example
+    - curl -L "$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip
+    - unzip tflint.zip
+    - rm tflint.zip  
   script:
     - terraform fmt modules
     - terraform validate example
@@ -38,8 +36,11 @@ validate:
 
 plan:
   stage: build
+  before_script:
+    - cd example
+    - terraform init
   script:
-    - terraform plan -var-file example/example.tfvars -out=$PLAN
+    - terraform plan -var-file example.tfvars -out=$PLAN
   artifacts:
     name: plan
     paths:
