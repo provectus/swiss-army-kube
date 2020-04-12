@@ -17,6 +17,10 @@ variables:
 before_script:
   - terraform --version
   - terraform init example
+  - curl -L "$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip
+  - unzip tflint.zip
+  - rm tflint.zip
+  
 
 stages:
   - validate
@@ -28,12 +32,14 @@ validate:
   stage: validate
   script:
     - terraform fmt modules
-    - terraform validate example
+    - cd example
+    - terraform validate
+    - TFLINT_LOG=info tflint --deep --force --module --format=checkstyle --var-file example.tfvars .    
 
 plan:
   stage: build
   script:
-    - cd example && terraform plan -var-file example.tfvars -out=$PLAN
+    - terraform plan -var-file example.tfvars -out=$PLAN
   artifacts:
     name: plan
     paths:
