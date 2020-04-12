@@ -14,13 +14,9 @@ image:
 variables:
   PLAN: plan.tfplan
 
-cache:
-  paths:
-    - .terraform
-
 before_script:
   - terraform --version
-  - cd example && terraform init
+  - terraform init example
 
 stages:
   - validate
@@ -32,7 +28,7 @@ validate:
   stage: validate
   script:
     - terraform fmt modules
-    - cd example && terraform validate
+    - terraform validate example
 
 plan:
   stage: build
