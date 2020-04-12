@@ -12,7 +12,7 @@ image:
 
 # Default output file for Terraform plan
 variables:
-  PLAN: example/plan.tfplan
+  PLAN: plan.tfplan
   
 stages:
   - validate
