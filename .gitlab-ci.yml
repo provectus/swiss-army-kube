@@ -15,7 +15,7 @@ variables:
   PLAN: plan.tfplan
 
 before_script:
-  - apt install curl
+  - apk add curl
   - terraform --version
   - terraform init example
   - curl -L "$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip
