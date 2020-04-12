@@ -39,8 +39,7 @@ validate:
 plan:
   stage: build
   script:
-    - cd example
-    - terraform plan -var-file example.tfvars -out=$PLAN
+    - terraform plan -var-file example/example.tfvars -out=$PLAN
   artifacts:
     name: plan
     paths:
