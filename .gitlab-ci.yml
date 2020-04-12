@@ -33,13 +33,13 @@ validate:
   stage: validate
   script:
     - terraform fmt modules
-    - cd example
-    - terraform validate
-    - TFLINT_LOG=info tflint --deep --force --module --format=checkstyle --var-file example.tfvars .    
+    - terraform validate example
+    - TFLINT_LOG=info tflint --deep --force --module --format=checkstyle --var-file example.tfvars example    
 
 plan:
   stage: build
   script:
+    - cd example
     - terraform plan -var-file example.tfvars -out=$PLAN
   artifacts:
     name: plan
