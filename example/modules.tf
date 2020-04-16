@@ -62,11 +62,7 @@ module "nginx" {
 # Monitoring
 module "prometheus" {
   module_depends_on = [module.system.kubernetes_service_account,module.nginx.nginx-ingress]
-<<<<<<< HEAD
   source            = "github.com/provectus/swiss-army-kube//modules/monitoring/prometheus?ref=master"
-=======
-  source            = "../modules/monitoring/prometheus"
->>>>>>> d04e364e6fd08067ee2e00b64eac7c226ab67241
 
   cluster_name = var.cluster_name
   domains      = var.domains
@@ -77,11 +73,7 @@ module "prometheus" {
 # Logging
 module "loki" {
   module_depends_on = [module.system.kubernetes_service_account,module.nginx.nginx-ingress]
-<<<<<<< HEAD
   source            = "github.com/provectus/swiss-army-kube//modules/logging/loki?ref=master"
-=======
-  source            = "../modules/logging/loki"
->>>>>>> d04e364e6fd08067ee2e00b64eac7c226ab67241
 
   cluster_name = var.cluster_name
   domains      = var.domains
@@ -90,11 +82,7 @@ module "loki" {
 
 #module "efk" {
 #  module_depends_on     = [module.system.kubernetes_service_account,module.nginx.nginx-ingress]
-<<<<<<< HEAD
 #  source                = "github.com/provectus/swiss-army-kube//modules/logging/efk?ref=master"
-=======
-#  source                = "../modules/logging/efk"
->>>>>>> d04e364e6fd08067ee2e00b64eac7c226ab67241
 #  cluster_name          = var.cluster_name
 #  domains                = var.domains
 #  config_path           = "${path.module}/kubeconfig_${var.cluster_name}"
@@ -107,22 +95,14 @@ module "loki" {
 #ARGO CD
 #module "argo-cd" {
 #  module_depends_on = [module.system.kubernetes_service_account,module.nginx.nginx-ingress]
-<<<<<<< HEAD
 #  source            = "github.com/provectus/swiss-army-kube//modules/cicd/argo-cd?ref=master"
-=======
-#  source            = "../modules/cicd/argo-cd"
->>>>>>> d04e364e6fd08067ee2e00b64eac7c226ab67241
 #
 #  domains = var.domains
 #}
 
 #module "argo-artifacts" {
 #  module_depends_on = [module.system.kubernetes_service_account,module.argo-events.argo_events_namespace,module.nginx.nginx-ingress]
-<<<<<<< HEAD
 #  source            = "github.com/provectus/swiss-army-kube//modules/cicd/argo-artifacts?ref=master"
-=======
-#  source            = "../modules/cicd/argo-artifacts"
->>>>>>> d04e364e6fd08067ee2e00b64eac7c226ab67241
 #
 #  aws_region            = var.aws_region
 #  cluster_name          = var.cluster_name
