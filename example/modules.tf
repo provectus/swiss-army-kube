@@ -1,5 +1,5 @@
 module "kubernetes" {
-  source = "../modules/kubernetes"
+  source = "github.com/provectus/swiss-army-kube//modules/kubernetes?ref=master"
 
   environment                = var.environment
   project                    = var.project
@@ -20,7 +20,7 @@ module "kubernetes" {
 }
 
 module "network" {
-  source = "../modules/network"
+  source = "github.com/provectus/swiss-army-kube//modules/network?ref=master"
 
   availability_zones = var.availability_zones
   environment        = var.environment
@@ -31,7 +31,7 @@ module "network" {
 
 module "system" {
   module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name]
-  source            = "../modules/system"
+  source            = "github.com/provectus/swiss-army-kube//modules/system?ref=master"
 
   environment         = var.environment
   project             = var.project
@@ -45,7 +45,7 @@ module "system" {
 # Ingress
 module "nginx" {
   module_depends_on = [module.system.kubernetes_service_account]
-  source            = "../modules/ingress/nginx"
+  source            = "github.com/provectus/swiss-army-kube//modules/ingress/nginx?ref=master"
 
   cluster_name = var.cluster_name
   domains      = var.domains
