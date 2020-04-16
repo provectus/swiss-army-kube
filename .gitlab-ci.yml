@@ -1,0 +1,64 @@
+# This file is a template, and might need editing before it works on your project.
+# Official image for Hashicorp's Terraform. It uses light image which is Alpine
+# based as it is much lighter.
+#
+# Entrypoint is also needed as image by default set `terraform` binary as an
+# entrypoint.
+image:
+  name: hashicorp/terraform:light
+  entrypoint:
+    - '/usr/bin/env'
+    - 'PATH=/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin'
+
+# Default output file for Terraform plan
+variables:
+  PLAN: plan.tfplan
+  
+stages:
+  - validate
+  - build
+  - test
+  - deploy
+
+validate:
+  stage: validate
+  before_script:
+    - apk add curl
+    - terraform --version
+    - terraform init example
+    - curl -L "$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip
+    - unzip tflint.zip
+    - rm tflint.zip  
+  script:
+    - terraform fmt -recursive -diff modules
+    - terraform validate example
+    - TFLINT_LOG=info ./tflint --deep --force --module --format=checkstyle --var-file example/example.tfvars .   
+
+plan:
+  stage: build
+  before_script:
+    - cd example
+    - terraform init
+  script:
+    - terraform plan -var-file example.tfvars -out=$PLAN
+#  artifacts:
+#    name: plan
+#    paths:
+#      - $PLAN
+
+# Separate apply job for manual launching Terraform as it can be destructive
+# action.
+#apply:
+#  stage: deploy
+#  environment:
+#    name: production
+#  before_script:
+#    - cd example
+#    - terraform init
+#  script:
+#    - terraform apply -input=false $PLAN
+#  dependencies:
+#    - plan
+#  when: manual
+#  only:
+#    - master

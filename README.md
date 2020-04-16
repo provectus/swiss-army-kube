@@ -10,9 +10,8 @@
 - Run `terraform plan -out=plan` and review
 - Run `terraform apply plan`
 
-
 ## Structure
-This repository provides the minimal set of resources, which may be required for starting comfortably developing the process of new IaC project:
+This repository provides a minimal set of resources, which may be required to comfortably start developing the process of a new IaC project:
  - `modules` - Terraform modules.
  - `charts`  - Local helm repository for charts which could not be retrieved from public repositories.
- - `example` - Example project, include some modules and variables for deploy kubernetes EKS and install charts. Use as template.
+ - `example` - Example project, include some modules and variables to deploy kubernetes EKS and install charts. Use as template.
