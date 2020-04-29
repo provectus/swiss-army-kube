@@ -1,4 +1,31 @@
-data "aws_region" "current" {}
+#Global helm chart repo
+data "helm_repository" "incubator" {
+  name = "incubator"
+  url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
+}
+
+#Cert-manager chart repo
+data "helm_repository" "jetstack" {
+  name = "jetstack"
+  url  = "https://charts.jetstack.io"
+}
+
+data "aws_region" "current" {
+
+}
+
+
+# Route53 hostedzone
+# TODO: need create ns records in main zone
+resource "aws_route53_zone" "cluster" {
+  count = "${length(var.domains)}"
+  name  = "${element(var.domains, count.index)}"
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project
+  }
+}
 
 # OIDC cluster EKS settings
 resource "aws_iam_openid_connect_provider" "cluster" {
@@ -6,9 +33,12 @@ resource "aws_iam_openid_connect_provider" "cluster" {
     var.module_depends_on
   ]
   client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da2b0ab7280"]
+  thumbprint_list = ["9E99A48A9960B14926BB7F3B02E22DA2B0AB7280"]
   url             = var.cluster_oidc_url
 }
+
+# Enabling IAM Roles for Service Accounts 
+data "aws_caller_identity" "current" {}
 
 data "aws_iam_policy_document" "external_dns_assume_role_policy" {
   statement {
@@ -48,37 +78,37 @@ resource "aws_iam_policy" "cert_manager" {
   depends_on = [
     var.module_depends_on
   ]
-  name = "${var.cluster_name}_route53_dns_manager"
-  policy = jsonencode(
-    {
-      "Version" : "2012-10-17",
-      "Statement" : [
+  name   = "${var.cluster_name}_route53_dns_manager"
+  policy = <<EOF
+{
+    "Version": "2012-10-17",
+    "Statement": [
         {
-          "Effect" : "Allow",
-          "Action" : "route53:GetChange",
-          "Resource" : "arn:aws:route53:::change/*"
+            "Effect": "Allow",
+            "Action": "route53:GetChange",
+            "Resource": "arn:aws:route53:::change/*"
         },
         {
-          "Effect" : "Allow",
-          "Action" : [
-            "route53:ChangeResourceRecordSets",
-            "route53:ListResourceRecordSets"
-          ],
-          "Resource" : "arn:aws:route53:::hostedzone/*"
+            "Effect": "Allow",
+            "Action": [
+              "route53:ChangeResourceRecordSets",
+              "route53:ListResourceRecordSets"
+            ],
+            "Resource": "arn:aws:route53:::hostedzone/*"
         },
         {
-          "Effect" : "Allow",
-          "Action" : "route53:ListHostedZonesByName",
-          "Resource" : "*"
+            "Effect": "Allow",
+            "Action": "route53:ListHostedZonesByName",
+            "Resource": "*"
         },
         {
-          "Effect" : "Allow",
-          "Action" : "route53:ListHostedZones",
-          "Resource" : "*"
-        }
-      ]
-    }
-  )
+            "Effect": "Allow",
+            "Action": "route53:ListHostedZones",
+            "Resource": "*"
+        }        
+    ]
+}   
+EOF
 }
 
 # Create role for cert_manager
@@ -86,23 +116,23 @@ resource "aws_iam_role" "cert_manager" {
   depends_on = [
     var.module_depends_on
   ]
-  name        = "${var.cluster_name}_dns_manager"
-  description = "Role for manage dns by cert-manager"
-  assume_role_policy = jsonencode(
+  name               = "${var.cluster_name}_dns_manager"
+  description        = "Role for manage dns by cert-manager"
+  assume_role_policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
     {
-      "Version" : "2012-10-17",
-      "Statement" : [
-        {
-          "Action" : "sts:AssumeRole",
-          "Principal" : {
-            "Service" : "ec2.amazonaws.com"
-          },
-          "Effect" : "Allow",
-          "Sid" : ""
-        }
-      ]
+      "Action": "sts:AssumeRole",
+      "Principal": {
+        "Service": "ec2.amazonaws.com"
+      },
+      "Effect": "Allow",
+      "Sid": ""
     }
-  )
+  ]
+}
+EOF
 
 }
 
@@ -127,22 +157,72 @@ resource "aws_iam_role_policy_attachment" "external_dns" {
   policy_arn = aws_iam_policy.cert_manager.arn
 }
 
-# Install Bitnami Helm repository
-data "helm_repository" "bitnami" {
-  name = "bitnami"
-  url  = "https://charts.bitnami.com/bitnami"
+//TODO: нужен таймаут после создания екс - секунд 30 (не успевают стартануть api). Попробовать создавать другие штуки вроде aws_iam_policy
+# Create service account for tiller
+resource "kubernetes_service_account" "tiller" {
+  depends_on = [
+    var.module_depends_on,
+    aws_iam_policy.cert_manager,
+    aws_iam_role.cert_manager
+  ]
+
+  metadata {
+    name      = "tiller"
+    namespace = "kube-system"
+  }
+
+  automount_service_account_token = true
+}
+
+resource "kubernetes_cluster_role_binding" "tiller" {
+  depends_on = [
+    kubernetes_service_account.tiller,
+    var.module_depends_on
+  ]
+  metadata {
+    name = "tiller-binding"
+  }
+
+  subject {
+    kind      = "ServiceAccount"
+    name      = "tiller"
+    namespace = "kube-system"
+    api_group = ""
+  }
+
+  role_ref {
+    kind      = "ClusterRole"
+    name      = "cluster-admin"
+    api_group = "rbac.authorization.k8s.io"
+  }
+}
+
+# Init helm for update tiller
+resource "null_resource" "helm_init" {
+  depends_on = [
+    var.module_depends_on,
+    kubernetes_cluster_role_binding.tiller
+  ]
+  provisioner "local-exec" {
+    command = <<EOT
+      helm --kubeconfig ${var.config_path} init --upgrade;
+      sleep 30
+    EOT  
+  }
 }
 
 # Deploy external_dns to manage route53 domain zone
 resource "helm_release" "external-dns" {
   depends_on = [
     var.module_depends_on,
-    aws_iam_role.cert_manager
+    aws_iam_role.cert_manager,
+    kubernetes_cluster_role_binding.tiller
   ]
-  repository = data.helm_repository.bitnami.metadata[0].name
+
   name       = "external-dns"
+  repository = "stable"
   chart      = "external-dns"
-  version    = "2.20.12"
+  version    = "v2.11.0"
   namespace  = "kube-system"
 
   values = [
@@ -163,9 +243,21 @@ resource "helm_release" "external-dns" {
   }
 }
 
+# Deploy custom resources for cert-manager
+resource "null_resource" "cert-manager-crd" {
+  depends_on = [
+    kubernetes_cluster_role_binding.tiller,
+    var.module_depends_on
+  ]
+  provisioner "local-exec" {
+    command = "kubectl --kubeconfig ${var.config_path} apply --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.11/deploy/manifests/00-crds.yaml"
+  }
+}
+
 # Create namespace cert-manager
 resource "kubernetes_namespace" "cert-manager" {
   depends_on = [
+    null_resource.cert-manager-crd,
     var.module_depends_on
   ]
   metadata {
@@ -177,25 +269,16 @@ resource "kubernetes_namespace" "cert-manager" {
   }
 }
 
-resource "helm_release" "cert_manager_crd" {
+# Deploy clusterissuer with route53 dns challenge
+resource "helm_release" "issuers" {
   depends_on = [
+    null_resource.cert-manager-crd,
     kubernetes_namespace.cert-manager,
     aws_iam_role.cert_manager,
     var.module_depends_on
   ]
-  name      = "cert-manager-crd"
-  chart     = "${path.module}/../../charts/cert-manager-crd"
-  namespace = kubernetes_namespace.cert-manager.metadata[0].name
-}
-
-# Deploy clusterissuer with route53 dns challenge
-resource "helm_release" "issuers" {
-  depends_on = [
-    helm_release.cert_manager_crd,
-    var.module_depends_on
-  ]
-  name      = "cluster-issuers"
-  chart     = "${path.module}/../../charts/cluster-issuers"
+  name      = "issuers"
+  chart     = "../charts/cluster-issuers"
   namespace = kubernetes_namespace.cert-manager.metadata[0].name
 
   set {
@@ -214,25 +297,21 @@ resource "helm_release" "issuers" {
   }
 }
 
-# Install Jetstack Helm repository
-data "helm_repository" "jetstack" {
-  name = "jetstack"
-  url  = "https://charts.jetstack.io"
-}
-
 # Deploy cert-manager (ingress certificate manager)
 resource "helm_release" "cert-manager" {
   depends_on = [
     helm_release.issuers,
     kubernetes_namespace.cert-manager,
+    kubernetes_cluster_role_binding.tiller,
     var.module_depends_on
   ]
-  repository    = data.helm_repository.jetstack.metadata[0].name
+
   name          = "cert-manager"
+  repository    = "jetstack"
   chart         = "cert-manager"
+  version       = "v0.13.1"
   namespace     = kubernetes_namespace.cert-manager.metadata[0].name
   recreate_pods = true
-  version       = "v0.14.2"
 
   values = [
     file("${path.module}/values/cert-manager.yaml"),
@@ -244,13 +323,14 @@ resource "helm_release" "kube-state-metrics" {
   depends_on = [
     helm_release.issuers,
     helm_release.cert-manager,
+    kubernetes_cluster_role_binding.tiller,
     var.module_depends_on
   ]
 
   name          = "state"
   repository    = "stable"
   chart         = "kube-state-metrics"
-  version       = "2.8.2"
+  version       = "2.4.1"
   namespace     = "kube-system"
   recreate_pods = true
 
@@ -259,12 +339,13 @@ resource "helm_release" "kube-state-metrics" {
 # Deploy saled-secrets
 resource "helm_release" "sealed-secrets" {
   depends_on = [
+    kubernetes_cluster_role_binding.tiller,
     var.module_depends_on
   ]
   name          = "sealed-secrets"
   repository    = "stable"
   chart         = "sealed-secrets"
-  version       = "1.8.0"
+  version       = "1.4.0"
   namespace     = "kube-system"
   recreate_pods = true
 
