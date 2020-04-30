@@ -1,6 +1,6 @@
 #Global helm chart repo
-data "helm_repository" "incubator" {
-  name = "incubator"
+data "helm_repository" "stable" {
+  name = "stable"
   url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
 }
 
@@ -10,9 +10,8 @@ resource "helm_release" "jenkins" {
   ]   
   
   name          = "jenkins"
-  repository    = "stable"
+  repository    = data.helm_repository.stable.metadata[0].name
   chart         = "jenkins"
-  version       = "1.9.16"
   namespace     = "jenkins"
   recreate_pods = true
 

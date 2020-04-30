@@ -4,12 +4,13 @@ controller:
   service:
     annotations:
       service.beta.kubernetes.io/aws-load-balancer-type: nlb
+      service.beta.kubernetes.io/aws-load-balancer-internal: false
   stats:
     enabled: true
   metrics:
     port: 10254
     # if this port is changed, change healthz-port: in extraArgs: accordingly
-    enabled: true
+    enabled: false
 
     service:
       annotations:

@@ -3,6 +3,11 @@ variable "module_depends_on" {
   default = []
 }
 
+variable "aws_private" {
+  type        = string
+  description = "Use private or public infrastructure"
+}
+
 #Deploy environment name
 variable "environment" {
   type        = string
@@ -16,6 +21,16 @@ variable "project" {
 
 variable "cluster_name" {
   description = "Name of the kubernetes cluster"
+}
+
+variable "vpc_id" {
+  type        = string
+  description = "VPC id"
+}
+
+variable "mainzoneid" {
+  type        = string
+  description = "ID of main route53 zone if exist"
 }
 
 variable "config_path" {

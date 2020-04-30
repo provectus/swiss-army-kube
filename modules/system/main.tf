@@ -1,29 +1,42 @@
-#Global helm chart repo
-data "helm_repository" "incubator" {
-  name = "incubator"
-  url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
+data "aws_region" "current" {}
+
+
+data "aws_vpc" "main" {
+  id = var.vpc_id
 }
-
-#Cert-manager chart repo
-data "helm_repository" "jetstack" {
-  name = "jetstack"
-  url  = "https://charts.jetstack.io"
-}
-
-data "aws_region" "current" {
-
-}
-
 
 # Route53 hostedzone
 # TODO: need create ns records in main zone
 resource "aws_route53_zone" "cluster" {
-  count = "${length(var.domains)}"
-  name  = "${element(var.domains, count.index)}"
+  count = var.aws_private == "false" ? length(var.domains) : 0
+  name  = element(var.domains, count.index)
 
   tags = {
     Environment = var.environment
     Project     = var.project
+  }
+}
+
+resource "aws_route53_record" "cluster-ns" {
+  count = var.aws_private == "false" ? length(var.domains) : 0
+  zone_id = var.mainzoneid
+  name    = element(var.domains, count.index)
+  type    = "NS"
+  ttl     = "30"
+
+  records = [
+    "${aws_route53_zone.cluster[count.index].name_servers.0}",
+    "${aws_route53_zone.cluster[count.index].name_servers.1}",
+    "${aws_route53_zone.cluster[count.index].name_servers.2}",
+    "${aws_route53_zone.cluster[count.index].name_servers.3}",
+  ]
+}
+
+resource "aws_route53_zone" "private" {
+  count = var.aws_private == "true" ? length(var.domains) : 0
+  name = element(var.domains, count.index)
+  vpc {
+    vpc_id = data.aws_vpc.main.id
   }
 }
 
@@ -33,7 +46,7 @@ resource "aws_iam_openid_connect_provider" "cluster" {
     var.module_depends_on
   ]
   client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = ["9E99A48A9960B14926BB7F3B02E22DA2B0AB7280"]
+  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da2b0ab7280"]
   url             = var.cluster_oidc_url
 }
 
@@ -157,23 +170,6 @@ resource "aws_iam_role_policy_attachment" "external_dns" {
   policy_arn = aws_iam_policy.cert_manager.arn
 }
 
-//TODO: нужен таймаут после создания екс - секунд 30 (не успевают стартануть api). Попробовать создавать другие штуки вроде aws_iam_policy
-# Create service account for tiller
-resource "kubernetes_service_account" "tiller" {
-  depends_on = [
-    var.module_depends_on,
-    aws_iam_policy.cert_manager,
-    aws_iam_role.cert_manager
-  ]
-
-  metadata {
-    name      = "tiller"
-    namespace = "kube-system"
-  }
-
-  automount_service_account_token = true
-}
-
 resource "kubernetes_cluster_role_binding" "tiller" {
   depends_on = [
     kubernetes_service_account.tiller,
@@ -197,49 +193,24 @@ resource "kubernetes_cluster_role_binding" "tiller" {
   }
 }
 
-# Init helm for update tiller
-resource "null_resource" "helm_init" {
+//TODO: нужен таймаут после создания екс - секунд 30 (не успевают стартануть api). Попробовать создавать другие штуки вроде aws_iam_policy
+# Create service account for tiller
+resource "kubernetes_service_account" "tiller" {
   depends_on = [
-    var.module_depends_on,
-    kubernetes_cluster_role_binding.tiller
+    var.module_depends_on
   ]
-  provisioner "local-exec" {
-    command = <<EOT
-      helm --kubeconfig ${var.config_path} init --upgrade;
-      sleep 30
-    EOT  
+
+  metadata {
+    name      = "tiller"
+    namespace = "kube-system"
   }
+
+  automount_service_account_token = true
 }
 
-# Deploy external_dns to manage route53 domain zone
-resource "helm_release" "external-dns" {
-  depends_on = [
-    var.module_depends_on,
-    aws_iam_role.cert_manager,
-    kubernetes_cluster_role_binding.tiller
-  ]
-
-  name       = "external-dns"
-  repository = "stable"
-  chart      = "external-dns"
-  version    = "v2.11.0"
-  namespace  = "kube-system"
-
-  values = [
-    file("${path.module}/values/external-dns.yaml"),
-  ]
-
-  dynamic "set" {
-    for_each = var.domains
-    content {
-      name  = "domainFilters[${set.key}]"
-      value = "${set.value}"
-    }
-  }
-
-  set {
-    name  = "aws.region"
-    value = data.aws_region.current.name
+resource "null_resource" "wait-tiller"{
+    provisioner "local-exec" {
+    command = "sleep 15"
   }
 }
 
@@ -269,10 +240,65 @@ resource "kubernetes_namespace" "cert-manager" {
   }
 }
 
+# Init helm for update tiller
+resource "null_resource" "helm_init" {
+  depends_on = [
+    var.module_depends_on,
+    kubernetes_cluster_role_binding.tiller
+  ]
+  provisioner "local-exec" {
+    command = "helm --kubeconfig ${var.config_path} --service-account tiller init --upgrade"
+  }
+}
+
+resource "null_resource" "wait-helm"{
+    provisioner "local-exec" {
+    command = "sleep 15"
+  }
+}
+
+# Install Bitnami Helm repository
+data "helm_repository" "bitnami" {
+  name = "bitnami"
+  url  = "https://charts.bitnami.com/bitnami"
+}
+
+# Deploy external_dns to manage route53 domain zone
+resource "helm_release" "external-dns" {
+  depends_on = [
+    var.module_depends_on,
+    aws_iam_role.cert_manager,
+    null_resource.wait-helm
+  ]
+  repository = data.helm_repository.bitnami.metadata[0].name
+  name       = "external-dns"
+  chart      = "external-dns"
+  version    = "2.22.0"
+  namespace  = "kube-system"
+
+  values = [
+    file("${path.module}/values/external-dns.yaml"),
+  ]
+
+  dynamic "set" {
+    for_each = var.domains
+    content {
+      name  = "domainFilters[${set.key}]"
+      value = set.value
+    }
+  }
+
+  set {
+    name  = "aws.region"
+    value = data.aws_region.current.name
+  }
+}
+
 # Deploy clusterissuer with route53 dns challenge
 resource "helm_release" "issuers" {
   depends_on = [
     null_resource.cert-manager-crd,
+    null_resource.wait-helm,
     kubernetes_namespace.cert-manager,
     aws_iam_role.cert_manager,
     var.module_depends_on
@@ -303,6 +329,7 @@ resource "helm_release" "cert-manager" {
     helm_release.issuers,
     kubernetes_namespace.cert-manager,
     kubernetes_cluster_role_binding.tiller,
+    null_resource.wait-helm,
     var.module_depends_on
   ]
 
@@ -318,36 +345,40 @@ resource "helm_release" "cert-manager" {
   ]
 }
 
+#Stable chart repository
+data "helm_repository" "stable" {
+  name = "stable"
+  url  = "https://kubernetes-charts.storage.googleapis.com"
+}
+
 # Deploy kube-state-metrics chart
-resource "helm_release" "kube-state-metrics" {
+resource "helm_release" "metrics-server" {
   depends_on = [
     helm_release.issuers,
     helm_release.cert-manager,
-    kubernetes_cluster_role_binding.tiller,
+    null_resource.wait-helm,
     var.module_depends_on
-  ]
+    ]
 
   name          = "state"
-  repository    = "stable"
-  chart         = "kube-state-metrics"
-  version       = "2.4.1"
+  repository    = data.helm_repository.stable.metadata[0].name
+  chart         = "metrics-server"
+  version       = "2.11.1"
   namespace     = "kube-system"
-  recreate_pods = true
 
 }
 
 # Deploy saled-secrets
 resource "helm_release" "sealed-secrets" {
   depends_on = [
-    kubernetes_cluster_role_binding.tiller,
-    var.module_depends_on
+    var.module_depends_on,
+    null_resource.wait-helm
   ]
   name          = "sealed-secrets"
-  repository    = "stable"
+  repository    = data.helm_repository.stable.metadata[0].name
   chart         = "sealed-secrets"
-  version       = "1.4.0"
+  version       = "1.9.0"
   namespace     = "kube-system"
-  recreate_pods = true
 
   values = [
     "${file("${path.module}/values/sealed-secrets.yaml")}",
