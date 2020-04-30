@@ -1,6 +1,10 @@
 # Prerequsite
 
-Helm v2 - `brew install helm@2`
+Helm v2
+`brew install helm@2`
+`cd /usr/local/bin`
+`ln -s /usr/local/opt/helm@2/bin/tiller tiller`
+`ln -s /usr/local/opt/helm@2/bin/helm helm`
 
 kubectl - `brew install kubernetes-cli`
 
@@ -42,3 +46,16 @@ For destroy some module just remove it from modules.tf and run
 
 `terraform plan -out plan && terraform apply plan`
 
+
+## Troubleshooting
+Enable terraform logs verbose
+`export TF_LOG=trace`
+
+Remove corrupt state 
+`terraform state rm module.loki.helm_release.loki-stack`
+
+Refresh tfstate
+`terraform refresh -var-file example.tfvars`
+
+Recreate resources
+`terraform taint module.system.null_resource.helm_init`
