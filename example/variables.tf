@@ -28,6 +28,16 @@ variable "config_path" {
   description = "The kubernetes config file path"
 }
 
+variable "aws_private" {
+  type        = string
+  description = "Use private zone or public"
+}
+ 
+variable "mainzoneid" {
+  type        = string
+  description = "ID of main route53 zone if exist"
+}
+
 variable "domains" {
   description = "domains name for ingress"
 }

@@ -4,7 +4,15 @@ variable "module_depends_on" {
 }
 
 variable "cluster_name" {
+  type        = string
   description = "Name of the kubernetes cluster"
+  default     = "test"
+}
+
+variable "aws_private" {
+  type        = string
+  description = "Use private or public infrastructure"
+  default     = "true"
 }
 
 variable "domains" {

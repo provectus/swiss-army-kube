@@ -1,7 +1,16 @@
-#Global helm chart repo
-data "helm_repository" "incubator" {
-  name = "incubator"
-  url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
+data "helm_repository" "stable" {
+  name = "stable"
+  url  = "https://kubernetes-charts.storage.googleapis.com"
+}
+
+# Create namespace ingress-system
+resource "kubernetes_namespace" "ingress-system" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  metadata {  
+    name = "ingress-system"
+  }
 }
 
 resource "helm_release" "nginx-ingress" {
@@ -9,14 +18,18 @@ resource "helm_release" "nginx-ingress" {
     var.module_depends_on
   ]
   name       = "nginx"
-  repository = "stable"
+  repository = data.helm_repository.stable.metadata[0].name
   chart      = "nginx-ingress"
-  version    = "1.33.0" 
   namespace  = "ingress-system"
 
   values = [
     file("${path.module}/values/nginx-ingress.yaml"),
   ]
+
+  set {
+    name = "controller.service.annotations.service.beta.kubernetes.io"
+    value = var.aws_private =="true" ?  "aws-load-balancer-internal=true" : "aws-load-balancer-internal=false"
+  }
 }
 
 
@@ -50,9 +63,8 @@ resource "helm_release" "oauth2-proxy" {
   ]
 
   name          = "oauth2-proxy"
-  repository    = "stable"
+  repository    = data.helm_repository.stable.metadata[0].name
   chart         = "oauth2-proxy"
-  version       = "2.1.1"
   namespace     = "ingress-system"
   recreate_pods = true
 
