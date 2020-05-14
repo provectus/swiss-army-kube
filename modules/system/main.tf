@@ -332,6 +332,12 @@ resource "helm_release" "issuers" {
   }
 }
 
+# Install jetstack Helm repository
+data "helm_repository" "jetstack" {
+  name = "jetstack"
+  url  = "https://charts.jetstack.io"
+}
+
 # Deploy cert-manager (ingress certificate manager)
 resource "helm_release" "cert-manager" {
   depends_on = [
@@ -343,7 +349,7 @@ resource "helm_release" "cert-manager" {
   ]
 
   name          = "cert-manager"
-  repository    = "jetstack"
+  repository    = data.helm_repository.jetstack.metadata[0].name
   chart         = "cert-manager"
   version       = "v0.13.1"
   namespace     = kubernetes_namespace.cert-manager.metadata[0].name

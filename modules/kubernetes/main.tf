@@ -26,6 +26,12 @@ module "eks" {
      additional_userdata = "sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm && sudo systemctl enable amazon-ssm-agent && sudo systemctl start amazon-ssm-agent"
   }
 
+  # Note:
+  #   If you add here worker groups with GPUs or some other custom resources make sure 
+  #   to start the node in ASG manually once or cluster autoscaler doesn't find the resources.
+  #
+  #   After that autoscaler is able to see the resources on that ASG.
+  #
   worker_groups = [
     {
       name                 = "on-demand-1"
