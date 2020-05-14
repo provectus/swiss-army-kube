@@ -11,6 +11,10 @@ resource "aws_route53_zone" "cluster" {
   count = var.aws_private == "false" ? length(var.domains) : 0
   name  = element(var.domains, count.index)
 
+  lifecycle {
+    prevent_destroy = true
+  }
+
   tags = {
     Environment = var.environment
     Project     = var.project
@@ -30,6 +34,10 @@ resource "aws_route53_record" "cluster-ns" {
     "${aws_route53_zone.cluster[count.index].name_servers.2}",
     "${aws_route53_zone.cluster[count.index].name_servers.3}",
   ]
+
+  lifecycle {
+    prevent_destroy = true
+  }  
 }
 
 resource "aws_route53_zone" "private" {
@@ -38,6 +46,10 @@ resource "aws_route53_zone" "private" {
   vpc {
     vpc_id = data.aws_vpc.main.id
   }
+
+  lifecycle {
+    prevent_destroy = true
+  }  
 }
 
 # OIDC cluster EKS settings
@@ -208,9 +220,23 @@ resource "kubernetes_service_account" "tiller" {
   automount_service_account_token = true
 }
 
-resource "null_resource" "wait-tiller"{
+# Init helm for update tiller
+resource "null_resource" "helm_init" {
+  depends_on = [
+    var.module_depends_on,
+    kubernetes_cluster_role_binding.tiller
+  ]
+  provisioner "local-exec" {
+    command = "helm --kubeconfig ${var.config_path} --service-account tiller init --upgrade"
+  }
+}
+
+resource "null_resource" "wait-helm"{
+  depends_on = [
+    null_resource.helm_init
+  ]
     provisioner "local-exec" {
-    command = "sleep 15"
+    command = "sleep 30"
   }
 }
 
@@ -237,23 +263,6 @@ resource "kubernetes_namespace" "cert-manager" {
     }
 
     name = "cert-manager"
-  }
-}
-
-# Init helm for update tiller
-resource "null_resource" "helm_init" {
-  depends_on = [
-    var.module_depends_on,
-    kubernetes_cluster_role_binding.tiller
-  ]
-  provisioner "local-exec" {
-    command = "helm --kubeconfig ${var.config_path} --service-account tiller init --upgrade"
-  }
-}
-
-resource "null_resource" "wait-helm"{
-    provisioner "local-exec" {
-    command = "sleep 15"
   }
 }
 
