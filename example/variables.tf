@@ -32,7 +32,7 @@ variable "aws_private" {
   type        = string
   description = "Use private zone or public"
 }
- 
+
 variable "mainzoneid" {
   type        = string
   description = "ID of main route53 zone if exist"
@@ -53,7 +53,7 @@ variable "admin_arns" {
     username = string
     groups   = list(string)
   }))
-  default     = []
+  default = []
 }
 
 variable "cluster_version" {

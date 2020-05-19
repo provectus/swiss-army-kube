@@ -34,7 +34,7 @@ resource "helm_release" "nginx-ingress" {
 
 
 # Deploy oauth2-proxy if github-auth set true
-resource "kubernetes_secret" "oauth2-proxy" {
+resource "kubernetes_secret" "oauth2-proxy-secret" {
   count = var.github-auth == "true" ? 1 : 0
   depends_on = [
     var.module_depends_on,
@@ -42,13 +42,13 @@ resource "kubernetes_secret" "oauth2-proxy" {
   ]
 
   metadata {
-    name      = "oauth-proxy-secret"
+    name      = "oauth2-proxy-secret"
     namespace = "ingress-system"
   }
 
   data = {
-    github-client-id : var.github-client-id
-    github-client-secret : var.github-client-secret
+    client-id : var.github-client-id
+    client-secret : var.github-client-secret
     cookie-secret : var.cookie-secret
   }
 }
@@ -58,7 +58,7 @@ resource "helm_release" "oauth2-proxy" {
   count = var.github-auth == "true" ? 1 : 0
   depends_on = [
     var.module_depends_on,
-    kubernetes_secret.oauth2-proxy,
+    kubernetes_secret.oauth2-proxy-secret,
     helm_release.nginx-ingress
   ]
 
