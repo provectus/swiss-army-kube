@@ -2,8 +2,8 @@
 aws_region = "us-west-2"
 
 # Deploy private mode (Internal route 53, don't use Gateway etc) (true or false)
-aws_private  = "false"
- 
+aws_private = "false"
+
 # List of aws region availability_zones
 availability_zones = ["us-west-2b", "us-west-2a", "us-west-2c"]
 
@@ -30,13 +30,13 @@ network = 10
 
 # ARNs of users which would have admin permissions.
 admin_arns = [
-    {
-      userarn  = "arn:aws:iam::245582572290:user/dkharlamov"
-      username = "dkharlamov"
-      groups   = ["system:masters"]
-    }, 
+  {
+    userarn  = "arn:aws:iam::245582572290:user/dkharlamov"
+    username = "dkharlamov"
+    groups   = ["system:masters"]
+  },
 ]
- 
+
 # Type and number of worker node
 on_demand_max_cluster_size = "2"
 on_demand_min_cluster_size = "2"

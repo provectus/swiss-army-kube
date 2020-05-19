@@ -32,16 +32,16 @@ module "system" {
   module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name]
   source            = "../modules/system"
 
-  environment         = var.environment
-  project             = var.project
-  cluster_name        = var.cluster_name
-  vpc_id              = module.network.vpc_id
-  aws_private         = var.aws_private
-  domains             = var.domains
-  mainzoneid          = var.mainzoneid
-  config_path         = "${path.module}/kubeconfig_${var.cluster_name}"
-  cert_manager_email  = var.cert_manager_email
-  cluster_oidc_url    = module.kubernetes.cluster_oidc_url
+  environment        = var.environment
+  project            = var.project
+  cluster_name       = var.cluster_name
+  vpc_id             = module.network.vpc_id
+  aws_private        = var.aws_private
+  domains            = var.domains
+  mainzoneid         = var.mainzoneid
+  config_path        = "${path.module}/kubeconfig_${var.cluster_name}"
+  cert_manager_email = var.cert_manager_email
+  cluster_oidc_url   = module.kubernetes.cluster_oidc_url
 }
 
 # Ingress
@@ -128,11 +128,11 @@ module "nginx" {
 #}
 
 module "jenkins" {
-  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
- source = "../modules/cicd/jenkins"
+  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
+  source            = "../modules/cicd/jenkins"
 
   domains          = var.domains
   jenkins_password = var.jenkins_password
 
-  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
+  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
 }
