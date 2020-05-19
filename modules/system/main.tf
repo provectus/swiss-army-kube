@@ -8,12 +8,12 @@ data "aws_vpc" "main" {
 # Route53 hostedzone
 # TODO: need create ns records in main zone
 resource "aws_route53_zone" "cluster" {
+  depends_on = [
+    var.module_depends_on
+  ]
+
   count = var.aws_private == "false" ? length(var.domains) : 0
   name  = element(var.domains, count.index)
-
-  lifecycle {
-    prevent_destroy = true
-  }
 
   tags = {
     Environment = var.environment
@@ -22,6 +22,9 @@ resource "aws_route53_zone" "cluster" {
 }
 
 resource "aws_route53_record" "cluster-ns" {
+  depends_on = [
+    var.module_depends_on
+  ]  
   count = var.aws_private == "false" ? length(var.domains) : 0
   zone_id = var.mainzoneid
   name    = element(var.domains, count.index)
@@ -35,21 +38,17 @@ resource "aws_route53_record" "cluster-ns" {
     "${aws_route53_zone.cluster[count.index].name_servers.3}",
   ]
 
-  lifecycle {
-    prevent_destroy = true
-  }  
 }
 
 resource "aws_route53_zone" "private" {
+  depends_on = [
+    var.module_depends_on
+  ]  
   count = var.aws_private == "true" ? length(var.domains) : 0
   name = element(var.domains, count.index)
   vpc {
     vpc_id = data.aws_vpc.main.id
-  }
-
-  lifecycle {
-    prevent_destroy = true
-  }  
+  } 
 }
 
 # OIDC cluster EKS settings
@@ -182,6 +181,32 @@ resource "aws_iam_role_policy_attachment" "external_dns" {
   policy_arn = aws_iam_policy.cert_manager.arn
 }
 
+
+# Wait initial eks 
+resource "null_resource" "wait-eks" {
+  depends_on = [
+    var.module_depends_on
+  ]  
+  provisioner "local-exec" {
+    command = "until kubectl --kubeconfig ${path.root}/${var.config_path} -n kube-system get pods >/dev/null 2>&1;do echo 'Waiting for EKS API';sleep 5;done"
+  }
+}
+
+# Create service account for tiller
+resource "kubernetes_service_account" "tiller" {
+  depends_on = [
+    var.module_depends_on,
+    null_resource.wait-eks
+  ]
+
+  metadata {
+    name      = "tiller"
+    namespace = "kube-system"
+  }
+
+  automount_service_account_token = false
+}
+
 resource "kubernetes_cluster_role_binding" "tiller" {
   depends_on = [
     kubernetes_service_account.tiller,
@@ -205,21 +230,6 @@ resource "kubernetes_cluster_role_binding" "tiller" {
   }
 }
 
-//TODO: нужен таймаут после создания екс - секунд 30 (не успевают стартануть api). Попробовать создавать другие штуки вроде aws_iam_policy
-# Create service account for tiller
-resource "kubernetes_service_account" "tiller" {
-  depends_on = [
-    var.module_depends_on
-  ]
-
-  metadata {
-    name      = "tiller"
-    namespace = "kube-system"
-  }
-
-  automount_service_account_token = true
-}
-
 # Init helm for update tiller
 resource "null_resource" "helm_init" {
   depends_on = [
@@ -227,7 +237,7 @@ resource "null_resource" "helm_init" {
     kubernetes_cluster_role_binding.tiller
   ]
   provisioner "local-exec" {
-    command = "helm --kubeconfig ${var.config_path} --service-account tiller init --upgrade"
+    command = "helm --kubeconfig ${var.config_path} --service-account tiller init --upgrade --wait"
   }
 }
 
@@ -243,7 +253,7 @@ resource "null_resource" "wait-helm"{
 # Deploy custom resources for cert-manager
 resource "null_resource" "cert-manager-crd" {
   depends_on = [
-    kubernetes_cluster_role_binding.tiller,
+    null_resource.wait-helm,
     var.module_depends_on
   ]
   provisioner "local-exec" {
@@ -342,8 +352,6 @@ data "helm_repository" "jetstack" {
 resource "helm_release" "cert-manager" {
   depends_on = [
     helm_release.issuers,
-    kubernetes_namespace.cert-manager,
-    kubernetes_cluster_role_binding.tiller,
     null_resource.wait-helm,
     var.module_depends_on
   ]
@@ -369,8 +377,6 @@ data "helm_repository" "stable" {
 # Deploy kube-state-metrics chart
 resource "helm_release" "metrics-server" {
   depends_on = [
-    helm_release.issuers,
-    helm_release.cert-manager,
     null_resource.wait-helm,
     var.module_depends_on
     ]

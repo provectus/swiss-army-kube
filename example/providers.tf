@@ -12,12 +12,12 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
   token                  = data.aws_eks_cluster_auth.cluster.token
   load_config_file       = false
-  version                = "1.10.0"
+  version                = ">=1.10.0"
 }
 
 provider "helm" {
   version         = "0.10"
-  install_tiller  = "true"
+  install_tiller  = "false"
   service_account = module.system.kubernetes_service_account.metadata.0.name
   namespace       = module.system.kubernetes_service_account.metadata.0.namespace
 
