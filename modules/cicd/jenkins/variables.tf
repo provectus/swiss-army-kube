@@ -16,3 +16,30 @@ variable "config_path" {
   description = "location of the kubeconfig file"
   default     = "~/.kube/config"
 }
+
+#Deploy environment name
+variable "environment" {
+  type        = string
+  description = "Environment Use in tags and annotations for identify EKS cluster"
+}
+
+variable "project" {
+  type        = string
+  description = "Project Use in tags and annotations for identify EKS cluster"
+}
+
+variable "cluster_name" {
+  description = "Name of the kubernetes cluster"
+}
+
+variable "cluster_oidc_arn" {
+  type        = string
+  description = "OIDC EKS cluster arn"
+  default     = ""
+}
+
+variable "cluster_oidc_url" {
+  type        = string
+  description = "OIDC EKS cluster endpoint"
+  default     = ""
+}

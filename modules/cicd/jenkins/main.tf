@@ -51,3 +51,49 @@ resource "helm_release" "jenkins" {
     file("${path.module}/values.yml")
   ]
 }
+
+# Enabling IAM Roles for Service Accounts
+data "aws_caller_identity" "current" {}
+
+data "aws_iam_policy_document" "jenkins_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    effect  = "Allow"
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(var.cluster_oidc_url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:jenkins:jenkins"]
+    }
+
+    principals {
+      identifiers = [var.cluster_oidc_arn]
+      type        = "Federated"
+    }
+  }
+}
+
+# Create role for jenkins
+resource "aws_iam_role" "jenkins" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  assume_role_policy = data.aws_iam_policy_document.jenkins_assume_role_policy.json
+  name               = "${var.cluster_name}_jenkins"
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project
+  }
+
+}
+
+# Attach policy external_dns to role external_dns
+resource "aws_iam_role_policy_attachment" "jenkins" {
+  depends_on = [
+    var.module_depends_on,
+    aws_iam_role.jenkins
+  ]
+  role       = aws_iam_role.jenkins.name
+  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+}
