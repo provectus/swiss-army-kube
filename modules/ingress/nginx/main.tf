@@ -73,7 +73,7 @@ resource "helm_release" "oauth2-proxy" {
   ]
 
   set {
-    name = "config.existingSecret"
+    name  = "config.existingSecret"
     value = kubernetes_secret.oauth2-proxy-secret[0].metadata[0].name
   }
 
