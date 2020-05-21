@@ -147,12 +147,56 @@ resource "aws_iam_role" "jenkins_master" {
   }
 }
 
-# Attach S3 policy to role jenkins_agent
+# Change this for needed policy to attach it to jenkins agent role
+data "aws_iam_policy_document" "empty_agent" {
+  statement {
+    actions   = ["*"]
+    resources = ["*"]
+    effect    = "Deny"
+  }
+}
+
+resource "aws_iam_policy" "empty_agent" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  name   = "${var.cluster_name}_empty_agent"
+  policy = data.aws_iam_policy_document.empty_agent.json
+}
+
+# Change this for needed policy to attach it to jenkins master role
+data "aws_iam_policy_document" "empty_master" {
+  statement {
+    actions   = ["*"]
+    resources = ["*"]
+    effect    = "Deny"
+  }
+}
+
+resource "aws_iam_policy" "empty_master" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  name   = "${var.cluster_name}_empty_master"
+  policy = data.aws_iam_policy_document.empty_master.json
+}
+
+# Attach policy to role jenkins_agent
 resource "aws_iam_role_policy_attachment" "jenkins_agent" {
   depends_on = [
     var.module_depends_on,
     aws_iam_role.jenkins_agent
   ]
   role       = aws_iam_role.jenkins_agent.name
-  policy_arn = "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+  policy_arn = aws_iam_policy.empty_agent.arn
+}
+
+# Attach policy to role jenkins_master
+resource "aws_iam_role_policy_attachment" "jenkins_master" {
+  depends_on = [
+    var.module_depends_on,
+    aws_iam_role.jenkins_master
+  ]
+  role       = aws_iam_role.jenkins_master.name
+  policy_arn = aws_iam_policy.empty_master.arn
 }
