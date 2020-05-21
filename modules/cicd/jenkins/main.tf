@@ -28,7 +28,7 @@ resource "helm_release" "jenkins" {
 
   set {
     name  = "serviceAccountAgent.name"
-    value = "jenkins_agent"
+    value = "jenkins-agent"
   }
 
   set {
@@ -39,6 +39,21 @@ resource "helm_release" "jenkins" {
   set_string {
     name  = "serviceAccountAgent.annotations.eks\\.amazonaws\\.com/role-arn"
     value = "${aws_iam_role.jenkins_agent.arn}"
+  }
+
+  set {
+    name  = "serviceAccount.name"
+    value = "jenkins-master"
+  }
+
+  set {
+    name  = "serviceAccount.create"
+    value = true
+  }
+
+  set_string {
+    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+    value = "${aws_iam_role.jenkins_master.arn}"
   }
 
 //TODO: fix it for multi domains
@@ -68,8 +83,6 @@ resource "helm_release" "jenkins" {
 }
 
 # Enabling IAM Roles for Service Accounts
-data "aws_caller_identity" "current" {}
-
 data "aws_iam_policy_document" "jenkins_agent_assume_role_policy" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -78,7 +91,25 @@ data "aws_iam_policy_document" "jenkins_agent_assume_role_policy" {
     condition {
       test     = "StringEquals"
       variable = "${replace(var.cluster_oidc_url, "https://", "")}:sub"
-      values   = ["system:serviceaccount:jenkins:jenkins_agent"]
+      values   = ["system:serviceaccount:jenkins:jenkins-agent"]
+    }
+
+    principals {
+      identifiers = [var.cluster_oidc_arn]
+      type        = "Federated"
+    }
+  }
+}
+
+data "aws_iam_policy_document" "jenkins_master_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    effect  = "Allow"
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(var.cluster_oidc_url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:jenkins:jenkins-master"]
     }
 
     principals {
@@ -100,7 +131,20 @@ resource "aws_iam_role" "jenkins_agent" {
     Environment = var.environment
     Project     = var.project
   }
+}
 
+# Create role for jenkins master
+resource "aws_iam_role" "jenkins_master" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  assume_role_policy = data.aws_iam_policy_document.jenkins_master_assume_role_policy.json
+  name               = "${var.cluster_name}_jenkins_master"
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project
+  }
 }
 
 # Attach S3 policy to role jenkins_agent

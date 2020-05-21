@@ -495,7 +495,7 @@ agent:
     apiVersion: v1
     kind: Pod
     spec:
-      serviceAccountName: jenkins_agent
+      serviceAccountName: jenkins-agent
   #     tolerations:
   #     - key: "key"
   #       operator: "Equal"
