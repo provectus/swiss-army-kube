@@ -38,7 +38,7 @@ resource "helm_release" "jenkins" {
 
   set_string {
     name  = "serviceAccountAgent.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = "${aws_iam_role.jenkins_agent.arn}"
+    value = aws_iam_role.jenkins_agent.arn
   }
 
   set {
@@ -53,7 +53,7 @@ resource "helm_release" "jenkins" {
 
   set_string {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = "${aws_iam_role.jenkins_master.arn}"
+    value = aws_iam_role.jenkins_master.arn
   }
 
 //TODO: fix it for multi domains
