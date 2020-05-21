@@ -8,7 +8,7 @@ resource "kubernetes_namespace" "ingress-system" {
   depends_on = [
     var.module_depends_on
   ]
-  metadata {  
+  metadata {
     name = "ingress-system"
   }
 }
@@ -71,6 +71,11 @@ resource "helm_release" "oauth2-proxy" {
   values = [
     "${file("${path.module}/values/oauth2-proxy.yaml")}",
   ]
+
+  set {
+    name  = "config.existingSecret"
+    value = kubernetes_secret.oauth2-proxy-secret[0].metadata[0].name
+  }
 
   set {
     name  = "extraArgs.cookie-domain"
