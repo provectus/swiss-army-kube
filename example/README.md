@@ -21,14 +21,14 @@ terraform - `brew install terraform`
 
   providers.tf - list of providers and their values
 
-  variables.tf - variables used in modules
+  variables.tf - definition of variables used in modules and their default values
 
-  terraform.tfvars - list of values for variables. Customize it for your project data !!!
+  terraform.tfvars - list of values for variables. **Customize it for your project data!**
 
 # Deploy cluster
-Change terraform.tfvars, chose modules in main.tf and run:
+Change terraform.tfvars, choose modules in modules.tf and do the following:
 
-Prepare and downloads module
+Prepare and download modules
 
 `terraform init --upgrade=true`
 
@@ -36,13 +36,17 @@ Plan and test deployment
 
 `terraform plan -out plan`
 
-Deploy cluster and helm chart
+Review plan if needed
+
+`terraform show plan`
+
+Deploy cluster and helm charts
 
 `terraform apply plan`
 
-## Work with cluster
+## Working with cluster
 
-For destroy some module just remove it from modules.tf and run 
+To destroy some module just remove them from modules.tf and run 
 
 `terraform plan -out plan && terraform apply plan`
 

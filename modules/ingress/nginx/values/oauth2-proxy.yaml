@@ -3,7 +3,7 @@ config:
   # # python -c 'import os,base64; print base64.b64encode(os.urandom(16))'
 
   ### oauth2-proxy-secrets - is kubernetes secret, created manually
-  existingSecret: "oauth2-proxy-secrets"
+  existingSecret: "enter-secret-name"
   configFile: |-
     pass_basic_auth = false
     pass_access_token = true

@@ -4,14 +4,15 @@
 
 ## Usage
 - Checkout repo
-- `cd swiss-army-kube/example` or rename example for your environment name and cd
+- `cd swiss-army-kube/example` or rename "example" for your environment name and `cd`
+- `mv example.tfvars terraform.tfvars`
 - Edit terraform.tfvars
 - Run `terraform init`
 - Run `terraform plan -out=plan` and review
 - Run `terraform apply plan`
 
 ## Structure
-This repository provides a minimal set of resources, which may be required to comfortably start developing the process of a new IaC project:
+This repository provides a minimal set of resources, which are helpful to comfortably start development of a new IaC project:
  - `modules` - Terraform modules.
  - `charts`  - Local helm repository for charts which could not be retrieved from public repositories.
- - `example` - Example project, include some modules and variables to deploy kubernetes EKS and install charts. Use as template.
+ - `example` - Example project, include some modules and variables to deploy AWS EKS and install charts. Use as a template.
