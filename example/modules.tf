@@ -140,5 +140,8 @@ module "jenkins" {
   cluster_oidc_url   = module.kubernetes.cluster_oidc_url
   cluster_oidc_arn   = module.system.oidc_arn
 
+  master_policy      = var.master_policy
+  agent_policy       = var.agent_policy
+
   config_path = "${path.module}/kubeconfig_${var.cluster_name}"
 }

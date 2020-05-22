@@ -43,3 +43,13 @@ variable "cluster_oidc_url" {
   description = "OIDC EKS cluster endpoint"
   default     = ""
 }
+
+variable "agent_policy" {
+  description = "Policy attached to Jenkins agents IAM role"
+  default = ""
+}
+
+variable "master_policy" {
+  description = "Policy attached to Jenkins master IAM role"
+  default = ""
+}

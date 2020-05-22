@@ -64,6 +64,37 @@ elasticDataSize = "30Gi"
 
 #Jenkins
 jenkins_password = "password"
+# Uncomment to attach S3 readonly policy for Jenkins master and agent IAM roles, or customize to add needed policies
+//agent_policy = <<EOF
+//{
+//  "Version": "2012-10-17",
+//  "Statement": [
+//    {
+//      "Effect": "Allow",
+//      "Action": [
+//        "s3:Get*",
+//        "s3:List*"
+//      ],
+//      "Resource": "*"
+//    }
+//  ]
+//}
+//EOF
+//master_policy = <<EOF
+//{
+//  "Version": "2012-10-17",
+//  "Statement": [
+//    {
+//      "Effect": "Allow",
+//      "Action": [
+//        "s3:Get*",
+//        "s3:List*"
+//      ],
+//      "Resource": "*"
+//    }
+//  ]
+//}
+//EOF
 
 #Grafana
 grafana_password = "password"
