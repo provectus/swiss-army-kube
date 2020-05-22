@@ -6,8 +6,7 @@ data "helm_repository" "stable" {
 
 resource "helm_release" "jenkins" {
   depends_on = [
-    var.module_depends_on,
-    aws_iam_role_policy_attachment.jenkins_agent
+    var.module_depends_on
   ]   
   
   name          = "jenkins"
