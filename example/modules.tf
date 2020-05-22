@@ -134,5 +134,14 @@ module "jenkins" {
   domains          = var.domains
   jenkins_password = var.jenkins_password
 
+  environment        = var.environment
+  project            = var.project
+  cluster_name       = var.cluster_name
+  cluster_oidc_url   = module.kubernetes.cluster_oidc_url
+  cluster_oidc_arn   = module.system.oidc_arn
+
+  master_policy      = var.master_policy
+  agent_policy       = var.agent_policy
+
   config_path = "${path.module}/kubeconfig_${var.cluster_name}"
 }

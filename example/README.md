@@ -63,3 +63,7 @@ Refresh tfstate
 
 Recreate resources
 `terraform taint module.system.null_resource.helm_init`
+
+If `terraform destroy` command fails, run
+`destroy_fix.sh`
+and try `terraform destroy` again
