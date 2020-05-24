@@ -69,7 +69,7 @@ resource "helm_release" "oauth2-proxy" {
   recreate_pods = true
 
   values = [
-    "${file("${path.module}/values/oauth2-proxy.yaml")}",
+    file("${path.module}/values/oauth2-proxy.yaml"),
   ]
 
   set {
@@ -79,12 +79,12 @@ resource "helm_release" "oauth2-proxy" {
 
   set {
     name  = "extraArgs.cookie-domain"
-    value = join(", ", var.domains)
+    value = join(", ", formatlist(".%s", var.domains))
   }
 
   set {
     name  = "extraArgs.whitelist-domain"
-    value = join(", ", var.domains)
+    value = join(", ", formatlist(".%s", var.domains))
   }
 
   set {
