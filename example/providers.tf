@@ -3,7 +3,7 @@ terraform {
 }
 
 provider "aws" {
-  version = ">=2.50"
+  version = ">=2.52.0"
   region  = var.aws_region
 }
 
@@ -12,7 +12,7 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
   token                  = data.aws_eks_cluster_auth.cluster.token
   load_config_file       = false
-  version                = ">=1.10.0"
+  version                = ">=1.11.1"
 }
 
 provider "helm" {
@@ -31,7 +31,7 @@ provider "random" {
 }
 
 provider "local" {
-  version = "~> 1.2"
+  version = "~> 1.4"
 }
 
 provider "null" {

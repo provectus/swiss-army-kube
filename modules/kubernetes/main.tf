@@ -1,6 +1,6 @@
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "v8.2.0"
+  version         = "v12.0.0"
   cluster_version = var.cluster_version
   cluster_name    = var.cluster_name
   subnets         = var.subnets
@@ -40,7 +40,7 @@ module "eks" {
       asg_min_size         = var.on_demand_min_cluster_size
       asg_desired_capacity = var.on_demand_desired_capacity
       autoscaling_enabled  = false
-      kubelet_extra_args   = "--node-labels=kubernetes.io/lifecycle=normal"
+      kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=normal"
       suspended_processes  = ["AZRebalance"]
     },
     {
@@ -51,7 +51,7 @@ module "eks" {
       asg_min_size         = var.spot_min_cluster_size
       asg_desired_capacity = var.spot_desired_capacity
       autoscaling_enabled  = true
-      kubelet_extra_args   = "--node-labels=kubernetes.io/lifecycle=spot"
+      kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=spot"
       suspended_processes  = ["AZRebalance"]
     }
   ]
