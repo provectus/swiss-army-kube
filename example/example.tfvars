@@ -46,7 +46,7 @@ spot_max_cluster_size      = "2"
 spot_min_cluster_size      = "0"
 spot_desired_capacity      = "0"
 spot_instance_type         = "m5.large"
-cluster_version            = "1.15"
+cluster_version            = "1.16"
 
 #Cert-manager
 cert_manager_email = "dkharlamov@provectus.com"
