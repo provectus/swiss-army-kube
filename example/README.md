@@ -1,10 +1,6 @@
 # Prerequsite
 
-Helm v2
-`brew install helm@2`
-`cd /usr/local/bin`
-`ln -s /usr/local/opt/helm@2/bin/tiller tiller`
-`ln -s /usr/local/opt/helm@2/bin/helm helm`
+Helm v3 - `brew install helm`
 
 kubectl - `brew install kubernetes-cli`
 
