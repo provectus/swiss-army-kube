@@ -4,6 +4,16 @@ data "helm_repository" "incubator" {
   url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
 }
 
+# Create namespace monitoring
+resource "kubernetes_namespace" "monitoring" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  metadata {
+    name = "monitoring"
+  }
+}
+
 //TODO: при удалении выгрызать crd
 resource "helm_release" "monitoring" {
   depends_on = [

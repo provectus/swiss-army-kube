@@ -4,6 +4,16 @@ data "helm_repository" "incubator" {
   url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
 }
 
+# Create namespace logging
+resource "kubernetes_namespace" "logging" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  metadata {
+    name = "logging"
+  }
+}
+
 resource "helm_release" "elastic-stack" {
   depends_on = [
     var.module_depends_on
