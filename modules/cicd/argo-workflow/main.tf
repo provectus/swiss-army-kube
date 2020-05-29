@@ -11,7 +11,7 @@ resource "helm_release" "argo-workflow" {
   name          = "argo-workflow"
   repository    = "argo"
   chart         = "argo"
-  version       = "0.6.3"
+//  version       = "0.6.3"
   namespace     = "argo-workflow"
   recreate_pods = true
 

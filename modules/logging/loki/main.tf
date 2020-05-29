@@ -12,7 +12,7 @@ resource "helm_release" "loki-stack" {
   name       = "loki"
   repository = "loki"
   chart      = "loki-stack"
-  version    = "0.27.0"
+//  version    = "0.27.0"
   namespace  = "logging"
 
   values = [

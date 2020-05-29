@@ -11,7 +11,7 @@ resource "helm_release" "argo-events" {
   name          = "argo-events"
   repository    = "argo"
   chart         = "argo-events"
-  version       = "0.6.0"
+//  version       = "0.6.0"
   namespace     = "argo-events"
   recreate_pods = true
 
