@@ -12,7 +12,7 @@ resource "helm_release" "monitoring" {
   name       = "prometheus-operator"
   repository = "stable"
   chart      = "prometheus-operator"
-//  version    = "8.5.14"
+  version    = "8.5.14"
   namespace  = "monitoring"
 
   values = [

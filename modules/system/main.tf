@@ -199,7 +199,7 @@ resource "null_resource" "cert-manager-crd" {
     var.module_depends_on
   ]
   provisioner "local-exec" {
-    command = "kubectl --kubeconfig ${var.config_path} apply --validate=false -f https://github.com/jetstack/cert-manager/releases/download/v0.15.1/cert-manager.crds.yaml"
+    command = "kubectl --kubeconfig ${var.config_path} apply --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.11/deploy/manifests/00-crds.yaml"
   }
 }
 
@@ -234,7 +234,7 @@ resource "helm_release" "external-dns" {
   repository = data.helm_repository.bitnami.metadata[0].name
   name       = "external-dns"
   chart      = "external-dns"
-//  version    = "2.22.0"
+  version    = "2.22.0"
   namespace  = "kube-system"
 
   values = [
@@ -301,7 +301,7 @@ resource "helm_release" "cert-manager" {
   name          = "cert-manager"
   repository    = data.helm_repository.jetstack.metadata[0].name
   chart         = "cert-manager"
-  version       = "v0.15.1"
+  version       = "v0.14.3"
   namespace     = kubernetes_namespace.cert-manager.metadata[0].name
   recreate_pods = true
 
@@ -326,7 +326,7 @@ resource "helm_release" "metrics-server" {
   name          = "state"
   repository    = data.helm_repository.stable.metadata[0].name
   chart         = "metrics-server"
-//  version       = "2.11.1"
+  version       = "2.11.1"
   namespace     = "kube-system"
 
 }
@@ -340,7 +340,7 @@ resource "helm_release" "sealed-secrets" {
   name          = "sealed-secrets"
   repository    = data.helm_repository.stable.metadata[0].name
   chart         = "sealed-secrets"
-  version       = "1.10.1"
+  version       = "1.9.0"
   namespace     = "kube-system"
 
   values = [

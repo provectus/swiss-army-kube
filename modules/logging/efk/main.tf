@@ -12,7 +12,7 @@ resource "helm_release" "elastic-stack" {
   name       = "elastic"
   repository = "stable"
   chart      = "elastic-stack"
-//  version    = "1.8.0"
+  version    = "1.8.0"
   namespace  = "logging"
 
   values = [
