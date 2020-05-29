@@ -3,16 +3,6 @@ data "helm_repository" "argo" {
   url  = "https://argoproj.github.io/argo-helm"
 }
 
-# Create namespace argo-cd
-resource "kubernetes_namespace" "argo-cd" {
-  depends_on = [
-    var.module_depends_on
-  ]
-  metadata {
-    name = "argo-cd"
-  }
-}
-
 resource "helm_release" "argo-cd" {
   depends_on = [
     var.module_depends_on
