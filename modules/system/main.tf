@@ -301,7 +301,7 @@ resource "helm_release" "cert-manager" {
   name          = "cert-manager"
   repository    = data.helm_repository.jetstack.metadata[0].name
   chart         = "cert-manager"
-  version       = "v0.14.3"
+  version       = "v0.13.1"
   namespace     = kubernetes_namespace.cert-manager.metadata[0].name
   recreate_pods = true
 
