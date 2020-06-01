@@ -1,8 +1,3 @@
-data "helm_repository" "stable" {
-  name = "stable"
-  url  = "https://kubernetes-charts.storage.googleapis.com"
-}
-
 # Create namespace logging
 resource "kubernetes_namespace" "logging" {
   depends_on = [
@@ -19,7 +14,7 @@ resource "helm_release" "elastic-stack" {
   ]
 
   name       = "elastic"
-  repository = data.helm_repository.stable.metadata[0].name
+  repository = "https://kubernetes-charts.storage.googleapis.com"
   chart      = "elastic-stack"
   namespace  = "logging"
 

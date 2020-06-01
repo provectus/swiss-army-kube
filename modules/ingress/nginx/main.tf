@@ -1,8 +1,3 @@
-data "helm_repository" "stable" {
-  name = "stable"
-  url  = "https://kubernetes-charts.storage.googleapis.com"
-}
-
 # Create namespace ingress-system
 resource "kubernetes_namespace" "ingress-system" {
   depends_on = [
@@ -18,8 +13,9 @@ resource "helm_release" "nginx-ingress" {
     var.module_depends_on
   ]
   name       = "nginx"
-  repository = data.helm_repository.stable.metadata[0].name
+  repository = "https://kubernetes-charts.storage.googleapis.com"
   chart      = "nginx-ingress"
+  version    = "1.39.0"
   namespace  = "ingress-system"
 
   values = [
@@ -63,7 +59,7 @@ resource "helm_release" "oauth2-proxy" {
   ]
 
   name          = "oauth2-proxy"
-  repository    = data.helm_repository.stable.metadata[0].name
+  repository    = "https://kubernetes-charts.storage.googleapis.com"
   chart         = "oauth2-proxy"
   namespace     = "ingress-system"
   recreate_pods = true

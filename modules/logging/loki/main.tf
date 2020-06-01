@@ -1,9 +1,3 @@
-#Loki chart repo
-data "helm_repository" "loki" {
-  name = "loki"
-  url  = "https://grafana.github.io/loki/charts"
-}
-
 # Create namespace logging
 resource "kubernetes_namespace" "logging" {
   depends_on = [
@@ -20,9 +14,9 @@ resource "helm_release" "loki-stack" {
   ]
 
   name       = "loki"
-  repository = data.helm_repository.loki.metadata[0].name
+  repository = "https://grafana.github.io/loki/charts"
   chart      = "loki-stack"
-  version    = "0.27.0"
+//  version    = "0.27.0"
   namespace  = "logging"
 
   values = [

@@ -63,15 +63,15 @@ module "nginx" {
 }
 
 # Monitoring
-#module "prometheus" {
-#  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-#  source            = "../modules/monitoring/prometheus"
-#
-#  cluster_name = var.cluster_name
-#  domains      = var.domains
-#  grafana_password = var.grafana_password
-#  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
-#}
+module "prometheus" {
+  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+  source            = "../modules/monitoring/prometheus"
+
+  cluster_name = var.cluster_name
+  domains      = var.domains
+  grafana_password = var.grafana_password
+  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
+}
 
 # Logging
 #module "loki" {
