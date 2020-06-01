@@ -1,7 +1,7 @@
 #Global helm chart repo
 data "helm_repository" "stable" {
   name = "stable"
-  url  = "https://kubernetes-charts.storage.googleapis.com"
+  url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
 }
 
 # Create namespace jenkins

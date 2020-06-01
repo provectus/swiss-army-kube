@@ -4,6 +4,16 @@ data "helm_repository" "loki" {
   url  = "https://grafana.github.io/loki/charts"
 }
 
+# Create namespace logging
+resource "kubernetes_namespace" "logging" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  metadata {
+    name = "logging"
+  }
+}
+
 resource "helm_release" "loki-stack" {
   depends_on = [
     var.module_depends_on
