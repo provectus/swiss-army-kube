@@ -58,7 +58,7 @@ resource "helm_release" "oauth2-proxy" {
   ]
 
   name          = "oauth2-proxy"
-  repository    = data.helm_repository.stable.metadata[0].name
+  repository    = "https://kubernetes-charts.storage.googleapis.com"
   chart         = "oauth2-proxy"
   namespace     = "ingress-system"
   recreate_pods = true
