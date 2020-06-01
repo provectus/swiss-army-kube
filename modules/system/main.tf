@@ -218,12 +218,6 @@ resource "kubernetes_namespace" "cert-manager" {
   }
 }
 
-# Install Bitnami Helm repository
-data "helm_repository" "bitnami" {
-  name = "bitnami"
-  url  = "https://charts.bitnami.com/bitnami"
-}
-
 # Deploy external_dns to manage route53 domain zone
 resource "helm_release" "external-dns" {
   depends_on = [
@@ -231,7 +225,7 @@ resource "helm_release" "external-dns" {
     aws_iam_role.cert_manager,
     null_resource.wait-eks
   ]
-  repository = data.helm_repository.bitnami.metadata[0].name
+  repository = "https://charts.bitnami.com/bitnami"
   name       = "external-dns"
   chart      = "external-dns"
   version    = "2.22.0"
@@ -284,12 +278,6 @@ resource "helm_release" "issuers" {
   }
 }
 
-# Install jetstack Helm repository
-data "helm_repository" "jetstack" {
-  name = "jetstack"
-  url  = "https://charts.jetstack.io"
-}
-
 # Deploy cert-manager (ingress certificate manager)
 resource "helm_release" "cert-manager" {
   depends_on = [
@@ -299,7 +287,7 @@ resource "helm_release" "cert-manager" {
   ]
 
   name          = "cert-manager"
-  repository    = data.helm_repository.jetstack.metadata[0].name
+  repository    = "https://charts.jetstack.io"
   chart         = "cert-manager"
   version       = "v0.14.3"
   namespace     = kubernetes_namespace.cert-manager.metadata[0].name
@@ -310,12 +298,6 @@ resource "helm_release" "cert-manager" {
   ]
 }
 
-#Stable chart repository
-data "helm_repository" "stable" {
-  name = "stable"
-  url  = "https://kubernetes-charts.storage.googleapis.com"
-}
-
 # Deploy kube-state-metrics chart
 resource "helm_release" "metrics-server" {
   depends_on = [
@@ -324,7 +306,7 @@ resource "helm_release" "metrics-server" {
     ]
 
   name          = "state"
-  repository    = data.helm_repository.stable.metadata[0].name
+  repository    = "https://kubernetes-charts.storage.googleapis.com"
   chart         = "metrics-server"
   version       = "2.11.1"
   namespace     = "kube-system"
@@ -338,7 +320,7 @@ resource "helm_release" "sealed-secrets" {
     null_resource.wait-eks
   ]
   name          = "sealed-secrets"
-  repository    = data.helm_repository.stable.metadata[0].name
+  repository    = "https://kubernetes-charts.storage.googleapis.com"
   chart         = "sealed-secrets"
   version       = "1.9.0"
   namespace     = "kube-system"
