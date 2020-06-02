@@ -74,26 +74,26 @@ module "prometheus" {
 }
 
 # Logging
-#module "loki" {
-#  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-#  source            = "../modules/logging/loki"
-#
-#  cluster_name = var.cluster_name
-#  domains      = var.domains
-#  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
-#}
+module "loki" {
+  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+  source            = "../modules/logging/loki"
 
-#module "efk" {
-#  module_depends_on     = [module.system.cert-manager,module.nginx.nginx-ingress]
-#  source                = "../modules/logging/efk"
-#  cluster_name          = var.cluster_name
-#  domains                = var.domains
-#  config_path           = "${path.module}/kubeconfig_${var.cluster_name}"
-#  elasticsearch-curator = var.elasticsearch-curator
-#  logstash              = var.logstash
-#  filebeat              = var.filebeat
-#  elasticDataSize       = var.elasticDataSize
-#}
+  cluster_name = var.cluster_name
+  domains      = var.domains
+  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
+}
+
+module "efk" {
+  module_depends_on     = [module.system.cert-manager,module.nginx.nginx-ingress]
+  source                = "../modules/logging/efk"
+//  cluster_name          = var.cluster_name
+  domain                = "byusupov.edu.provectus.io"
+  config_path           = "${path.module}/kubeconfig_${var.cluster_name}"
+  elasticsearch-curator = var.elasticsearch-curator
+  logstash              = var.logstash
+  filebeat              = var.filebeat
+  elasticDataSize       = var.elasticDataSize
+}
 
 #ARGO CD
 #module "argo-cd" {

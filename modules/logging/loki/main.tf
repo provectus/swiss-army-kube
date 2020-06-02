@@ -16,7 +16,7 @@ resource "helm_release" "loki-stack" {
   name       = "loki"
   repository = "https://grafana.github.io/loki/charts"
   chart      = "loki-stack"
-//  version    = "0.27.0"
+  version    = "0.37.3"
   namespace  = "logging"
 
   values = [

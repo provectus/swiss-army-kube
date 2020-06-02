@@ -123,7 +123,7 @@ logstash:
   
   ingress:
     enabled: false
-    annotations: {}
+    annotations:
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
       certmanager.k8s.io/cluster-issuer: letsencrypt-staging
       kubernetes.io/tls-acme: "true"
@@ -174,8 +174,8 @@ filebeat:
       rotate_every_kb: 10000
       number_of_files: 5
 
-  indexTemplateLoad:
-    - {{ .Release.Name }}-elasticsearch-client:9200
+#  indexTemplateLoad:
+#    - {{ .Release.Name }}-elasticsearch-client:9200
 
 fluentd:
   enabled: false
@@ -214,7 +214,7 @@ nginx-ldapauth-proxy:
   # secrets:
   #   ldapBindPassword: PASSWORD
 elasticsearch-curator:
-  enabled: true
+  enabled: false
   cronjob:
     # At 01:00 every day
     schedule: "0 1 * * *"
