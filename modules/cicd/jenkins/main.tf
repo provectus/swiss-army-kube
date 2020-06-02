@@ -14,7 +14,7 @@ resource "helm_release" "jenkins" {
   ]   
   
   name          = "jenkins"
-  repository    = "https://kubernetes-charts-incubator.storage.googleapis.com"
+  repository    = "https://kubernetes-charts.storage.googleapis.com"
   chart         = "jenkins"
   namespace     = "jenkins"
   recreate_pods = true
