@@ -53,13 +53,6 @@ data "aws_iam_policy_document" "aw" {
   }
 }
 
-resource "kubernetes_namespace" "this" {
-  metadata {
-    name = var.namespace
-  }
-}
-
-
 resource "aws_iam_role" "aw" {
   depends_on = [
     var.module_depends_on
@@ -74,12 +67,6 @@ resource "aws_iam_role" "aw" {
 
 }
 
-
-data "helm_repository" "argo" {
-  name = "argo"
-  url  = "https://argoproj.github.io/argo-helm"
-}
-
 resource "helm_release" "argo-workflow" {
   depends_on = [
     var.module_depends_on
@@ -89,7 +76,7 @@ resource "helm_release" "argo-workflow" {
   repository    = "argo"
   chart         = "argo"
   version       = "0.7.3"
-  namespace     = kubernetes_namespace.this.metadata[0].name
+  namespace     = var.namespace
   recreate_pods = true
 
   dynamic set {
@@ -102,12 +89,13 @@ resource "helm_release" "argo-workflow" {
   }
 
   provisioner "local-exec" {
-    command = "kubectl --kubeconfig kubeconfig_${var.cluster_name} annotate serviceaccount -n ${kubernetes_namespace.this.metadata[0].name} argo-server eks.amazonaws.com/role-arn=${aws_iam_role.aw.arn}"
+    command = "kubectl --kubeconfig kubeconfig_${var.cluster_name} annotate serviceaccount -n ${var.namespace} argo-server eks.amazonaws.com/role-arn=${aws_iam_role.aw.arn}"
   }
 }
 
 locals {
   workflow_conf_defaults = {
+    "installCRDs" = false,
     "artifactRepository.s3.bucket"         = aws_s3_bucket.artifacts.bucket,
     "rbac.create"                          = true,
     "rbac.pspEnabled"                      = true,

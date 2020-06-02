@@ -1,14 +1,3 @@
-data "helm_repository" "argo" {
-  name = "argo"
-  url  = "https://argoproj.github.io/argo-helm"
-}
-
-resource "kubernetes_namespace" "this" {
-  metadata {
-    name = var.namespace
-  }
-}
-
 resource "helm_release" "argo-events" {
   depends_on = [
     var.module_depends_on
@@ -18,7 +7,7 @@ resource "helm_release" "argo-events" {
   repository    = "argo"
   chart         = "argo-events"
   version       = "0.14.0"
-  namespace     = kubernetes_namespace.this.metadata[0].name
+  namespace     = var.namespace
   recreate_pods = true
 
   dynamic set {
@@ -32,5 +21,7 @@ resource "helm_release" "argo-events" {
 }
 
 locals {
-  events_conf_defaults = {}
+  events_conf_defaults = {
+    "installCRD" = false
+  }
 }

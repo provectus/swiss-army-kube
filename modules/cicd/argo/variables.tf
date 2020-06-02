@@ -13,3 +13,6 @@ variable "iam_openid_provider" {
 variable "project" {
   type = string
 }
+variable "namespace" {
+  default = "argo"
+}

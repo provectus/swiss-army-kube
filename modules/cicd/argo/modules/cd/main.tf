@@ -1,24 +1,13 @@
-data "helm_repository" "argo" {
-  name = "argo"
-  url  = "https://argoproj.github.io/argo-helm"
-}
-
-resource "kubernetes_namespace" "this" {
-  metadata {
-    name = var.namespace
-  }
-}
-
 resource "helm_release" "argo-cd" {
   depends_on = [
     var.module_depends_on
   ]
 
-  name          = "argo-cd"
+  name          = "argocd"
   repository    = "argo"
   chart         = "argo-cd"
   version       = "2.2.8"
-  namespace     = kubernetes_namespace.this.metadata[0].name
+  namespace     = var.namespace
   recreate_pods = true
 
   dynamic set {
@@ -33,6 +22,7 @@ resource "helm_release" "argo-cd" {
 
 locals {
   cd_conf_defaults = merge({
+    "installCRDs" = false
     "server.ingress.enabled" = true,
     "server.config.url"      = "https://argo-cd.${var.domains[0]}",
     },
