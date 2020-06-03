@@ -45,21 +45,21 @@ resource "helm_release" "elastic-stack" {
 
   set {
     name  = "logstash.enabled"
-    value = "${var.logstash}"
+    value = var.logstash
   }
 
   set {
     name  = "filebeat.enabled"
-    value = "${var.filebeat}"
+    value = var.filebeat
   }
 
 //  set {
 //    name  = "elasticsearch-curator"
-//    value = "${var.elasticsearch-curator}"
+//    value = var.elasticsearch-curator
 //  }
 
   set {
     name  = "elasticsearch.data.persistence.size"
-    value = "${var.elasticDataSize}"
+    value = var.elasticDataSize
   }
 }

@@ -16,6 +16,7 @@ resource "helm_release" "argo-cd" {
   name          = "argo-cd"
   repository    = "https://argoproj.github.io/argo-helm"
   chart         = "argo-cd"
+  version       = "2.3.5"
   namespace     = "argo-cd"
   recreate_pods = true
 
