@@ -5,7 +5,7 @@ registry: argoproj
 imagePullPolicy: Always
 
 # If set to false, skip installing the CRDs. Requires user to have them installed prior to helm chart installation.
-installCRD: true
+installCRD: false
 
 # ServiceAccount to use for running controller.
 serviceAccount: argo-events-sa
@@ -26,11 +26,11 @@ singleNamespace: true
 sensorController:
   name: sensor-controller
   image: sensor-controller
-  tag: v0.11
+  tag: v0.14.0
   replicaCount: 1
 
 gatewayController:
   name: gateway-controller
   image: gateway-controller
-  tag: v0.11
+  tag: v0.14.0
   replicaCount: 1
