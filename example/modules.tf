@@ -63,69 +63,69 @@ module "nginx" {
 }
 
 # Monitoring
-module "prometheus" {
-  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-  source            = "../modules/monitoring/prometheus"
-
-  cluster_name = var.cluster_name
-  domains      = var.domains
-  grafana_password = var.grafana_password
-  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
-}
+#module "prometheus" {
+#  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+#  source            = "../modules/monitoring/prometheus"
+#
+#  cluster_name = var.cluster_name
+#  domains      = var.domains
+#  grafana_password = var.grafana_password
+#  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
+#}
 
 # Logging
-module "loki" {
-  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-  source            = "../modules/logging/loki"
+#module "loki" {
+#  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+#  source            = "../modules/logging/loki"
+#
+#  cluster_name = var.cluster_name
+#  domains      = var.domains
+#  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
+#}
 
-  cluster_name = var.cluster_name
-  domains      = var.domains
-  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
-}
-
-//module "efk" {
-//  module_depends_on     = [module.system.cert-manager,module.nginx.nginx-ingress]
-//  source                = "../modules/logging/efk"
-////  cluster_name          = var.cluster_name
-//  domain                = "byusupov.edu.provectus.io"
-//  config_path           = "${path.module}/kubeconfig_${var.cluster_name}"
-//  elasticsearch-curator = var.elasticsearch-curator
-//  logstash              = var.logstash
-//  filebeat              = var.filebeat
-//  elasticDataSize       = var.elasticDataSize
-//}
+#module "efk" {
+#  module_depends_on     = [module.system.cert-manager,module.nginx.nginx-ingress]
+#  source                = "../modules/logging/efk"
+#  cluster_name          = var.cluster_name
+#  domains                = var.domains
+#  config_path           = "${path.module}/kubeconfig_${var.cluster_name}"
+#  elasticsearch-curator = var.elasticsearch-curator
+#  logstash              = var.logstash
+#  filebeat              = var.filebeat
+#  elasticDataSize       = var.elasticDataSize
+#}
 
 #ARGO CD
-module "argo-cd" {
-  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-  source            = "../modules/cicd/argo-cd"
+#module "argo-cd" {
+#  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+#  source            = "../modules/cicd/argo-cd"
+#
+#  domains = var.domains
+#}
 
-  domains = var.domains
-}
+#module "argo-artifacts" {
+#  module_depends_on = [module.system.cert-manager,module.argo-events.argo_events_namespace,module.nginx.nginx-ingress]
+#  source            = "../modules/cicd/argo-artifacts"
+#
+#  aws_region            = var.aws_region
+#  cluster_name          = var.cluster_name
+#  environment           = var.environment
+#  project               = var.project
+#  argo_events_namespace = module.argo-events.argo_events_namespace
+#}
 
-module "argo-artifacts" {
-  module_depends_on = [module.system.cert-manager,module.argo-events.argo_events_namespace,module.nginx.nginx-ingress]
-  source            = "../modules/cicd/argo-artifacts"
+#module "argo-events" {
+#  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+#  source            = "../modules/cicd/argo-events"
+#}
 
-  aws_region            = var.aws_region
-  cluster_name          = var.cluster_name
-  environment           = var.environment
-  project               = var.project
-  argo_events_namespace = module.argo-events.argo_events_namespace
-}
-
-module "argo-events" {
-  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-  source            = "../modules/cicd/argo-events"
-}
-
-module "argo-workflow" {
-  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-  source            = "../modules/cicd/argo-workflow"
-
-  aws_region    = var.aws_region
-  aws_s3_bucket = module.argo-artifacts.aws_s3_bucket
-}
+#module "argo-workflow" {
+#  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+#  source            = "../modules/cicd/argo-workflow"
+#
+#  aws_region    = var.aws_region
+#  aws_s3_bucket = module.argo-artifacts.aws_s3_bucket
+#}
 
 module "jenkins" {
   module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]

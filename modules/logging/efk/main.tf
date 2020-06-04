@@ -1,12 +1,12 @@
-//# Create namespace logging
-//resource "kubernetes_namespace" "logging" {
-//  depends_on = [
-//    var.module_depends_on
-//  ]
-//  metadata {
-//    name = "logging"
-//  }
-//}
+# Create namespace logging
+resource "kubernetes_namespace" "logging" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  metadata {
+    name = "logging"
+  }
+}
 
 resource "helm_release" "elastic-stack" {
   depends_on = [
@@ -16,7 +16,6 @@ resource "helm_release" "elastic-stack" {
   name       = "elastic"
   repository = "https://kubernetes-charts.storage.googleapis.com"
   chart      = "elastic-stack"
-  version    = "2.0.1"
   namespace  = "logging"
 
   values = [
@@ -45,21 +44,21 @@ resource "helm_release" "elastic-stack" {
 
   set {
     name  = "logstash.enabled"
-    value = var.logstash
+    value = "${var.logstash}"
   }
 
   set {
     name  = "filebeat.enabled"
-    value = var.filebeat
+    value = "${var.filebeat}"
   }
 
-//  set {
-//    name  = "elasticsearch-curator"
-//    value = var.elasticsearch-curator
-//  }
+  set {
+    name  = "elasticsearch-curator"
+    value = "${var.elasticsearch-curator}"
+  }
 
   set {
     name  = "elasticsearch.data.persistence.size"
-    value = var.elasticDataSize
+    value = "${var.elasticDataSize}"
   }
 }

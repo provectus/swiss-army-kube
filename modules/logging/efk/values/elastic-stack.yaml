@@ -61,7 +61,7 @@ kibana:
       # - localhost.localdomain/kibana
     annotations:
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      certmanager.k8s.io/cluster-issuer: letsencrypt-staging
+      certmanager.k8s.io/cluster-issuer: letsencrypt-prod
       kubernetes.io/tls-acme: "true"
       kubernetes.io/ingress.class: nginx
       nginx.ingress.kubernetes.io/auth-url: https://oauth2.example.com/oauth2/auth
@@ -123,9 +123,9 @@ logstash:
   
   ingress:
     enabled: false
-    annotations:
+    annotations: {}
       nginx.ingress.kubernetes.io/ssl-redirect: "true"
-      certmanager.k8s.io/cluster-issuer: letsencrypt-staging
+      certmanager.k8s.io/cluster-issuer: letsencrypt-prod
       kubernetes.io/tls-acme: "true"
       kubernetes.io/ingress.class: nginx
     path: /
@@ -174,8 +174,8 @@ filebeat:
       rotate_every_kb: 10000
       number_of_files: 5
 
-#  indexTemplateLoad:
-#    - {{ .Release.Name }}-elasticsearch-client:9200
+  indexTemplateLoad:
+    - {{ .Release.Name }}-elasticsearch-client:9200
 
 fluentd:
   enabled: false
@@ -214,7 +214,7 @@ nginx-ldapauth-proxy:
   # secrets:
   #   ldapBindPassword: PASSWORD
 elasticsearch-curator:
-  enabled: false
+  enabled: true
   cronjob:
     # At 01:00 every day
     schedule: "0 1 * * *"
