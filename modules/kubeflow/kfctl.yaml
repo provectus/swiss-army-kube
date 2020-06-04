@@ -182,6 +182,7 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
+      - aws
       repoRef:
         name: manifests
         path: pipeline/persistent-agent
@@ -241,3 +242,7 @@ spec:
   - name: manifests
     uri: https://github.com/kubeflow/manifests/archive/v1.0.0.tar.gz
   version: v1.0.0
+status:
+  reposCache:
+  - localPath: '"../../modules/kubeflow/.cache/manifests/manifests-1.0.0"'
+    name: manifests

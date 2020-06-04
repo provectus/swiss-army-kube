@@ -11,7 +11,7 @@ commonLabels:
 configurations:
 - overlays/istio/params.yaml
 kind: Kustomization
-namespace: argo
+namespace: kubeflow
 resources:
 - overlays/istio/virtual-service.yaml
 - overlays/application/application.yaml

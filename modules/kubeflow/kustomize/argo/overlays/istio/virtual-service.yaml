@@ -15,6 +15,6 @@ spec:
       uri: /
     route:
     - destination:
-        host: argo-ui.$(namespace).svc.$(clusterDomain)
+        host: argo-workflow-server.$(namespace).svc.$(clusterDomain)
         port:
-          number: 80
+          number: 2746

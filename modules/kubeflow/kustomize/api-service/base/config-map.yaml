@@ -8,17 +8,19 @@ data:
       "DBConfig": {
         "DriverName": "mysql",
         "Host": "$(DB_HOST)",
-        "Port": "3306",
+        "Port": 3306,
         "User": "$(DB_USER)",
         "Password": "$(DB_PASSWORD)",
         "DBName": "$(DB_NAME)"
       },
       "ObjectStoreConfig":{
         "Host": "$(STORAGE_HOST)",
-        "Port": "443",
+        "Port": 443,
         "Region": "$(STORAGE_REGION)",
         "BucketName": "$(STORAGE_BUCKET)",
-        "Secure": "True",
+        "Secure": true,
+        "AccessKey": "$(STORAGE_KEY)",
+        "SecretAccessKey": "$(STORAGE_SECRET)"
       },
       "InitConnectionTimeout": "6m",
       "DefaultPipelineRunnerServiceAccount": "pipeline-runner",

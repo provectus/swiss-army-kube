@@ -28,11 +28,6 @@ resource "aws_rds_cluster" "db" {
   vpc_security_group_ids = [var.cluster.worker_security_group_id]
 }
 
-resource "aws_s3_bucket" "artifacts" {
-  bucket = "pv-${var.cluster_name}-bucket"
-  acl    = "private"
-}
-
 data "aws_iam_policy_document" "this" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
@@ -41,7 +36,7 @@ data "aws_iam_policy_document" "this" {
     condition {
       test     = "StringEquals"
       variable = "${replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")}:sub"
-      values   = ["system:serviceaccount:kubeflow:ml-pipeline"]
+      values   = ["system:serviceaccount:kubeflow:pipeline-runner"]
     }
 
     principals {
@@ -51,9 +46,18 @@ data "aws_iam_policy_document" "this" {
   }
 }
 
+# TODO: delete user after updating aws-go-sdk
+resource "aws_iam_user" "this" {
+  name = "${var.cluster_name}-ml-pipeline"
+}
+
+resource "aws_iam_access_key" "this" {
+  user = "${aws_iam_user.this.name}"
+}
+
 resource "aws_iam_role" "this" {
   assume_role_policy = data.aws_iam_policy_document.this.json
-  name               = "${var.cluster_name}-ml-pipeline"
+  name               = "${var.cluster_name}-pipeline-runner"
 }
 
 resource "aws_iam_role_policy" "this" {
@@ -69,7 +73,34 @@ resource "aws_iam_role_policy" "this" {
             "s3:*",
           ],
           Effect : "Allow",
-          Resource : [aws_s3_bucket.artifacts.arn, "${aws_s3_bucket.artifacts.arn}:*"]
+          Resource : [
+            var.artifacts.arn,
+            "${var.artifacts.arn}/*"
+          ]
+        }
+      ]
+    }
+  )
+}
+
+resource "aws_iam_user_policy" "this" {
+  name = "s3-access"
+  user = aws_iam_user.this.id
+  # role = aws_iam_role.this.id
+
+  policy = jsonencode(
+    {
+      Version : "2012-10-17",
+      Statement : [
+        {
+          Action : [
+            "s3:*",
+          ],
+          Effect : "Allow",
+          Resource : [
+            var.artifacts.arn,
+            "${var.artifacts.arn}/*"
+          ]
         }
       ]
     }
@@ -77,6 +108,12 @@ resource "aws_iam_role_policy" "this" {
 }
 
 resource "null_resource" "kfctl" {
+  triggers = {
+    api-service = local_file.api-service.id,
+    metadata    = local_file.metadata.id,
+    api-service = local_file.metadata-secrets.id,
+  }
+
   depends_on = [
     "aws_iam_role.this",
     "aws_rds_cluster.db"

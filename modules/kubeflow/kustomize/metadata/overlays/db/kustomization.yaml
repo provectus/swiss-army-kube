@@ -14,21 +14,9 @@ secretGenerator:
   env: secrets.env
 bases:
 - ../../base
-resources:
-- metadata-db-pvc.yaml
-- metadata-db-deployment.yaml
-- metadata-db-service.yaml
 patchesStrategicMerge:
 - metadata-deployment.yaml
 images:
 - name: mysql
   newName: mysql
   newTag: 8.0.3
-vars:
-- name: metadata-db-service
-  objref:
-    kind: Service
-    name: metadata-db
-    apiVersion: v1
-  fieldref:
-    fieldpath: metadata.name
