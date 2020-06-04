@@ -228,7 +228,7 @@ resource "helm_release" "external-dns" {
   repository = "https://charts.bitnami.com/bitnami"
   name       = "external-dns"
   chart      = "external-dns"
-  version    = "2.22.0"
+  version    = "3.1.0"
   namespace  = "kube-system"
 
   values = [
@@ -260,6 +260,7 @@ resource "helm_release" "issuers" {
   ]
   name      = "issuers"
   chart     = "../charts/cluster-issuers"
+  version   = "0.1.0"
   namespace = kubernetes_namespace.cert-manager.metadata[0].name
 
   set {
@@ -289,7 +290,7 @@ resource "helm_release" "cert-manager" {
   name          = "cert-manager"
   repository    = "https://charts.jetstack.io"
   chart         = "cert-manager"
-  version       = "v0.14.3"
+  version       = "v0.15.1"
   namespace     = kubernetes_namespace.cert-manager.metadata[0].name
   recreate_pods = true
 
@@ -322,7 +323,7 @@ resource "helm_release" "sealed-secrets" {
   name          = "sealed-secrets"
   repository    = "https://kubernetes-charts.storage.googleapis.com"
   chart         = "sealed-secrets"
-  version       = "1.9.0"
+  version       = "1.10.1"
   namespace     = "kube-system"
 
   values = [

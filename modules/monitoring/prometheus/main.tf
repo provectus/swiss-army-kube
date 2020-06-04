@@ -16,7 +16,7 @@ resource "helm_release" "monitoring" {
   name       = "prometheus-operator"
   repository = "https://kubernetes-charts.storage.googleapis.com"
   chart      = "prometheus-operator"
-  version    = "8.5.14"
+  version    = "8.13.9"
   namespace  = "monitoring"
 
   values = [
