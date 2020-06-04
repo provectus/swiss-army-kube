@@ -16,10 +16,6 @@ init:
 
 createAggregateRoles: true
 
-# Restrict Argo to only deploy into a single namespace by apply Roles and RoleBindings instead of the Cluster equivalents,
-# and start argo-cli with the --namespaced flag. Use it in clusters with strict access policy.
-singleNamespace: false
-
 controller:
   image:
     # Overrides .images.tag if defined.
@@ -33,30 +29,24 @@ controller:
     enabled: false
     path: /metrics
     port: 8080
-  persistence: {}
-  # connectionPool:
-  #   maxIdleConns: 100
-  #   maxOpenConns: 0
-  # # save the entire workflow into etcd and DB
-  # nodeStatusOffLoad: false
-  # # enable archiving of old workflows
-  # archive: false
-  # postgresql:
-  #   host: localhost
-  #   port: 5432
-  #   database: postgres
-  #   tableName: argo_workflows
-  #   # the database secrets must be in the same namespace of the controller
-  #   userNameSecret:
-  #     name: argo-postgres-config
-  #     key: username
-  #   passwordSecret:
-  #     name: argo-postgres-config
-  #     key: password
-  workflowDefaults: {}  # Only valid for 2.7+
-  #  spec:
-  #    ttlStrategy:
-  #      secondsAfterCompletion: 84600
+    persistence: {}
+    #  connectionPool:
+    #    maxIdleConns: 100
+    #    maxOpenConns: 0
+    #  # save the entire workflow into etcd and DB
+    #  nodeStatusOffLoad: false
+    #  postgresql:
+    #    host: localhost
+    #    port: 5432
+    #    database: postgres
+    #    tableName: argo_workflows
+    #    # the database secrets must be in the same namespace of the controller
+    #    userNameSecret:
+    #      name: argo-postgres-config
+    #      key: username
+    #    passwordSecret:
+    #      name: argo-postgres-config
+    #      key: password
   telemetryConfig:
     enabled: false
     path: /telemetry
@@ -65,8 +55,6 @@ controller:
     enabled: false
     additionalLabels: {}
   serviceAccount: argo
-  # Service account annotations
-  serviceAccountAnnotations: {}
   name: workflow-controller
   workflowNamespaces:
     - default
@@ -100,21 +88,11 @@ controller:
     enabled: false
     # minAvailable: 1
     # maxUnavailable: 1
-  ## Node selectors and tolerations for server scheduling to nodes with taints
-  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
-  ##
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
 
-# executor controls how the init and wait container should be customized
 executor:
   image:
     # Overrides .images.tag if defined.
     tag: ""
-  resources: {}
-  # Adds environment variables for the executor.
-  env: {}
 
 ui:
   enabled: true
@@ -132,8 +110,6 @@ ui:
   servicePort: 80
   # servicePortName: http
   serviceAccount: argo-ui
-  # Service account annotations
-  serviceAccountAnnotations: {}
   # Annotations to be applied to the UI Service
   serviceAnnotations: {}
   # Optional labels to add to the UI Service
@@ -150,15 +126,6 @@ ui:
     enabled: false
     # minAvailable: 1
     # maxUnavailable: 1
-  ## Node selectors and tolerations for server scheduling to nodes with taints
-  ## Ref: https://kubernetes.io/docs/concepts/configuration/assign-pod-node/
-  ##
-  nodeSelector: {}
-  tolerations: []
-  affinity: {}
-
-  # Extra arguments to provide to the Argo server binary.
-  extraArgs: []
 
   ## Ingress configuration.
   ## ref: https://kubernetes.io/docs/user-guide/ingress/
@@ -177,11 +144,6 @@ ui:
     ##
     # hosts:
     #   - argo.domain.com
-
-    ## Additional Paths for each host
-    # paths:
-    #   - serviceName: "ssl-redirect"
-    #     servicePort: "use-annotation"
 
     ## TLS configuration.
     ## Secrets must be manually created in the namespace.
