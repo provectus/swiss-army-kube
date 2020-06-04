@@ -182,78 +182,20 @@ resource "aws_iam_role_policy_attachment" "external_dns" {
 }
 
 
-# Wait initial eks 
+# Wait initial eks
 resource "null_resource" "wait-eks" {
   depends_on = [
     var.module_depends_on
-  ]  
+  ]
   provisioner "local-exec" {
     command = "until kubectl --kubeconfig ${path.root}/${var.config_path} -n kube-system get pods >/dev/null 2>&1;do echo 'Waiting for EKS API';sleep 5;done"
-  }
-}
-
-# Create service account for tiller
-resource "kubernetes_service_account" "tiller" {
-  depends_on = [
-    var.module_depends_on,
-    null_resource.wait-eks
-  ]
-
-  metadata {
-    name      = "tiller"
-    namespace = "kube-system"
-  }
-
-  automount_service_account_token = false
-}
-
-resource "kubernetes_cluster_role_binding" "tiller" {
-  depends_on = [
-    kubernetes_service_account.tiller,
-    var.module_depends_on
-  ]
-  metadata {
-    name = "tiller-binding"
-  }
-
-  subject {
-    kind      = "ServiceAccount"
-    name      = "tiller"
-    namespace = "kube-system"
-    api_group = ""
-  }
-
-  role_ref {
-    kind      = "ClusterRole"
-    name      = "cluster-admin"
-    api_group = "rbac.authorization.k8s.io"
-  }
-}
-
-# Init helm for update tiller
-resource "null_resource" "helm_init" {
-  depends_on = [
-    var.module_depends_on,
-    kubernetes_cluster_role_binding.tiller
-  ]
-  provisioner "local-exec" {
-    command = "helm --kubeconfig ${var.config_path} --service-account tiller init --upgrade --wait"
-  }
-}
-
-resource "null_resource" "wait-helm"{
-  depends_on = [
-    null_resource.helm_init
-  ]
-    provisioner "local-exec" {
-    command = "sleep 30"
   }
 }
 
 # Deploy custom resources for cert-manager
 resource "null_resource" "cert-manager-crd" {
   depends_on = [
-    null_resource.wait-helm,
+    null_resource.wait-eks,
     var.module_depends_on
   ]
   provisioner "local-exec" {
@@ -276,20 +218,14 @@ resource "kubernetes_namespace" "cert-manager" {
   }
 }
 
-# Install Bitnami Helm repository
-data "helm_repository" "bitnami" {
-  name = "bitnami"
-  url  = "https://charts.bitnami.com/bitnami"
-}
-
 # Deploy external_dns to manage route53 domain zone
 resource "helm_release" "external-dns" {
   depends_on = [
     var.module_depends_on,
     aws_iam_role.cert_manager,
-    null_resource.wait-helm
+    null_resource.wait-eks
   ]
-  repository = data.helm_repository.bitnami.metadata[0].name
+  repository = "https://charts.bitnami.com/bitnami"
   name       = "external-dns"
   chart      = "external-dns"
   version    = "2.22.0"
@@ -317,7 +253,7 @@ resource "helm_release" "external-dns" {
 resource "helm_release" "issuers" {
   depends_on = [
     null_resource.cert-manager-crd,
-    null_resource.wait-helm,
+    null_resource.wait-eks,
     kubernetes_namespace.cert-manager,
     aws_iam_role.cert_manager,
     var.module_depends_on
@@ -342,24 +278,18 @@ resource "helm_release" "issuers" {
   }
 }
 
-# Install jetstack Helm repository
-data "helm_repository" "jetstack" {
-  name = "jetstack"
-  url  = "https://charts.jetstack.io"
-}
-
 # Deploy cert-manager (ingress certificate manager)
 resource "helm_release" "cert-manager" {
   depends_on = [
     helm_release.issuers,
-    null_resource.wait-helm,
+    null_resource.wait-eks,
     var.module_depends_on
   ]
 
   name          = "cert-manager"
-  repository    = data.helm_repository.jetstack.metadata[0].name
+  repository    = "https://charts.jetstack.io"
   chart         = "cert-manager"
-  version       = "v0.13.1"
+  version       = "v0.14.3"
   namespace     = kubernetes_namespace.cert-manager.metadata[0].name
   recreate_pods = true
 
@@ -368,21 +298,15 @@ resource "helm_release" "cert-manager" {
   ]
 }
 
-#Stable chart repository
-data "helm_repository" "stable" {
-  name = "stable"
-  url  = "https://kubernetes-charts.storage.googleapis.com"
-}
-
 # Deploy kube-state-metrics chart
 resource "helm_release" "metrics-server" {
   depends_on = [
-    null_resource.wait-helm,
+    null_resource.wait-eks,
     var.module_depends_on
     ]
 
   name          = "state"
-  repository    = data.helm_repository.stable.metadata[0].name
+  repository    = "https://kubernetes-charts.storage.googleapis.com"
   chart         = "metrics-server"
   version       = "2.11.1"
   namespace     = "kube-system"
@@ -393,10 +317,10 @@ resource "helm_release" "metrics-server" {
 resource "helm_release" "sealed-secrets" {
   depends_on = [
     var.module_depends_on,
-    null_resource.wait-helm
+    null_resource.wait-eks
   ]
   name          = "sealed-secrets"
-  repository    = data.helm_repository.stable.metadata[0].name
+  repository    = "https://kubernetes-charts.storage.googleapis.com"
   chart         = "sealed-secrets"
   version       = "1.9.0"
   namespace     = "kube-system"

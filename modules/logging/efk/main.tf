@@ -1,7 +1,11 @@
-#Global helm chart repo
-data "helm_repository" "incubator" {
-  name = "incubator"
-  url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
+# Create namespace logging
+resource "kubernetes_namespace" "logging" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  metadata {
+    name = "logging"
+  }
 }
 
 resource "helm_release" "elastic-stack" {
@@ -10,9 +14,8 @@ resource "helm_release" "elastic-stack" {
   ]
 
   name       = "elastic"
-  repository = "stable"
+  repository = "https://kubernetes-charts.storage.googleapis.com"
   chart      = "elastic-stack"
-  version    = "1.8.0"
   namespace  = "logging"
 
   values = [

@@ -1,6 +1,11 @@
-data "helm_repository" "argo" {
-  name = "argo"
-  url  = "https://argoproj.github.io/argo-helm"
+# Create namespace argo-cd
+resource "kubernetes_namespace" "argo-cd" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  metadata {
+    name = "argo-cd"
+  }
 }
 
 resource "helm_release" "argo-cd" {
@@ -9,9 +14,8 @@ resource "helm_release" "argo-cd" {
   ]
 
   name          = "argo-cd"
-  repository    = "argo"
+  repository    = "https://argoproj.github.io/argo-helm"
   chart         = "argo-cd"
-  version       = "1.4.5"
   namespace     = "argo-cd"
   recreate_pods = true
 

@@ -1,6 +1,11 @@
-data "helm_repository" "argo" {
-  name = "argo"
-  url  = "https://argoproj.github.io/argo-helm"
+# Create namespace argo-workflow
+resource "kubernetes_namespace" "argo-workflow" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  metadata {
+    name = "argo-workflow"
+  }
 }
 
 resource "helm_release" "argo-workflow" {
@@ -9,7 +14,7 @@ resource "helm_release" "argo-workflow" {
   ]
 
   name          = "argo-workflow"
-  repository    = "argo"
+  repository    = "https://argoproj.github.io/argo-helm"
   chart         = "argo"
   version       = "0.6.3"
   namespace     = "argo-workflow"

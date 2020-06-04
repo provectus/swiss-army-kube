@@ -3,7 +3,7 @@ terraform {
 }
 
 provider "aws" {
-  version = ">=2.52.0"
+  version = ">=2.58"
   region  = var.aws_region
 }
 
@@ -16,10 +16,7 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  version         = "0.10"
-  install_tiller  = "false"
-  service_account = module.system.kubernetes_service_account.metadata.0.name
-  namespace       = module.system.kubernetes_service_account.metadata.0.namespace
+  version       = "1.0.0"
 
   kubernetes {
     config_path = module.kubernetes.kubeconfig_filename

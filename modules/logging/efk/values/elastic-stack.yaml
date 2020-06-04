@@ -249,7 +249,7 @@ elasticsearch-curator:
               stats_result:
               epoch:
               exclude: False
-              
+
       config_yml: |-
         ---
         client:
@@ -269,7 +269,7 @@ elasticsearch-curator:
         #   loglevel: INFO
         #   logfile:
         #   logformat: default
-        #   blacklist: ['elasticsearch', 'urllib3']              
+        #   blacklist: ['elasticsearch', 'urllib3']
 
 elasticsearch-exporter:
   enabled: false

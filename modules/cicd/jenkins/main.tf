@@ -1,7 +1,11 @@
-#Global helm chart repo
-data "helm_repository" "stable" {
-  name = "stable"
-  url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
+# Create namespace jenkins
+resource "kubernetes_namespace" "jenkins" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  metadata {
+    name = "jenkins"
+  }
 }
 
 resource "helm_release" "jenkins" {
@@ -10,7 +14,7 @@ resource "helm_release" "jenkins" {
   ]   
   
   name          = "jenkins"
-  repository    = data.helm_repository.stable.metadata[0].name
+  repository    = "https://kubernetes-charts.storage.googleapis.com"
   chart         = "jenkins"
   namespace     = "jenkins"
   recreate_pods = true
