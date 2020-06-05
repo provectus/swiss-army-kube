@@ -162,7 +162,7 @@ filebeat:
     output.elasticsearch:
       enabled: true
       hosts: ["http://elastic-elasticsearch-client:9200"]
-      protocol: https
+      protocol: http
 
 #  indexTemplateLoad:
 #    - elastic-elasticsearch-client:9200
