@@ -1,7 +1,14 @@
+locals {
+  name           = var.cluster.cluster_id
+  vpc_id         = var.vpc.id
+  security_group = var.cluster.worker_security_group_id
+  subnet         = var.vpc.private_subnets[0]
+}
+
 data "aws_caller_identity" "this" {}
 
 data "aws_eks_cluster" "this" {
-  name = var.cluster_name
+  name = local.name
 }
 
 resource "helm_release" "aws-fsx-csi-driver" {
@@ -80,4 +87,29 @@ resource "aws_iam_role_policy" "this" {
       ]
     }
   )
+}
+
+resource "aws_security_group_rule" "fsx-0" {
+  type                     = "ingress"
+  from_port                = 988
+  to_port                  = 988
+  protocol                 = "tcp"
+  source_security_group_id = local.security_group
+  description              = "Allows Lustre traffic between Lustre clients"
+  security_group_id        = aws_security_group.fsx.id
+}
+
+resource "aws_security_group_rule" "fsx-1" {
+  type                     = "ingress"
+  from_port                = 1021
+  to_port                  = 1023
+  protocol                 = "tcp"
+  source_security_group_id = local.security_group
+  description              = "Allows Lustre traffic between Lustre clients"
+  security_group_id        = aws_security_group.fsx.id
+}
+
+resource "aws_security_group" "fsx" {
+  name   = "AWS FSx SG [${local.name}]"
+  vpc_id = local.vpc_id
 }
