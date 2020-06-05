@@ -1,3 +1,9 @@
+data "aws_caller_identity" "this" {}
+
+data "aws_eks_cluster" "this" {
+  name = var.cluster_name
+}
+
 resource "helm_release" "aws-fsx-csi-driver" {
   name      = "aws-fsx-csi-driver"
   chart     = "${path.module}/../../../charts/aws-fsx-csi-driver"
@@ -16,12 +22,12 @@ data "aws_iam_policy_document" "this" {
 
     condition {
       test     = "StringLike"
-      variable = "${replace(var.cluster_oidc.url, "https://", "")}:sub"
+      variable = "${replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")}:sub"
       values   = ["system:serviceaccount:kube-system:fsx-csi-controller-sa"]
     }
 
     principals {
-      identifiers = [var.cluster_oidc.arn]
+      identifiers = ["arn:aws:iam::${data.aws_caller_identity.this.account_id}:oidc-provider/${replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")}"]
       type        = "Federated"
     }
   }
