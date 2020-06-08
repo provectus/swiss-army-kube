@@ -26,7 +26,7 @@ resource "helm_release" "cluster_autoscaler" {
 
 locals {
   autoscaler_conf_defaults = {
-    "image.tag"                             = "v1.15.5"
+    "image.tag"                             = "v1.16.5"
     "autoDiscovery.clusterName"             = var.cluster_name,
     "awsRegion"                             = data.aws_region.current.name,
     "extraArgs.balance-similar-node-groups" = true,
