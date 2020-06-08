@@ -157,6 +157,16 @@ variable "elasticsearch-curator" {
   default     = "true"
 }
 
+variable "failed_limit" {
+  description = "elasticsearch-curator failed jobs history limit"
+  default     = 2
+}
+
+variable "success_limit" {
+  description = "elasticsearch-curator successfull jobs history limit"
+  default     = 2
+}
+
 variable "elasticDataSize" {
   description = "Size of pvc for elastic data"
   default     = "30Gi"

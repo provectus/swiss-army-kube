@@ -86,12 +86,13 @@ module "nginx" {
 #module "efk" {
 #  module_depends_on     = [module.system.cert-manager,module.nginx.nginx-ingress]
 #  source                = "../modules/logging/efk"
-#  cluster_name          = var.cluster_name
-#  domains                = var.domains
+#  domains               = var.domains
 #  config_path           = "${path.module}/kubeconfig_${var.cluster_name}"
 #  elasticsearch-curator = var.elasticsearch-curator
 #  logstash              = var.logstash
 #  filebeat              = var.filebeat
+#  success_limit         = var.success_limit
+#  failed_limit          = var.failed_limit
 #  elasticDataSize       = var.elasticDataSize
 #}
 
