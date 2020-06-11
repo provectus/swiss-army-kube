@@ -26,6 +26,7 @@ resource "helm_release" "cluster_autoscaler" {
 
 locals {
   autoscaler_conf_defaults = {
+    "image.repository"                      = "us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler"
     "image.tag"                             = "v1.16.5"
     "autoDiscovery.clusterName"             = var.cluster_name,
     "awsRegion"                             = data.aws_region.current.name,

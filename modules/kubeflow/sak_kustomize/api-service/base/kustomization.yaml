@@ -1,0 +1,87 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+commonLabels:
+  app: ml-pipeline
+resources:
+- config-map.yaml
+- deployment.yaml
+- role-binding.yaml
+- role.yaml
+- service-account.yaml
+- service.yaml
+images:
+- name: gcr.io/ml-pipeline/api-server
+  newTag: 0.5.1
+  newName: gcr.io/ml-pipeline/api-server
+configurations:
+- params.yaml
+configMapGenerator:
+- name: ml-pipeline-parameters
+  envs:
+    - params.env
+generatorOptions:
+  disableNameSuffixHash: true
+vars:
+- name: DB_HOST
+  objref:
+    kind: ConfigMap
+    name: ml-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.DB_HOST
+- name: DB_USER
+  objref:
+    kind: ConfigMap
+    name: ml-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.DB_USER
+- name: DB_PASSWORD
+  objref:
+    kind: ConfigMap
+    name: ml-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.DB_PASSWORD
+- name: DB_NAME
+  objref:
+    kind: ConfigMap
+    name: ml-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.DB_NAME
+- name: STORAGE_HOST
+  objref:
+    kind: ConfigMap
+    name: ml-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.STORAGE_HOST
+- name: STORAGE_REGION
+  objref:
+    kind: ConfigMap
+    name: ml-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.STORAGE_REGION
+- name: STORAGE_BUCKET
+  objref:
+    kind: ConfigMap
+    name: ml-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.STORAGE_BUCKET
+- name: STORAGE_KEY
+  objref:
+    kind: ConfigMap
+    name: ml-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.STORAGE_KEY
+- name: STORAGE_SECRET
+  objref:
+    kind: ConfigMap
+    name: ml-pipeline-parameters
+    apiVersion: v1
+  fieldref:
+    fieldpath: data.STORAGE_SECRET
