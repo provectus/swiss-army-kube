@@ -42,6 +42,18 @@ module "eks" {
       autoscaling_enabled  = false
       kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=normal"
       suspended_processes  = ["AZRebalance"]
+      tags = [
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/enabled"
+          "propagate_at_launch" = "false"
+          "value"               = "true"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
+          "propagate_at_launch" = "false"
+          "value"               = "true"
+        }
+      ]
     },
     {
       name                 = "spot-1"
@@ -53,6 +65,18 @@ module "eks" {
       autoscaling_enabled  = true
       kubelet_extra_args   = "--node-labels=node.kubernetes.io/lifecycle=spot"
       suspended_processes  = ["AZRebalance"]
+      tags = [
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/enabled"
+          "propagate_at_launch" = "false"
+          "value"               = "true"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
+          "propagate_at_launch" = "false"
+          "value"               = "true"
+        }
+      ]
     }
   ]
 }
