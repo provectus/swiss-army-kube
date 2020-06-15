@@ -177,7 +177,6 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
-      - configmap
       repoRef:
         name: manifests
         path: pipeline/api-service

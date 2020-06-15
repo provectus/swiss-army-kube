@@ -52,7 +52,7 @@ resource "aws_iam_user" "this" {
 }
 
 resource "aws_iam_access_key" "this" {
-  user = "${aws_iam_user.this.name}"
+  user = aws_iam_user.this.name
 }
 
 resource "aws_iam_role" "this" {

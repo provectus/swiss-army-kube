@@ -68,9 +68,12 @@ resource "null_resource" "kfctl" {
   }
 
   depends_on = [
-    null_resource.sak_kustomize
+    var.module_depends_on,
+    local_file.api-service,
+    local_file.metadata,
+    local_file.metadata-secrets
   ]
   provisioner "local-exec" {
-    command = "kfctl apply -f ${path.module}/kfctl.yaml"
+    command = "KUBECONFIG=${var.config_path} kfctl apply -f ${path.module}/kfctl.yaml"
   }
 }

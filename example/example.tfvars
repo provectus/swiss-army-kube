@@ -46,6 +46,7 @@ spot_max_cluster_size      = "2"
 spot_min_cluster_size      = "0"
 spot_desired_capacity      = "0"
 spot_instance_type         = "m5.large"
+# Use EKS 1.15 if deploying Kubeflow !!!
 cluster_version            = "1.16"
 
 #Cert-manager
@@ -64,37 +65,37 @@ elasticDataSize = "30Gi"
 
 #Jenkins
 jenkins_password = "password"
-# Uncomment to attach S3 readonly policy for Jenkins master and agent IAM roles, or customize to add needed policies
-//agent_policy = <<EOF
-//{
-//  "Version": "2012-10-17",
-//  "Statement": [
-//    {
-//      "Effect": "Allow",
-//      "Action": [
-//        "s3:Get*",
-//        "s3:List*"
-//      ],
-//      "Resource": "*"
-//    }
-//  ]
-//}
-//EOF
-//master_policy = <<EOF
-//{
-//  "Version": "2012-10-17",
-//  "Statement": [
-//    {
-//      "Effect": "Allow",
-//      "Action": [
-//        "s3:Get*",
-//        "s3:List*"
-//      ],
-//      "Resource": "*"
-//    }
-//  ]
-//}
-//EOF
+## Uncomment to attach S3 readonly policy for Jenkins master and agent IAM roles, or customize to add needed policies
+#agent_policy = <<EOF
+#{
+#  "Version": "2012-10-17",
+#  "Statement": [
+#    {
+#      "Effect": "Allow",
+#      "Action": [
+#        "s3:Get*",
+#        "s3:List*"
+#      ],
+#      "Resource": "*"
+#    }
+#  ]
+#}
+#EOF
+#master_policy = <<EOF
+#{
+#  "Version": "2012-10-17",
+#  "Statement": [
+#    {
+#      "Effect": "Allow",
+#      "Action": [
+#        "s3:Get*",
+#        "s3:List*"
+#      ],
+#      "Resource": "*"
+#    }
+#  ]
+#}
+#EOF
 
 #Grafana
 grafana_password = "password"

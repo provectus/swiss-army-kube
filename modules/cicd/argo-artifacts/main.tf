@@ -18,6 +18,7 @@ resource "aws_s3_bucket" "argo-artifacts" {
 output "aws_s3_bucket" {
   value = aws_s3_bucket.argo-artifacts.bucket
 }
+
 output "artifacts" {
   value = aws_s3_bucket.argo-artifacts
 }
