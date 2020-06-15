@@ -123,7 +123,7 @@ module "eks" {
       on_demand_base_capacity                  = var.on_demand_gpu_base_capacity
       on_demand_percentage_above_base_capacity = var.on_demand_gpu_percentage_above_base_capacity
       autoscaling_enabled                      = true
-      kubelet_extra_args                       = "--node-labels=node.kubernetes.io/lifecycle=gpu,node-type=gpu --register-with-taints=node-type=gpu:NoSchedule"
+      kubelet_extra_args                       = "--node-labels=node.kubernetes.io/lifecycle=gpu,node-type=gpu,nvidia.com/gpu=gpu --register-with-taints=node-type=gpu:NoSchedule,nvidia.com/gpu=gpu:NoSchedule"
       suspended_processes                      = ["AZRebalance"]
       tags = [
         {

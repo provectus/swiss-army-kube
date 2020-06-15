@@ -15,6 +15,21 @@ resource "null_resource" "wait-eks" {
   }
 }
 
+# Install NVIDIA gpu support 
+#      resources:
+#        limits:
+#          nvidia.com/gpu: 2 # requesting 2 GPUs
+# WARNING: if you don't request GPUs when using the device plugin with NVIDIA images all the GPUs on the machine will be exposed inside your container.
+resource "null_resource" "nvidia" {
+  depends_on = [
+    var.module_depends_on,
+    null_resource.wait-eks
+  ]
+  provisioner "local-exec" {
+    command = "kubectl --kubeconfig ${path.root}/${var.config_path} -n kube-system create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/1.0.0-beta6/nvidia-device-plugin.yml"
+  }
+}
+
 # Route53 hostedzone
 # TODO: need create ns records in main zone
 resource "aws_route53_zone" "cluster" {
