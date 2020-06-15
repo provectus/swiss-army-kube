@@ -17,3 +17,8 @@ output "this" {
   value       = module.eks
   description = "TBD"
 }
+
+output "workers_launch_template_ids" {
+  description = "IDs of the worker launch templates."
+  value       = module.eks.workers_launch_template_ids.*
+}
