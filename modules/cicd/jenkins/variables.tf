@@ -46,10 +46,10 @@ variable "cluster_oidc_url" {
 
 variable "agent_policy" {
   description = "Policy attached to Jenkins agents IAM role"
-  default = ""
+  default     = ""
 }
 
 variable "master_policy" {
   description = "Policy attached to Jenkins master IAM role"
-  default = ""
+  default     = ""
 }

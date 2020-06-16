@@ -23,8 +23,8 @@ resource "helm_release" "nginx-ingress" {
   ]
 
   set {
-    name = "controller.service.annotations.service.beta.kubernetes.io"
-    value = var.aws_private =="true" ?  "aws-load-balancer-internal=true" : "aws-load-balancer-internal=false"
+    name  = "controller.service.annotations.service.beta.kubernetes.io"
+    value = var.aws_private == "true" ? "aws-load-balancer-internal=true" : "aws-load-balancer-internal=false"
   }
 }
 

@@ -11,8 +11,8 @@ resource "kubernetes_namespace" "jenkins" {
 resource "helm_release" "jenkins" {
   depends_on = [
     var.module_depends_on
-  ]   
-  
+  ]
+
   name          = "jenkins"
   repository    = "https://kubernetes-charts.storage.googleapis.com"
   chart         = "jenkins"
@@ -60,22 +60,22 @@ resource "helm_release" "jenkins" {
     value = aws_iam_role.jenkins_master.arn
   }
 
-//TODO: fix it for multi domains
+  //TODO: fix it for multi domains
   set {
-      name  = "master.ingress.hostName"
-      value = "jenkins.${var.domains[0]}"
+    name  = "master.ingress.hostName"
+    value = "jenkins.${var.domains[0]}"
   }
 
   dynamic "set" {
     for_each = var.domains
-    content {  
+    content {
       name  = "master.ingress.tls[${set.key}].secretName"
       value = "jenkins-${set.key}-tls"
     }
   }
   dynamic "set" {
     for_each = var.domains
-    content {  
+    content {
       name  = "master.ingress.tls[${set.key}].hosts[0]"
       value = "jenkins.${set.value}"
     }
