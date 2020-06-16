@@ -3,7 +3,7 @@ kind: KfDef
 metadata:
   annotations:
     kfctl.kubeflow.io/force-delete: "false"
-  clusterName: eks_byusupov
+  clusterName: eks_swiss-army
   creationTimestamp: null
   name: kubeflow
   namespace: kubeflow

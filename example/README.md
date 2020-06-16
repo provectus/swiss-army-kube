@@ -10,6 +10,16 @@ aws-iam-authenticator - `brew install aws-iam-authenticator`
 
 terraform - `brew install terraform`
 
+### Kubeflow
+kfctl - 
+Downloads bin from https://github.com/kubeflow/kfctl/releases/
+Untar and open kfctl ( To run kfctl, go to the kfctl binary file in Finder, right-click, then select Open. Then click Open again to confirm that you want to open the app. )
+Move kfctl to bin and try get version
+```
+mv ~/Downloads/kfctl /usr/local/bin/kfctl
+kfctl version
+```
+
 # Structure
   main.tf - data from modules
 
