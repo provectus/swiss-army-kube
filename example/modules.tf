@@ -44,6 +44,12 @@ module "system" {
   cluster_oidc_url   = module.kubernetes.cluster_oidc_url
 }
 
+module "scaling" {
+  module_depends_on = [module.system.cert-manager]
+  source            = "../modules/scaling"
+  cluster_name      = module.kubernetes.cluster_name
+}
+
 # Ingress
 module "nginx" {
   module_depends_on = [module.system.cert-manager]
@@ -62,7 +68,7 @@ module "nginx" {
   cookie-secret        = var.cookie-secret
 }
 
-# Monitoring
+## Monitoring
 #module "prometheus" {
 #  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
 #  source            = "../modules/monitoring/prometheus"
@@ -73,7 +79,7 @@ module "nginx" {
 #  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
 #}
 
-# Logging
+## Logging
 #module "loki" {
 #  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
 #  source            = "../modules/logging/loki"
@@ -96,7 +102,26 @@ module "nginx" {
 #  elasticDataSize       = var.elasticDataSize
 #}
 
-#ARGO CD
+## Kubeflow
+## Use EKS 1.15 in terraform.tfvars if deploying Kubeflow !!!
+#module "kubeflow" {
+#  module_depends_on = [module.system.cert-manager]
+#  source            = "../modules/kubeflow"
+#  vpc               = module.network.vpc
+#  cluster_name      = module.kubernetes.cluster_name
+#  cluster           = module.kubernetes.this
+#  artifacts         = module.argo-artifacts.artifacts
+#  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
+#}
+
+#module "efs" {
+#  module_depends_on = [module.system.cert-manager]
+#  source       = "../modules/storage/efs"
+#  vpc          = module.network.vpc
+#  cluster_name = module.kubernetes.cluster_name
+#}
+
+## ARGO CD
 #module "argo-cd" {
 #  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
 #  source            = "../modules/cicd/argo-cd"
@@ -128,6 +153,7 @@ module "nginx" {
 #  aws_s3_bucket = module.argo-artifacts.aws_s3_bucket
 #}
 
+# Jenkins
 module "jenkins" {
   module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
   source            = "../modules/cicd/jenkins"
