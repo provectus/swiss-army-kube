@@ -37,6 +37,7 @@ admin_arns = [
   },
 ]
 #Version of EKS cluster
+# Use EKS 1.15 if deploying Kubeflow !!!
 cluster_version = "1.16"
 
 # Type and number of worker node
@@ -95,37 +96,37 @@ elasticDataSize = "30Gi"
 
 #Jenkins
 jenkins_password = "password"
-# Uncomment to attach S3 readonly policy for Jenkins master and agent IAM roles, or customize to add needed policies
-//agent_policy = <<EOF
-//{
-//  "Version": "2012-10-17",
-//  "Statement": [
-//    {
-//      "Effect": "Allow",
-//      "Action": [
-//        "s3:Get*",
-//        "s3:List*"
-//      ],
-//      "Resource": "*"
-//    }
-//  ]
-//}
-//EOF
-//master_policy = <<EOF
-//{
-//  "Version": "2012-10-17",
-//  "Statement": [
-//    {
-//      "Effect": "Allow",
-//      "Action": [
-//        "s3:Get*",
-//        "s3:List*"
-//      ],
-//      "Resource": "*"
-//    }
-//  ]
-//}
-//EOF
+## Uncomment to attach S3 readonly policy for Jenkins master and agent IAM roles, or customize to add needed policies
+#agent_policy = <<EOF
+#{
+#  "Version": "2012-10-17",
+#  "Statement": [
+#    {
+#      "Effect": "Allow",
+#      "Action": [
+#        "s3:Get*",
+#        "s3:List*"
+#      ],
+#      "Resource": "*"
+#    }
+#  ]
+#}
+#EOF
+#master_policy = <<EOF
+#{
+#  "Version": "2012-10-17",
+#  "Statement": [
+#    {
+#      "Effect": "Allow",
+#      "Action": [
+#        "s3:Get*",
+#        "s3:List*"
+#      ],
+#      "Resource": "*"
+#    }
+#  ]
+#}
+#EOF
 
 #Grafana
 grafana_password = "password"

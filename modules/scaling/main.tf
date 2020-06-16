@@ -7,6 +7,9 @@ data "aws_eks_cluster" "this" {
 }
 
 resource "kubernetes_namespace" "this" {
+  depends_on = [
+    var.module_depends_on
+  ]
   count = var.namespace == "kube-system" ? 0 : 1
   metadata {
     name = var.namespace
@@ -14,6 +17,9 @@ resource "kubernetes_namespace" "this" {
 }
 
 resource "helm_release" "cluster_autoscaler" {
+  depends_on = [
+    var.module_depends_on
+  ]
   name       = "aws-cluster-autoscaler"
   repository = "stable"
   chart      = "cluster-autoscaler"
@@ -41,6 +47,9 @@ module "iam_assumable_role_admin" {
 }
 
 resource "aws_iam_policy" "cluster_autoscaler" {
+  depends_on = [
+    var.module_depends_on
+  ]
   name_prefix = "cluster-autoscaler"
   description = "EKS cluster-autoscaler policy for cluster ${data.aws_eks_cluster.this.id}"
   policy      = data.aws_iam_policy_document.cluster_autoscaler.json

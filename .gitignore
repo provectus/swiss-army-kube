@@ -4,6 +4,8 @@ kubeconfig_*
 local
 .idea
 *.tfstate*
+.cache
+kustomize
 
 # use other *.tfvars files for parametrization of config-modules
 terraform.tfvars
