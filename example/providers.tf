@@ -16,7 +16,7 @@ provider "kubernetes" {
 }
 
 provider "helm" {
-  version       = "1.0.0"
+  version = "1.0.0"
 
   kubernetes {
     config_path = module.kubernetes.kubeconfig_filename

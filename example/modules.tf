@@ -1,21 +1,49 @@
 module "kubernetes" {
   source = "../modules/kubernetes"
 
-  environment                = var.environment
-  project                    = var.project
-  cluster_name               = var.cluster_name
-  vpc_id                     = module.network.vpc_id
-  subnets                    = module.network.private_subnets
-  admin_arns                 = var.admin_arns
-  on_demand_max_cluster_size = var.on_demand_max_cluster_size
-  on_demand_min_cluster_size = var.on_demand_min_cluster_size
-  on_demand_desired_capacity = var.on_demand_desired_capacity
-  on_demand_instance_type    = var.on_demand_instance_type
-  spot_max_cluster_size      = var.spot_max_cluster_size
-  spot_min_cluster_size      = var.spot_min_cluster_size
-  spot_desired_capacity      = var.spot_desired_capacity
-  spot_instance_type         = var.spot_instance_type
-  cluster_version            = var.cluster_version
+  environment     = var.environment
+  project         = var.project
+  cluster_name    = var.cluster_name
+  cluster_version = var.cluster_version
+  vpc_id          = module.network.vpc_id
+  subnets         = module.network.private_subnets
+  admin_arns      = var.admin_arns
+  #On-demand
+  on_demand_common_max_cluster_size               = var.on_demand_common_max_cluster_size
+  on_demand_common_min_cluster_size               = var.on_demand_common_min_cluster_size
+  on_demand_common_desired_capacity               = var.on_demand_common_desired_capacity
+  on_demand_common_instance_type                  = var.on_demand_common_instance_type
+  on_demand_common_allocation_strategy            = var.on_demand_common_allocation_strategy
+  on_demand_common_base_capacity                  = var.on_demand_common_base_capacity
+  on_demand_common_percentage_above_base_capacity = var.on_demand_common_percentage_above_base_capacity
+  on_demand_common_asg_recreate_on_change         = var.on_demand_common_asg_recreate_on_change
+  #Spot
+  spot_max_cluster_size       = var.spot_max_cluster_size
+  spot_min_cluster_size       = var.spot_min_cluster_size
+  spot_desired_capacity       = var.spot_desired_capacity
+  spot_instance_type          = var.spot_instance_type
+  spot_instance_pools         = var.spot_instance_pools
+  spot_asg_recreate_on_change = var.spot_asg_recreate_on_change
+  spot_allocation_strategy    = var.spot_allocation_strategy
+  spot_max_price              = var.spot_max_price
+  #CPU
+  on_demand_cpu_max_cluster_size               = var.on_demand_cpu_max_cluster_size
+  on_demand_cpu_min_cluster_size               = var.on_demand_cpu_min_cluster_size
+  on_demand_cpu_desired_capacity               = var.on_demand_cpu_desired_capacity
+  on_demand_cpu_instance_type                  = var.on_demand_cpu_instance_type
+  on_demand_cpu_allocation_strategy            = var.on_demand_cpu_allocation_strategy
+  on_demand_cpu_base_capacity                  = var.on_demand_cpu_base_capacity
+  on_demand_cpu_percentage_above_base_capacity = var.on_demand_cpu_percentage_above_base_capacity
+  on_demand_cpu_asg_recreate_on_change         = var.on_demand_cpu_asg_recreate_on_change
+  #GPU
+  on_demand_gpu_max_cluster_size               = var.on_demand_gpu_max_cluster_size
+  on_demand_gpu_min_cluster_size               = var.on_demand_gpu_min_cluster_size
+  on_demand_gpu_desired_capacity               = var.on_demand_gpu_desired_capacity
+  on_demand_gpu_instance_type                  = var.on_demand_gpu_instance_type
+  on_demand_gpu_allocation_strategy            = var.on_demand_gpu_allocation_strategy
+  on_demand_gpu_base_capacity                  = var.on_demand_gpu_base_capacity
+  on_demand_gpu_percentage_above_base_capacity = var.on_demand_gpu_percentage_above_base_capacity
+  on_demand_gpu_asg_recreate_on_change         = var.on_demand_gpu_asg_recreate_on_change
 }
 
 module "network" {
@@ -29,7 +57,7 @@ module "network" {
 }
 
 module "system" {
-  module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name]
+  module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, module.kubernetes.workers_launch_template_ids]
   source            = "../modules/system"
 
   environment        = var.environment
@@ -104,54 +132,55 @@ module "nginx" {
 
 ## Kubeflow
 ## Use EKS 1.15 in terraform.tfvars if deploying Kubeflow !!!
-#module "kubeflow" {
-#  module_depends_on = [module.system.cert-manager]
-#  source            = "../modules/kubeflow"
-#  vpc               = module.network.vpc
-#  cluster_name      = module.kubernetes.cluster_name
-#  cluster           = module.kubernetes.this
-#  artifacts         = module.argo-artifacts.artifacts
-#  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
-#}
+## Enable module efs , argo-cd, argo-artifacts, argo-events, argo-workflow
+module "kubeflow" {
+  module_depends_on = [module.system.cert-manager]
+  source            = "../modules/kubeflow"
+  vpc               = module.network.vpc
+  cluster_name      = module.kubernetes.cluster_name
+  cluster           = module.kubernetes.this
+  artifacts         = module.argo-artifacts.artifacts
+  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
+}
 
-#module "efs" {
-#  module_depends_on = [module.system.cert-manager]
-#  source       = "../modules/storage/efs"
-#  vpc          = module.network.vpc
-#  cluster_name = module.kubernetes.cluster_name
-#}
+module "efs" {
+  module_depends_on = [module.system.cert-manager]
+  source       = "../modules/storage/efs"
+  vpc          = module.network.vpc
+  cluster_name = module.kubernetes.cluster_name
+}
 
 ## ARGO CD
-#module "argo-cd" {
-#  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-#  source            = "../modules/cicd/argo-cd"
-#
-#  domains = var.domains
-#}
+module "argo-cd" {
+  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+  source            = "../modules/cicd/argo-cd"
 
-#module "argo-artifacts" {
-#  module_depends_on = [module.system.cert-manager,module.argo-events.argo_events_namespace,module.nginx.nginx-ingress]
-#  source            = "../modules/cicd/argo-artifacts"
-#
-#  aws_region            = var.aws_region
-#  cluster_name          = var.cluster_name
-#  environment           = var.environment
-#  project               = var.project
-#  argo_events_namespace = module.argo-events.argo_events_namespace
-#}
+  domains = var.domains
+}
 
-#module "argo-events" {
-#  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-#  source            = "../modules/cicd/argo-events"
-#}
+module "argo-artifacts" {
+  module_depends_on = [module.system.cert-manager,module.argo-events.argo_events_namespace,module.nginx.nginx-ingress]
+  source            = "../modules/cicd/argo-artifacts"
 
-#module "argo-workflow" {
-#  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-#  source            = "../modules/cicd/argo-workflow"
-#
-#  aws_region    = var.aws_region
-#  aws_s3_bucket = module.argo-artifacts.aws_s3_bucket
-#}
+  aws_region            = var.aws_region
+  cluster_name          = var.cluster_name
+  environment           = var.environment
+  project               = var.project
+  argo_events_namespace = module.argo-events.argo_events_namespace
+}
+
+module "argo-events" {
+  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+  source            = "../modules/cicd/argo-events"
+}
+
+module "argo-workflow" {
+  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+  source            = "../modules/cicd/argo-workflow"
+
+  aws_region    = var.aws_region
+  aws_s3_bucket = module.argo-artifacts.aws_s3_bucket
+}
 
 # Jenkins
 module "jenkins" {
@@ -161,14 +190,14 @@ module "jenkins" {
   domains          = var.domains
   jenkins_password = var.jenkins_password
 
-  environment        = var.environment
-  project            = var.project
-  cluster_name       = var.cluster_name
-  cluster_oidc_url   = module.kubernetes.cluster_oidc_url
-  cluster_oidc_arn   = module.system.oidc_arn
+  environment      = var.environment
+  project          = var.project
+  cluster_name     = var.cluster_name
+  cluster_oidc_url = module.kubernetes.cluster_oidc_url
+  cluster_oidc_arn = module.system.oidc_arn
 
-  master_policy      = var.master_policy
-  agent_policy       = var.agent_policy
+  master_policy = var.master_policy
+  agent_policy  = var.agent_policy
 
   config_path = "${path.module}/kubeconfig_${var.cluster_name}"
 }

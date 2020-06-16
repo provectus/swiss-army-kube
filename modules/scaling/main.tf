@@ -99,20 +99,20 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
 
 locals {
   autoscaler_conf_defaults = {
-    "cloudProvider"                         = "aws"
-    "image.repository"                      = "us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler"
-    "image.tag"                             = "v1.16.5"
-    "autoDiscovery.clusterName"             = var.cluster_name,
-    "autoDiscovery.enabled"                 = true
-    "awsRegion"                             = data.aws_region.current.name,
-    "extraArgs.balance-similar-node-groups" = true,
-    "extraArgs.scale-down-enabled"          = true,
-    "rbac.create"                           = true,
+    "cloudProvider"                                                 = "aws"
+    "image.repository"                                              = "us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler"
+    "image.tag"                                                     = "v1.16.5"
+    "autoDiscovery.clusterName"                                     = var.cluster_name,
+    "autoDiscovery.enabled"                                         = true
+    "awsRegion"                                                     = data.aws_region.current.name,
+    "extraArgs.balance-similar-node-groups"                         = true,
+    "extraArgs.scale-down-enabled"                                  = true,
+    "rbac.create"                                                   = true,
     "rbac.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn" = module.iam_assumable_role_admin.this_iam_role_arn
-    "rbac.pspEnabled"                       = true,
-    "resources.limits.cpu"                  = "100m",
-    "resources.limits.memory"               = "300Mi",
-    "resources.requests.cpu"                = "100m",
-    "resources.requests.memory"             = "300Mi",
+    "rbac.pspEnabled"                                               = true,
+    "resources.limits.cpu"                                          = "100m",
+    "resources.limits.memory"                                       = "300Mi",
+    "resources.requests.cpu"                                        = "100m",
+    "resources.requests.memory"                                     = "300Mi",
   }
 }
