@@ -2,7 +2,7 @@
 
 ![Swiss-army-kube](https://github.com/provectus/swiss-army-kube/raw/master/logo-swiss-army.png)
 
-## Prerequsite
+## Prerequisites
 
 #### Helm v3  
 `brew install helm`
@@ -20,19 +20,19 @@
 `brew install terraform`
 
 #### kfctl 
-- Downloads bin from https://github.com/kubeflow/kfctl/releases/  
-- Untar and open kfctl  
-( To run kfctl, go to the kfctl binary file in Finder, right-click, then select Open. Then click Open again to confirm that you want to open the app. )  
+`bash swiss-army-kube/kfctl_install.sh`
 
-- Move kfctl to bin and try get version
-```
-mv ~/Downloads/kfctl /usr/local/bin/kfctl
-kfctl version
-```
+( To run kfctl, go to the `/usr/local/bin/kfctl` binary file in Finder, right-click, then select Open. Then click Open again to confirm that you want to open the app. )  
+
+#### jq
+`brew install jq`
+
+#### To install all prerequisites
+`bash swiss-army-kube/prerequisites_install.sh` 
 
 ## Usage
 - Checkout repo
-- `cd swiss-army-kube/example` or rename "example" for your environment name and `cd <environment name>`
+- `cd swiss-army-kube/example` or rename "example" for your environment name and `cd swiss-army-kube/<environment name>`
 - `mv example.tfvars terraform.tfvars`
 - Edit terraform.tfvars (for security reasons terraform.tfvars in .gitignore)
 - Run `terraform init`

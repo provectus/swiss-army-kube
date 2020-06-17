@@ -1,24 +1,30 @@
-# Prerequsite
+# Prerequisites
 
-Helm v3 - `brew install helm`
+#### Helm v3  
+`brew install helm`
 
-kubectl - `brew install kubernetes-cli`
+#### kubectl  
+`brew install kubernetes-cli`
 
-awscli - `brew install awscli`
+#### awscli  
+`brew install awscli`
 
-aws-iam-authenticator - `brew install aws-iam-authenticator`
+#### aws-iam-authenticator  
+`brew install aws-iam-authenticator`
 
-terraform - `brew install terraform`
+#### terraform  
+`brew install terraform`
 
-### Kubeflow
-kfctl - 
-Downloads bin from https://github.com/kubeflow/kfctl/releases/
-Untar and open kfctl ( To run kfctl, go to the kfctl binary file in Finder, right-click, then select Open. Then click Open again to confirm that you want to open the app. )
-Move kfctl to bin and try get version
-```
-mv ~/Downloads/kfctl /usr/local/bin/kfctl
-kfctl version
-```
+#### kfctl 
+`bash swiss-army-kube/kfctl_install.sh`
+
+( To run kfctl, go to the `/usr/local/bin/kfctl` binary file in Finder, right-click, then select Open. Then click Open again to confirm that you want to open the app. )  
+
+#### jq
+`brew install jq`
+
+#### To install all prerequisites
+`bash swiss-army-kube/prerequisites_install.sh` 
 
 # Structure
   main.tf - data from modules
@@ -96,4 +102,4 @@ Recreate resources
 
 If `terraform destroy` command fails, run
 `destroy_fix.sh`
-and try `terraform destroy` again
+and try `terraform destroy` again. After successful destroy process go to AWS console and delete argo-artifacts S3 bucket (if needed), also delete Route53 resources remaining from your deployment.
