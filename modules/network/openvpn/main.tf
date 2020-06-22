@@ -18,7 +18,7 @@ resource "tls_self_signed_cert" "ca" {
   ]
 
   subject {
-    common_name = "vpn.${var.domain}"
+    common_name = "AWS Client VPN"
   }
 }
 
@@ -33,9 +33,9 @@ resource "tls_cert_request" "cert" {
   for_each        = toset(local.certs)
   key_algorithm   = "RSA"
   private_key_pem = tls_private_key.cert[each.key].private_key_pem
-
+  dns_names       = ["vpn.${var.domain}"]
   subject {
-    common_name = "vpn.${var.domain}"
+    common_name = each.key
   }
 }
 
@@ -103,7 +103,6 @@ resolv-retry infinite
 nobind
 persist-key
 persist-tun
-remote-cert-tls server
 cipher AES-256-GCM
 verb 3
 <ca>
@@ -118,4 +117,28 @@ ${tls_private_key.cert[each.key].private_key_pem}
 reneg-sec 0
 EOT
   filename = "${each.key}.ovpn"
+}
+
+resource "null_resource" "authorize-client-vpn-ingress" {
+  provisioner "local-exec" {
+    when    = create
+    command = "aws ec2 authorize-client-vpn-ingress --client-vpn-endpoint-id ${aws_ec2_client_vpn_endpoint.this.id} --target-network-cidr 0.0.0.0/0 --authorize-all-groups"
+  }
+
+  depends_on = [
+    aws_ec2_client_vpn_endpoint.this
+  ]
+}
+
+resource "null_resource" "create-client-vpn-route" {
+  for_each = toset(var.subnet_ids)
+  provisioner "local-exec" {
+    when    = create
+    command = "aws ec2 create-client-vpn-route --client-vpn-endpoint-id ${aws_ec2_client_vpn_endpoint.this.id} --destination-cidr-block 0.0.0.0/0 --target-vpc-subnet-id ${each.key} --description Internet-Access"
+  }
+
+  depends_on = [
+    aws_ec2_client_vpn_endpoint.this,
+    null_resource.authorize-client-vpn-ingress
+  ]
 }
