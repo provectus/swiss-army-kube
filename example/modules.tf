@@ -98,13 +98,17 @@ module "nginx" {
 
 ## Monitoring
 #module "prometheus" {
-#  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-#  source            = "../modules/monitoring/prometheus"
+#  module_depends_on       = [module.system.cert-manager, module.nginx.nginx-ingress]
+#  source                  = "../modules/monitoring/prometheus"
 #
-#  cluster_name = var.cluster_name
-#  domains      = var.domains
-#  grafana_password = var.grafana_password
-#  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
+#  cluster_name            = var.cluster_name
+#  domains                 = [var.domains[0]]
+#  grafana_password        = var.grafana_password
+#  grafana_google_auth     = var.grafana_google_auth
+#  grafana_client_id       = var.grafana_client_id
+#  grafana_client_secret   = var.grafana_client_secret
+#  grafana_allowed_domains = var.grafana_allowed_domains
+#  config_path             = "${path.module}/kubeconfig_${var.cluster_name}"
 #}
 
 ## Logging
