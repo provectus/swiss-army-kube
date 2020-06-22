@@ -56,6 +56,14 @@ module "network" {
   network            = var.network
 }
 
+module "vpn" {
+  source       = "../modules/network/openvpn"
+  cluster_name = var.cluster_name
+  domain       = var.domains[0]
+  clients      = ["admin"]
+  subnet_ids   = module.network.private_subnets
+}
+
 module "system" {
   module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, module.kubernetes.workers_launch_template_ids]
   source            = "../modules/system"
@@ -145,21 +153,21 @@ module "kubeflow" {
 
 module "efs" {
   module_depends_on = [module.system.cert-manager]
-  source       = "../modules/storage/efs"
-  vpc          = module.network.vpc
-  cluster_name = module.kubernetes.cluster_name
+  source            = "../modules/storage/efs"
+  vpc               = module.network.vpc
+  cluster_name      = module.kubernetes.cluster_name
 }
 
 ## ARGO CD
 module "argo-cd" {
-  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
   source            = "../modules/cicd/argo-cd"
 
   domains = var.domains
 }
 
 module "argo-artifacts" {
-  module_depends_on = [module.system.cert-manager,module.argo-events.argo_events_namespace,module.nginx.nginx-ingress]
+  module_depends_on = [module.system.cert-manager, module.argo-events.argo_events_namespace, module.nginx.nginx-ingress]
   source            = "../modules/cicd/argo-artifacts"
 
   aws_region            = var.aws_region
@@ -170,12 +178,12 @@ module "argo-artifacts" {
 }
 
 module "argo-events" {
-  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
   source            = "../modules/cicd/argo-events"
 }
 
 module "argo-workflow" {
-  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
   source            = "../modules/cicd/argo-workflow"
 
   aws_region    = var.aws_region
