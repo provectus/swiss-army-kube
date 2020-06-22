@@ -102,7 +102,7 @@ module "nginx" {
 #  source                  = "../modules/monitoring/prometheus"
 #
 #  cluster_name            = var.cluster_name
-#  domains                 = [var.domains[0]]
+#  domains                 = var.domains
 #  grafana_password        = var.grafana_password
 #  grafana_google_auth     = var.grafana_google_auth
 #  grafana_client_id       = var.grafana_client_id
