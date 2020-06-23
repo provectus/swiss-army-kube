@@ -5,11 +5,37 @@ data "aws_vpc" "main" {
   id = var.vpc_id
 }
 
+# Wait initial eks
+resource "null_resource" "wait-eks" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  provisioner "local-exec" {
+    command = "until kubectl --kubeconfig ${path.root}/${var.config_path} -n kube-system get pods >/dev/null 2>&1;do echo 'Waiting for EKS API';sleep 5;done"
+  }
+}
+
+# Install NVIDIA gpu support 
+#      resources:
+#        limits:
+#          nvidia.com/gpu: 2 # requesting 2 GPUs
+# WARNING: if you don't request GPUs when using the device plugin with NVIDIA images all the GPUs on the machine will be exposed inside your container.
+resource "null_resource" "nvidia" {
+  depends_on = [
+    var.module_depends_on,
+    null_resource.wait-eks
+  ]
+  provisioner "local-exec" {
+    command = "kubectl --kubeconfig ${path.root}/${var.config_path} -n kube-system create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/1.0.0-beta6/nvidia-device-plugin.yml"
+  }
+}
+
 # Route53 hostedzone
 # TODO: need create ns records in main zone
 resource "aws_route53_zone" "cluster" {
   depends_on = [
-    var.module_depends_on
+    var.module_depends_on,
+    null_resource.wait-eks
   ]
 
   count = var.aws_private == "false" ? length(var.domains) : 0
@@ -23,9 +49,10 @@ resource "aws_route53_zone" "cluster" {
 
 resource "aws_route53_record" "cluster-ns" {
   depends_on = [
-    var.module_depends_on
-  ]  
-  count = var.aws_private == "false" ? length(var.domains) : 0
+    var.module_depends_on,
+    null_resource.wait-eks
+  ]
+  count   = var.aws_private == "false" ? length(var.domains) : 0
   zone_id = var.mainzoneid
   name    = element(var.domains, count.index)
   type    = "NS"
@@ -42,19 +69,21 @@ resource "aws_route53_record" "cluster-ns" {
 
 resource "aws_route53_zone" "private" {
   depends_on = [
-    var.module_depends_on
-  ]  
+    var.module_depends_on,
+    null_resource.wait-eks
+  ]
   count = var.aws_private == "true" ? length(var.domains) : 0
-  name = element(var.domains, count.index)
+  name  = element(var.domains, count.index)
   vpc {
     vpc_id = data.aws_vpc.main.id
-  } 
+  }
 }
 
 # OIDC cluster EKS settings
 resource "aws_iam_openid_connect_provider" "cluster" {
   depends_on = [
-    var.module_depends_on
+    var.module_depends_on,
+    null_resource.wait-eks
   ]
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da2b0ab7280"]
@@ -85,7 +114,8 @@ data "aws_iam_policy_document" "external_dns_assume_role_policy" {
 # Create role for external_dns
 resource "aws_iam_role" "external_dns" {
   depends_on = [
-    var.module_depends_on
+    var.module_depends_on,
+    null_resource.wait-eks
   ]
   assume_role_policy = data.aws_iam_policy_document.external_dns_assume_role_policy.json
   name               = var.cluster_name
@@ -100,7 +130,8 @@ resource "aws_iam_role" "external_dns" {
 # Create policy for cert_manager
 resource "aws_iam_policy" "cert_manager" {
   depends_on = [
-    var.module_depends_on
+    var.module_depends_on,
+    null_resource.wait-eks
   ]
   name   = "${var.cluster_name}_route53_dns_manager"
   policy = <<EOF
@@ -138,7 +169,8 @@ EOF
 # Create role for cert_manager
 resource "aws_iam_role" "cert_manager" {
   depends_on = [
-    var.module_depends_on
+    var.module_depends_on,
+    null_resource.wait-eks
   ]
   name               = "${var.cluster_name}_dns_manager"
   description        = "Role for manage dns by cert-manager"
@@ -164,7 +196,8 @@ EOF
 resource "aws_iam_role_policy_attachment" "cert_manager" {
   depends_on = [
     var.module_depends_on,
-    aws_iam_policy.cert_manager
+    aws_iam_policy.cert_manager,
+    null_resource.wait-eks
   ]
   role       = aws_iam_role.cert_manager.name
   policy_arn = aws_iam_policy.cert_manager.arn
@@ -175,22 +208,13 @@ resource "aws_iam_role_policy_attachment" "external_dns" {
   depends_on = [
     var.module_depends_on,
     aws_iam_policy.cert_manager,
-    aws_iam_role.external_dns
+    aws_iam_role.external_dns,
+    null_resource.wait-eks
   ]
   role       = aws_iam_role.external_dns.name
   policy_arn = aws_iam_policy.cert_manager.arn
 }
 
-
-# Wait initial eks
-resource "null_resource" "wait-eks" {
-  depends_on = [
-    var.module_depends_on
-  ]
-  provisioner "local-exec" {
-    command = "until kubectl --kubeconfig ${path.root}/${var.config_path} -n kube-system get pods >/dev/null 2>&1;do echo 'Waiting for EKS API';sleep 5;done"
-  }
-}
 
 # Deploy custom resources for cert-manager
 resource "null_resource" "cert-manager-crd" {
@@ -207,7 +231,8 @@ resource "null_resource" "cert-manager-crd" {
 resource "kubernetes_namespace" "cert-manager" {
   depends_on = [
     null_resource.cert-manager-crd,
-    var.module_depends_on
+    var.module_depends_on,
+    null_resource.wait-eks
   ]
   metadata {
     labels = {
@@ -304,13 +329,13 @@ resource "helm_release" "metrics-server" {
   depends_on = [
     null_resource.wait-eks,
     var.module_depends_on
-    ]
+  ]
 
-  name          = "state"
-  repository    = "https://kubernetes-charts.storage.googleapis.com"
-  chart         = "metrics-server"
-  version       = "2.11.1"
-  namespace     = "kube-system"
+  name       = "state"
+  repository = "https://kubernetes-charts.storage.googleapis.com"
+  chart      = "metrics-server"
+  version    = "2.11.1"
+  namespace  = "kube-system"
 
 }
 
@@ -320,11 +345,11 @@ resource "helm_release" "sealed-secrets" {
     var.module_depends_on,
     null_resource.wait-eks
   ]
-  name          = "sealed-secrets"
-  repository    = "https://kubernetes-charts.storage.googleapis.com"
-  chart         = "sealed-secrets"
-  version       = "1.10.1"
-  namespace     = "kube-system"
+  name       = "sealed-secrets"
+  repository = "https://kubernetes-charts.storage.googleapis.com"
+  chart      = "sealed-secrets"
+  version    = "1.10.1"
+  namespace  = "kube-system"
 
   values = [
     "${file("${path.module}/values/sealed-secrets.yaml")}",

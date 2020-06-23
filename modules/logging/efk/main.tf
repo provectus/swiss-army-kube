@@ -1,10 +1,10 @@
-# Create namespace logging
-resource "kubernetes_namespace" "logging" {
+# Create namespace efk
+resource "kubernetes_namespace" "efk" {
   depends_on = [
     var.module_depends_on
   ]
   metadata {
-    name = "logging"
+    name = "efk"
   }
 }
 
@@ -16,7 +16,8 @@ resource "helm_release" "elastic-stack" {
   name       = "elastic"
   repository = "https://kubernetes-charts.storage.googleapis.com"
   chart      = "elastic-stack"
-  namespace  = "logging"
+  version    = "2.0.1"
+  namespace  = "efk"
 
   values = [
     file("${path.module}/values/elastic-stack.yaml"),
@@ -24,41 +25,41 @@ resource "helm_release" "elastic-stack" {
 
   set {
     name  = "kibana.ingress.hosts[0]"
-    value = "kibana.${var.domain}"
+    value = "kibana.${var.domains[0]}"
   }
 
   set {
     name  = "kibana.ingress.tls[0].hosts[0]"
-    value = "kibana.${var.domain}"
-  }
-
-  set {
-    name  = "kibana.ingress.annotations.ingress.kubernetes.io/auth-url"
-    value = "https://oauth2.${var.domain}/oauth2/auth"
-  }
-
-  set {
-    name  = "kibana.ingress.annotations.ingress.kubernetes.io/auth-signin"
-    value = "https://oauth2.${var.domain}/oauth2/start?rd=https://$host$request_uri$is_args$args"
+    value = "kibana.${var.domains[0]}"
   }
 
   set {
     name  = "logstash.enabled"
-    value = "${var.logstash}"
+    value = var.logstash
   }
 
   set {
     name  = "filebeat.enabled"
-    value = "${var.filebeat}"
+    value = var.filebeat
   }
 
   set {
-    name  = "elasticsearch-curator"
-    value = "${var.elasticsearch-curator}"
+    name  = "elasticsearch-curator.enabled"
+    value = var.elasticsearch-curator
+  }
+
+  set {
+    name  = "elasticsearch-curator.cronjob.failedJobsHistoryLimit"
+    value = var.failed_limit
+  }
+
+  set {
+    name  = "elasticsearch-curator.cronjob.successfulJobsHistoryLimit"
+    value = var.success_limit
   }
 
   set {
     name  = "elasticsearch.data.persistence.size"
-    value = "${var.elasticDataSize}"
+    value = var.elasticDataSize
   }
 }
