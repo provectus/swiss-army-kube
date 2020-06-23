@@ -60,7 +60,10 @@ module "vpn" {
   source       = "../modules/network/openvpn"
   cluster_name = var.cluster_name
   domain       = var.domains[0]
+  # This option allows to generate user specific certificates, just add new entities to clients list
+  # for example:  clients      = ["admin","developer1","developer2"]
   clients      = ["admin"]
+  # These subnets would be associated with VPN endpoint, would be billed by 0.10$ per hour
   subnet_ids   = module.network.private_subnets
 }
 
@@ -140,14 +143,14 @@ module "nginx" {
 
 ## Kubeflow
 ## Use EKS 1.15 in terraform.tfvars if deploying Kubeflow !!!
-## Enable module efs , argo-cd, argo-artifacts, argo-events, argo-workflow
+## Enable module efs and argo
 module "kubeflow" {
-  module_depends_on = [module.system.cert-manager]
+  module_depends_on = [module.system.cert-manager, module.argo]
   source            = "../modules/kubeflow"
   vpc               = module.network.vpc
   cluster_name      = module.kubernetes.cluster_name
   cluster           = module.kubernetes.this
-  artifacts         = module.argo-artifacts.artifacts
+  artifacts         = module.argo.artifacts
   config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
 }
 
@@ -158,36 +161,14 @@ module "efs" {
   cluster_name      = module.kubernetes.cluster_name
 }
 
-## ARGO CD
-module "argo-cd" {
+# Argoproj: all-in-one
+module "argo" {
   module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
-  source            = "../modules/cicd/argo-cd"
-
-  domains = var.domains
-}
-
-module "argo-artifacts" {
-  module_depends_on = [module.system.cert-manager, module.argo-events.argo_events_namespace, module.nginx.nginx-ingress]
-  source            = "../modules/cicd/argo-artifacts"
-
-  aws_region            = var.aws_region
-  cluster_name          = var.cluster_name
-  environment           = var.environment
-  project               = var.project
-  argo_events_namespace = module.argo-events.argo_events_namespace
-}
-
-module "argo-events" {
-  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
-  source            = "../modules/cicd/argo-events"
-}
-
-module "argo-workflow" {
-  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
-  source            = "../modules/cicd/argo-workflow"
-
-  aws_region    = var.aws_region
-  aws_s3_bucket = module.argo-artifacts.aws_s3_bucket
+  source            = "../modules/cicd/argo"
+  cluster_name      = var.cluster_name
+  domains           = var.domains
+  environment       = var.environment
+  project           = var.project
 }
 
 # Jenkins

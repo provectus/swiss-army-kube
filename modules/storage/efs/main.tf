@@ -8,9 +8,9 @@ resource "helm_release" "aws-efs-csi-driver" {
 }
 
 resource "aws_efs_mount_target" "this" {
-  count           = length(var.vpc.private_subnets) > 0 ? length(var.vpc.private_subnets) : 0
-  file_system_id  = aws_efs_file_system.this.id
-  subnet_id       = var.vpc.private_subnets[count.index]
+  count          = length(var.vpc.private_subnets) > 0 ? length(var.vpc.private_subnets) : 0
+  file_system_id = aws_efs_file_system.this.id
+  subnet_id      = var.vpc.private_subnets[count.index]
 }
 
 resource "aws_efs_file_system" "this" {
