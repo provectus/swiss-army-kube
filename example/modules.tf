@@ -131,43 +131,13 @@ module "nginx" {
 #}
 
 # Argoproj: all-in-one
-#module "argo" {
-#  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-#  source              = "../modules/cicd/argo"
-#  cluster_name        = var.cluster_name
-#  iam_openid_provider = module.system.iam_openid_provider
-#  domains             = var.domains
-#  environment         = var.environment
-#  project             = var.project
-#}
-
-# Argoproj: separately
-#module "argo-cd" {
-#  source    = "./modules/cd"
-#  domains   = var.domains
-#}
-
-#module "argo-events" {
-#  source    = "./modules/events"
-#}
-
-#module "argo-workflow" {
-#  module_depends_on = [module.argo-events.argo_events_namespace]
-#  source            = "./modules/workflow"
-
-#  environment           = var.environment
-#  project               = var.project
-#  cluster_name          = var.cluster_name
-#  cluster_oidc          = module.system.iam_openid_provider
-#  argo_events_namespace = module.argo-events.argo_events_namespace
-#}
-
-module "argo-workflow" {
-  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-  source            = "../modules/cicd/argo-workflow"
-
-  aws_region    = var.aws_region
-  aws_s3_bucket = module.argo-artifacts.aws_s3_bucket
+module "argo" {
+  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
+  source            = "../modules/cicd/argo"
+  cluster_name      = var.cluster_name
+  domains           = var.domains
+  environment       = var.environment
+  project           = var.project
 }
 
 # Jenkins

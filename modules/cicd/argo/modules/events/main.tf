@@ -22,6 +22,8 @@ resource "helm_release" "argo-events" {
 
 locals {
   events_conf_defaults = {
-    "installCRD" = false
+    "installCRD"      = false
+    "singleNamespace" = false
+    "namespace"       = var.namespace
   }
 }

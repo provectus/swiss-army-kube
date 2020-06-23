@@ -7,9 +7,6 @@ variable "domains" {
 variable "environment" {
   type = string
 }
-variable "iam_openid_provider" {
-  type = any
-}
 variable "project" {
   type = string
 }
@@ -24,4 +21,7 @@ variable "install_events" {
 }
 variable "install_workflows" {
   default = true
+}
+variable "module_depends_on" {
+  default = []
 }

@@ -1,7 +1,13 @@
 data "aws_region" "current" {}
 
+data "aws_eks_cluster" "this" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  name = var.cluster_name
+}
+
 resource "aws_s3_bucket" "artifacts" {
-  count = var.enabled
   depends_on = [
     var.module_depends_on
   ]
@@ -19,9 +25,8 @@ resource "aws_s3_bucket" "artifacts" {
 }
 
 resource "aws_iam_role_policy" "s3" {
-  count = var.enabled
   name = "s3-access"
-  role = aws_iam_role.aw.id
+  role = module.sa_assumable_role.this_iam_role_name
   policy = jsonencode(
     { "Version" : "2012-10-17",
       "Statement" : [
@@ -31,52 +36,27 @@ resource "aws_iam_role_policy" "s3" {
           "Action" : [
             "s3:PutObject",
             "s3:GetObject",
+            "s3:ListBucket",
             "s3:GetBucketLocation"
           ],
           "Resource" : ["${aws_s3_bucket.artifacts.arn}/*",
-aws_s3_bucket.artifacts.arn]
+          aws_s3_bucket.artifacts.arn]
         }
       ]
     }
- )
+  )
 }
 
-data "aws_iam_policy_document" "aw" {
-  count = var.enabled
-  statement {
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-    effect  = "Allow"
-
-    condition {
-      test     = "StringLike"
-      variable = "${replace(var.cluster_oidc.url, "https://", "")}:sub"
-      values   = ["system:serviceaccount:${var.namespace}:argo-*"]
-    }
-
-    principals {
-      identifiers = [var.cluster_oidc.arn]
-      type        = "Federated"
-    }
-  }
-}
-
-resource "aws_iam_role" "aw" {
-  count = var.enabled
-  depends_on = [
-    var.module_depends_on
-  ]
-  assume_role_policy = data.aws_iam_policy_document.aw.json
-  name               = "${var.cluster_name}-argo-workflow"
-
-  tags = {
-    Environment = var.environment
-    Project     = var.project
-  }
-
+module "sa_assumable_role" {
+  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  version                       = "~> v2.6.0"
+  create_role                   = true
+  role_name                     = "${var.cluster_name}_argo-workflow"
+  provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${var.namespace}:argo-*"]
 }
 
 resource "helm_release" "argo-workflow" {
-  count = var.enabled
   depends_on = [
     var.module_depends_on
   ]
@@ -100,25 +80,25 @@ resource "helm_release" "argo-workflow" {
 
 locals {
   workflow_conf_defaults = {
-    "useDefaultArtifactRepo" = true,
-    "artifactRepository.s3.endpoint" = "s3.amazonaws.com",
-    "artifactRepository.archiveLogs"       = true,
-    "artifactRepository.s3.bucket"         = aws_s3_bucket.artifacts.bucket,
-    "artifactRepository.s3.useSDKCreds"    = true,
-    "controller.resources.limits.cpu"      = "100m",
-    "controller.resources.limits.memory"   = "300Mi",
-    "controller.resources.requests.cpu"    = "100m",
-    "controller.resources.requests.memory" = "300Mi",
-    "controller.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"     = aws_iam_role.aw.arn, 
-    "controller.workflowNamespaces[0]"     = var.argo_events_namespace,
-    "installCRD" = false,
-    "rbac.create"                          = true,
-    "rbac.pspEnabled"                      = true,
-    "server.baseHref"                      = "/argo/"
-    "server.resources.limits.cpu"          = "100m",
-    "server.resources.limits.memory"       = "300Mi",
-    "server.resources.requests.cpu"        = "100m",
-    "server.resources.requests.memory"     = "300Mi",
-    "server.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"     = aws_iam_role.aw.arn, 
+    "useDefaultArtifactRepo"                                              = true,
+    "artifactRepository.s3.endpoint"                                      = "s3.amazonaws.com",
+    "artifactRepository.archiveLogs"                                      = true,
+    "artifactRepository.s3.bucket"                                        = aws_s3_bucket.artifacts.bucket,
+    "artifactRepository.s3.useSDKCreds"                                   = true,
+    "controller.resources.limits.cpu"                                     = "100m",
+    "controller.resources.limits.memory"                                  = "300Mi",
+    "controller.resources.requests.cpu"                                   = "100m",
+    "controller.resources.requests.memory"                                = "300Mi",
+    "controller.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn" = module.sa_assumable_role.this_iam_role_arn,
+    "controller.workflowNamespaces[0]"                                    = var.argo_events_namespace,
+    "installCRD"                                                          = false,
+    "rbac.create"                                                         = true,
+    "rbac.pspEnabled"                                                     = true,
+    "server.baseHref"                                                     = "/argo/"
+    "server.resources.limits.cpu"                                         = "100m",
+    "server.resources.limits.memory"                                      = "300Mi",
+    "server.resources.requests.cpu"                                       = "100m",
+    "server.resources.requests.memory"                                    = "300Mi",
+    "server.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"     = module.sa_assumable_role.this_iam_role_arn
   }
 }
