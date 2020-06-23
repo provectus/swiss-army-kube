@@ -18,7 +18,7 @@ module "argo-events" {
 }
 
 module "argo-workflow" {
-  module_depends_on = concat([module.argo-events.argo_events_namespace],var.module_depends_on)
+  module_depends_on = concat([module.argo-events.argo_events_namespace], var.module_depends_on)
   source            = "./modules/workflow"
 
   environment           = var.environment

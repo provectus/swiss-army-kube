@@ -130,6 +130,26 @@ module "nginx" {
 #  elasticDataSize       = var.elasticDataSize
 #}
 
+## Kubeflow
+## Use EKS 1.15 in terraform.tfvars if deploying Kubeflow !!!
+## Enable module efs and argo
+module "kubeflow" {
+  module_depends_on = [module.system.cert-manager, module.argo]
+  source            = "../modules/kubeflow"
+  vpc               = module.network.vpc
+  cluster_name      = module.kubernetes.cluster_name
+  cluster           = module.kubernetes.this
+  artifacts         = module.argo.artifacts
+  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
+}
+
+module "efs" {
+  module_depends_on = [module.system.cert-manager]
+  source            = "../modules/storage/efs"
+  vpc               = module.network.vpc
+  cluster_name      = module.kubernetes.cluster_name
+}
+
 # Argoproj: all-in-one
 module "argo" {
   module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]

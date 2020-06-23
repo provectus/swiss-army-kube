@@ -54,7 +54,7 @@ EOT
 
 resource "null_resource" "kfctl_build" {
   triggers = {
-    kfctl = "${sha1(file("${path.module}/kfctl.yaml"))}"
+    kfctl              = "${sha1(file("${path.module}/kfctl.yaml"))}"
     sak_kustomize_hash = "${data.external.trigger.result["checksum"]}"
   }
 
