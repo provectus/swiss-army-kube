@@ -6,11 +6,3 @@ variable "module_depends_on" {
 variable "domains" {
   description = "domain name for ingress"
 }
-
-variable "cd_conf" {
-  default = {}
-}
-
-variable "namespace" {
-  default = "argo-cd"
-}

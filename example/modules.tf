@@ -130,37 +130,49 @@ module "nginx" {
 #  elasticDataSize       = var.elasticDataSize
 #}
 
-# Argoproj: all-in-one
-#module "argo" {
-#  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
-#  source              = "../modules/cicd/argo"
-#  cluster_name        = var.cluster_name
-#  iam_openid_provider = module.system.iam_openid_provider
-#  domains             = var.domains
-#  environment         = var.environment
-#  project             = var.project
-#}
+## Kubeflow
+## Use EKS 1.15 in terraform.tfvars if deploying Kubeflow !!!
+## Enable module efs , argo-cd, argo-artifacts, argo-events, argo-workflow
+module "kubeflow" {
+  module_depends_on = [module.system.cert-manager]
+  source            = "../modules/kubeflow"
+  vpc               = module.network.vpc
+  cluster_name      = module.kubernetes.cluster_name
+  cluster           = module.kubernetes.this
+  artifacts         = module.argo-artifacts.artifacts
+  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
+}
 
-# Argoproj: separately
-#module "argo-cd" {
-#  source    = "./modules/cd"
-#  domains   = var.domains
-#}
+module "efs" {
+  module_depends_on = [module.system.cert-manager]
+  source       = "../modules/storage/efs"
+  vpc          = module.network.vpc
+  cluster_name = module.kubernetes.cluster_name
+}
 
-#module "argo-events" {
-#  source    = "./modules/events"
-#}
+## ARGO CD
+module "argo-cd" {
+  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+  source            = "../modules/cicd/argo-cd"
 
-#module "argo-workflow" {
-#  module_depends_on = [module.argo-events.argo_events_namespace]
-#  source            = "./modules/workflow"
+  domains = var.domains
+}
 
-#  environment           = var.environment
-#  project               = var.project
-#  cluster_name          = var.cluster_name
-#  cluster_oidc          = module.system.iam_openid_provider
-#  argo_events_namespace = module.argo-events.argo_events_namespace
-#}
+module "argo-artifacts" {
+  module_depends_on = [module.system.cert-manager,module.argo-events.argo_events_namespace,module.nginx.nginx-ingress]
+  source            = "../modules/cicd/argo-artifacts"
+
+  aws_region            = var.aws_region
+  cluster_name          = var.cluster_name
+  environment           = var.environment
+  project               = var.project
+  argo_events_namespace = module.argo-events.argo_events_namespace
+}
+
+module "argo-events" {
+  module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
+  source            = "../modules/cicd/argo-events"
+}
 
 module "argo-workflow" {
   module_depends_on = [module.system.cert-manager,module.nginx.nginx-ingress]
