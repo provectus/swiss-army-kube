@@ -1,13 +1,3 @@
-# Create namespace argo-events
-resource "kubernetes_namespace" "argo-events" {
-  depends_on = [
-    var.module_depends_on
-  ]
-  metadata {
-    name = "argo-events"
-  }
-}
-
 resource "helm_release" "argo-events" {
   depends_on = [
     var.module_depends_on
@@ -17,10 +7,21 @@ resource "helm_release" "argo-events" {
   repository    = "https://argoproj.github.io/argo-helm"
   chart         = "argo-events"
   version       = "0.14.0"
-  namespace     = "argo-events"
+  namespace     = var.namespace
   recreate_pods = true
 
-  values = [
-    file("${path.module}/values.yml")
-  ]
+  dynamic set {
+    for_each = merge(local.events_conf_defaults, var.events_conf)
+
+    content {
+      name  = set.key
+      value = set.value
+    }
+  }
+}
+
+locals {
+  events_conf_defaults = {
+    "installCRD" = false
+  }
 }
