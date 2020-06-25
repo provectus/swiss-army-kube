@@ -39,22 +39,22 @@ resource "helm_release" "monitoring" {
     }
   }
 
-  set_string {
+  set {
     name  = "grafana.grafana\\.ini.auth\\.google.enabled"
     value = var.grafana_google_auth
   }
 
-  set_string {
+  set {
     name  = "grafana.grafana\\.ini.server.domain"
     value = "grafana.${var.domains[0]}"
   }
 
-  set_string {
+  set {
     name  = "grafana.grafana\\.ini.server.root_url"
     value = "https://grafana.${var.domains[0]}"
   }
 
-  set_string {
+  set {
     name  = "grafana.grafana\\.ini.auth\\.google.allowed_domains"
     value = var.grafana_allowed_domains
   }
@@ -71,6 +71,10 @@ resource "helm_release" "monitoring" {
 }
 
 resource "kubernetes_secret" "grafana_auth" {
+  depends_on = [
+    var.module_depends_on
+  ]
+
   count = var.grafana_google_auth == true ? 1 : 0
 
   metadata {
