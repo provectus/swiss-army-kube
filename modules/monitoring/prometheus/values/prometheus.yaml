@@ -13,6 +13,29 @@ grafana:
       - secretName: prometheus-grafana-tls-secret
         hosts:
           - grafana.local
+  grafana.ini:
+    paths:
+      data: /var/lib/grafana/data
+      logs: /var/log/grafana
+      plugins: /var/lib/grafana/plugins
+      provisioning: /etc/grafana/provisioning
+    analytics:
+      check_for_updates: true
+    log:
+      mode: console
+    grafana_net:
+      url: https://grafana.net
+    server:
+      domain: grafana.local
+      root_url: https://grafana.local
+    auth.google:
+      enabled: false
+      scopes: https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email
+      auth_url: https://accounts.google.com/o/oauth2/auth
+      token_url: https://accounts.google.com/o/oauth2/token
+      allowed_domains: local
+      allow_sign_up: true
+  envFromSecret:
 
 prometheus:
   ingress:

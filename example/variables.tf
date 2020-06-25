@@ -324,3 +324,23 @@ variable "grafana_password" {
   description = "Password for grafana admin"
   default     = "password"
 }
+
+variable "grafana_google_auth" {
+  description = "Enables Google auth for Grafana"
+  default     = false
+}
+
+variable "grafana_client_id" {
+  description = "The id of the client for Grafana Google auth"
+  default     = ""
+}
+
+variable "grafana_client_secret" {
+  description = "The token of the client for Grafana Google auth"
+  default     = ""
+}
+
+variable "grafana_allowed_domains" {
+  description = "Allowed domain for Grafana Google auth"
+  default     = ""
+}
