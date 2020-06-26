@@ -26,24 +26,24 @@ module "kubernetes" {
   spot_asg_recreate_on_change = var.spot_asg_recreate_on_change
   spot_allocation_strategy    = var.spot_allocation_strategy
   spot_max_price              = var.spot_max_price
-  #CPU
-  on_demand_cpu_max_cluster_size               = var.on_demand_cpu_max_cluster_size
-  on_demand_cpu_min_cluster_size               = var.on_demand_cpu_min_cluster_size
-  on_demand_cpu_desired_capacity               = var.on_demand_cpu_desired_capacity
-  on_demand_cpu_instance_type                  = var.on_demand_cpu_instance_type
-  on_demand_cpu_allocation_strategy            = var.on_demand_cpu_allocation_strategy
-  on_demand_cpu_base_capacity                  = var.on_demand_cpu_base_capacity
-  on_demand_cpu_percentage_above_base_capacity = var.on_demand_cpu_percentage_above_base_capacity
-  on_demand_cpu_asg_recreate_on_change         = var.on_demand_cpu_asg_recreate_on_change
-  #GPU
-  on_demand_gpu_max_cluster_size               = var.on_demand_gpu_max_cluster_size
-  on_demand_gpu_min_cluster_size               = var.on_demand_gpu_min_cluster_size
-  on_demand_gpu_desired_capacity               = var.on_demand_gpu_desired_capacity
-  on_demand_gpu_instance_type                  = var.on_demand_gpu_instance_type
-  on_demand_gpu_allocation_strategy            = var.on_demand_gpu_allocation_strategy
-  on_demand_gpu_base_capacity                  = var.on_demand_gpu_base_capacity
-  on_demand_gpu_percentage_above_base_capacity = var.on_demand_gpu_percentage_above_base_capacity
-  on_demand_gpu_asg_recreate_on_change         = var.on_demand_gpu_asg_recreate_on_change
+//  #CPU
+//  on_demand_cpu_max_cluster_size               = var.on_demand_cpu_max_cluster_size
+//  on_demand_cpu_min_cluster_size               = var.on_demand_cpu_min_cluster_size
+//  on_demand_cpu_desired_capacity               = var.on_demand_cpu_desired_capacity
+//  on_demand_cpu_instance_type                  = var.on_demand_cpu_instance_type
+//  on_demand_cpu_allocation_strategy            = var.on_demand_cpu_allocation_strategy
+//  on_demand_cpu_base_capacity                  = var.on_demand_cpu_base_capacity
+//  on_demand_cpu_percentage_above_base_capacity = var.on_demand_cpu_percentage_above_base_capacity
+//  on_demand_cpu_asg_recreate_on_change         = var.on_demand_cpu_asg_recreate_on_change
+//  #GPU
+//  on_demand_gpu_max_cluster_size               = var.on_demand_gpu_max_cluster_size
+//  on_demand_gpu_min_cluster_size               = var.on_demand_gpu_min_cluster_size
+//  on_demand_gpu_desired_capacity               = var.on_demand_gpu_desired_capacity
+//  on_demand_gpu_instance_type                  = var.on_demand_gpu_instance_type
+//  on_demand_gpu_allocation_strategy            = var.on_demand_gpu_allocation_strategy
+//  on_demand_gpu_base_capacity                  = var.on_demand_gpu_base_capacity
+//  on_demand_gpu_percentage_above_base_capacity = var.on_demand_gpu_percentage_above_base_capacity
+//  on_demand_gpu_asg_recreate_on_change         = var.on_demand_gpu_asg_recreate_on_change
 }
 
 module "network" {
@@ -121,65 +121,62 @@ module "nginx" {
 #  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
 #}
 
-#module "efk" {
-#  module_depends_on     = [module.system.cert-manager,module.nginx.nginx-ingress]
-#  source                = "../modules/logging/efk"
-#  domains               = var.domains
-#  config_path           = "${path.module}/kubeconfig_${var.cluster_name}"
-#  elasticsearch-curator = var.elasticsearch-curator
-#  logstash              = var.logstash
-#  filebeat              = var.filebeat
-#  success_limit         = var.success_limit
-#  failed_limit          = var.failed_limit
-#  elasticDataSize       = var.elasticDataSize
-#}
-
-## Kubeflow
-## Use EKS 1.15 in terraform.tfvars if deploying Kubeflow !!!
-## Enable module efs and argo
-module "kubeflow" {
-  module_depends_on = [module.system.cert-manager, module.argo]
-  source            = "../modules/kubeflow"
-  vpc               = module.network.vpc
-  cluster_name      = module.kubernetes.cluster_name
-  cluster           = module.kubernetes.this
-  artifacts         = module.argo.artifacts
-  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
+module "efk" {
+  module_depends_on     = [module.system.cert-manager,module.nginx.nginx-ingress]
+  source                = "../modules/logging/efk_new"
+  domains               = var.domains
+  config_path           = "${path.module}/kubeconfig_${var.cluster_name}"
+  success_limit         = var.success_limit
+  failed_limit          = var.failed_limit
+  elasticDataSize       = var.elasticDataSize
 }
 
-module "efs" {
-  module_depends_on = [module.system.cert-manager]
-  source            = "../modules/storage/efs"
-  vpc               = module.network.vpc
-  cluster_name      = module.kubernetes.cluster_name
-}
-
-# Argoproj: all-in-one
-module "argo" {
-  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
-  source            = "../modules/cicd/argo"
-  cluster_name      = var.cluster_name
-  domains           = var.domains
-  environment       = var.environment
-  project           = var.project
-}
-
-# Jenkins
-module "jenkins" {
-  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
-  source            = "../modules/cicd/jenkins"
-
-  domains          = var.domains
-  jenkins_password = var.jenkins_password
-
-  environment      = var.environment
-  project          = var.project
-  cluster_name     = var.cluster_name
-  cluster_oidc_url = module.kubernetes.cluster_oidc_url
-  cluster_oidc_arn = module.system.oidc_arn
-
-  master_policy = var.master_policy
-  agent_policy  = var.agent_policy
-
-  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
-}
+//## Kubeflow
+//## Use EKS 1.15 in terraform.tfvars if deploying Kubeflow !!!
+//## Enable module efs and argo
+//module "kubeflow" {
+//  module_depends_on = [module.system.cert-manager, module.argo]
+//  source            = "../modules/kubeflow"
+//  vpc               = module.network.vpc
+//  cluster_name      = module.kubernetes.cluster_name
+//  cluster           = module.kubernetes.this
+//  artifacts         = module.argo.artifacts
+//  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
+//}
+//
+//module "efs" {
+//  module_depends_on = [module.system.cert-manager]
+//  source            = "../modules/storage/efs"
+//  vpc               = module.network.vpc
+//  cluster_name      = module.kubernetes.cluster_name
+//}
+//
+//# Argoproj: all-in-one
+//module "argo" {
+//  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
+//  source            = "../modules/cicd/argo"
+//  cluster_name      = var.cluster_name
+//  domains           = var.domains
+//  environment       = var.environment
+//  project           = var.project
+//}
+//
+//# Jenkins
+//module "jenkins" {
+//  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
+//  source            = "../modules/cicd/jenkins"
+//
+//  domains          = var.domains
+//  jenkins_password = var.jenkins_password
+//
+//  environment      = var.environment
+//  project          = var.project
+//  cluster_name     = var.cluster_name
+//  cluster_oidc_url = module.kubernetes.cluster_oidc_url
+//  cluster_oidc_arn = module.system.oidc_arn
+//
+//  master_policy = var.master_policy
+//  agent_policy  = var.agent_policy
+//
+//  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+//}
