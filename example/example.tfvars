@@ -91,8 +91,16 @@ github-client-secret = ""
 cookie-secret = "1fWkwIpMskU4miQYcCZZUw=="
 github-org    = ""
 
+#Ingress google auth settings
+google-auth          = "true"
+google-client-id     = "xxxxxxx.apps.googleusercontent.com"
+google-client-secret = "XXXXXXX"
+google-cookie-secret = "1fWkwIpMskU4miQYcCZZUw=="
+
 #Kibana
-elasticDataSize = "30Gi"
+elasticDataSize   = "30Gi"
+#Enables oauth2 for Kibana with specified oauth2 domain
+#efk_oauth2_domain = "oauth2-google"
 
 #Jenkins (Change It)
 jenkins_password = "password"

@@ -34,6 +34,16 @@ resource "helm_release" "elastic-stack" {
   }
 
   set {
+    name  = "kibana.ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-url"
+    value = var.efk_oauth2_domain == "" ? "" : "https://${var.efk_oauth2_domain}.${var.domains[0]}/oauth2/auth"
+  }
+
+  set {
+    name  = "kibana.ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-signin"
+    value = var.efk_oauth2_domain == "" ? "" : "https://${var.efk_oauth2_domain}.${var.domains[0]}/oauth2/sign_in?rd=$scheme://$host$request_uri"
+  }
+
+  set {
     name  = "logstash.enabled"
     value = var.logstash
   }

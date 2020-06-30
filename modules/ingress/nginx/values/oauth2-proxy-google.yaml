@@ -1,0 +1,75 @@
+authenticatedEmailsFile:
+  enabled: false
+  restricted_access: ""
+  template: ""
+config:
+#  clientID: 800096223636-7g04f0sa8r94grbgg7gq8i4u83kq11v5.apps.googleusercontent.com
+#  clientSecret: Ke1eR8dQ3ErWzOsoLusu30qC
+  existingSecret: "enter-secret-name"
+  configFile: |-
+    email_domains = [ "*" ]
+    upstreams = [ "file:///dev/null" ]
+  google: {}
+extraArgs:
+  cookie-domain: ".DOMAIN.com"
+  whitelist-domain: ".DOMAIN.com"
+extraEnv: []
+extraVolumeMounts: []
+extraVolumes: []
+htpasswdFile:
+  enabled: false
+  entries: {}
+  existingSecret: ""
+httpScheme: http
+image:
+  pullPolicy: IfNotPresent
+  repository: quay.io/pusher/oauth2_proxy
+  tag: v5.1.0
+ingress:
+  enabled: true
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "true"
+    certmanager.k8s.io/cluster-issuer: letsencrypt-staging
+    kubernetes.io/tls-acme: "true"
+    kubernetes.io/ingress.class: nginx
+    nginx.ingress.kubernetes.io/proxy-body-size: 100m
+    path: /
+  hosts:
+    - oauth2.DOMAIN.com
+  tls:
+    - secretName: oauth2-noc-tls
+      hosts:
+        - oauth2.DOMAIN.com
+livenessProbe:
+  enabled: true
+  initialDelaySeconds: 0
+  timeoutSeconds: 1
+nodeSelector: {}
+podAnnotations: {}
+podDisruptionBudget:
+  enabled: true
+  minAvailable: 1
+podLabels: {}
+podSecurityContext: {}
+priorityClassName: ""
+proxyVarsAsSecrets: true
+readinessProbe:
+  enabled: true
+  initialDelaySeconds: 0
+  periodSeconds: 10
+  successThreshold: 1
+  timeoutSeconds: 1
+replicaCount: 1
+resources: {}
+securityContext:
+  enabled: false
+  runAsNonRoot: true
+service:
+  annotations: {}
+  port: 80
+  type: ClusterIP
+serviceAccount:
+  annotations: {}
+  enabled: true
+  name: null
+tolerations: []

@@ -50,6 +50,8 @@ kibana:
       cert-manager.io/cluster-issuer: "letsencrypt-staging"
       kubernetes.io/tls-acme: "true"
       kubernetes.io/ingress.class: "nginx"
+      nginx.ingress.kubernetes.io/auth-url: https://oauth2-google.example.com/oauth2/auth
+      nginx.ingress.kubernetes.io/auth-signin: https://oauth2-google.example.com/oauth2/sign_in?rd=$scheme://$host$request_uri
     tls:
       - secretName: kibana-tls-secret
         hosts:

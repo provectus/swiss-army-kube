@@ -26,24 +26,24 @@ module "kubernetes" {
   spot_asg_recreate_on_change = var.spot_asg_recreate_on_change
   spot_allocation_strategy    = var.spot_allocation_strategy
   spot_max_price              = var.spot_max_price
-//  #CPU
-//  on_demand_cpu_max_cluster_size               = var.on_demand_cpu_max_cluster_size
-//  on_demand_cpu_min_cluster_size               = var.on_demand_cpu_min_cluster_size
-//  on_demand_cpu_desired_capacity               = var.on_demand_cpu_desired_capacity
-//  on_demand_cpu_instance_type                  = var.on_demand_cpu_instance_type
-//  on_demand_cpu_allocation_strategy            = var.on_demand_cpu_allocation_strategy
-//  on_demand_cpu_base_capacity                  = var.on_demand_cpu_base_capacity
-//  on_demand_cpu_percentage_above_base_capacity = var.on_demand_cpu_percentage_above_base_capacity
-//  on_demand_cpu_asg_recreate_on_change         = var.on_demand_cpu_asg_recreate_on_change
-//  #GPU
-//  on_demand_gpu_max_cluster_size               = var.on_demand_gpu_max_cluster_size
-//  on_demand_gpu_min_cluster_size               = var.on_demand_gpu_min_cluster_size
-//  on_demand_gpu_desired_capacity               = var.on_demand_gpu_desired_capacity
-//  on_demand_gpu_instance_type                  = var.on_demand_gpu_instance_type
-//  on_demand_gpu_allocation_strategy            = var.on_demand_gpu_allocation_strategy
-//  on_demand_gpu_base_capacity                  = var.on_demand_gpu_base_capacity
-//  on_demand_gpu_percentage_above_base_capacity = var.on_demand_gpu_percentage_above_base_capacity
-//  on_demand_gpu_asg_recreate_on_change         = var.on_demand_gpu_asg_recreate_on_change
+  #CPU
+  on_demand_cpu_max_cluster_size               = var.on_demand_cpu_max_cluster_size
+  on_demand_cpu_min_cluster_size               = var.on_demand_cpu_min_cluster_size
+  on_demand_cpu_desired_capacity               = var.on_demand_cpu_desired_capacity
+  on_demand_cpu_instance_type                  = var.on_demand_cpu_instance_type
+  on_demand_cpu_allocation_strategy            = var.on_demand_cpu_allocation_strategy
+  on_demand_cpu_base_capacity                  = var.on_demand_cpu_base_capacity
+  on_demand_cpu_percentage_above_base_capacity = var.on_demand_cpu_percentage_above_base_capacity
+  on_demand_cpu_asg_recreate_on_change         = var.on_demand_cpu_asg_recreate_on_change
+  #GPU
+  on_demand_gpu_max_cluster_size               = var.on_demand_gpu_max_cluster_size
+  on_demand_gpu_min_cluster_size               = var.on_demand_gpu_min_cluster_size
+  on_demand_gpu_desired_capacity               = var.on_demand_gpu_desired_capacity
+  on_demand_gpu_instance_type                  = var.on_demand_gpu_instance_type
+  on_demand_gpu_allocation_strategy            = var.on_demand_gpu_allocation_strategy
+  on_demand_gpu_base_capacity                  = var.on_demand_gpu_base_capacity
+  on_demand_gpu_percentage_above_base_capacity = var.on_demand_gpu_percentage_above_base_capacity
+  on_demand_gpu_asg_recreate_on_change         = var.on_demand_gpu_asg_recreate_on_change
 }
 
 module "network" {
@@ -94,6 +94,12 @@ module "nginx" {
   github-org           = var.github-org
   github-client-secret = var.github-client-secret
   cookie-secret        = var.cookie-secret
+
+  #Settings for oauth2-proxy google auth
+  google-auth          = var.google-auth
+  google-client-id     = var.google-client-id
+  google-client-secret = var.google-client-secret
+  google-cookie-secret = var.google-cookie-secret
 }
 
 ## Monitoring
@@ -123,12 +129,16 @@ module "nginx" {
 
 module "efk" {
   module_depends_on     = [module.system.cert-manager,module.nginx.nginx-ingress]
-  source                = "../modules/logging/efk_new"
+  source                = "../modules/logging/efk"
   domains               = var.domains
   config_path           = "${path.module}/kubeconfig_${var.cluster_name}"
+  elasticsearch-curator = var.elasticsearch-curator
+  logstash              = var.logstash
+  filebeat              = var.filebeat
   success_limit         = var.success_limit
   failed_limit          = var.failed_limit
   elasticDataSize       = var.elasticDataSize
+  efk_oauth2_domain     = var.efk_oauth2_domain
 }
 
 //## Kubeflow

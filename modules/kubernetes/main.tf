@@ -27,7 +27,7 @@ module "eks" {
   }
 
   # Note:
-  #   If you add here worker groups with GPUs or some other custom resources make sure 
+  #   If you add here worker groups with GPUs or some other custom resources make sure
   #   to start the node in ASG manually once or cluster autoscaler doesn't find the resources.
   #
   #   After that autoscaler is able to see the resources on that ASG.
@@ -86,57 +86,57 @@ module "eks" {
         }
       ]
     },
-//    {
-//      name                                     = "on-demand-cpu-1"
-//      override_instance_types                  = var.on_demand_cpu_instance_type
-//      asg_max_size                             = var.on_demand_cpu_max_cluster_size
-//      asg_min_size                             = var.on_demand_cpu_min_cluster_size
-//      asg_desired_capacity                     = var.on_demand_cpu_desired_capacity
-//      asg_recreate_on_change                   = var.on_demand_cpu_asg_recreate_on_change
-//      on_demand_allocation_strategy            = var.on_demand_cpu_allocation_strategy
-//      on_demand_base_capacity                  = var.on_demand_cpu_base_capacity
-//      on_demand_percentage_above_base_capacity = var.on_demand_cpu_percentage_above_base_capacity
-//      autoscaling_enabled                      = true
-//      kubelet_extra_args                       = "--node-labels=node.kubernetes.io/lifecycle=cpu,,node-type=cpu --register-with-taints=node-type=cpu:NoSchedule"
-//      suspended_processes                      = ["AZRebalance"]
-//      tags = [
-//        {
-//          "key"                 = "k8s.io/cluster-autoscaler/enabled"
-//          "propagate_at_launch" = "false"
-//          "value"               = "true"
-//        },
-//        {
-//          "key"                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
-//          "propagate_at_launch" = "false"
-//          "value"               = "true"
-//        }
-//      ]
-//    },
-//    {
-//      name                                     = "on-demand-gpu-1"
-//      override_instance_types                  = var.on_demand_gpu_instance_type
-//      asg_max_size                             = var.on_demand_gpu_max_cluster_size
-//      asg_min_size                             = var.on_demand_gpu_min_cluster_size
-//      asg_desired_capacity                     = var.on_demand_gpu_desired_capacity
-//      asg_recreate_on_change                   = var.on_demand_gpu_asg_recreate_on_change
-//      on_demand_allocation_strategy            = var.on_demand_gpu_allocation_strategy
-//      on_demand_base_capacity                  = var.on_demand_gpu_base_capacity
-//      on_demand_percentage_above_base_capacity = var.on_demand_gpu_percentage_above_base_capacity
-//      autoscaling_enabled                      = true
-//      kubelet_extra_args                       = "--node-labels=node.kubernetes.io/lifecycle=gpu,node-type=gpu,nvidia.com/gpu=gpu --register-with-taints=node-type=gpu:NoSchedule,nvidia.com/gpu=gpu:NoSchedule"
-//      suspended_processes                      = ["AZRebalance"]
-//      tags = [
-//        {
-//          "key"                 = "k8s.io/cluster-autoscaler/enabled"
-//          "propagate_at_launch" = "false"
-//          "value"               = "true"
-//        },
-//        {
-//          "key"                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
-//          "propagate_at_launch" = "false"
-//          "value"               = "true"
-//        }
-//      ]
-//    },
+    {
+      name                                     = "on-demand-cpu-1"
+      override_instance_types                  = var.on_demand_cpu_instance_type
+      asg_max_size                             = var.on_demand_cpu_max_cluster_size
+      asg_min_size                             = var.on_demand_cpu_min_cluster_size
+      asg_desired_capacity                     = var.on_demand_cpu_desired_capacity
+      asg_recreate_on_change                   = var.on_demand_cpu_asg_recreate_on_change
+      on_demand_allocation_strategy            = var.on_demand_cpu_allocation_strategy
+      on_demand_base_capacity                  = var.on_demand_cpu_base_capacity
+      on_demand_percentage_above_base_capacity = var.on_demand_cpu_percentage_above_base_capacity
+      autoscaling_enabled                      = true
+      kubelet_extra_args                       = "--node-labels=node.kubernetes.io/lifecycle=cpu,,node-type=cpu --register-with-taints=node-type=cpu:NoSchedule"
+      suspended_processes                      = ["AZRebalance"]
+      tags = [
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/enabled"
+          "propagate_at_launch" = "false"
+          "value"               = "true"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
+          "propagate_at_launch" = "false"
+          "value"               = "true"
+        }
+      ]
+    },
+    {
+      name                                     = "on-demand-gpu-1"
+      override_instance_types                  = var.on_demand_gpu_instance_type
+      asg_max_size                             = var.on_demand_gpu_max_cluster_size
+      asg_min_size                             = var.on_demand_gpu_min_cluster_size
+      asg_desired_capacity                     = var.on_demand_gpu_desired_capacity
+      asg_recreate_on_change                   = var.on_demand_gpu_asg_recreate_on_change
+      on_demand_allocation_strategy            = var.on_demand_gpu_allocation_strategy
+      on_demand_base_capacity                  = var.on_demand_gpu_base_capacity
+      on_demand_percentage_above_base_capacity = var.on_demand_gpu_percentage_above_base_capacity
+      autoscaling_enabled                      = true
+      kubelet_extra_args                       = "--node-labels=node.kubernetes.io/lifecycle=gpu,node-type=gpu,nvidia.com/gpu=gpu --register-with-taints=node-type=gpu:NoSchedule,nvidia.com/gpu=gpu:NoSchedule"
+      suspended_processes                      = ["AZRebalance"]
+      tags = [
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/enabled"
+          "propagate_at_launch" = "false"
+          "value"               = "true"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
+          "propagate_at_launch" = "false"
+          "value"               = "true"
+        }
+      ]
+    },
   ]
 }
