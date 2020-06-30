@@ -94,6 +94,12 @@ module "nginx" {
   github-org           = var.github-org
   github-client-secret = var.github-client-secret
   cookie-secret        = var.cookie-secret
+
+  #Settings for oauth2-proxy google auth
+  google-auth          = var.google-auth
+  google-client-id     = var.google-client-id
+  google-client-secret = var.google-client-secret
+  google-cookie-secret = var.google-cookie-secret
 }
 
 ## Monitoring
@@ -132,6 +138,7 @@ module "nginx" {
 #  success_limit         = var.success_limit
 #  failed_limit          = var.failed_limit
 #  elasticDataSize       = var.elasticDataSize
+#  efk_oauth2_domain     = var.efk_oauth2_domain
 #}
 
 ## Kubeflow

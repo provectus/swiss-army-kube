@@ -12,6 +12,9 @@ terraform state rm module.system.kubernetes_namespace.cert-manager
 # Workaround for non-empty s3 bucket
 terraform state rm module.argo-artifacts.aws_s3_bucket.argo-artifacts
 
+terraform state rm module.nginx.kubernetes_secret.oauth2-proxy-secret-google
+terraform state rm module.nginx.kubernetes_secret.oauth2-proxy-secret
+
 # Workaround for "Error: RDS Cluster FinalSnapshotIdentifier is required when a final snapshot is required"
 case "$OSTYPE" in
   darwin*)  sed -i "" 's/\"skip_final_snapshot\":.*/\"skip_final_snapshot\": true,/g' "$SCRIPTPATH/terraform.tfstate" ;;

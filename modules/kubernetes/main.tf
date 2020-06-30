@@ -27,7 +27,7 @@ module "eks" {
   }
 
   # Note:
-  #   If you add here worker groups with GPUs or some other custom resources make sure 
+  #   If you add here worker groups with GPUs or some other custom resources make sure
   #   to start the node in ASG manually once or cluster autoscaler doesn't find the resources.
   #
   #   After that autoscaler is able to see the resources on that ASG.

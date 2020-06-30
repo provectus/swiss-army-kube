@@ -272,6 +272,27 @@ variable "github-org" {
   description = "Github organization"
 }
 
+#Ingress google auth settings
+variable "google-auth" {
+  description = "Enables Google auth"
+  default     = false
+}
+
+variable "google-client-id" {
+  description = "Client ID for Google auth"
+  default     = ""
+}
+
+variable "google-client-secret" {
+  description = "Client secret for Google auth"
+  default     = ""
+}
+
+variable "google-cookie-secret" {
+  default     = ""
+  description = "random_string make gen command python -c 'import os,base64; print base64.b64encode(os.urandom(16))'"
+}
+
 #Kibana preference
 variable "logstash" {
   description = "logstash"
@@ -301,6 +322,11 @@ variable "success_limit" {
 variable "elasticDataSize" {
   description = "Size of pvc for elastic data"
   default     = "30Gi"
+}
+
+variable "efk_oauth2_domain" {
+  description = "oauth2 domain for Kibana"
+  default     = ""
 }
 
 #Jenkins

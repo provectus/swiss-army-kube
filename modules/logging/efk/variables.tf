@@ -41,3 +41,8 @@ variable "elasticDataSize" {
   description = "Size of pvc for elastic data"
   default     = "30Gi"
 }
+
+variable "efk_oauth2_domain" {
+  description = "oauth2 domain for EFK"
+  default     = ""
+}
