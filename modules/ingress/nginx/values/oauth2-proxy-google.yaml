@@ -3,8 +3,6 @@ authenticatedEmailsFile:
   restricted_access: ""
   template: ""
 config:
-#  clientID: 800096223636-7g04f0sa8r94grbgg7gq8i4u83kq11v5.apps.googleusercontent.com
-#  clientSecret: Ke1eR8dQ3ErWzOsoLusu30qC
   existingSecret: "enter-secret-name"
   configFile: |-
     email_domains = [ "*" ]
