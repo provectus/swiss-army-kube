@@ -92,7 +92,7 @@ cookie-secret = "1fWkwIpMskU4miQYcCZZUw=="
 github-org    = ""
 
 #Ingress google auth settings
-google-auth          = "true"
+google-auth          = "false"
 google-client-id     = "xxxxxxx.apps.googleusercontent.com"
 google-client-secret = "XXXXXXX"
 google-cookie-secret = "1fWkwIpMskU4miQYcCZZUw=="

@@ -325,7 +325,7 @@ variable "elasticDataSize" {
 }
 
 variable "efk_oauth2_domain" {
-  description = "oauth2 domain for EFK"
+  description = "oauth2 domain for Kibana"
   default     = ""
 }
 

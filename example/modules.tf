@@ -127,66 +127,66 @@ module "nginx" {
 #  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
 #}
 
-module "efk" {
-  module_depends_on     = [module.system.cert-manager,module.nginx.nginx-ingress]
-  source                = "../modules/logging/efk"
-  domains               = var.domains
-  config_path           = "${path.module}/kubeconfig_${var.cluster_name}"
-  elasticsearch-curator = var.elasticsearch-curator
-  logstash              = var.logstash
-  filebeat              = var.filebeat
-  success_limit         = var.success_limit
-  failed_limit          = var.failed_limit
-  elasticDataSize       = var.elasticDataSize
-  efk_oauth2_domain     = var.efk_oauth2_domain
+#module "efk" {
+#  module_depends_on     = [module.system.cert-manager,module.nginx.nginx-ingress]
+#  source                = "../modules/logging/efk"
+#  domains               = var.domains
+#  config_path           = "${path.module}/kubeconfig_${var.cluster_name}"
+#  elasticsearch-curator = var.elasticsearch-curator
+#  logstash              = var.logstash
+#  filebeat              = var.filebeat
+#  success_limit         = var.success_limit
+#  failed_limit          = var.failed_limit
+#  elasticDataSize       = var.elasticDataSize
+#  efk_oauth2_domain     = var.efk_oauth2_domain
+#}
+
+## Kubeflow
+## Use EKS 1.15 in terraform.tfvars if deploying Kubeflow !!!
+## Enable module efs and argo
+module "kubeflow" {
+  module_depends_on = [module.system.cert-manager, module.argo]
+  source            = "../modules/kubeflow"
+  vpc               = module.network.vpc
+  cluster_name      = module.kubernetes.cluster_name
+  cluster           = module.kubernetes.this
+  artifacts         = module.argo.artifacts
+  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
 }
 
-//## Kubeflow
-//## Use EKS 1.15 in terraform.tfvars if deploying Kubeflow !!!
-//## Enable module efs and argo
-//module "kubeflow" {
-//  module_depends_on = [module.system.cert-manager, module.argo]
-//  source            = "../modules/kubeflow"
-//  vpc               = module.network.vpc
-//  cluster_name      = module.kubernetes.cluster_name
-//  cluster           = module.kubernetes.this
-//  artifacts         = module.argo.artifacts
-//  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
-//}
-//
-//module "efs" {
-//  module_depends_on = [module.system.cert-manager]
-//  source            = "../modules/storage/efs"
-//  vpc               = module.network.vpc
-//  cluster_name      = module.kubernetes.cluster_name
-//}
-//
-//# Argoproj: all-in-one
-//module "argo" {
-//  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
-//  source            = "../modules/cicd/argo"
-//  cluster_name      = var.cluster_name
-//  domains           = var.domains
-//  environment       = var.environment
-//  project           = var.project
-//}
-//
-//# Jenkins
-//module "jenkins" {
-//  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
-//  source            = "../modules/cicd/jenkins"
-//
-//  domains          = var.domains
-//  jenkins_password = var.jenkins_password
-//
-//  environment      = var.environment
-//  project          = var.project
-//  cluster_name     = var.cluster_name
-//  cluster_oidc_url = module.kubernetes.cluster_oidc_url
-//  cluster_oidc_arn = module.system.oidc_arn
-//
-//  master_policy = var.master_policy
-//  agent_policy  = var.agent_policy
-//
-//  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
-//}
+module "efs" {
+  module_depends_on = [module.system.cert-manager]
+  source            = "../modules/storage/efs"
+  vpc               = module.network.vpc
+  cluster_name      = module.kubernetes.cluster_name
+}
+
+# Argoproj: all-in-one
+module "argo" {
+  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
+  source            = "../modules/cicd/argo"
+  cluster_name      = var.cluster_name
+  domains           = var.domains
+  environment       = var.environment
+  project           = var.project
+}
+
+# Jenkins
+module "jenkins" {
+  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
+  source            = "../modules/cicd/jenkins"
+
+  domains          = var.domains
+  jenkins_password = var.jenkins_password
+
+  environment      = var.environment
+  project          = var.project
+  cluster_name     = var.cluster_name
+  cluster_oidc_url = module.kubernetes.cluster_oidc_url
+  cluster_oidc_arn = module.system.oidc_arn
+
+  master_policy = var.master_policy
+  agent_policy  = var.agent_policy
+
+  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+}
