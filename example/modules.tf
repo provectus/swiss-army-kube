@@ -44,6 +44,12 @@ module "kubernetes" {
   on_demand_gpu_base_capacity                  = var.on_demand_gpu_base_capacity
   on_demand_gpu_percentage_above_base_capacity = var.on_demand_gpu_percentage_above_base_capacity
   on_demand_gpu_asg_recreate_on_change         = var.on_demand_gpu_asg_recreate_on_change
+
+  # Private cluster
+  allowed_security_groups = module.vpn.security_groups
+  private_access          = true
+  private_access_cidrs    = module.network.private_subnets_cidr_blocks
+
 }
 
 module "network" {
@@ -57,14 +63,18 @@ module "network" {
 }
 
 module "vpn" {
-  source       = "../modules/network/openvpn"
-  cluster_name = var.cluster_name
-  domain       = var.domains[0]
+  module_depends_on = [module.network.private_subnets]
+  source            = "../modules/network/openvpn"
+  cluster_name      = var.cluster_name
+  domain            = var.domains[0]
+  vpc_id            = module.network.vpc_id
+
   # This option allows to generate user specific certificates, just add new entities to clients list
   # for example:  clients      = ["admin","developer1","developer2"]
-  clients      = ["admin"]
+  clients = ["admin"]
+
   # These subnets would be associated with VPN endpoint, would be billed by 0.10$ per hour
-  subnet_ids   = module.network.private_subnets
+  subnet_cidrs = module.network.private_subnets_cidrs_pregenerated
 }
 
 module "system" {
