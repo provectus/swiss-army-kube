@@ -64,7 +64,7 @@ module "network" {
 
 module "vpn" {
   module_depends_on = [module.network.private_subnets]
-  source            = "../modules/network/openvpn"
+  source            = "../modules/vpn/aws"
   cluster_name      = var.cluster_name
   domain            = var.domains[0]
   vpc_id            = module.network.vpc_id
