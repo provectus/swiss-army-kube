@@ -221,3 +221,21 @@ variable "on_demand_cpu_asg_recreate_on_change" {
   description = "Recreate the autoscaling group when the Launch Template or Launch Configuration change."
   default     = "false"
 }
+
+variable "allowed_security_groups" {
+  type        = list(string)
+  description = "List of security groups ids for granting access to EKS nodes"
+  default     = []
+}
+
+variable "private_access" {
+  type        = bool
+  description = "Indicates whether or not the Amazon EKS private API server endpoint is enabled."
+  default     = false
+}
+
+variable "private_access_cidrs" {
+  type        = list(string)
+  description = "List of CIDR blocks which can access the Amazon EKS private API server endpoint."
+  default     = []
+}

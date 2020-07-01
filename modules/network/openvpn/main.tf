@@ -69,6 +69,7 @@ resource "aws_cloudwatch_log_stream" "openvpn" {
 }
 
 resource "aws_ec2_client_vpn_endpoint" "this" {
+  depends_on             = [var.module_depends_on]
   description            = "${var.cluster_name}-clientvpn"
   server_certificate_arn = aws_acm_certificate.this.arn
   client_cidr_block      = "10.100.0.0/16"
@@ -85,10 +86,20 @@ resource "aws_ec2_client_vpn_endpoint" "this" {
   }
 }
 
+data "aws_subnet_ids" "selected" {
+  depends_on = [var.module_depends_on]
+  vpc_id     = var.vpc_id
+  filter {
+    name   = "cidr-block"
+    values = var.subnet_cidrs
+  }
+}
+
 resource "aws_ec2_client_vpn_network_association" "this" {
-  for_each               = toset(var.subnet_ids)
+  depends_on             = [var.module_depends_on]
+  for_each               = data.aws_subnet_ids.selected.ids
   client_vpn_endpoint_id = "${aws_ec2_client_vpn_endpoint.this.id}"
-  subnet_id              = each.key
+  subnet_id              = each.value
 }
 
 resource "local_file" "config" {
@@ -131,14 +142,25 @@ resource "null_resource" "authorize-client-vpn-ingress" {
 }
 
 resource "null_resource" "create-client-vpn-route" {
-  for_each = toset(var.subnet_ids)
+  for_each = data.aws_subnet_ids.selected.ids
   provisioner "local-exec" {
     when    = create
-    command = "aws ec2 create-client-vpn-route --client-vpn-endpoint-id ${aws_ec2_client_vpn_endpoint.this.id} --destination-cidr-block 0.0.0.0/0 --target-vpc-subnet-id ${each.key} --description Internet-Access"
+    command = "aws ec2 create-client-vpn-route --client-vpn-endpoint-id ${aws_ec2_client_vpn_endpoint.this.value} --destination-cidr-block 0.0.0.0/0 --target-vpc-subnet-id ${each.key} --description Internet-Access"
   }
 
   depends_on = [
     aws_ec2_client_vpn_endpoint.this,
     null_resource.authorize-client-vpn-ingress
   ]
+}
+
+resource "aws_security_group_rule" "this" {
+  for_each          = toset(flatten(aws_ec2_client_vpn_network_association.this[*].security_groups))
+  type              = "ingress"
+  description       = "Allow inbound connections to AWS OpenVPN endpoints"
+  from_port         = 443
+  to_port           = 443
+  protocol          = "tcp"
+  cidr_blocks       = ["0.0.0.0/0"]
+  security_group_id = each.key
 }

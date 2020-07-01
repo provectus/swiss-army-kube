@@ -8,6 +8,10 @@ module "eks" {
 
   map_users = var.admin_arns
 
+  cluster_endpoint_private_access_cidrs = var.private_access_cidrs
+  cluster_endpoint_private_access       = var.private_access
+  cluster_endpoint_public_access        = var.private_access != true
+
   tags = {
     Environment = var.environment
     Project     = var.project
@@ -139,4 +143,16 @@ module "eks" {
       ]
     },
   ]
+}
+
+
+resource "aws_security_group_rule" "aws_security_group_rule_suffix" {
+  description              = "All access from ${each.key}"
+  for_each                 = toset(var.allowed_security_groups)
+  from_port                = "0"
+  protocol                 = "all"
+  security_group_id        = module.eks.worker_security_group_id
+  source_security_group_id = each.key
+  to_port                  = "65535"
+  type                     = "ingress"
 }

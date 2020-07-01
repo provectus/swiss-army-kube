@@ -13,3 +13,7 @@ output "private_subnets_cidr_blocks" {
 output "vpc" {
   value = "${module.vpc}"
 }
+
+output "private_subnets_cidrs_pregenerated" {
+  value = "${local.private}"
+}
