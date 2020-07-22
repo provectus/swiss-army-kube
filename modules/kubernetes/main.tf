@@ -1,3 +1,14 @@
+data "aws_ami" "eks_gpu_worker" {
+  filter {
+    name   = "name"
+    values = ["amazon-eks-gpu-node-${var.cluster_version}-*"]
+  }
+
+  most_recent = true
+  owners = ["602401143452"] // The ID of the owner of the official AWS EKS AMIs.
+}
+
+
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "v12.0.0"
@@ -123,6 +134,7 @@ module "eks" {
       on_demand_base_capacity                  = var.on_demand_gpu_base_capacity
       on_demand_percentage_above_base_capacity = var.on_demand_gpu_percentage_above_base_capacity
       autoscaling_enabled                      = true
+      ami_id                                   = data.aws_ami.eks_gpu_worker.id
       kubelet_extra_args                       = "--node-labels=node.kubernetes.io/lifecycle=gpu,node-type=gpu,nvidia.com/gpu=gpu --register-with-taints=node-type=gpu:NoSchedule,nvidia.com/gpu=gpu:NoSchedule"
       suspended_processes                      = ["AZRebalance"]
       tags = [
