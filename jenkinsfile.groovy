@@ -21,7 +21,9 @@ pipeline {
     stage('Run test') {
       steps {
         sh """
-          TFLINT_LOG=info tflint --deep --force --module --format=checkstyle --var-file dev.tfvars .      
+          cd example
+          terraform init
+          TFLINT_LOG=info tflint --deep --force --module --format=checkstyle --var-file example.tfvars .      
         """
       }
     }    
