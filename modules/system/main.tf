@@ -20,16 +20,6 @@ resource "null_resource" "wait-eks" {
 #        limits:
 #          nvidia.com/gpu: 2 # requesting 2 GPUs
 # WARNING: if you don't request GPUs when using the device plugin with NVIDIA images all the GPUs on the machine will be exposed inside your container.
-variable "tolerations" {
-  default = [
-    {
-        key = "dedicated"
-        operator = "Exists"
-        effect = "NoSchedule"
-    }
-  ]
-}
-
 resource "helm_release" "nvidia" {
   depends_on = [
     helm_release.issuers,
