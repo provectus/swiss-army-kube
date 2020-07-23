@@ -7,3 +7,6 @@ tolerations:
   - key: node-type
     operator: Exists
     effect: NoSchedule
+
+nodeSelector:
+  nvidia.com/gpu: gpu
