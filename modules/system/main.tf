@@ -20,14 +20,32 @@ resource "null_resource" "wait-eks" {
 #        limits:
 #          nvidia.com/gpu: 2 # requesting 2 GPUs
 # WARNING: if you don't request GPUs when using the device plugin with NVIDIA images all the GPUs on the machine will be exposed inside your container.
-resource "null_resource" "nvidia" {
-  depends_on = [
-    var.module_depends_on,
-    null_resource.wait-eks
+variable "tolerations" {
+  default = [
+    {
+        key = "dedicated"
+        operator = "Exists"
+        effect = "NoSchedule"
+    }
   ]
-  provisioner "local-exec" {
-    command = "kubectl --kubeconfig ${path.root}/${var.config_path} -n kube-system create -f https://raw.githubusercontent.com/NVIDIA/k8s-device-plugin/1.0.0-beta6/nvidia-device-plugin.yml"
-  }
+}
+
+resource "helm_release" "nvidia" {
+  depends_on = [
+    helm_release.issuers,
+    null_resource.wait-eks,
+    var.module_depends_on
+  ]
+
+  name          = "nvidia-device-plugin"
+  repository    = "https://nvidia.github.io/k8s-device-plugin"
+  chart         = "nvidia-device-plugin"
+  version       = "0.6.0"
+  recreate_pods = true
+
+  values = [
+    file("${path.module}/values/nvidia-device-plugin.yaml"),
+  ]
 }
 
 # Route53 hostedzone
