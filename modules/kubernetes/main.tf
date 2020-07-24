@@ -67,6 +67,11 @@ module "eks" {
           "key"                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
           "propagate_at_launch" = "false"
           "value"               = "true"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/node-template/label/node-type"
+          "propagate_at_launch" = "false"
+          "value"               = "common"
         }
       ]
     },
@@ -94,6 +99,16 @@ module "eks" {
           "key"                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
           "propagate_at_launch" = "false"
           "value"               = "true"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/node-template/label/node-type"
+          "propagate_at_launch" = "false"
+          "value"               = "spot"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/node-template/taint/node-type"
+          "propagate_at_launch" = "false"
+          "value"               = "spot:NoSchedule"
         }
       ]
     },
@@ -108,7 +123,7 @@ module "eks" {
       on_demand_base_capacity                  = var.on_demand_cpu_base_capacity
       on_demand_percentage_above_base_capacity = var.on_demand_cpu_percentage_above_base_capacity
       autoscaling_enabled                      = true
-      kubelet_extra_args                       = "--node-labels=node.kubernetes.io/lifecycle=cpu,,node-type=cpu --register-with-taints=node-type=cpu:NoSchedule"
+      kubelet_extra_args                       = "--node-labels=node.kubernetes.io/lifecycle=cpu,node-type=cpu --register-with-taints=node-type=cpu:NoSchedule"
       suspended_processes                      = ["AZRebalance"]
       tags = [
         {
@@ -120,6 +135,16 @@ module "eks" {
           "key"                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
           "propagate_at_launch" = "false"
           "value"               = "true"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/node-template/label/node-type"
+          "propagate_at_launch" = "false"
+          "value"               = "cpu"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/node-template/taint/node-type"
+          "propagate_at_launch" = "false"
+          "value"               = "cpu:NoSchedule"
         }
       ]
     },
@@ -147,6 +172,26 @@ module "eks" {
           "key"                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
           "propagate_at_launch" = "false"
           "value"               = "true"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/node-template/label/node-type"
+          "propagate_at_launch" = "false"
+          "value"               = "gpu"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/node-template/label/nvidia.com/gpu"
+          "propagate_at_launch" = "false"
+          "value"               = "gpu"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/node-template/taint/node-type"
+          "propagate_at_launch" = "false"
+          "value"               = "gpu:NoSchedule"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/node-template/taint/nvidia.com/gpu"
+          "propagate_at_launch" = "false"
+          "value"               = "gpu:NoSchedule"
         },
         {
           "key"                 = "k8s.io/cluster-autoscaler/node-template/resources/nvidia.com/gpu"
