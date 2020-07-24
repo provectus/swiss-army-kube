@@ -135,6 +135,11 @@ module "eks" {
           "key"                 = "k8s.io/cluster-autoscaler/${var.cluster_name}"
           "propagate_at_launch" = "false"
           "value"               = "true"
+        },
+        {
+          "key"                 = "k8s.io/cluster-autoscaler/node-template/resources/nvidia.com/gpu"
+          "propagate_at_launch" = "false"
+          "value"               = "1"  # Change to the number of GPUs on your node type
         }
       ]
     },
