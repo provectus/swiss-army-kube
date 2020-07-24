@@ -1,0 +1,12 @@
+tolerations:
+  - key: CriticalAddonsOnly
+    operator: Exists
+  - key: nvidia.com/gpu
+    operator: Exists
+    effect: NoSchedule
+  - key: node-type
+    operator: Exists
+    effect: NoSchedule
+
+nodeSelector:
+  nvidia.com/gpu: gpu
