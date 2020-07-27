@@ -1,6 +1,6 @@
 pipeline {
   agent any
-  tool {
+  tools {
     terraform 'terraform-12'
   }
 
