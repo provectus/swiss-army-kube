@@ -1,6 +1,8 @@
 pipeline {
   agent any
-  tool name: 'terraform-12', type: 'terraform'
+  tool {
+    terraform 'terraform-12'
+  }
 
   stages {
     stage('Prepare') {
