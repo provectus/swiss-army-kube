@@ -8,7 +8,7 @@ variable "config_path" {
   default     = "~/.kube/config"
 }
 
-variable "domain" {
+variable "domains" {
   description = "domain name for ingress"
 }
 
@@ -27,7 +27,22 @@ variable "elasticsearch-curator" {
   default     = "true"
 }
 
+variable "failed_limit" {
+  description = "elasticsearch-curator failed jobs history limit"
+  default     = 2
+}
+
+variable "success_limit" {
+  description = "elasticsearch-curator successfull jobs history limit"
+  default     = 2
+}
+
 variable "elasticDataSize" {
   description = "Size of pvc for elastic data"
   default     = "30Gi"
+}
+
+variable "efk_oauth2_domain" {
+  description = "oauth2 domain for EFK"
+  default     = ""
 }

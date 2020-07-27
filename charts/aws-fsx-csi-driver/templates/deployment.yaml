@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: fsx-csi-controller
+  namespace: kube-system
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: fsx-csi-controller
+  template:
+    metadata:
+      labels:
+        app: fsx-csi-controller
+    spec:
+      containers:
+      - args:
+        - --endpoint=$(CSI_ENDPOINT)
+        - --logtostderr
+        - --v=5
+        env:
+        - name: CSI_ENDPOINT
+          value: unix:///var/lib/csi/sockets/pluginproxy/csi.sock
+        - name: AWS_ACCESS_KEY_ID
+          valueFrom:
+            secretKeyRef:
+              key: key_id
+              name: aws-secret
+              optional: true
+        - name: AWS_SECRET_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              key: access_key
+              name: aws-secret
+              optional: true
+        image: amazon/aws-fsx-csi-driver:v0.3.0
+        name: fsx-plugin
+        volumeMounts:
+        - mountPath: /var/lib/csi/sockets/pluginproxy/
+          name: socket-dir
+      - args:
+        - --timeout=5m
+        - --csi-address=$(ADDRESS)
+        - --v=5
+        - --enable-leader-election
+        - --leader-election-type=leases
+        env:
+        - name: ADDRESS
+          value: /var/lib/csi/sockets/pluginproxy/csi.sock
+        image: quay.io/k8scsi/csi-provisioner:v1.3.0
+        name: csi-provisioner
+        volumeMounts:
+        - mountPath: /var/lib/csi/sockets/pluginproxy/
+          name: socket-dir
+      nodeSelector:
+        kubernetes.io/arch: amd64
+        kubernetes.io/os: linux
+      priorityClassName: system-cluster-critical
+      serviceAccount: fsx-csi-controller-sa
+      tolerations:
+      - key: CriticalAddonsOnly
+        operator: Exists
+      volumes:
+      - emptyDir: {}
+        name: socket-dir

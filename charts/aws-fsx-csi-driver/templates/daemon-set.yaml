@@ -1,0 +1,90 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: fsx-csi-node
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: fsx-csi-node
+  template:
+    metadata:
+      labels:
+        app: fsx-csi-node
+    spec:
+      containers:
+      - args:
+        - --endpoint=$(CSI_ENDPOINT)
+        - --logtostderr
+        - --v=5
+        env:
+        - name: CSI_ENDPOINT
+          value: unix:/csi/csi.sock
+        image: amazon/aws-fsx-csi-driver:v0.3.0
+        livenessProbe:
+          failureThreshold: 5
+          httpGet:
+            path: /healthz
+            port: healthz
+          initialDelaySeconds: 10
+          periodSeconds: 2
+          timeoutSeconds: 3
+        name: fsx-plugin
+        ports:
+        - containerPort: 9810
+          name: healthz
+          protocol: TCP
+        securityContext:
+          privileged: true
+        volumeMounts:
+        - mountPath: /var/lib/kubelet
+          mountPropagation: Bidirectional
+          name: kubelet-dir
+        - mountPath: /csi
+          name: plugin-dir
+      - args:
+        - --csi-address=$(ADDRESS)
+        - --kubelet-registration-path=$(DRIVER_REG_SOCK_PATH)
+        - --v=5
+        env:
+        - name: ADDRESS
+          value: /csi/csi.sock
+        - name: DRIVER_REG_SOCK_PATH
+          value: /var/lib/kubelet/plugins/fsx.csi.aws.com/csi.sock
+        - name: KUBE_NODE_NAME
+          valueFrom:
+            fieldRef:
+              fieldPath: spec.nodeName
+        image: quay.io/k8scsi/csi-node-driver-registrar:v1.1.0
+        name: csi-driver-registrar
+        volumeMounts:
+        - mountPath: /csi
+          name: plugin-dir
+        - mountPath: /registration
+          name: registration-dir
+      - args:
+        - --csi-address=/csi/csi.sock
+        - --health-port=9810
+        image: quay.io/k8scsi/livenessprobe:v1.1.0
+        imagePullPolicy: Always
+        name: liveness-probe
+        volumeMounts:
+        - mountPath: /csi
+          name: plugin-dir
+      hostNetwork: true
+      nodeSelector:
+        kubernetes.io/arch: amd64
+        kubernetes.io/os: linux
+      volumes:
+      - hostPath:
+          path: /var/lib/kubelet
+          type: Directory
+        name: kubelet-dir
+      - hostPath:
+          path: /var/lib/kubelet/plugins_registry/
+          type: Directory
+        name: registration-dir
+      - hostPath:
+          path: /var/lib/kubelet/plugins/fsx.csi.aws.com/
+          type: DirectoryOrCreate
+        name: plugin-dir

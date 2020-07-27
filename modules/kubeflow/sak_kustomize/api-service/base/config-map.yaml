@@ -1,0 +1,29 @@
+apiVersion: v1
+data:
+  config.json: |
+    {
+      "DBConfig": {
+        "DriverName": "mysql",
+        "Host": "$(DB_HOST)",
+        "Port": 3306,
+        "User": "$(DB_USER)",
+        "Password": "$(DB_PASSWORD)",
+        "DBName": "$(DB_NAME)"
+      },
+      "ObjectStoreConfig":{
+        "Host": "$(STORAGE_HOST)",
+        "Port": 443,
+        "Region": "$(STORAGE_REGION)",
+        "BucketName": "$(STORAGE_BUCKET)",
+        "Secure": true,
+        "AccessKey": "$(STORAGE_KEY)",
+        "SecretAccessKey": "$(STORAGE_SECRET)"
+      },
+      "InitConnectionTimeout": "6m",
+      "DefaultPipelineRunnerServiceAccount": "pipeline-runner",
+      "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_HOST": "ml-pipeline-ml-pipeline-visualizationserver",
+      "ML_PIPELINE_VISUALIZATIONSERVER_SERVICE_PORT": 8888
+    }
+kind: ConfigMap
+metadata:
+  name: ml-pipeline-config

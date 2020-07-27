@@ -1,7 +1,11 @@
-#Global helm chart repo
-data "helm_repository" "incubator" {
-  name = "incubator"
-  url  = "https://kubernetes-charts-incubator.storage.googleapis.com"
+# Create namespace efk
+resource "kubernetes_namespace" "efk" {
+  depends_on = [
+    var.module_depends_on
+  ]
+  metadata {
+    name = "efk"
+  }
 }
 
 resource "helm_release" "elastic-stack" {
@@ -10,10 +14,10 @@ resource "helm_release" "elastic-stack" {
   ]
 
   name       = "elastic"
-  repository = "stable"
+  repository = "https://kubernetes-charts.storage.googleapis.com"
   chart      = "elastic-stack"
-  version    = "1.8.0"
-  namespace  = "logging"
+  version    = "2.0.1"
+  namespace  = "efk"
 
   values = [
     file("${path.module}/values/elastic-stack.yaml"),
@@ -21,41 +25,51 @@ resource "helm_release" "elastic-stack" {
 
   set {
     name  = "kibana.ingress.hosts[0]"
-    value = "kibana.${var.domain}"
+    value = "kibana.${var.domains[0]}"
   }
 
   set {
     name  = "kibana.ingress.tls[0].hosts[0]"
-    value = "kibana.${var.domain}"
+    value = "kibana.${var.domains[0]}"
   }
 
   set {
-    name  = "kibana.ingress.annotations.ingress.kubernetes.io/auth-url"
-    value = "https://oauth2.${var.domain}/oauth2/auth"
+    name  = "kibana.ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-url"
+    value = var.efk_oauth2_domain == "" ? "" : "https://${var.efk_oauth2_domain}.${var.domains[0]}/oauth2/auth"
   }
 
   set {
-    name  = "kibana.ingress.annotations.ingress.kubernetes.io/auth-signin"
-    value = "https://oauth2.${var.domain}/oauth2/start?rd=https://$host$request_uri$is_args$args"
+    name  = "kibana.ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-signin"
+    value = var.efk_oauth2_domain == "" ? "" : "https://${var.efk_oauth2_domain}.${var.domains[0]}/oauth2/sign_in?rd=$scheme://$host$request_uri"
   }
 
   set {
     name  = "logstash.enabled"
-    value = "${var.logstash}"
+    value = var.logstash
   }
 
   set {
     name  = "filebeat.enabled"
-    value = "${var.filebeat}"
+    value = var.filebeat
   }
 
   set {
-    name  = "elasticsearch-curator"
-    value = "${var.elasticsearch-curator}"
+    name  = "elasticsearch-curator.enabled"
+    value = var.elasticsearch-curator
+  }
+
+  set {
+    name  = "elasticsearch-curator.cronjob.failedJobsHistoryLimit"
+    value = var.failed_limit
+  }
+
+  set {
+    name  = "elasticsearch-curator.cronjob.successfulJobsHistoryLimit"
+    value = var.success_limit
   }
 
   set {
     name  = "elasticsearch.data.persistence.size"
-    value = "${var.elasticDataSize}"
+    value = var.elasticDataSize
   }
 }

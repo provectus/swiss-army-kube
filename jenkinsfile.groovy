@@ -19,6 +19,7 @@ pipeline {
 
     stage('Run test') {
       steps {
+<<<<<<< HEAD
         withCredentials([[$class: 'AmazonWebServicesCredentialsBinding', accessKeyVariable: 'AWS_ACCESS_KEY_ID', credentialsId: 'education', secretKeyVariable: 'AWS_SECRET_ACCESS_KEY']]) {
           sh """
             cd example
@@ -26,6 +27,13 @@ pipeline {
             TFLINT_LOG=info tflint --aws-region=us-west-2 --aws-secret-key=$AWS_SECRET_ACCESS_KEY --aws-access-key=$AWS_ACCESS_KEY_ID --deep --force --module --var-file example.tfvars .
           """
         }
+=======
+        sh """
+          cd example
+          terraform init
+          TFLINT_LOG=info tflint --deep --force --module --format=checkstyle --var-file example.tfvars .      
+        """
+>>>>>>> f0033397fe8c5ab37cec5579b56fa82401c89557
       }
     }
   }

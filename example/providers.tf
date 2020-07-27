@@ -3,7 +3,7 @@ terraform {
 }
 
 provider "aws" {
-  version = ">=2.50"
+  version = ">=2.58"
   region  = var.aws_region
 }
 
@@ -12,14 +12,11 @@ provider "kubernetes" {
   cluster_ca_certificate = base64decode(data.aws_eks_cluster.cluster.certificate_authority.0.data)
   token                  = data.aws_eks_cluster_auth.cluster.token
   load_config_file       = false
-  version                = ">=1.10.0"
+  version                = ">=1.11.1"
 }
 
 provider "helm" {
-  version         = "0.10"
-  install_tiller  = "false"
-  service_account = module.system.kubernetes_service_account.metadata.0.name
-  namespace       = module.system.kubernetes_service_account.metadata.0.namespace
+  version = "1.0.0"
 
   kubernetes {
     config_path = module.kubernetes.kubeconfig_filename
@@ -31,7 +28,7 @@ provider "random" {
 }
 
 provider "local" {
-  version = "~> 1.2"
+  version = "~> 1.4"
 }
 
 provider "null" {
@@ -40,4 +37,8 @@ provider "null" {
 
 provider "template" {
   version = "~> 2.1"
+}
+
+provider "external" {
+  version = "~> 1.2"
 }
