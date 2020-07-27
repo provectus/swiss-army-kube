@@ -1,14 +1,11 @@
 pipeline {
   agent any
+  tool name: 'terraform-12', type: 'terraform'
 
   stages {
     stage('Prepare') {
       steps {
         sh """
-        wget https://releases.hashicorp.com/terraform/0.12.18/terraform_0.12.18_linux_amd64.zip
-        unzip terraform_0.12.18_linux_amd64.zip
-        rm terraform_0.12.18_linux_amd64.zip
-        mv terraform /usr/local/bin/
         terraform --version
         """
       }
