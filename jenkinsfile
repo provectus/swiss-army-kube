@@ -12,7 +12,7 @@ pipeline {
         curl -LO https://get.golang.org/$(uname)/go_installer && chmod +x go_installer && ./go_installer && rm go_installer
         apt install python3-pip gawk &&\
         pip3 install pre-commit
-        curl -L "$(curl -s https://api.github.com/repos/segmentio/terraform-docs/releases/latest | grep -o -E "https://.+?-linux-amd64")" > terraform-docs && chmod +x terraform-docs && sudo mv terraform-docs /home/jenkins/tools/org.jenkinsci.plugins.terraform.TerraformInstallation/terraform-12
+        curl -L "\$(curl -s https://api.github.com/repos/segmentio/terraform-docs/releases/latest | grep -o -E "https://.+?-linux-amd64")" > terraform-docs && chmod +x terraform-docs && mv terraform-docs /home/jenkins/tools/org.jenkinsci.plugins.terraform.TerraformInstallation/terraform-12
         env GO111MODULE=on go get -u github.com/liamg/tfsec/cmd/tfsec        
         curl -L "\$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip
         unzip tflint.zip -d /home/jenkins/tools/org.jenkinsci.plugins.terraform.TerraformInstallation/terraform-12
@@ -27,6 +27,7 @@ pipeline {
           sh """
             cd example
             terraform init
+            cd ..
             pre-commit run -a
           """
       }
