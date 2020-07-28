@@ -28,8 +28,8 @@ variable "project" {
 
 variable "cluster_name" {
   type        = string
-  description = "Name of cluster."
-  default     = "cluster-name"
+  description = "Name of the kubernetes cluster"
+  default     = "test"
 }
 
 variable "availability_zones" {

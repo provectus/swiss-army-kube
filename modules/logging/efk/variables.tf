@@ -46,3 +46,9 @@ variable "efk_oauth2_domain" {
   description = "oauth2 domain for EFK"
   default     = ""
 }
+
+variable "cluster_name" {
+  type        = string
+  description = "Name of the kubernetes cluster"
+  default     = "test"
+}

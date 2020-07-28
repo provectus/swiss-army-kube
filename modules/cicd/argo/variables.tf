@@ -1,5 +1,7 @@
 variable "cluster_name" {
-  type = string
+  type        = string
+  description = "Name of the kubernetes cluster"
+  default     = "test"
 }
 variable "domains" {
   type = list(string)

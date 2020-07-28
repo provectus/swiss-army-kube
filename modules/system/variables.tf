@@ -20,7 +20,9 @@ variable "project" {
 }
 
 variable "cluster_name" {
+  type        = string
   description = "Name of the kubernetes cluster"
+  default     = "test"
 }
 
 variable "vpc_id" {
@@ -51,5 +53,5 @@ variable "cert_manager_email" {
 variable "cluster_oidc_url" {
   type        = string
   description = "OIDC EKS cluster endpoint"
-  default     = ""
+  default     = "null"
 }

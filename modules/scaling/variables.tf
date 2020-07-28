@@ -11,6 +11,8 @@ variable namespace {
   default = "kube-system"
 }
 
-variable cluster_name {
-  type = string
+variable "cluster_name" {
+  type        = string
+  description = "Name of the kubernetes cluster"
+  default     = "test"
 }

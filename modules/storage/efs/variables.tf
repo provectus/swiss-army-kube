@@ -7,5 +7,7 @@ variable "vpc" {
   type = any
 }
 variable "cluster_name" {
-  type = string
+  type        = string
+  description = "Name of the kubernetes cluster"
+  default     = "test"
 }

@@ -4,7 +4,9 @@ variable "aws_region" {
 
 # Name of EKS cluster (Not use underscore in naming. S3 backet name issue)
 variable "cluster_name" {
-  description = "Name of cluster"
+  type        = string
+  description = "Name of the kubernetes cluster"
+  default     = "test"
 }
 
 variable "availability_zones" {

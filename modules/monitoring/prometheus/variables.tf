@@ -9,7 +9,9 @@ variable "namespace_name" {
 }
 
 variable "cluster_name" {
+  type        = string
   description = "Name of the kubernetes cluster"
+  default     = "test"
 }
 
 variable "config_path" {

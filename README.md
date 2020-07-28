@@ -44,3 +44,6 @@ This repository provides a minimal set of resources, which are helpful to comfor
  - `modules` - Terraform modules.
  - `charts`  - Local helm repository for charts which could not be retrieved from public repositories.
  - `example` - Example project, include some modules and variables to deploy AWS EKS and install charts. Use as a template.
+
+This repo use https://github.com/antonbabenko/pre-commit-terraform, please read README
+To install pre-commit use precommit-mac\linux-install.sh

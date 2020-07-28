@@ -78,12 +78,12 @@ resource "kubernetes_secret" "grafana_auth" {
   count = var.grafana_google_auth == true ? 1 : 0
 
   metadata {
-    name = "grafana-auth"
+    name      = "grafana-auth"
     namespace = "monitoring"
   }
 
   data = {
-    GF_AUTH_GOOGLE_CLIENT_ID = var.grafana_client_id
+    GF_AUTH_GOOGLE_CLIENT_ID     = var.grafana_client_id
     GF_AUTH_GOOGLE_CLIENT_SECRET = var.grafana_client_secret
   }
 }
