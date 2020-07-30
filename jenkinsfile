@@ -1,14 +1,68 @@
 pipeline {
-  agent any
   tools {
     terraform 'terraform-12'
   }
+    environment {
+        registry = "provectuslabs/swiss-army-lint"
+        registryCredential = 'docker-hub-credentials'
+    }
 
+    agent {
+        kubernetes {
+            label 'swiss-army'
+            yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: docker-client
+    image: docker:19.03.1
+    command:
+    - sleep
+    args:
+    - 99d
+    env:
+      - name: DOCKER_HOST
+        value: tcp://localhost:2375
+    volumeMounts:
+      - name: cache
+        mountPath: /tmp/repository
+  - name: docker-daemon
+    image: docker:19.03.1-dind
+    securityContext:
+      privileged: true
+    env:
+      - name: DOCKER_TLS_CERTDIR
+        value: ""
+    volumeMounts:
+      - name: cache
+        mountPath: /var/lib/docker
+  volumes:
+    - name: cache
+      hostPath:
+        path: /tmp
+        type: Directory
+'''
+        }
+    }
   stages {
+    stage('Build docker') {
+      container('docker-client'){
+        script {
+          dockerImage = docker.build( registry + ":$VERSION", " -f dockerfile docker/." )
+            docker.withRegistry( '', registryCredential ) {
+                dockerImage.push()
+                dockerImage.push('latest')
+            }
+        }
+      }
+    }
+/*    
     stage('Prepare') {
       steps {
         sh """
         terraform --version
+        curl -LO https://get.golang.org/\$(uname)/go_installer && chmod +x go_installer && ./go_installer && rm go_installer
         ./precommit-linux-install.sh
         """
       }
@@ -24,5 +78,6 @@ pipeline {
           """
       }
     }
+*/    
   }
 }
