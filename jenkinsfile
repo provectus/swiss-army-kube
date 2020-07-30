@@ -45,13 +45,41 @@ spec:
 '''
         }
     }
-  stages {   
-    stage('Run test') {
+  stages {
+    stage('Build docker') {
       steps {
-        container('docker-client') {
-            sh "docker run -v $WORKSPACE:/usr/src/swiss -w /usr/src/swiss $registry bash -c 'cd example && terraform init && cd .. && pre-commit run -a'"
+        container('docker-client'){
+          script {
+            dockerImage = docker.build( registry + ":$BUILD_NUMBER", " -f dockerfile docker/." )
+              docker.withRegistry( '', registryCredential ) {
+                  dockerImage.push()
+                  dockerImage.push('latest')
+              }
+          }
         }
       }
-    }   
+    }
+/*    
+    stage('Prepare') {
+      steps {
+        sh """
+        terraform --version
+        curl -LO https://get.golang.org/\$(uname)/go_installer && chmod +x go_installer && ./go_installer && rm go_installer
+        ./precommit-linux-install.sh
+        """
+      }
+    }
+
+    stage('Run test') {
+      steps {
+          sh """
+            cd example
+            terraform init
+            cd ..
+            pre-commit run -a
+          """
+      }
+    }
+*/    
   }
 }
