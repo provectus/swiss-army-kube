@@ -1,0 +1,6 @@
+FROM ubuntu
+
+RUN apt update && apt install sudo curl python3-pip gawk unzip -y
+RUN pip3 install pre-commit
+RUN curl -LO https://api.github.com/repos/segmentio/terraform-docs/releases/latest > terraform-docs && chmod +x terraform-docs && sudo mv terraform-docs /usr/bin/
+RUN curl -LO https://api.github.com/repos/terraform-linters/tflint/releases/latest > tflint && chmod +x tflint && sudo mv tflint /usr/bin
