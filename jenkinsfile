@@ -47,13 +47,15 @@ spec:
     }
   stages {
     stage('Build docker') {
-      container('docker-client'){
-        script {
-          dockerImage = docker.build( registry + ":$VERSION", " -f dockerfile docker/." )
-            docker.withRegistry( '', registryCredential ) {
-                dockerImage.push()
-                dockerImage.push('latest')
-            }
+      steps {
+        container('docker-client'){
+          script {
+            dockerImage = docker.build( registry + ":$VERSION", " -f dockerfile docker/." )
+              docker.withRegistry( '', registryCredential ) {
+                  dockerImage.push()
+                  dockerImage.push('latest')
+              }
+          }
         }
       }
     }
