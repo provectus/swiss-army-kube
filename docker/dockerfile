@@ -1,6 +1,6 @@
 FROM ubuntu
 
-RUN apt update && apt install sudo curl python3-pip gawk unzip wget -y
+RUN apt update && apt install sudo curl python3-pip gawk unzip wget git -y
 RUN pip3 install pre-commit
 RUN wget https://releases.hashicorp.com/terraform/0.12.18/terraform_0.12.18_linux_amd64.zip && unzip terraform_0.12.18_linux_amd64.zip && rm terraform_0.12.18_linux_amd64.zip && mv terraform /usr/local/bin/
 RUN curl -LO https://api.github.com/repos/segmentio/terraform-docs/releases/latest > terraform-docs && chmod +x terraform-docs && sudo mv terraform-docs /usr/bin/
