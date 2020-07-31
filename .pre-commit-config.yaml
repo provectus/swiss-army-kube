@@ -3,6 +3,7 @@ repos:
   rev: v1.31.0 # Get the latest from: https://github.com/antonbabenko/pre-commit-terraform/releases
   hooks:
     - id: terraform_fmt
+      args: ['-diff']
     - id: terraform_docs
 #    - id: terraform_validate
 #    - id: terraform_tflint
