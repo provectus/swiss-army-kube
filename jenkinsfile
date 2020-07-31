@@ -49,7 +49,7 @@ spec:
     stage('Run test') {
       steps {
         container('docker-client') {
-            sh "docker run -v $WORKSPACE:/usr/src/swiss -w /usr/src/swiss $registry bash -c 'cd example && terraform init && cd .. && pre-commit run -a'"
+            sh "docker run -v $WORKSPACE:/usr/src/swiss -w /usr/src/swiss $registry bash -c 'cd example && terraform init && cd .. && git diff && pre-commit run -a'"
         }
       }
     }   
