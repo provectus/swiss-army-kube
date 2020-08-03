@@ -60,7 +60,7 @@ resource "aws_route53_record" "cluster-ns" {
     var.module_depends_on,
     null_resource.wait-eks
   ]
-  count   = var.aws_private == "false" ? length(var.domains) : 0
+  count   = var.mainzoneid == "" ?  0 : length(var.domains)
   zone_id = var.mainzoneid
   name    = element(var.domains, count.index)
   type    = "NS"
