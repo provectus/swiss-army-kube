@@ -6,6 +6,7 @@ local
 *.tfstate*
 .cache
 kustomize
+kfctl.yaml
 
 # use other *.tfvars files for parametrization of config-modules
 terraform.tfvars

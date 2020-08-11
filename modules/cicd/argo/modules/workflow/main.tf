@@ -22,6 +22,7 @@ resource "aws_s3_bucket" "artifacts" {
     Team        = "DevOps"
     Description = "for argo artifacts in kubernetes"
   }
+  force_destroy = true
 }
 
 resource "aws_iam_role_policy" "s3" {
@@ -67,7 +68,7 @@ resource "helm_release" "argo-workflow" {
   version       = "0.9.4"
   namespace     = var.namespace
   recreate_pods = true
-
+  timeout       = 1200
   dynamic set {
     for_each = merge(local.workflow_conf_defaults, var.workflow_conf)
 

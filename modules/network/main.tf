@@ -37,7 +37,7 @@ module "vpc" {
 
   public_subnet_tags = {
     Name                                        = "${var.environment}-${var.cluster_name}-public"
-    KubernetesCluster                           = "${var.cluster_name}"
+    KubernetesCluster                           = var.cluster_name
     Environment                                 = var.environment
     Project                                     = var.project
     "kubernetes.io/role/elb"                    = ""

@@ -9,7 +9,7 @@ resource "helm_release" "argo-events" {
   version       = "0.14.0"
   namespace     = var.namespace
   recreate_pods = true
-
+  timeout       = 1200
   dynamic set {
     for_each = merge(local.events_conf_defaults, var.events_conf)
 

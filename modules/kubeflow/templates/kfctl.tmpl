@@ -3,7 +3,7 @@ kind: KfDef
 metadata:
   annotations:
     kfctl.kubeflow.io/force-delete: "false"
-  clusterName: eks_swiss-army
+  clusterName: ${cluster_name}
   creationTimestamp: null
   name: kubeflow
   namespace: kubeflow
@@ -184,7 +184,6 @@ spec:
   - kustomizeConfig:
       overlays:
       - application
-      - aws
       repoRef:
         name: manifests
         path: pipeline/persistent-agent

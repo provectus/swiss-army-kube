@@ -14,18 +14,19 @@ resource "aws_rds_cluster_instance" "cluster_instances" {
   count                = 2
   identifier           = "${var.cluster_name}-${count.index}"
   cluster_identifier   = aws_rds_cluster.db.id
-  instance_class       = "db.r5.large"
+  instance_class       = var.cluster_instance_class
   db_subnet_group_name = aws_db_subnet_group.this.name
 }
 
 resource "aws_rds_cluster" "db" {
-  cluster_identifier     = var.cluster_name
-  availability_zones     = var.vpc.azs
-  database_name          = "kubeflow"
-  master_username        = "admin"
-  master_password        = "testtest"
-  db_subnet_group_name   = aws_db_subnet_group.this.name
-  vpc_security_group_ids = [var.cluster.worker_security_group_id]
+  cluster_identifier        = var.cluster_name
+  availability_zones        = var.vpc.azs
+  database_name             = "kubeflow"
+  master_username           = "admin"
+  master_password           = "testtest"
+  db_subnet_group_name      = aws_db_subnet_group.this.name
+  vpc_security_group_ids    = [var.cluster.worker_security_group_id]
+  final_snapshot_identifier = "${var.cluster_name}-${formatdate("DD-MMM-YYYY-hh-mm", timestamp())}-final"
 }
 
 data "aws_iam_policy_document" "this" {

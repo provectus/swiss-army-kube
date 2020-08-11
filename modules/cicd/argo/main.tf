@@ -1,28 +1,28 @@
 resource "kubernetes_namespace" "this" {
+  depends_on = [var.module_depends_on]
   metadata {
     name = var.namespace
   }
 }
 
 module "argo-cd" {
-  module_depends_on = var.module_depends_on
   source            = "./modules/cd"
+  module_depends_on = var.module_depends_on
   domains           = var.domains
-  namespace         = var.namespace
+  namespace         = kubernetes_namespace.this.metadata[0].name
 }
 
 module "argo-events" {
-  module_depends_on = var.module_depends_on
   source            = "./modules/events"
-  namespace         = var.namespace
+  module_depends_on = var.module_depends_on
+  namespace         = kubernetes_namespace.this.metadata[0].name
 }
 
 module "argo-workflow" {
-  module_depends_on = concat([module.argo-events.argo_events_namespace], var.module_depends_on)
-  source            = "./modules/workflow"
-
+  source                = "./modules/workflow"
+  module_depends_on     = var.module_depends_on
   environment           = var.environment
-  namespace             = var.namespace
+  namespace             = kubernetes_namespace.this.metadata[0].name
   project               = var.project
   cluster_name          = var.cluster_name
   argo_events_namespace = module.argo-events.argo_events_namespace
