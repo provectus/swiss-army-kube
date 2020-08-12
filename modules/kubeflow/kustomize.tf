@@ -14,7 +14,6 @@ resource "local_file" "kfctl" {
   filename = "${path.module}/kfctl.yaml"
 }
 
-
 resource "null_resource" "kfctl_build" {
   triggers = {
     kfctl              = local_file.kfctl.id

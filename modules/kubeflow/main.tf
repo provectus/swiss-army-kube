@@ -5,6 +5,17 @@ data "aws_caller_identity" "this" {}
 data "aws_eks_cluster" "this" {
   name = var.cluster_name
 }
+resource "random_password" "rds_password" {
+  length           = 16
+  special          = true
+  override_special = "!#%&*()-_=+[]{}<>:?"
+}
+
+resource "aws_ssm_parameter" "rds_password" {
+  name  = "/rds/${var.cluster_name}/${var.db_admin_name}"
+  type  = "SecureString"
+  value = var.db_admin_password != "" ? var.db_admin_password : random_password.rds_password.result
+}
 
 resource "aws_db_subnet_group" "this" {
   subnet_ids = var.vpc.private_subnets
@@ -22,11 +33,11 @@ resource "aws_rds_cluster" "db" {
   cluster_identifier        = var.cluster_name
   availability_zones        = var.vpc.azs
   database_name             = "kubeflow"
-  master_username           = "admin"
-  master_password           = "testtest"
+  master_username           = var.db_admin_name
+  master_password           = var.db_admin_password != "" ? var.db_admin_password : random_password.rds_password.result
   db_subnet_group_name      = aws_db_subnet_group.this.name
   vpc_security_group_ids    = [var.cluster.worker_security_group_id]
-  final_snapshot_identifier = "${var.cluster_name}-${formatdate("DD-MMM-YYYY-hh-mm", timestamp())}-final"
+  final_snapshot_identifier = "${var.cluster_name}-final"
 }
 
 data "aws_iam_policy_document" "this" {
