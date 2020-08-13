@@ -26,4 +26,5 @@ module "argo-workflow" {
   project               = var.project
   cluster_name          = var.cluster_name
   argo_events_namespace = module.argo-events.argo_events_namespace
+  cluster_oidc_url      = replace(var.cluster_oidc_url, "https://", "")
 }

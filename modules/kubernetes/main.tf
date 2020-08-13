@@ -5,7 +5,7 @@ data "aws_ami" "eks_gpu_worker" {
   }
 
   most_recent = true
-  owners = ["602401143452"] // The ID of the owner of the official AWS EKS AMIs.
+  owners      = ["602401143452"] // The ID of the owner of the official AWS EKS AMIs.
 }
 
 
@@ -14,6 +14,7 @@ module "eks" {
   version         = "v12.0.0"
   cluster_version = var.cluster_version
   cluster_name    = var.cluster_name
+  kubeconfig_name = var.cluster_name
   subnets         = var.subnets
   vpc_id          = var.vpc_id
 
@@ -196,7 +197,7 @@ module "eks" {
         {
           "key"                 = "k8s.io/cluster-autoscaler/node-template/resources/nvidia.com/gpu"
           "propagate_at_launch" = "false"
-          "value"               = "1"  # Change to the number of GPUs on your node type
+          "value"               = "1" # Change to the number of GPUs on your node type
         }
       ]
     },

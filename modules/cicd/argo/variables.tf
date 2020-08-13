@@ -25,3 +25,7 @@ variable "install_workflows" {
 variable "module_depends_on" {
   default = []
 }
+
+variable "cluster_oidc_url" {
+  type = string
+}
