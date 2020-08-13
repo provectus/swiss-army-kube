@@ -17,9 +17,9 @@ resource "helm_release" "jenkins" {
   repository    = "https://kubernetes-charts.storage.googleapis.com"
   chart         = "jenkins"
   version       = "1.27.0"
-  namespace     = "jenkins"
+  namespace     = kubernetes_namespace.jenkins.metadata[0].name
   recreate_pods = true
-
+  timeout       = 1200
   set {
     name  = "master.adminPassword"
     value = var.jenkins_password
@@ -40,7 +40,7 @@ resource "helm_release" "jenkins" {
     value = true
   }
 
-  set_string {
+  set {
     name  = "serviceAccountAgent.annotations.eks\\.amazonaws\\.com/role-arn"
     value = aws_iam_role.jenkins_agent.arn
   }
@@ -55,7 +55,7 @@ resource "helm_release" "jenkins" {
     value = true
   }
 
-  set_string {
+  set {
     name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
     value = aws_iam_role.jenkins_master.arn
   }

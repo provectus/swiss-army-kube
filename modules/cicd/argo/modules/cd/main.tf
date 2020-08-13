@@ -9,7 +9,7 @@ resource "helm_release" "argo-cd" {
   version       = "2.3.5"
   namespace     = var.namespace
   recreate_pods = true
-
+  timeout       = 1200
   dynamic set {
     for_each = merge(local.cd_conf_defaults, var.cd_conf)
 

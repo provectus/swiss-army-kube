@@ -23,3 +23,9 @@ variable "config_path" {
   description = "location of the kubeconfig file"
   default     = "~/.kube/config"
 }
+
+variable "cluster_instance_class" {
+  type = string
+  description = "Instance class used for Aurora"
+  default = "db.t3.small"
+}

@@ -16,8 +16,8 @@ resource "helm_release" "nginx-ingress" {
   repository = "https://kubernetes-charts.storage.googleapis.com"
   chart      = "nginx-ingress"
   version    = "1.39.0"
-  namespace  = "ingress-system"
-
+  namespace  = kubernetes_namespace.ingress-system.metadata[0].name
+  timeout    = 1200
   values = [
     file("${path.module}/values/nginx-ingress.yaml"),
   ]
@@ -86,7 +86,7 @@ resource "helm_release" "oauth2-proxy" {
   recreate_pods = true
 
   values = [
-    "${file("${path.module}/values/oauth2-proxy.yaml")}",
+    file("${path.module}/values/oauth2-proxy.yaml"),
   ]
 
   set {
@@ -149,7 +149,7 @@ resource "helm_release" "oauth2-proxy-google" {
   recreate_pods = true
 
   values = [
-    "${file("${path.module}/values/oauth2-proxy-google.yaml")}",
+    file("${path.module}/values/oauth2-proxy-google.yaml")
   ]
 
   set {

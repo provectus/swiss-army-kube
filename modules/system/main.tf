@@ -53,6 +53,7 @@ resource "aws_route53_zone" "cluster" {
     Environment = var.environment
     Project     = var.project
   }
+  force_destroy = true
 }
 
 resource "aws_route53_record" "cluster-ns" {
@@ -60,17 +61,17 @@ resource "aws_route53_record" "cluster-ns" {
     var.module_depends_on,
     null_resource.wait-eks
   ]
-  count   = var.mainzoneid == "" ?  0 : length(var.domains)
+  count   = var.mainzoneid == "" ? 0 : length(var.domains)
   zone_id = var.mainzoneid
   name    = element(var.domains, count.index)
   type    = "NS"
   ttl     = "30"
 
   records = [
-    "${aws_route53_zone.cluster[count.index].name_servers.0}",
-    "${aws_route53_zone.cluster[count.index].name_servers.1}",
-    "${aws_route53_zone.cluster[count.index].name_servers.2}",
-    "${aws_route53_zone.cluster[count.index].name_servers.3}",
+    aws_route53_zone.cluster[count.index].name_servers[0],
+    aws_route53_zone.cluster[count.index].name_servers[1],
+    aws_route53_zone.cluster[count.index].name_servers[2],
+    aws_route53_zone.cluster[count.index].name_servers[3],
   ]
 
 }
@@ -98,7 +99,7 @@ resource "aws_iam_openid_connect_provider" "cluster" {
   url             = var.cluster_oidc_url
 }
 
-# Enabling IAM Roles for Service Accounts 
+# Enabling IAM Roles for Service Accounts
 data "aws_caller_identity" "current" {}
 
 data "aws_iam_policy_document" "external_dns_assume_role_policy" {
@@ -168,9 +169,9 @@ resource "aws_iam_policy" "cert_manager" {
             "Effect": "Allow",
             "Action": "route53:ListHostedZones",
             "Resource": "*"
-        }        
+        }
     ]
-}   
+}
 EOF
 }
 
@@ -263,7 +264,7 @@ resource "helm_release" "external-dns" {
   chart      = "external-dns"
   version    = "3.1.0"
   namespace  = "kube-system"
-
+  timeout    = 1200
   values = [
     file("${path.module}/values/external-dns.yaml"),
   ]
@@ -319,7 +320,7 @@ resource "helm_release" "cert-manager" {
     null_resource.wait-eks,
     var.module_depends_on
   ]
-
+  timeout       = 1200
   name          = "cert-manager"
   repository    = "https://charts.jetstack.io"
   chart         = "cert-manager"
@@ -344,22 +345,29 @@ resource "helm_release" "metrics-server" {
   chart      = "metrics-server"
   version    = "2.11.1"
   namespace  = "kube-system"
-
+  timeout    = 1200
 }
 
-# Deploy saled-secrets
-resource "helm_release" "sealed-secrets" {
+resource "null_resource" "sealed-secrets-crd" {
   depends_on = [
-    var.module_depends_on,
     null_resource.wait-eks
   ]
+  provisioner "local-exec" {
+    command = <<EOC
+kubectl --kubeconfig ${path.root}/${var.config_path} -n kube-system apply -f ${path.module}/manifests/sealed-secrets-crd.yaml
+    EOC
+  }
+}
+# Deploy saled-secrets
+resource "helm_release" "sealed-secrets" {
+  depends_on = [null_resource.sealed-secrets-crd]
   name       = "sealed-secrets"
   repository = "https://kubernetes-charts.storage.googleapis.com"
   chart      = "sealed-secrets"
-  version    = "1.10.1"
+  version    = "1.10.3"
   namespace  = "kube-system"
-
+  timeout    = 1200
   values = [
-    "${file("${path.module}/values/sealed-secrets.yaml")}",
+    file("${path.module}/values/sealed-secrets.yaml"),
   ]
 }

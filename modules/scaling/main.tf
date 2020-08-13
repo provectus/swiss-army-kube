@@ -16,16 +16,21 @@ resource "kubernetes_namespace" "this" {
   }
 }
 
+data "helm_repository" "stable" {
+  name = "stable"
+  url  = "https://kubernetes-charts.storage.googleapis.com/"
+}
+
 resource "helm_release" "cluster_autoscaler" {
   depends_on = [
     var.module_depends_on
   ]
   name       = "aws-cluster-autoscaler"
-  repository = "stable"
+  repository = data.helm_repository.stable.metadata[0].name
   chart      = "cluster-autoscaler"
   version    = "7.2.2"
   namespace  = var.namespace
-
+  timeout    = 1200
   dynamic set {
     for_each = merge(local.autoscaler_conf_defaults, var.autoscaler_conf)
 
