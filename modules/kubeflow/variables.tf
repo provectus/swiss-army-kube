@@ -25,7 +25,17 @@ variable "config_path" {
 }
 
 variable "cluster_instance_class" {
-  type = string
+  type        = string
   description = "Instance class used for Aurora"
-  default = "db.t3.small"
+  default     = "db.t3.small"
+}
+
+variable "db_admin_name" {
+  type    = string
+  default = "dbadmin"
+}
+
+variable "db_admin_password" {
+  type    = string
+  default = ""
 }

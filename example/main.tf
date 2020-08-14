@@ -110,6 +110,7 @@ module "argo" {
   domains           = var.domains
   environment       = var.environment
   project           = var.project
+  cluster_oidc_url  = module.kubernetes.cluster_oidc_url
 }
 
 ## Kubeflow

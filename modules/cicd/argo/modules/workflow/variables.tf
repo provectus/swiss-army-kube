@@ -33,3 +33,7 @@ variable "project" {
 variable "cluster_name" {
   description = "Name of the kubernetes cluster"
 }
+
+variable "cluster_oidc_url" {
+  type = string
+}
