@@ -20,69 +20,20 @@ resource "helm_release" "jenkins" {
   namespace     = kubernetes_namespace.jenkins.metadata[0].name
   recreate_pods = true
   timeout       = 1200
-  set {
-    name  = "master.adminPassword"
-    value = var.jenkins_password
-  }
 
-  set {
-    name  = "master.ingress.enabled"
-    value = "true"
-  }
-
-  set {
-    name  = "serviceAccountAgent.name"
-    value = "jenkins-agent"
-  }
-
-  set {
-    name  = "serviceAccountAgent.create"
-    value = true
-  }
-
-  set {
-    name  = "serviceAccountAgent.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = aws_iam_role.jenkins_agent.arn
-  }
-
-  set {
-    name  = "serviceAccount.name"
-    value = "jenkins-master"
-  }
-
-  set {
-    name  = "serviceAccount.create"
-    value = true
-  }
-
-  set {
-    name  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-    value = aws_iam_role.jenkins_master.arn
-  }
-
-  //TODO: fix it for multi domains
-  set {
-    name  = "master.ingress.hostName"
-    value = "jenkins.${var.domains[0]}"
-  }
-
-  dynamic "set" {
-    for_each = var.domains
-    content {
-      name  = "master.ingress.tls[${set.key}].secretName"
-      value = "jenkins-${set.key}-tls"
-    }
-  }
-  dynamic "set" {
-    for_each = var.domains
-    content {
-      name  = "master.ingress.tls[${set.key}].hosts[0]"
-      value = "jenkins.${set.value}"
-    }
-  }
-
-  values = [
-    file("${path.module}/values.yml")
+  values = [templatefile("${path.module}/values.yml",
+    {
+      adminPassword                           = var.jenkins_password
+      master_ingress_enabled                  = true
+      serviceAccountAgent_name                = "jenkins-agent"
+      serviceAccountAgent_create              = true
+      serviceAccount_name                     = "jenkins-master"
+      serviceAccount_create                   = true
+      master_ingress_hostName                 = "jenkins.${var.domains[0]}"
+      serviceAccount_annotations_rolearn      = aws_iam_role.jenkins_master.arn
+      serviceAccountAgent_annotations_rolearn = aws_iam_role.jenkins_agent.arn
+      domains                                 = var.domains
+    })
   ]
 }
 

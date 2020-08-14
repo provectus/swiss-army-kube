@@ -10,6 +10,9 @@ resource "helm_release" "argo-cd" {
   namespace     = var.namespace
   recreate_pods = true
   timeout       = 1200
+  values = [
+    file("${path.module}/values.yml")
+  ]
   dynamic set {
     for_each = merge(local.cd_conf_defaults, var.cd_conf)
 
