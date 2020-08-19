@@ -371,3 +371,48 @@ resource "helm_release" "sealed-secrets" {
     file("${path.module}/values/sealed-secrets.yaml"),
   ]
 }
+
+resource "kubernetes_cluster_role" "cluster_role" {
+  depends_on = [
+    var.module_depends_on,
+    null_resource.wait-eks
+  ]
+
+  for_each = { for role in var.cluster_roles : role.cluster_group => role}
+
+  metadata {
+    name = "${each.value.cluster_group}-role"
+  }
+
+  dynamic "rule" {
+    for_each = each.value.roles
+    content {
+      api_groups = rule.value.role_api_groups
+      resources  = rule.value.role_resources
+      verbs      = rule.value.role_verbs
+    }
+  }
+}
+
+resource "kubernetes_cluster_role_binding" "cluster_role_binding" {
+  depends_on = [
+    var.module_depends_on,
+    null_resource.wait-eks
+  ]
+
+  for_each = { for role in var.cluster_roles : role.cluster_group => role}
+
+  metadata {
+    name = "${each.value.cluster_group}-role-binding"
+  }
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "${each.value.cluster_group}-role"
+  }
+  subject {
+    kind      = "Group"
+    name      = "system:${each.value.cluster_group}"
+    api_group = "rbac.authorization.k8s.io"
+  }
+}

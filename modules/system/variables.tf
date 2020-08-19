@@ -53,3 +53,16 @@ variable "cluster_oidc_url" {
   description = "OIDC EKS cluster endpoint"
   default     = ""
 }
+
+variable "cluster_roles" {
+  description = "Additional cluster roles."
+  type        = list(object({
+    cluster_group  = string
+    roles          = list(object({
+      role_resources  = list(string)
+      role_verbs      = list(string)
+      role_api_groups = list(string)
+    }))
+  }))
+  default     = []
+}

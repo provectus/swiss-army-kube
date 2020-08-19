@@ -18,7 +18,7 @@ module "eks" {
   subnets         = var.subnets
   vpc_id          = var.vpc_id
 
-  map_users = var.admin_arns
+  map_users = concat(var.admin_arns, var.user_arns)
 
   tags = {
     Environment = var.environment

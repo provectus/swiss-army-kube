@@ -44,3 +44,31 @@ This repository provides a minimal set of resources, which are helpful to comfor
  - `modules` - Terraform modules.
  - `charts`  - Local helm repository for charts which could not be retrieved from public repositories.
  - `example` - Example project, include some modules and variables to deploy AWS EKS and install charts. Use as a template.
+ 
+ 
+ ## Adding developers to k8s cluster
+ #### DevOps engineer steps
+ - Add IAM user in AWS Console for developer with programmatic access
+ - Add user arn and name to `user_arns` variable with group `system:developers` in `terraform.tfvars` file
+ - Run `terraform plan -out=plan` and review
+ - Run `terraform apply plan`
+ - Send `kubeconfig_internal-projects` config and IAM user tokens to developer
+ 
+ NOTE: To change developers permissions on k8s cluster manipulate `cluster_roles` variable in `terraform.tfvars` file
+ 
+ #### Developer steps
+ - Configure the AWS CLI with received tokens from DevOps engineer:
+ ```
+ aws configure --profile your_profile_name
+ ```
+ NOTE: To use your profile in console run:
+ ```
+ export AWS_PROFILE=your_profile_name
+ ```
+ - Use received `kubeconfig_internal-projects` config for running `kubectl` commands
+ 
+ Command examples:
+ ```
+ kubectl --kubeconfig=kubeconfig_internal-projects get pods --all-namespaces
+ kubectl --kubeconfig=kubeconfig_internal-projects port-forward jenkins-xxxx-xxxx 5000:8080 -n jenkins
+ ```

@@ -36,6 +36,40 @@ admin_arns = [
     groups   = ["system:masters"]
   },
 ]
+
+## ARNs of users which would have provided permissions. (Change It)
+#user_arns = [
+#  {
+#    userarn  = "arn:aws:iam::245582572290:user/developer"
+#    username = "developer"
+#    groups   = ["system:developers"]
+#  },
+#]
+
+## Cluster role parameters
+#cluster_roles = [
+#  {
+#    cluster_group = "developers"
+#    roles         = [
+#      {
+#        role_resources  = [
+#          "deployments",
+#          "services",
+#          "statefulSets",
+#          "ingresses",
+#          "namespaces"
+#        ]
+#        role_verbs      = [
+#          "list",
+#          "get",
+#          "watch"
+#        ]
+#        role_api_groups = [""]
+#      }
+#    ]
+#  }
+#]
+
 #Version of EKS cluster
 # Use EKS 1.15 if deploying Kubeflow !!!
 cluster_version = "1.15"

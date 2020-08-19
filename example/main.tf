@@ -18,6 +18,7 @@ module "kubernetes" {
   vpc_id          = module.network.vpc_id
   subnets         = module.network.private_subnets
   admin_arns      = var.admin_arns
+  user_arns       = var.user_arns
   #On-demand
   on_demand_common_max_cluster_size               = var.on_demand_common_max_cluster_size
   on_demand_common_min_cluster_size               = var.on_demand_common_min_cluster_size
@@ -70,6 +71,7 @@ module "system" {
   config_path        = "${path.module}/kubeconfig_${var.cluster_name}"
   cert_manager_email = var.cert_manager_email
   cluster_oidc_url   = module.kubernetes.cluster_oidc_url
+  cluster_roles      = var.cluster_roles
 }
 
 module "scaling" {
