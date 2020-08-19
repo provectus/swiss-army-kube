@@ -56,6 +56,29 @@ variable "admin_arns" {
   default = []
 }
 
+variable "user_arns" {
+  description = "Additional IAM users to add to the aws-auth configmap."
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
+}
+
+variable "cluster_roles" {
+  description = "Additional cluster roles."
+  type        = list(object({
+    cluster_group  = string
+    roles          = list(object({
+      role_resources  = list(string)
+      role_verbs      = list(string)
+      role_api_groups = list(string)
+    }))
+  }))
+  default     = []
+}
+
 variable "cluster_version" {
   type        = string
   description = "Number of desired instances."

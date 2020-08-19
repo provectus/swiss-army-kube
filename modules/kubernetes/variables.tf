@@ -42,6 +42,16 @@ variable "admin_arns" {
   default = []
 }
 
+variable "user_arns" {
+  description = "Additional IAM users to add to the aws-auth configmap."
+  type = list(object({
+    userarn  = string
+    username = string
+    groups   = list(string)
+  }))
+  default = []
+}
+
 # On-demand instance
 variable "on_demand_common_max_cluster_size" {
   type        = string
