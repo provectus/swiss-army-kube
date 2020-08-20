@@ -170,8 +170,6 @@ jenkins_password = "password"
 #}
 #EOF
 
-#Grafana (Change It)
-grafana_password = "password"
 ## To enable Google auth for Grafana just uncomment block below and fill in needed id, secret and allowed domain
 #grafana_google_auth     = true
 #grafana_client_id       = "xxxxxxx.apps.googleusercontent.com"
