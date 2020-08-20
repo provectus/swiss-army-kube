@@ -1,4 +1,4 @@
-# Create namespace jenkins
+# Create namespace monitoring
 resource "kubernetes_namespace" "monitoring" {
   depends_on = [
     var.module_depends_on
