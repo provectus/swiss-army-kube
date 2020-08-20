@@ -51,7 +51,7 @@ resource "kubernetes_secret" "grafana_auth" {
 
   metadata {
     name = "grafana-auth"
-    namespace = "monitoring"
+    namespace = kubernetes_namespace.monitoring.metadata[0].name
   }
 
   data = {
