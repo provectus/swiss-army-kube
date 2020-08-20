@@ -1,4 +1,4 @@
-# Create namespace monitoring
+# Create namespace jenkins
 resource "kubernetes_namespace" "monitoring" {
   depends_on = [
     var.module_depends_on
@@ -8,66 +8,38 @@ resource "kubernetes_namespace" "monitoring" {
   }
 }
 
-//TODO: при удалении выгрызать crd
 resource "helm_release" "monitoring" {
   depends_on = [
     var.module_depends_on
-  ]
+  ]   
   name       = "prometheus-operator"
-  repository = "https://kubernetes-charts.storage.googleapis.com"
+  repository = "https://kubernetes-charts-incubator.storage.googleapis.com"
   chart      = "prometheus-operator"
-  version    = "8.13.9"
-  namespace  = "monitoring"
+  version    = "9.3.1"
+  namespace     = kubernetes_namespace.monitoring.metadata[0].name
+  recreate_pods = true
+  timeout       = 1200
 
-  values = [
-    file("${path.module}/values/prometheus.yaml"),
+
+  values = [templatefile("${path.module}/values/prometheus.yaml",
+    {
+      alertmanager_enabled = true
+      alertmanager_ingress_enabled = false
+      alertmanager_host = "alertmanager.${var.domains[0]}"
+      certmanager_issuer = "letsencrypt-prod"
+      grafana_enabled = true
+      grafana_version = "7.1.1"
+      grafana_pvc_enabled = true
+      grafana_ingress_enabled = true
+      grafana_admin_password = var.grafana_password
+      grafana_url = "grafana.${var.domains[0]}"
+      grafana_google_auth = var.grafana_google_auth
+      grafana_allowed_domains = var.grafana_allowed_domains
+      prometheus_enabled = true
+      prometheus_ingress_enabled = false
+      prometheus_url = "prometheus.${var.domains[0]}"
+    })
   ]
-
-  dynamic "set" {
-    for_each = var.domains
-    content {
-      name  = "grafana.ingress.hosts[${set.key}]"
-      value = "grafana.${set.value}"
-    }
-  }
-
-  dynamic "set" {
-    for_each = var.domains
-    content {
-      name  = "grafana.ingress.tls[${set.key}].hosts[0]"
-      value = "grafana.${set.value}"
-    }
-  }
-
-  set {
-    name  = "grafana.grafana\\.ini.auth\\.google.enabled"
-    value = var.grafana_google_auth
-  }
-
-  set {
-    name  = "grafana.grafana\\.ini.server.domain"
-    value = "grafana.${var.domains[0]}"
-  }
-
-  set {
-    name  = "grafana.grafana\\.ini.server.root_url"
-    value = "https://grafana.${var.domains[0]}"
-  }
-
-  set {
-    name  = "grafana.grafana\\.ini.auth\\.google.allowed_domains"
-    value = var.grafana_allowed_domains
-  }
-
-  set {
-    name  = "grafana.envFromSecret"
-    value = var.grafana_google_auth == true ? "grafana-auth" : ""
-  }
-
-  set {
-    name  = "grafana.adminPassword"
-    value = var.grafana_password
-  }
 }
 
 resource "kubernetes_secret" "grafana_auth" {
