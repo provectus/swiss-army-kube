@@ -192,3 +192,32 @@ module "jenkins" {
 #  elasticDataSize       = var.elasticDataSize
 #  efk_oauth2_domain     = var.efk_oauth2_domain
 #}
+
+#RDS
+module "rds" {
+  module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, module.kubernetes.workers_launch_template_ids]
+  source            = "../modules/rds"
+
+  environment  = var.environment
+  project      = var.project
+  cluster_name = module.kubernetes.cluster_name
+
+  subnets                     = module.network.private_subnets
+  rds_database_name           = var.rds_database_name
+  rds_database_username       = var.rds_database_username
+  rds_database_password       = var.rds_database_password
+  rds_database_engine         = var.rds_database_engine
+  rds_database_engine_version = var.rds_database_engine_version
+  rds_database_instance       = var.rds_database_instance
+
+  rds_allocated_storage  = var.rds_allocated_storage
+  rds_storage_encrypted  = var.rds_storage_encrypted
+  rds_kms_key_id         = var.rds_kms_key_id
+  rds_maintenance_window = var.rds_maintenance_window
+  rds_backup_window      = var.rds_backup_window
+  vpc_id                 = module.network.vpc_id
+
+
+  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+}
+
