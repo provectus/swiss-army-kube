@@ -108,6 +108,7 @@ module "nginx" {
 #  module_depends_on = [module.system.cert-manager]
 #  source            = "../modules/ingress/alb-ingress"
 #  cluster_name      = module.kubernetes.cluster_name
+#  domains           = var.domains
 #  vpc_id            = module.network.vpc_id
 #  aws_region        = var.aws_region
 #  config_path = "${path.module}/kubeconfig_${var.cluster_name}"

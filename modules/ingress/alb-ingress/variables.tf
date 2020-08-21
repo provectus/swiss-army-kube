@@ -7,6 +7,10 @@ variable "cluster_name" {
   description = "Name of the kubernetes cluster"
 }
 
+variable "domains" {
+  description = "domain name for ingress"
+}
+
 variable "vpc_id" {
   description = "domain name for ingress"
 }

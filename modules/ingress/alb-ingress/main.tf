@@ -225,14 +225,3 @@ resource "helm_release" "alb-ingress" {
     })
   ]
 }
-
-# Example deploy ingress for connect alb and nginx
-#resource "null_resource" "alb-nginx-ingress" {
-#  depends_on = [
-#    var.module_depends_on,
-#    helm_release.alb-ingress
-#  ]
-#  provisioner "local-exec" {
-#    command = "kubectl --kubeconfig ${var.config_path} create -f ${path.module}/values/ingress-nginx.yaml"
-#  }
-#}
