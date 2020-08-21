@@ -38,7 +38,7 @@ module "db" {
 
   kms_key_id = var.rds_kms_key_id
   name       = var.rds_database_name
-  multi_az   = true
+  multi_az   = var.rds_database_multi_az
 
   # NOTE: Do NOT use 'user' as the value for 'username' as it throws:
   # "Error creating DB Instance: InvalidParameterValue: MasterUsername
@@ -55,10 +55,13 @@ module "db" {
   # disable backups to create DB faster
   backup_retention_period = 0
 
-  tags = {
-    Owner       = var.project
-    Environment = var.environment
-  }
+  tags = merge(
+    var.rds_database_tags,
+    {
+      Owner       = var.project
+      Environment = var.environment
+    },
+  )
 
   enabled_cloudwatch_logs_exports = var.rds_database_engine == "postgresql" ? ["postgresql", "upgrade"] : ["alert", "audit", "error", "general", "listener", "slowquery"]
 
@@ -72,5 +75,5 @@ module "db" {
   final_snapshot_identifier = var.rds_database_name
 
   # Database Deletion Protection
-  deletion_protection = false
+  deletion_protection = var.rds_database_delete_protection
 }

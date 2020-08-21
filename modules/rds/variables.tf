@@ -38,6 +38,11 @@ variable "rds_database_name" {
   description = "Database name"
 }
 
+variable "rds_database_multi_az" {
+  type        = bool
+  description = "Enabled multi_az for RDS"
+}
+
 variable "rds_database_engine" {
   type        = string
   description = "What server use? postgres | mysql | oracle-ee | sqlserver-ex"
@@ -104,4 +109,15 @@ variable "rds_port_mapping" {
     "mysql"        = "3306",
     "oracle-ee"    = "1521"
   }
+}
+
+variable "rds_database_delete_protection" {
+  type        = bool
+  description = "enabled delete protection for database"
+}
+
+variable "rds_database_tags" {
+  default     = {}
+  description = "Additional tags for rds instance"
+  type        = map(string)
 }
