@@ -49,7 +49,7 @@ variable "airflow_postgresql_port" {
 }
 
 variable "airflow_postgresql_username" {
-  default     = "user"
+  default     = "postgresqluser"
   description = "external Postgresql username"
 }
 
@@ -79,7 +79,7 @@ variable "airflow_redis_port" {
 }
 
 variable "airflow_redis_username" {
-  default     = "user"
+  default     = "redisuser"
   description = "redis username"
 }
 
