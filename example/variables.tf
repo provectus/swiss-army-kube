@@ -68,15 +68,15 @@ variable "user_arns" {
 
 variable "cluster_roles" {
   description = "Additional cluster roles."
-  type        = list(object({
-    cluster_group  = string
-    roles          = list(object({
+  type = list(object({
+    cluster_group = string
+    roles = list(object({
       role_resources  = list(string)
       role_verbs      = list(string)
       role_api_groups = list(string)
     }))
   }))
-  default     = []
+  default = []
 }
 
 variable "cluster_version" {
@@ -369,11 +369,6 @@ variable "master_policy" {
 }
 
 #Grafana
-variable "grafana_password" {
-  description = "Password for grafana admin"
-  default     = "password"
-}
-
 variable "grafana_google_auth" {
   description = "Enables Google auth for Grafana"
   default     = false

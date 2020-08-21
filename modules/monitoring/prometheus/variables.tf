@@ -44,5 +44,5 @@ variable "grafana_client_secret" {
 
 variable "grafana_allowed_domains" {
   description = "Allowed domain for Grafana Google auth"
-  default     = ""
+  default     = "local"
 }

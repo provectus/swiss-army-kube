@@ -378,7 +378,7 @@ resource "kubernetes_cluster_role" "cluster_role" {
     null_resource.wait-eks
   ]
 
-  for_each = { for role in var.cluster_roles : role.cluster_group => role}
+  for_each = { for role in var.cluster_roles : role.cluster_group => role }
 
   metadata {
     name = "${each.value.cluster_group}-role"
@@ -400,7 +400,7 @@ resource "kubernetes_cluster_role_binding" "cluster_role_binding" {
     null_resource.wait-eks
   ]
 
-  for_each = { for role in var.cluster_roles : role.cluster_group => role}
+  for_each = { for role in var.cluster_roles : role.cluster_group => role }
 
   metadata {
     name = "${each.value.cluster_group}-role-binding"

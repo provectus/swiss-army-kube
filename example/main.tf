@@ -118,22 +118,22 @@ module "argo" {
 ## Kubeflow
 ## Use EKS 1.15 in terraform.tfvars if deploying Kubeflow !!!
 ## Enable module efs and argo
-module "kubeflow" {
-  module_depends_on = [module.system.cert-manager, module.argo]
-  source            = "../modules/kubeflow"
-  vpc               = module.network.vpc
-  cluster_name      = module.kubernetes.cluster_name
-  cluster           = module.kubernetes.this
-  artifacts         = module.argo.artifacts
-  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
-}
+#module "kubeflow" {
+#  module_depends_on = [module.system.cert-manager, module.argo]
+#  source            = "../modules/kubeflow"
+#  vpc               = module.network.vpc
+#  cluster_name      = module.kubernetes.cluster_name
+#  cluster           = module.kubernetes.this
+#  artifacts         = module.argo.artifacts
+#  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
+#}
 
-module "efs" {
-  module_depends_on = [module.system.cert-manager]
-  source            = "../modules/storage/efs"
-  vpc               = module.network.vpc
-  cluster_name      = module.kubernetes.cluster_name
-}
+#module "efs" {
+#  module_depends_on = [module.system.cert-manager]
+#  source            = "../modules/storage/efs"
+#  vpc               = module.network.vpc
+#  cluster_name      = module.kubernetes.cluster_name
+#}
 
 # Jenkins
 module "jenkins" {
@@ -162,7 +162,6 @@ module "jenkins" {
 #
 #  cluster_name            = var.cluster_name
 #  domains                 = var.domains
-#  grafana_password        = var.grafana_password
 #  grafana_google_auth     = var.grafana_google_auth
 #  grafana_client_id       = var.grafana_client_id
 #  grafana_client_secret   = var.grafana_client_secret

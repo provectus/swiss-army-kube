@@ -132,7 +132,7 @@ google-client-secret = "XXXXXXX"
 google-cookie-secret = "1fWkwIpMskU4miQYcCZZUw=="
 
 #Kibana
-elasticDataSize   = "30Gi"
+elasticDataSize = "30Gi"
 #Enables oauth2 for Kibana with specified oauth2 domain
 #efk_oauth2_domain = "oauth2-google"
 
@@ -170,8 +170,6 @@ jenkins_password = "password"
 #}
 #EOF
 
-#Grafana (Change It)
-grafana_password        = "password"
 ## To enable Google auth for Grafana just uncomment block below and fill in needed id, secret and allowed domain
 #grafana_google_auth     = true
 #grafana_client_id       = "xxxxxxx.apps.googleusercontent.com"
