@@ -1,18 +1,10 @@
-#Check if namespace exist
-data "kubernetes_namespace" "ingress-system" {
-  metadata {
-    name = "ingress-system"
-  }
-}
-
 # Create namespace ingress-system
-resource "kubernetes_namespace" "ingress-system" {
-  count = lookup(data.kubernetes_namespace.ingress-system, "id") != null ? 0 : 1
+resource "kubernetes_namespace" "alb-ingress-system" {
   depends_on = [
     var.module_depends_on
   ]
   metadata {
-    name = "ingress-system"
+    name = "alb-ingress-system"
   }
 }
 
@@ -189,7 +181,7 @@ resource "aws_iam_role" "alb-ingress" {
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringEquals": {
-          "${replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")}:sub": "system:serviceaccount:${kubernetes_namespace.ingress-system.metadata[0].name}:*"
+          "${replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")}:sub": "system:serviceaccount:${kubernetes_namespace.alb-ingress-system.metadata[0].name}:*"
         }
       },
       "Principal": {
@@ -221,7 +213,7 @@ resource "helm_release" "alb-ingress" {
   name       = "alb"
   repository = "https://kubernetes-charts-incubator.storage.googleapis.com"
   chart      = "aws-alb-ingress-controller"
-  namespace  = kubernetes_namespace.ingress-system.metadata[0].name
+  namespace  = kubernetes_namespace.alb-ingress-system.metadata[0].name
 
   values = [
     file("${path.module}/values/values.yaml"),

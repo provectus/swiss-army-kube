@@ -1,13 +1,5 @@
-#Check if namespace exist
-data "kubernetes_namespace" "ingress-system" {
-  metadata {
-    name = "ingress-system"
-  }
-}
-
 # Create namespace ingress-system
 resource "kubernetes_namespace" "ingress-system" {
-  count = lookup(data.kubernetes_namespace.ingress-system, "id") != null ? 0 : 1
   depends_on = [
     var.module_depends_on
   ]
