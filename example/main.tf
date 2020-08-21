@@ -192,3 +192,28 @@ module "jenkins" {
 #  elasticDataSize       = var.elasticDataSize
 #  efk_oauth2_domain     = var.efk_oauth2_domain
 #}
+
+#Airflow
+module "airflow" {
+  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
+  source            = "../modules/airflow"
+
+  cluster_name                = var.cluster_name
+  domains                     = var.domains
+  airflow_password            = var.airflow_password
+  airflow_username            = var.airflow_username
+  airflow_fernetKey           = var.airflow_fernetKey
+  airflow_postgresql_local    = var.airflow_postgresql_local
+  airflow_postgresql_host     = var.airflow_postgresql_host
+  airflow_postgresql_port     = var.airflow_postgresql_port
+  airflow_postgresql_username = var.airflow_postgresql_username
+  airflow_postgresql_password = var.airflow_postgresql_password
+  airflow_postgresql_database = var.airflow_postgresql_database
+  airflow_redis_local         = var.airflow_redis_local
+  airflow_redis_host          = var.airflow_redis_host
+  airflow_redis_port          = var.airflow_redis_port
+  airflow_redis_username      = var.airflow_redis_username
+  airflow_redis_password      = var.airflow_redis_password
+
+  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+}

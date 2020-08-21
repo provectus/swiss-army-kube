@@ -175,3 +175,22 @@ jenkins_password = "password"
 #grafana_client_id       = "xxxxxxx.apps.googleusercontent.com"
 #grafana_client_secret   = "XXXXXXX"
 #grafana_allowed_domains = "provectus.com"
+
+#Airflow
+airflow_username = "user"
+airflow_password = "unpr0tected_pass!"
+#about fernetKey https://bcb.github.io/airflow/fernet-key
+airflow_fernetKey = "GFqrDfu-0oac6x2ATKLsx-Mr2yHKWFpa5hY4pYeWmXw="
+#If use local postgresql, host and port ignore
+airflow_postgresql_local    = true
+airflow_postgresql_host     = ""
+airflow_postgresql_port     = "5432"
+airflow_postgresql_username = "user"
+airflow_postgresql_password = "unpr0tected_pass!"
+airflow_postgresql_database = "airflow"
+#If use local redis, set password and ignore other settings
+airflow_redis_local    = true
+airflow_redis_host     = ""
+airflow_redis_port     = "6379"
+airflow_redis_username = "user"
+airflow_redis_password = "unpr0tected_pass!"

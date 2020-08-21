@@ -1,0 +1,109 @@
+## Airflow Components configuration
+##
+airflow:
+  ## URL used to access to airflow web ui
+  ##
+  baseUrl: ${airflow_url}
+
+  auth:
+    ## Option to force users to specify a password. That is required for 'helm upgrade' to work properly.
+    ## If it is not forced, a random password will be generated.
+    ##
+    forcePassword: true
+    ## Specify username to acccess web UI
+    ##
+    username: ${airflow_username}
+    ## Specify password to acccess web UI
+    ##
+    password: ${airflow_password}
+    ## Specify a fernet key to secure airflow connections
+    ## Fernet key must be 32 url-safe base64-encoded bytes.
+    ## More info at:
+    ## - https://airflow.readthedocs.io/en/stable/howto/secure-connections.html
+    ## - https://bcb.github.io/airflow/fernet-key
+    ##
+    fernetKey: ${airflow_fernetKey}
+
+ingress:
+  ## Set to true to enable ingress record generation
+  ##
+  enabled: true
+
+  ## Set this to true in order to add the corresponding annotations for cert-manager
+  ##
+  certManager: true
+
+  ## Ingress annotations done as key:value pairs
+  ## For a full list of possible ingress annotations, please see
+  ## ref: https://github.com/kubernetes/ingress-nginx/blob/master/docs/user-guide/nginx-configuration/annotations.md
+  ##
+  ## If tls is set to true, annotation ingress.kubernetes.io/secure-backends: "true" will automatically be set
+  ## If certManager is set to true, annotation kubernetes.io/tls-acme: "true" will automatically be set
+  ##
+  annotations:
+      cert-manager.io/cluster-issuer: "letsencrypt-prod"
+      kubernetes.io/ingress.class: "nginx" 
+
+  ## The list of hostnames to be covered with this ingress record.
+  ## Most likely this will be just one host, but in the event more hosts are needed, this is an array
+  ##
+  hosts:
+    - name: ${airflow_url}
+      ## If TLS is set to true, you must declare what secret will store the key/certificate for TLS
+      ##
+      tlsSecret: ${airflow_url}-tls
+
+##
+## PostgreSQL chart configuration
+##
+## https://github.com/bitnami/charts/blob/master/bitnami/postgresql/values.yaml
+##
+postgresql:
+  enabled: ${postgresql_local}
+  postgresqlUsername: ${postgresql_username}
+  postgresqlPassword: ${postgresql_password}
+  postgresqlDatabase: ${postgresql_database}
+
+externalDatabase:
+  ## All of these values are only used when postgresql.enabled is set to false
+  ## Database host
+  ##
+  host: ${postgres_host}
+  ## non-root Username for Airflow Database
+  ##
+  user: ${postgresql_username}
+  ## Database password
+  ##
+  password: ${postgresql_password}
+  ## Database name
+  ##
+  database: ${postgresql_database}
+  ## Database port number
+  ##
+  port: ${postgresql_port}
+
+##
+## Redis chart configuration
+##
+## https://github.com/bitnami/charts/blob/master/bitnami/redis/values.yaml
+##
+redis:
+  enabled: ${redis_local}
+  password: ${redis_password}
+
+externalRedis:
+  ## All of these values are only used when redis.enabled is set to false
+  ## Redis host
+  ##
+  host: ${redis_host}
+  ## Redis port number
+  ##
+  port: ${redis_port}
+  ## Redis password
+  ##
+  password: ${redis_password}
+  ## Redis username
+  ## Most Redis implementnations do not require a username to authenticate
+  ## and it should be enough with the password
+  ##
+  username: ${redis_username}
