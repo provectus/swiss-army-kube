@@ -54,7 +54,7 @@ variable "airflow_postgresql_username" {
 }
 
 variable "airflow_postgresql_password" {
-  default     = "unpr0tected_pass!"
+  default     = ""
   description = "external Postgresql password"
 }
 
@@ -84,6 +84,6 @@ variable "airflow_redis_username" {
 }
 
 variable "airflow_redis_password" {
-  default     = "unpr0tected_pass!"
+  default     = ""
   description = "redis password"
 }
