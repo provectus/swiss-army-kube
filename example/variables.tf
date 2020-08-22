@@ -388,3 +388,74 @@ variable "grafana_allowed_domains" {
   description = "Allowed domain for Grafana Google auth"
   default     = ""
 }
+
+#Airflow
+variable "airflow_fernetKey" {
+  description = "https://bcb.github.io/airflow/fernet-key"
+  default     = "GFqrDfu-0oac6x2ATKLsx-Mr2yHKWFpa5hY4pYeWmXw="
+}
+
+variable "airflow_username" {
+  default     = ""
+  description = "Username for auth"
+}
+
+variable "airflow_password" {
+  default     = ""
+  description = "Password for auth"
+}
+
+variable "airflow_postgresql_local" {
+  default     = true
+  description = "Internal database or external"
+}
+
+variable "airflow_postgresql_host" {
+  default     = ""
+  description = "external Postgresql host"
+}
+
+variable "airflow_postgresql_port" {
+  default     = "5432"
+  description = "external Postgresql port"
+}
+
+variable "airflow_postgresql_username" {
+  default     = "user"
+  description = "external Postgresql username"
+}
+
+variable "airflow_postgresql_password" {
+  default     = ""
+  description = "external Postgresql password"
+}
+
+variable "airflow_postgresql_database" {
+  default     = "airflow"
+  description = "external Postgresql database"
+}
+
+variable "airflow_redis_local" {
+  default     = "true"
+  description = "internal redis or external"
+}
+
+variable "airflow_redis_host" {
+  default     = ""
+  description = "external redis host"
+}
+
+variable "airflow_redis_port" {
+  default     = "6379"
+  description = "external redis port"
+}
+
+variable "airflow_redis_username" {
+  default     = "user"
+  description = "redis username"
+}
+
+variable "airflow_redis_password" {
+  default     = ""
+  description = "redis password"
+}
