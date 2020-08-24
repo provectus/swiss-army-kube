@@ -104,6 +104,16 @@ module "nginx" {
   google-cookie-secret = var.google-cookie-secret
 }
 
+#module "alb-ingress" {
+#  module_depends_on = [module.system.cert-manager]
+#  source            = "../modules/ingress/alb-ingress"
+#  cluster_name      = module.kubernetes.cluster_name
+#  domains           = var.domains
+#  vpc_id            = module.network.vpc_id
+#  aws_region        = var.aws_region
+#  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+#}
+
 # Argoproj: all-in-one
 module "argo" {
   module_depends_on = [module.system.cluster_available]
@@ -221,3 +231,27 @@ module "jenkins" {
 #  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
 #}
 
+#Airflow
+#module "airflow" {
+#  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
+#  source            = "../modules/airflow"
+#
+#  cluster_name                = var.cluster_name
+#  domains                     = var.domains
+#  airflow_password            = var.airflow_password
+#  airflow_username            = var.airflow_username
+#  airflow_fernetKey           = var.airflow_fernetKey
+#  airflow_postgresql_local    = var.airflow_postgresql_local
+#  airflow_postgresql_host     = var.airflow_postgresql_host
+#  airflow_postgresql_port     = var.airflow_postgresql_port
+#  airflow_postgresql_username = var.airflow_postgresql_username
+#  airflow_postgresql_password = var.airflow_postgresql_password
+#  airflow_postgresql_database = var.airflow_postgresql_database
+#  airflow_redis_local         = var.airflow_redis_local
+#  airflow_redis_host          = var.airflow_redis_host
+#  airflow_redis_port          = var.airflow_redis_port
+#  airflow_redis_username      = var.airflow_redis_username
+#  airflow_redis_password      = var.airflow_redis_password
+#
+#  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+#}
