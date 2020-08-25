@@ -25,7 +25,7 @@ resource "helm_release" "monitoring" {
     var.module_depends_on
   ]
   name          = "prometheus-operator"
-  repository    = "https://kubernetes-charts-incubator.storage.googleapis.com"
+  repository    = "https://kubernetes-charts.storage.googleapis.com"
   chart         = "prometheus-operator"
   version       = "9.3.1"
   namespace     = kubernetes_namespace.monitoring.metadata[0].name
