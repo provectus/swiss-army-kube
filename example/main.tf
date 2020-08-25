@@ -8,6 +8,17 @@ module "network" {
   network            = var.network
 }
 
+module "acm" {
+  source  = "terraform-aws-modules/acm/aws"
+  version = "~> v2.0"
+
+  domain_name               = var.domains[0]
+  subject_alternative_names = ["*.${var.domains[0]}"]
+  zone_id                   = module.system.route53_zone[0].zone_id
+  validate_certificate      = var.aws_private == "false" ? true : false
+  tags                      = local.tags
+}
+
 module "kubernetes" {
   source = "../modules/kubernetes"
 
@@ -104,15 +115,17 @@ module "nginx" {
   google-cookie-secret = var.google-cookie-secret
 }
 
-#module "alb-ingress" {
-#  module_depends_on = [module.system.cert-manager]
-#  source            = "../modules/ingress/alb-ingress"
-#  cluster_name      = module.kubernetes.cluster_name
-#  domains           = var.domains
-#  vpc_id            = module.network.vpc_id
-#  aws_region        = var.aws_region
-#  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
-#}
+module "alb-ingress" {
+  module_depends_on = [module.system.cert-manager]
+  source            = "../modules/ingress/alb-ingress"
+  cluster_name      = module.kubernetes.cluster_name
+  domains           = var.domains
+  vpc_id            = module.network.vpc_id
+  aws_region        = var.aws_region
+  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
+  certificates_arns = [module.acm.this_acm_certificate_arn]
+  cluster_oidc_url  = module.kubernetes.cluster_oidc_url
+}
 
 # Argoproj: all-in-one
 module "argo" {
