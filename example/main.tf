@@ -203,27 +203,55 @@ module "jenkins" {
 #  efk_oauth2_domain     = var.efk_oauth2_domain
 #}
 
+#RDS
+#module "rds" {
+#  module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, module.kubernetes.workers_launch_template_ids]
+#  source            = "../modules/rds"
+
+#  environment  = var.environment
+#  project      = var.project
+#  cluster_name = module.kubernetes.cluster_name
+#  subnets                        = module.network.private_subnets
+#  rds_database_name              = var.rds_database_name
+#  rds_database_username          = var.rds_database_username
+#  rds_database_password          = var.rds_database_password
+#  rds_database_engine            = var.rds_database_engine
+#  rds_database_engine_version    = var.rds_database_engine_version
+#  rds_database_instance          = var.rds_database_instance
+#  rds_database_multi_az          = var.rds_database_multi_az
+#  rds_database_delete_protection = var.rds_database_delete_protection
+#  rds_allocated_storage          = var.rds_allocated_storage
+#  rds_storage_encrypted          = var.rds_storage_encrypted
+#  rds_kms_key_id                 = var.rds_kms_key_id
+#  rds_maintenance_window         = var.rds_maintenance_window
+#  rds_backup_window              = var.rds_backup_window
+#  rds_database_tags              = var.rds_database_tags
+#  vpc_id                         = module.network.vpc_id
+
+#  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+#}
+
 #Airflow
-module "airflow" {
-  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
-  source            = "../modules/airflow"
-
-  cluster_name                = var.cluster_name
-  domains                     = var.domains
-  airflow_password            = var.airflow_password
-  airflow_username            = var.airflow_username
-  airflow_fernetKey           = var.airflow_fernetKey
-  airflow_postgresql_local    = var.airflow_postgresql_local
-  airflow_postgresql_host     = var.airflow_postgresql_host
-  airflow_postgresql_port     = var.airflow_postgresql_port
-  airflow_postgresql_username = var.airflow_postgresql_username
-  airflow_postgresql_password = var.airflow_postgresql_password
-  airflow_postgresql_database = var.airflow_postgresql_database
-  airflow_redis_local         = var.airflow_redis_local
-  airflow_redis_host          = var.airflow_redis_host
-  airflow_redis_port          = var.airflow_redis_port
-  airflow_redis_username      = var.airflow_redis_username
-  airflow_redis_password      = var.airflow_redis_password
-
-  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
-}
+#module "airflow" {
+#  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
+#  source            = "../modules/airflow"
+#
+#  cluster_name                = var.cluster_name
+#  domains                     = var.domains
+#  airflow_password            = var.airflow_password
+#  airflow_username            = var.airflow_username
+#  airflow_fernetKey           = var.airflow_fernetKey
+#  airflow_postgresql_local    = var.airflow_postgresql_local
+#  airflow_postgresql_host     = var.airflow_postgresql_host
+#  airflow_postgresql_port     = var.airflow_postgresql_port
+#  airflow_postgresql_username = var.airflow_postgresql_username
+#  airflow_postgresql_password = var.airflow_postgresql_password
+#  airflow_postgresql_database = var.airflow_postgresql_database
+#  airflow_redis_local         = var.airflow_redis_local
+#  airflow_redis_host          = var.airflow_redis_host
+#  airflow_redis_port          = var.airflow_redis_port
+#  airflow_redis_username      = var.airflow_redis_username
+#  airflow_redis_password      = var.airflow_redis_password
+#
+#  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+#}
