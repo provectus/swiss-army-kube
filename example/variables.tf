@@ -408,7 +408,7 @@ variable "rds_database_engine_version" {
 variable "rds_database_instance" {
   type        = string
   description = "RDS instance type"
-  default     = "db.t2.large"
+  default     = "db.t3.large"
 }
 
 variable "rds_database_username" {
