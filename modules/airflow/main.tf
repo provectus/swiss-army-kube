@@ -31,13 +31,13 @@ resource "helm_release" "airflow" {
       postgresql_host     = var.airflow_postgresql_host
       postgresql_port     = var.airflow_postgresql_port
       postgresql_username = var.airflow_postgresql_username
-      postgresql_password = var.airflow_postgresql_local == "true" ? random_password.airflow_postgresql_password.result : var.airflow_postgresql_password
+      postgresql_password = var.airflow_postgresql_local ? random_password.airflow_postgresql_password.result : var.airflow_postgresql_password
       postgresql_database = var.airflow_postgresql_database
       redis_local         = var.airflow_redis_local
       redis_host          = var.airflow_redis_host
       redis_port          = var.airflow_redis_port
       redis_username      = var.airflow_redis_username
-      redis_password      = var.airflow_redis_local == "true" ? random_password.airflow_redis_password.result : var.airflow_redis_password
+      redis_password      = var.airflow_redis_local ? random_password.airflow_redis_password.result : var.airflow_redis_password
     })
   ]
 }

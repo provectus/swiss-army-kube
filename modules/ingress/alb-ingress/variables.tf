@@ -23,3 +23,13 @@ variable "config_path" {
   description = "location of the kubeconfig file"
   default     = "~/.kube/config"
 }
+
+variable "certificates_arns" {
+  type        = list(string)
+  description = "List of certificates to attach to ingress"
+  default     = []
+}
+
+variable "cluster_oidc_url" {
+  type = string
+}
