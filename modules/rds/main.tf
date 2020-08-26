@@ -30,11 +30,12 @@ module "db" {
 
   identifier = var.rds_database_name
 
-  engine            = var.rds_database_engine
-  engine_version    = var.rds_database_engine_version
-  instance_class    = var.rds_database_instance
-  allocated_storage = var.rds_allocated_storage
-  storage_encrypted = var.rds_storage_encrypted
+  engine               = var.rds_database_engine
+  engine_version       = var.rds_database_engine_version
+  major_engine_version = var.rds_database_major_engine_version
+  instance_class       = var.rds_database_instance
+  allocated_storage    = var.rds_allocated_storage
+  storage_encrypted    = var.rds_storage_encrypted
 
   kms_key_id = var.rds_kms_key_id
   name       = var.rds_database_name
@@ -63,13 +64,13 @@ module "db" {
     },
   )
 
-  enabled_cloudwatch_logs_exports = var.rds_database_engine == "postgresql" ? ["postgresql", "upgrade"] : ["alert", "audit", "error", "general", "listener", "slowquery"]
+  enabled_cloudwatch_logs_exports = var.rds_database_engine == "postgres" ? ["postgresql", "upgrade"] : ["alert", "audit", "error", "general", "listener", "slowquery"]
 
   # DB subnet group
   subnet_ids = var.subnets
 
   # DB parameter group
-  family = var.rds_database_engine == "postgresql" ? "postgres9.6" : ""
+  family = var.rds_database_engine == "postgres" ? "postgres9.6" : ""
 
   # Snapshot name upon DB deletion
   final_snapshot_identifier = var.rds_database_name

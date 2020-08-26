@@ -8,7 +8,7 @@ aws_private = "false"
 availability_zones = ["us-west-2b", "us-west-2a", "us-west-2c"]
 
 # Name of kubernetes cluster. It's tag for cluster
-cluster_name = "swiss-army"
+cluster_name = "swiss-army-new"
 
 # Deploy environment name
 environment = "dev"
@@ -156,20 +156,21 @@ jenkins_password = "password"
 #grafana_allowed_domains = "provectus.com"
 
 #RDS
-rds_database_name              = "exampledb"
-rds_database_engine            = "postgresql" # postgres mysql oracle-ee sqlserver-ex
-rds_database_engine_version    = "9.6.9"      #(postgres - 9.6.9, mysql - 5.7.19, oracle-ee - 12.1.0.2.v8, sqlserver-ex - 14.00.1000.169.v1 )
-rds_database_instance          = "db.t3.large"
-rds_database_username          = "exampleuser"
-rds_database_password          = ""
-rds_kms_key_id                 = ""
-rds_allocated_storage          = "10"
-rds_storage_encrypted          = false
-rds_maintenance_window         = "Mon:00:00-Mon:03:00"
-rds_backup_window              = "03:00-06:00"
-rds_database_multi_az          = true
-rds_database_delete_protection = false
-rds_database_tags              = { "test" = "tags" }
+rds_database_name                 = "exampledb"
+rds_database_engine               = "postgres" # postgres mysql oracle-ee sqlserver-ex
+rds_database_engine_version       = "9.6.9"    #(postgres - 9.6.9, mysql - 5.7.19, oracle-ee - 12.1.0.2.v8, sqlserver-ex - 14.00.1000.169.v1 )
+rds_database_major_engine_version = "9"
+rds_database_instance             = "db.t3.large"
+rds_database_username             = "exampleuser"
+rds_database_password             = ""
+rds_kms_key_id                    = ""
+rds_allocated_storage             = "10"
+rds_storage_encrypted             = false
+rds_maintenance_window            = "Mon:00:00-Mon:03:00"
+rds_backup_window                 = "03:00-06:00"
+rds_database_multi_az             = true
+rds_database_delete_protection    = false
+rds_database_tags                 = { "test" = "tags" }
 #Airflow
 airflow_username = "user"
 airflow_password = ""

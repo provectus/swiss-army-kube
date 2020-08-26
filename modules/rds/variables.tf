@@ -53,6 +53,12 @@ variable "rds_database_engine_version" {
   description = "Engine version"
 }
 
+variable "rds_database_major_engine_version" {
+  type        = string
+  description = "Major Database enjine version"
+  default     = "9"
+}
+
 variable "rds_database_instance" {
   type        = string
   description = "RDS instance type"
@@ -104,7 +110,7 @@ variable "rds_backup_window" {
 variable "rds_port_mapping" {
   description = "mapping port for engine type"
   default = {
-    "postgresql"   = "5432",
+    "postgres"     = "5432",
     "sqlserver-ex" = "1433",
     "mysql"        = "3306",
     "oracle-ee"    = "1521"

@@ -14,5 +14,7 @@ awsRegion: ${region}
 ## Required if autoDiscoverAwsVpcID != true
 awsVpcID: ${vpc_id}
 
-podAnnotations:
-  iam.amazonaws.com/role: ${role-arn}
+rbac:
+  serviceAccount:
+    annotations:
+      "eks.amazonaws.com/role-arn": ${role-arn}

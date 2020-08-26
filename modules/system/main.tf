@@ -15,7 +15,7 @@ resource "null_resource" "wait-eks" {
   }
 }
 
-# Install NVIDIA gpu support 
+# Install NVIDIA gpu support
 #      resources:
 #        limits:
 #          nvidia.com/gpu: 2 # requesting 2 GPUs
