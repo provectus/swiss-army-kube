@@ -22,3 +22,8 @@ output "workers_launch_template_ids" {
   description = "IDs of the worker launch templates."
   value       = module.eks.workers_launch_template_ids.*
 }
+
+output "node_group" {
+  description = "Worker node_group name"
+  value       = aws_eks_node_group.common_node_group[*].node_group_name  
+}

@@ -9,6 +9,7 @@ module "network" {
 }
 
 module "kubernetes" {
+  module_depends_on = [module.network.vpc_id]
   source = "../modules/kubernetes"
 
   environment     = var.environment
@@ -20,58 +21,43 @@ module "kubernetes" {
   admin_arns      = var.admin_arns
   user_arns       = var.user_arns
   #On-demand
-  on_demand_common_max_cluster_size               = var.on_demand_common_max_cluster_size
-  on_demand_common_min_cluster_size               = var.on_demand_common_min_cluster_size
-  on_demand_common_desired_capacity               = var.on_demand_common_desired_capacity
-  on_demand_common_instance_type                  = var.on_demand_common_instance_type
-  on_demand_common_allocation_strategy            = var.on_demand_common_allocation_strategy
-  on_demand_common_base_capacity                  = var.on_demand_common_base_capacity
-  on_demand_common_percentage_above_base_capacity = var.on_demand_common_percentage_above_base_capacity
-  on_demand_common_asg_recreate_on_change         = var.on_demand_common_asg_recreate_on_change
-  #Spot
-  spot_max_cluster_size       = var.spot_max_cluster_size
-  spot_min_cluster_size       = var.spot_min_cluster_size
-  spot_desired_capacity       = var.spot_desired_capacity
-  spot_instance_type          = var.spot_instance_type
-  spot_instance_pools         = var.spot_instance_pools
-  spot_asg_recreate_on_change = var.spot_asg_recreate_on_change
-  spot_allocation_strategy    = var.spot_allocation_strategy
-  spot_max_price              = var.spot_max_price
+  on_demand_common_enabled          = var.on_demand_common_enabled
+  on_demand_common_max_cluster_size = var.on_demand_common_max_cluster_size
+  on_demand_common_min_cluster_size = var.on_demand_common_min_cluster_size
+  on_demand_common_desired_capacity = var.on_demand_common_desired_capacity
+  on_demand_common_instance_type    = var.on_demand_common_instance_type
+
   #CPU
-  on_demand_cpu_max_cluster_size               = var.on_demand_cpu_max_cluster_size
-  on_demand_cpu_min_cluster_size               = var.on_demand_cpu_min_cluster_size
-  on_demand_cpu_desired_capacity               = var.on_demand_cpu_desired_capacity
-  on_demand_cpu_instance_type                  = var.on_demand_cpu_instance_type
-  on_demand_cpu_allocation_strategy            = var.on_demand_cpu_allocation_strategy
-  on_demand_cpu_base_capacity                  = var.on_demand_cpu_base_capacity
-  on_demand_cpu_percentage_above_base_capacity = var.on_demand_cpu_percentage_above_base_capacity
-  on_demand_cpu_asg_recreate_on_change         = var.on_demand_cpu_asg_recreate_on_change
+  on_demand_cpu_enabled          = var.on_demand_cpu_enabled
+  on_demand_cpu_max_cluster_size = var.on_demand_cpu_max_cluster_size
+  on_demand_cpu_min_cluster_size = var.on_demand_cpu_min_cluster_size
+  on_demand_cpu_desired_capacity = var.on_demand_cpu_desired_capacity
+  on_demand_cpu_instance_type    = var.on_demand_cpu_instance_type
+
   #GPU
-  on_demand_gpu_max_cluster_size               = var.on_demand_gpu_max_cluster_size
-  on_demand_gpu_min_cluster_size               = var.on_demand_gpu_min_cluster_size
-  on_demand_gpu_desired_capacity               = var.on_demand_gpu_desired_capacity
-  on_demand_gpu_instance_type                  = var.on_demand_gpu_instance_type
-  on_demand_gpu_allocation_strategy            = var.on_demand_gpu_allocation_strategy
-  on_demand_gpu_base_capacity                  = var.on_demand_gpu_base_capacity
-  on_demand_gpu_percentage_above_base_capacity = var.on_demand_gpu_percentage_above_base_capacity
-  on_demand_gpu_asg_recreate_on_change         = var.on_demand_gpu_asg_recreate_on_change
+  on_demand_gpu_enabled          = var.on_demand_gpu_enabled
+  on_demand_gpu_max_cluster_size = var.on_demand_gpu_max_cluster_size
+  on_demand_gpu_min_cluster_size = var.on_demand_gpu_min_cluster_size
+  on_demand_gpu_desired_capacity = var.on_demand_gpu_desired_capacity
+  on_demand_gpu_instance_type    = var.on_demand_gpu_instance_type
 }
 
 module "system" {
-  module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, module.kubernetes.workers_launch_template_ids]
+  module_depends_on = [module.network.vpc_id, module.kubernetes.node_group, module.kubernetes.workers_launch_template_ids]
   source            = "../modules/system"
 
-  environment        = var.environment
-  project            = var.project
-  cluster_name       = var.cluster_name
-  vpc_id             = module.network.vpc_id
-  aws_private        = var.aws_private
-  domains            = var.domains
-  mainzoneid         = var.mainzoneid
-  config_path        = "${path.module}/kubeconfig_${var.cluster_name}"
-  cert_manager_email = var.cert_manager_email
-  cluster_oidc_url   = module.kubernetes.cluster_oidc_url
-  cluster_roles      = var.cluster_roles
+  environment           = var.environment
+  project               = var.project
+  cluster_name          = var.cluster_name
+  vpc_id                = module.network.vpc_id
+  aws_private           = var.aws_private
+  domains               = var.domains
+  mainzoneid            = var.mainzoneid
+  config_path           = "${path.module}/kubeconfig_${var.cluster_name}"
+  cert_manager_email    = var.cert_manager_email
+  cluster_oidc_url      = module.kubernetes.cluster_oidc_url
+  cluster_roles         = var.cluster_roles
+  on_demand_gpu_enabled = var.on_demand_gpu_enabled
 }
 
 module "scaling" {
@@ -116,13 +102,13 @@ module "nginx" {
 
 # Argoproj: all-in-one
 module "argo" {
-  module_depends_on = [module.system.cluster_available]
-  source            = "../modules/cicd/argo"
-  cluster_name      = var.cluster_name
-  domains           = var.domains
-  environment       = var.environment
-  project           = var.project
-  cluster_oidc_url  = module.kubernetes.cluster_oidc_url
+ module_depends_on = [module.system.cluster_available]
+ source            = "../modules/cicd/argo"
+ cluster_name      = var.cluster_name
+ domains           = var.domains
+ environment       = var.environment
+ project           = var.project
+ cluster_oidc_url  = module.kubernetes.cluster_oidc_url
 }
 
 ## Kubeflow
@@ -166,18 +152,18 @@ module "jenkins" {
 }
 
 ## Monitoring
-#module "prometheus" {
-#  module_depends_on       = [module.system.cert-manager, module.nginx.nginx-ingress]
-#  source                  = "../modules/monitoring/prometheus"
-#
-#  cluster_name            = var.cluster_name
-#  domains                 = var.domains
-#  grafana_google_auth     = var.grafana_google_auth
-#  grafana_client_id       = var.grafana_client_id
-#  grafana_client_secret   = var.grafana_client_secret
-#  grafana_allowed_domains = var.grafana_allowed_domains
-#  config_path             = "${path.module}/kubeconfig_${var.cluster_name}"
-#}
+module "prometheus" {
+ module_depends_on       = [module.system.cert-manager, module.nginx.nginx-ingress]
+ source                  = "../modules/monitoring/prometheus"
+
+ cluster_name            = var.cluster_name
+ domains                 = var.domains
+ grafana_google_auth     = var.grafana_google_auth
+ grafana_client_id       = var.grafana_client_id
+ grafana_client_secret   = var.grafana_client_secret
+ grafana_allowed_domains = var.grafana_allowed_domains
+ config_path             = "${path.module}/kubeconfig_${var.cluster_name}"
+}
 
 ## Logging
 #module "loki" {

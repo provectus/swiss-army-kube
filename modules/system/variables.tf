@@ -66,3 +66,9 @@ variable "cluster_roles" {
   }))
   default = []
 }
+
+variable "on_demand_gpu_enabled" {
+  type        = bool
+  description = "Enable gpu on-demand instances"
+  default     = false
+}
