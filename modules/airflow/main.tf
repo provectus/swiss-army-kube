@@ -25,7 +25,7 @@ resource "helm_release" "airflow" {
     {
       airflow_url         = "airflow.${var.domains[0]}"
       airflow_username    = var.airflow_username
-      airflow_password    = var.airflow_password ? var.airflow_password : random_password.airflow_password.result
+      airflow_password    = var.airflow_password != "" ? var.airflow_password : random_password.airflow_password.result
       airflow_fernetKey   = var.airflow_fernetKey
       postgresql_local    = var.airflow_postgresql_local
       postgresql_host     = var.airflow_postgresql_host
