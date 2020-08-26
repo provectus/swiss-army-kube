@@ -3,7 +3,11 @@ output "route53_zone" {
   value = module.system.route53_zone
 }
 
-# Kubernetes
+output "wildcard_certificate" {
+  value = module.acm.this_acm_certificate_arn
+}
+
+// Kubernetes
 output "cluster_name" {
   value = module.kubernetes.cluster_name
 }
