@@ -1,14 +1,14 @@
 # Name of aws region (us-west-1, us-west-2, us-east-1 etc)
-aws_region = "eu-west-3"
+aws_region = "us-west-2"
 
 # Deploy private mode (Internal route 53, don't use Gateway etc) (true or false)
 aws_private = "false"
 
 # List of aws region availability_zones
-availability_zones = ["eu-west-3b", "eu-west-3a", "eu-west-3c"]
+availability_zones = ["us-west-2b", "us-west-2a", "us-west-2c"]
 
 # Name of kubernetes cluster. It's tag for cluster
-cluster_name = "dkharlamov-swiss-army"
+cluster_name = "swiss-army"
 
 # Deploy environment name
 environment = "dev"
@@ -20,10 +20,10 @@ project = "EDUCATION"
 mainzoneid = "Z02149423PVQ0YMP19F13"
 
 # Name of domains (create route53 zone and ingress). Set as array, first main ingress fqdn ["example.com", "example.io"]
-domains = ["dkharlamov-swiss-army.edu.provectus.io"]
+domains = ["swiss-army.edu.provectus.io"]
 
 # The kubernetes config file path
-config_path = "kubeconfig_dkharlamov-swiss-army"
+config_path = "kubeconfig_swiss-army"
 
 # Number would be used to template CIDR 10.X.0.0/16.
 network = 10

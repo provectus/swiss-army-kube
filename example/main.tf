@@ -101,15 +101,15 @@ module "nginx" {
 #}
 
 # Argoproj: all-in-one
-module "argo" {
- module_depends_on = [module.system.cluster_available]
- source            = "../modules/cicd/argo"
- cluster_name      = var.cluster_name
- domains           = var.domains
- environment       = var.environment
- project           = var.project
- cluster_oidc_url  = module.kubernetes.cluster_oidc_url
-}
+# module "argo" {
+#  module_depends_on = [module.system.cluster_available]
+#  source            = "../modules/cicd/argo"
+#  cluster_name      = var.cluster_name
+#  domains           = var.domains
+#  environment       = var.environment
+#  project           = var.project
+#  cluster_oidc_url  = module.kubernetes.cluster_oidc_url
+# }
 
 ## Kubeflow
 ## Use EKS 1.15 in terraform.tfvars if deploying Kubeflow !!!
@@ -132,38 +132,38 @@ module "argo" {
 #}
 
 # Jenkins
-module "jenkins" {
-  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
-  source            = "../modules/cicd/jenkins"
+# module "jenkins" {
+#   module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
+#   source            = "../modules/cicd/jenkins"
 
-  domains          = var.domains
-  jenkins_password = var.jenkins_password
+#   domains          = var.domains
+#   jenkins_password = var.jenkins_password
 
-  environment      = var.environment
-  project          = var.project
-  cluster_name     = var.cluster_name
-  cluster_oidc_url = module.kubernetes.cluster_oidc_url
-  cluster_oidc_arn = module.system.oidc_arn
+#   environment      = var.environment
+#   project          = var.project
+#   cluster_name     = var.cluster_name
+#   cluster_oidc_url = module.kubernetes.cluster_oidc_url
+#   cluster_oidc_arn = module.system.oidc_arn
 
-  master_policy = var.master_policy
-  agent_policy  = var.agent_policy
+#   master_policy = var.master_policy
+#   agent_policy  = var.agent_policy
 
-  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
-}
+#   config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+# }
 
 ## Monitoring
-module "prometheus" {
- module_depends_on       = [module.system.cert-manager, module.nginx.nginx-ingress]
- source                  = "../modules/monitoring/prometheus"
+# module "prometheus" {
+#  module_depends_on       = [module.system.cert-manager, module.nginx.nginx-ingress]
+#  source                  = "../modules/monitoring/prometheus"
 
- cluster_name            = var.cluster_name
- domains                 = var.domains
- grafana_google_auth     = var.grafana_google_auth
- grafana_client_id       = var.grafana_client_id
- grafana_client_secret   = var.grafana_client_secret
- grafana_allowed_domains = var.grafana_allowed_domains
- config_path             = "${path.module}/kubeconfig_${var.cluster_name}"
-}
+#  cluster_name            = var.cluster_name
+#  domains                 = var.domains
+#  grafana_google_auth     = var.grafana_google_auth
+#  grafana_client_id       = var.grafana_client_id
+#  grafana_client_secret   = var.grafana_client_secret
+#  grafana_allowed_domains = var.grafana_allowed_domains
+#  config_path             = "${path.module}/kubeconfig_${var.cluster_name}"
+# }
 
 ## Logging
 #module "loki" {
