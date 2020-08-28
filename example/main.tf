@@ -85,11 +85,11 @@ module "system" {
   cluster_roles      = var.cluster_roles
 }
 
-module "scaling" {
-  module_depends_on = [module.system.cert-manager]
-  source            = "../modules/scaling"
-  cluster_name      = module.kubernetes.cluster_name
-}
+//module "scaling" {
+//  module_depends_on = [module.system.cert-manager]
+//  source            = "../modules/scaling"
+//  cluster_name      = module.kubernetes.cluster_name
+//}
 
 # Ingress
 module "nginx" {
@@ -141,15 +141,15 @@ module "argo" {
 ## Kubeflow
 ## Use EKS 1.15 in terraform.tfvars if deploying Kubeflow !!!
 ## Enable module efs and argo
-#module "kubeflow" {
-#  module_depends_on = [module.system.cert-manager, module.argo]
-#  source            = "../modules/kubeflow"
-#  vpc               = module.network.vpc
-#  cluster_name      = module.kubernetes.cluster_name
-#  cluster           = module.kubernetes.this
-#  artifacts         = module.argo.artifacts
-#  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
-#}
+module "kubeflow" {
+  module_depends_on = [module.system.cert-manager, module.argo]
+  source            = "../modules/kubeflow"
+  vpc               = module.network.vpc
+  cluster_name      = module.kubernetes.cluster_name
+  cluster           = module.kubernetes.this
+  artifacts         = module.argo.artifacts
+  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
+}
 
 #module "efs" {
 #  module_depends_on = [module.system.cert-manager]
@@ -159,24 +159,24 @@ module "argo" {
 #}
 
 # Jenkins
-module "jenkins" {
-  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
-  source            = "../modules/cicd/jenkins"
-
-  domains          = var.domains
-  jenkins_password = var.jenkins_password
-
-  environment      = var.environment
-  project          = var.project
-  cluster_name     = var.cluster_name
-  cluster_oidc_url = module.kubernetes.cluster_oidc_url
-  cluster_oidc_arn = module.system.oidc_arn
-
-  master_policy = var.master_policy
-  agent_policy  = var.agent_policy
-
-  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
-}
+//module "jenkins" {
+//  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
+//  source            = "../modules/cicd/jenkins"
+//
+//  domains          = var.domains
+//  jenkins_password = var.jenkins_password
+//
+//  environment      = var.environment
+//  project          = var.project
+//  cluster_name     = var.cluster_name
+//  cluster_oidc_url = module.kubernetes.cluster_oidc_url
+//  cluster_oidc_arn = module.system.oidc_arn
+//
+//  master_policy = var.master_policy
+//  agent_policy  = var.agent_policy
+//
+//  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+//}
 
 ## Monitoring
 #module "prometheus" {
@@ -246,26 +246,26 @@ module "jenkins" {
 # }
 
 #Airflow
-#module "airflow" {
-#  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
-#  source            = "../modules/airflow"
-#
-#  cluster_name                = var.cluster_name
-#  domains                     = var.domains
-#  airflow_password            = var.airflow_password
-#  airflow_username            = var.airflow_username
-#  airflow_fernetKey           = var.airflow_fernetKey
-#  airflow_postgresql_local    = var.airflow_postgresql_local
-#  airflow_postgresql_host     = var.airflow_postgresql_host
-#  airflow_postgresql_port     = var.airflow_postgresql_port
-#  airflow_postgresql_username = var.airflow_postgresql_username
-#  airflow_postgresql_password = var.airflow_postgresql_password
-#  airflow_postgresql_database = var.airflow_postgresql_database
-#  airflow_redis_local         = var.airflow_redis_local
-#  airflow_redis_host          = var.airflow_redis_host
-#  airflow_redis_port          = var.airflow_redis_port
-#  airflow_redis_username      = var.airflow_redis_username
-#  airflow_redis_password      = var.airflow_redis_password
-#
-#  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
-#}
+//module "airflow" {
+//  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
+//  source            = "../modules/airflow"
+//
+//  cluster_name                = var.cluster_name
+//  domains                     = var.domains
+//  airflow_password            = var.airflow_password
+//  airflow_username            = var.airflow_username
+//  airflow_fernetKey           = var.airflow_fernetKey
+//  airflow_postgresql_local    = var.airflow_postgresql_local
+//  airflow_postgresql_host     = var.airflow_postgresql_host
+//  airflow_postgresql_port     = var.airflow_postgresql_port
+//  airflow_postgresql_username = var.airflow_postgresql_username
+//  airflow_postgresql_password = var.airflow_postgresql_password
+//  airflow_postgresql_database = var.airflow_postgresql_database
+//  airflow_redis_local         = var.airflow_redis_local
+//  airflow_redis_host          = var.airflow_redis_host
+//  airflow_redis_port          = var.airflow_redis_port
+//  airflow_redis_username      = var.airflow_redis_username
+//  airflow_redis_password      = var.airflow_redis_password
+//
+//  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+//}

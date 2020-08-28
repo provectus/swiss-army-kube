@@ -204,7 +204,7 @@ resource "aws_iam_role_policy_attachment" "alb-ingress" {
 resource "helm_release" "alb-ingress" {
   depends_on = [
     var.module_depends_on,
-    aws_iam_role.alb-ingress
+    aws_iam_role_policy_attachment.alb-ingress
   ]
   name       = "alb"
   repository = "https://kubernetes-charts-incubator.storage.googleapis.com"
@@ -223,6 +223,7 @@ resource "helm_release" "alb-ingress" {
 }
 
 resource "kubernetes_ingress" "alb-nginx-ingress" {
+  depends_on = [helm_release.alb-ingress]
   metadata {
     name      = "alb-nginx-ingress"
     namespace = kubernetes_namespace.alb-ingress-system.metadata[0].name

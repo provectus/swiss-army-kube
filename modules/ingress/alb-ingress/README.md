@@ -7,18 +7,19 @@ The AWS ALB Ingress Controller satisfies Kubernetes ingress resources by provisi
 
 ```
 resource "kubernetes_ingress" "alb-nginx-ingress" {
-    metadata {
-        name = "alb-nginx-ingress"
-        namespace = "default"
-        annotations = {
-            "alb.ingress.kubernetes.io/certificate-arn" = "arn:aws:acm:us-west-2:xxxx:certificate/xxxxxx"
-            "alb.ingress.kubernetes.io/healthcheck-path" = "/healthz"
-            "alb.ingress.kubernetes.io/scheme" = "internet-facing"
-            "alb.ingress.kubernetes.io/listen-ports" = "'[{\"HTTP\":80}, {\"HTTPS\":443}]'"
-            "alb.ingress.kubernetes.io/actions.ssl-redirect" = "'{\"Type\": \"redirect\", \"RedirectConfig\": { \"Protocol\": \"HTTPS\", \"Port\": \"443\", \"StatusCode\": \"HTTP_301\"}}'"
-            "kubernetes.io/ingress.class" = "alb"
-        }
+  depends_on = [helm_release.alb-ingress]
+  metadata {
+    name      = "alb-nginx-ingress"
+    namespace = kubernetes_namespace.alb-ingress-system.metadata[0].name
+    annotations = {
+      "alb.ingress.kubernetes.io/certificate-arn"      = "arn:aws:acm:us-west-2:xxxx:certificate/xxxxxx"
+      "alb.ingress.kubernetes.io/healthcheck-path"     = "/healthz"
+      "alb.ingress.kubernetes.io/scheme"               = "internet-facing"
+      "alb.ingress.kubernetes.io/listen-ports"         = "[{\"HTTP\":80}, {\"HTTPS\":443}]"
+      "alb.ingress.kubernetes.io/actions.ssl-redirect" = "{\"Type\": \"redirect\", \"RedirectConfig\": { \"Protocol\": \"HTTPS\", \"Port\": \"443\", \"StatusCode\": \"HTTP_301\"}}"
+      "kubernetes.io/ingress.class"                    = "alb"
     }
+  }
 
     spec {
         backend {
@@ -53,7 +54,7 @@ resource "kubernetes_ingress" "alb-nginx-ingress" {
 # Example kubernetes ingress manifest
 
 ```
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1beta1
 kind: Ingress
 metadata:
   annotations:
