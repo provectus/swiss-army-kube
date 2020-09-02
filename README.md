@@ -3,7 +3,7 @@
 [![Contributors](https://img.shields.io/github/contributors/provectus/head.svg?style=for-the-badge)](https://github.com/provectus/swiss-army-kube/graphs/contributors) 
 
 <!-- Swiss-Army-Kube_README -->
-**[Quickstart](https://github.com/provectus/swiss-army-kube/blob/feature/new_docs/QUICKSTART.md)** • **[Modules](https://github.com/provectus/swiss-army-kube/tree/feature/new_docs/modules)** • **[Configure Deployment](https://github.com/Evanto/qna/wiki/SAK-Configure-Deployment-in-example.tfvars)** • **[Troubleshooting](https://github.com/Evanto/qna/wiki/SAK-Troubleshooting)** • **[Contribute](https://github.com/Evanto/qna/wiki/SAK-Contributing)** • **[Provectus](https://provectus.com/)**
+**[Quickstart](https://github.com/provectus/swiss-army-kube/blob/feature/new_docs/QUICKSTART.md)** • **[Modules](https://github.com/provectus/swiss-army-kube/blob/feature/new_docs/modules/README.md)** • **[Configure Deployment](https://github.com/provectus/swiss-army-kube/blob/feature/new_docs/example/CONFIGURE.md)** • **[Troubleshooting](https://github.com/provectus/swiss-army-kube/blob/feature/new_docs/docs/TROUBLESHOOTING.md)** • **[Provectus](https://provectus.com/)**
 
 
 # Swiss Army Kube - Free IaC Tool for Easy EKS Kubernetes Cluster Deployment.  
