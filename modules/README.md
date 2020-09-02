@@ -16,7 +16,7 @@ SAK Modules:
 * [Core Modules](#core)
 * [Optional Modules](#optional)
 
-Some of the SAK modules are core - you can't deploy a cluster without them. Cure modules are in bold in the list below. Other modules are optional.
+Some of the SAK modules are core - you can't deploy a cluster without them. Core modules are in bold in the list below. Other modules are optional.
 
 *  [airflow](https://github.com/provectus/swiss-army-kube/tree/master/modules/airflow) 
 *  [cicd](https://github.com/provectus/swiss-army-kube/tree/master/modules/cicd)
