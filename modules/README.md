@@ -26,7 +26,6 @@ Some of the SAK modules are core - you can't deploy a cluster without them. Core
     + [alb-ingress](https://github.com/provectus/swiss-army-kube/tree/master/modules/ingress/alb-ingress)
     + [nginx](https://github.com/provectus/swiss-army-kube/tree/master/modules/ingress/nginx)
 *   [kubeflow](https://github.com/provectus/swiss-army-kube/tree/master/modules/kubeflow)
-    + [sak_kustomize](https://github.com/provectus/swiss-army-kube/tree/master/modules/kubeflow/sak_kustomize)
 *   **[kubernetes](https://github.com/provectus/swiss-army-kube/tree/master/modules/kubernetes)**
 *   [logging](https://github.com/provectus/swiss-army-kube/tree/master/modules/logging)
     + [efk](https://github.com/provectus/swiss-army-kube/tree/master/modules/logging/efk)
