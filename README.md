@@ -82,7 +82,7 @@ After deployment, manage your cluster with Terraform and Kubernetes CLI commands
 
 ## Contributing
 
-Contributing to Swiss Army Kube is very welcome. Currently, we're looking for contributions to the documentation of Modules. All you need is being comfortable with GitHub and Git. To get involved with documentation, please read our
+Contributing to Swiss Army Kube is very welcome. Currently, we're looking for contributions to the documentation of [Modules](https://github.com/provectus/swiss-army-kube/tree/feature/new_docs/modules). All you need is being comfortable with GitHub and Git. To get involved with documentation, please read our
 [Contributing Guide](https://github.com/Evanto/qna/wiki/SAK-Contributing).
 <br>
 
