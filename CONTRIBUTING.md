@@ -24,7 +24,7 @@ Find an [issue](https://github.com/provectus/swiss-army-kube/issues) to work on 
 ## Contributing Pull Requests (PRs)
 
 Please check our guide on how to contribute to Swiss Army Kube with PRs:
-* [Contributing Pull Requests](https://github.com/Evanto/qna/wiki/SAK-Contributing-Pull-Requests)
+* [Contributing Pull Requests](https://github.com/provectus/swiss-army-kube/blob/feature/new_docs/docs/CONTRIBUTE_PR.md)
 
 ## Select a Module to Contribute
 
