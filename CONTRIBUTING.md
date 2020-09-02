@@ -38,7 +38,6 @@ Please select a module to contribute:
     + [nginx](https://github.com/provectus/swiss-army-kube/tree/master/modules/ingress/nginx)                   (has short annotation)
     + [alb-ingress](https://github.com/provectus/swiss-army-kube/tree/master/modules/ingress/alb-ingress)       (has short annotation)
 *   [kubeflow](https://github.com/provectus/swiss-army-kube/tree/master/modules/kubeflow)                       (has Readme)
-    + [sak_kustomize](https://github.com/provectus/swiss-army-kube/tree/master/modules/kubeflow/sak_kustomize)  (has no Readme)
 *   **[kubernetes](https://github.com/provectus/swiss-army-kube/tree/master/modules/kubernetes)**               (has short annotation)
 *   [logging](https://github.com/provectus/swiss-army-kube/tree/master/modules/logging)                         (empty Readme)
     + [efk](https://github.com/provectus/swiss-army-kube/tree/master/modules/logging/efk)                       (empty Readme)
