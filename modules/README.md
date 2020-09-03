@@ -1,6 +1,6 @@
 # Modules 
 
-The [Modules](https://github.com/provectus/swiss-army-kube/tree/master/modules) directory contains Terraform modules that you can use in your projects. Modules are a collection of services that you can deploy on top of your EKS Kubernetes cluster to enable logging, monitoring, certificate management, automatic discovery of Kubernetes resources via public DNS servers, and other common infrastructure needs.
+The [Modules](./modules) directory contains Terraform modules that you can use in your projects. Modules are a collection of services that you can deploy on top of your EKS Kubernetes cluster to enable logging, monitoring, certificate management, automatic discovery of Kubernetes resources via public DNS servers, and other common infrastructure needs.
 
 ## Using SAK Modules
 
