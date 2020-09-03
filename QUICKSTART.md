@@ -138,7 +138,6 @@ terraform plan -out plan
 terraform apply plan
 ```
 
-
 #### Teardown and Cleanup
 
 
