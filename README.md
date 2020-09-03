@@ -3,13 +3,13 @@
 [![Contributors](https://img.shields.io/github/contributors/provectus/head.svg?style=for-the-badge)](https://github.com/provectus/swiss-army-kube/graphs/contributors) 
 
 <!-- Swiss-Army-Kube_README -->
-**[Quickstart](./QUICKSTART.md)** • **[Modules](https://github.com/provectus/swiss-army-kube/blob/feature/new_docs/modules/README.md)** • **[Configure Deployment](https://github.com/provectus/swiss-army-kube/blob/feature/new_docs/example/CONFIGURE.md)** • **[Troubleshooting](https://github.com/provectus/swiss-army-kube/blob/feature/new_docs/docs/TROUBLESHOOTING.md)** • **[Contributing](https://github.com/provectus/swiss-army-kube/blob/feature/new_docs/CONTRIBUTING.md)** • **[Provectus](https://provectus.com/)**
+**[Quickstart](./QUICKSTART.md)** • **[Modules](./modules/README.md)** • **[Configure Deployment](./example/CONFIGURE.md)** • **[Troubleshooting](./docs/TROUBLESHOOTING.md)** • **[Contributing](./CONTRIBUTING.md)** • **[Provectus](https://provectus.com/)**
 
 
 # Swiss Army Kube - Free IaC Tool for Easy EKS Kubernetes Cluster Deployment.  
 
 
-<img src="https://user-images.githubusercontent.com/20886422/91975571-9639dc00-eced-11ea-9c93-c485aa6636d2.jpg" width="400px" alt="logo"/>&nbsp;
+<img src="./images/swiss-army-kube-logo.jpg" width="400px" alt="logo"/>&nbsp;
 
 Swiss Army Kube (SAK) is an open-source IaC (Infrastructure as Code) collection of services for quick, easy, and controllable deployment of EKS Kubernetes clusters on Amazon for your projects. With Swiss Army Kube, cluster configuration and provisioning takes just a fraction of time normally spent on manual deployment via AWS management console. SAK automates deployments, making them repeatable, consistent, and less error-prone.
 
@@ -68,7 +68,7 @@ Configure and deploy as many projects as you want.
 
 ## Get Started
 
-Visit our [Quickstart](https://github.com/Evanto/qna/wiki/SAK-Quickstart) to install and configure prerequisites, set up your project deployment with desired modules in `modules.tf` and variables in `example.tfvars`, and deploy your infrastructure with Terraform commands:
+Visit our [Quickstart](./QUICKSTART.md) to install and configure prerequisites, set up your project deployment with desired modules in `modules.tf` and variables in `example.tfvars`, and deploy your infrastructure with Terraform commands:
 
 ``` 
 terraform init
@@ -82,8 +82,8 @@ After deployment, manage your cluster with Terraform and Kubernetes CLI commands
 
 ## Contributing
 
-Contributing to Swiss Army Kube is very welcome. Currently, we're looking for contributions to the documentation of [Modules](https://github.com/provectus/swiss-army-kube/tree/feature/new_docs/modules). All you need is being comfortable with GitHub and Git. To get involved with documentation, please read our
-[Contributing Guide](https://github.com/Evanto/qna/wiki/SAK-Contributing).
+Contributing to Swiss Army Kube is very welcome. Currently, we're looking for contributions to the documentation of [Modules](./modules). All you need is being comfortable with GitHub and Git. To get involved with documentation, please read our
+[Contributing Guide](.CONTRIBUTING.md).
 <br>
 
 
