@@ -10,7 +10,7 @@
 
 Terraform's `.tfvars` files are used to manage AWS environments. While variables are defined in the `.tf` files, their inputs are provided in the `.tfvars` variable definitions file that uses the same basic syntax as Terraform language files but consists only of variable name assignments and comments.
 
-To configure your cluster with proper parameters before deployment, set variables for your project in the [`example.tfvars`](./example/example.tfvars) file. It contains variables for all modules in one place, making it easy to set up your configuration quickly and without having to work across multiple separate files for each module.
+To configure your cluster with proper parameters before deployment, set variables for your project in the [`.tfvars` file](./example/example.tfvars). It contains variables for all modules in one place, making it easy to set up your configuration quickly and without having to work across multiple separate files for each module.
 
 <a name="variables"></a>
 ## Common Variables
