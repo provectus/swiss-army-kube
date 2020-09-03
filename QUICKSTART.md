@@ -59,11 +59,6 @@ The [kfctl_install.sh](https://github.com/provectus/swiss-army-kube/blob/master/
 
 An installation script for Linux users is to be done. At the moment use official guides linked above to install all prerequisites manually. You have to have them installed into the '/usr/local/bin' directory as a result.  
 
- 
-
-
-
-
 ## Usage
 
 ### 1. Clone this repository 
@@ -82,7 +77,7 @@ The `example` directory contains the project structure. You can use this folder 
 
 ### 3. Configure your EKS cluster 
 
-Edit the `example.tfvars` file to set cluster variables according to your project requirements. Check the [example.tfvars](https://github.com/Evanto/qna/wiki/SAK-example.tfvars) page to learn more. 
+Edit the [`example.tfvars` file](./example/example.tfvars) to set cluster variables according to your project requirements. Check the [example.tfvars](https://github.com/Evanto/qna/wiki/SAK-example.tfvars) page to learn more. 
 
 ### 4. Deploy your pre-configured EKS cluster on Amazon with Terraform commands 
 
