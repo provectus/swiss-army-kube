@@ -77,7 +77,7 @@ The `example` directory contains the project structure. You can use this folder 
 
 ### 3. Configure your EKS cluster 
 
-Edit the [`example.tfvars` file](./example/example.tfvars) to set cluster variables according to your project requirements. Check the [example.tfvars](https://github.com/Evanto/qna/wiki/SAK-example.tfvars) page to learn more. 
+Edit the [`.tfvars` file](./example/example.tfvars) to set cluster variables according to your project requirements. Check the [Configure Deployment](./example/CONFIGURE.md) page to learn more. 
 
 ### 4. Deploy your pre-configured EKS cluster on Amazon with Terraform commands 
 
