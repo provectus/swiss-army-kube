@@ -174,7 +174,7 @@ The Swiss Army Kube repository has three main directories that provide a minimal
 
 The `swiss-army-kube/example` directory is a boilerplate for your projects. Use it as a template. You can rename it to your project name for convenience. Make as many projects as you need by cloning and modifying this directory.  
 
-To configure your project cluster for deployment, just [include modules](./modules) that you need and [set variables](./example/CONFIGURE.md) in the [`.tfvars` file](./example.tfvars) before deploying your EKS cluster with Terraform commands. 
+To configure your project cluster for deployment, just [include modules](./modules) that you need and [set variables](./example/CONFIGURE.md) in the [`.tfvars` file](./example/example.tfvars) before deploying your EKS cluster with Terraform commands. 
 
 The example directory contains a set of `.tf` files: 
 
