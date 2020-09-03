@@ -9,7 +9,7 @@
 # Swiss Army Kube - Free IaC Tool for Easy EKS Kubernetes Cluster Deployment.  
 
 
-<img src="./images/swiss-army-kube-logo.jpg" width="400px" alt="logo"/>&nbsp;
+<img src="./images/swiss-arky-kube-logo.jpg" width="400px" alt="logo"/>&nbsp;
 
 Swiss Army Kube (SAK) is an open-source IaC (Infrastructure as Code) collection of services for quick, easy, and controllable deployment of EKS Kubernetes clusters on Amazon for your projects. With Swiss Army Kube, cluster configuration and provisioning takes just a fraction of time normally spent on manual deployment via AWS management console. SAK automates deployments, making them repeatable, consistent, and less error-prone.
 
