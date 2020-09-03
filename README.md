@@ -83,7 +83,7 @@ After deployment, manage your cluster with Terraform and Kubernetes CLI commands
 ## Contributing
 
 Contributing to Swiss Army Kube is very welcome. Currently, we're looking for contributions to the documentation of [Modules](./modules). All you need is being comfortable with GitHub and Git. To get involved with documentation, please read our
-[Contributing Guide](.CONTRIBUTING.md).
+[Contributing Guide](./CONTRIBUTING.md).
 <br>
 
 
