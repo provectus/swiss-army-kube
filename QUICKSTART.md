@@ -167,6 +167,7 @@ It will ignore Route 53 zone resources, Amazon RDS for Kubeflow, argo-artifacts 
 The Swiss Army Kube repository has three main directories that provide a minimal set of resources allowing to comfortably start the development of a new IaC project: 
 
 * `charts`  - local Helm repository for Helm charts that can't be retrieved from public repositories.
+* `docs`    - more detailed documentation and various FAQ's
 * `example` - directory to be used as a template for your projects that includes configuration files for modules and variables.
 * `modules` - Terraform modules (must-have and optional) to deploy your cluster with.
 
@@ -179,6 +180,7 @@ To configure your project cluster for deployment, just [include modules](./modul
 The example directory contains a set of `.tf` files: 
 
 * `main.tf`        - data from modules
+* `local.tf`       - contains local data to use in main.tf
 * `modules.tf`     - a list of modules and their redefined values
 * `output.tf`      - contains ouput definitions for your modules
 * `providers.tf`   - list of providers and their values

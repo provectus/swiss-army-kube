@@ -5,8 +5,7 @@
 1. [Common Variables](#Variables)
 2. [Variables of Worker Nodes (Overview)](#nodevars)
 3. [Variables of On-Demand Instances](#ondemvars)
-4. [Variables of Spot Instances](#spotvars)
-5. [Using GPU Instances](#gpunodes)
+4. [Using GPU Instances](#gpunodes)
 
 Terraform's `.tfvars` files are used to manage AWS environments. While variables are defined in the `.tf` files, their inputs are provided in the `.tfvars` variable definitions file that uses the same basic syntax as Terraform language files but consists only of variable name assignments and comments.
 
@@ -28,23 +27,50 @@ To configure your cluster with proper parameters before deployment, set variable
 |`config_path`        	| Unique path to the Kubernetes configuration file for working with your EKS clusters. The configuration file is located in the `swiss-army-kube/example` directory. |`kubeconfig_projectname`
 |`network`        	| Set a subnet your cluster will work in by providing a number to be as used "x" in the 10.X.0.0/16 CIDR template. Normally the default is enough, but you can change it once you have complex installations that require other subnets.  |`10`
 |`admin_arns`        	| Provide AWS IAM credentials (`userarn`, `username`, `groups`) of administrators of your Kubernetes cluster. Add as many administrators as you want by adding arrays.|`arn:aws:iam::245582572290:user/username`, `username`, `system:masters`
-|`cluster_version`      | Provide a version of your EKS cluster. Swiss Army Kube supports EKS versions 1.14, 1.15, and 1.16. Deployments with Kubeflow require EKS 1.15.   |`1.15`
+|`cluster_version`      | Provide a version of your EKS cluster. Swiss Army Kube supports EKS versions 1.14, 1.15, and 1.16. Deployments with Kubeflow require EKS 1.15.   |`1.16`
 |`cert_manager_email`    | Provide an email to let the cert-manager of your Kubernetes cluster sign up for free [Let’s Encrypt](https://letsencrypt.org/) certificates.|`youremail@domain.com`
 |`github-auth`      | You can turn on Ingress Github Oauth 2 authorization to limit who can access your private services and validate users via Github. If `true`, provide `github-client-id`, `github-client-secret`, `cookie-secret`, `github-org`. |`false`
 |`google-auth `     | Set to `true` and fill if the block below if you want to use Ingress Google Auth.|`false`
 |`elasticDataSize`      | If you use Kibana, provide PersistentVolume storage capacity here.|`30Gi`
 |`jenkins_password`     | If you use Jenkins, provide a password here. Uncomment properties below to attach S3 read-only policy for Jenkins IAM roles or add needed policies. |`password`
-|`grafana_password`     | If you use Grafana, provide a password here. To enable Google Auth for Grafana, uncomment and fill the block below (`grafana_google_auth`, `grafana_client_id`, `grafana_client_secret`, `grafana_allowed_domains`).  |`password`
+|`rds_database_name`     | If you use RDS, provide a database name here.|`exampledb`
+|`rds_database_engine`   | RDS database engine (aviable postgres mysql oracle-ee sqlserver-ex)| `postgres`
+|`rds_database_engine_version`| RDS databese engine version (see versions in AWS RDS engine table)|`9.6.9`
+|`rds_database_major_engine_version`| RDS databese major version (AWS bump minor version automatically)|`9`
+|`rds_database_instance`| Provide a RDS database instance type|`db.t3.large`
+|`rds_database_username`| Provide a RDS database username|`exampleuser`
+|`rds_database_password`| Provide a RDS database password| `""`
+|`rds_kms_key_id`| Provide a KMS key id if rds_storage_encrypted = true|`""`
+|`rds_allocated_storage`| Provide a RDS storage size in GB|`10`
+|`rds_storage_encrypted`| If you want encrypted database set true|`false`
+|`rds_maintenance_window`| Provide a maintenance window, at this time, the database may be unavailable (the window is set for updating)|`Mon:00:00-Mon:03:00`
+|`rds_backup_window`| Provide a backup window, at this time, the database may be unavailable (the window is set for creating backups)|`03:00-06:00`
+|`rds_database_multi_az`| If you want use multi aviability zone mode, set true.This will require an additional fee|`true`
+|`rds_database_delete_protection`| Delete protection mode, set true if you want prevent delete RDS|`false`
+|`rds_database_tags`| Additionals tags for RDS instance, comma separate key=value pairs|`{ "test" = "tags" }`
+|`airflow_username`| Provide a Airflow username here.|`username`
+|`airflow_password`| Provide a Airflow password here. If password null it's autogenerate and store to AWS ParamStore|`""`
+|`airflow_fernetKey`| Generate fernetKey (read about https://bcb.github.io/airflow/fernet-key )|`GFqrDfu-0oac6x2ATKLsx-Mr2yHKWFpa5hY4pYeWmXw=`
+|`airflow_postgresql_local`| Set true if you want use local postgresql database (pod in kubernetes).|`true`
+|`airflow_postgresql_host`| Provide postgresql host, if you set airflow_postgresql_local to false|`""`
+|`airflow_postgresql_port`| Provide postgresql port, if you set airflow_postgresql_local to false|`5432`
+|`airflow_postgresql_username`| Provide a postgresql username here.|`postgresqluser`
+|`airflow_postgresql_password`| Provide a postgresql password here.If password null it's autogenerate and store to AWS ParamStore|`""`
+|`airflow_postgresql_database`| Provide a postgresql database name here.|`airflow`
+|`airflow_redis_local`| Set true if you want use local redis database (pod in kubernetes).|`true`
+|`airflow_redis_host`| Provide redis host, if you set airflow_redis_local to false|`""`
+|`airflow_redis_port`| Provide redis port, if you set airflow_redis_local to false|`6379`
+|`airflow_redis_username`| Provide a redis username here.|`redisuser`
+|`airflow_redis_password`| Provide a redis password here.|`""`
 
 <a name="nodevars"></a>
 ## Variables of Worker Nodes (EC2 Instances)
  
 Use this block of variables to set up the type, number, and other parameters of your EC2 instances for the following node types:
 
-1. Common - On-Demand EC2 instances (stable, more expensive)
-2. Spot - Spot EC2 instances (unstable, less expensive)
-3. CPU - CPU-focused EC2 instances 
-4. GPU - GPU-focused EC2 instances
+1. Common - On-Demand EC2 instances
+2. CPU - CPU-focused EC2 instances 
+3. GPU - GPU-focused EC2 instances
 
 
 **On-Demand (Common) Instances**
@@ -60,6 +86,8 @@ We recommend, that at least 30% of your cluster consist of on-demand instances a
 
 Spot instances are a spare capacity that AWS sells at up to 90% discount. Using them allows you to save money by optimizing workload costs. The downside is that Spots are not guaranteed to stay available and can be recalled by AWS at any time. The more spots you use in an EKS cluster, the more risk exists for your cluster to suddenly become unavailable.  
 
+If you want use spot instance, set on_demand_common_percentage_above_base_capacity in percent. When set 30%, it's means that 70% instance in ASG common will be spot instance.
+
 **CPU Instances**
 
 Amazon EC2 C instances with high-performance processors. CPU instances are critical for resource-intensive tasks like scientific modeling, machine learning inference, and other compute-intensive apps.  
@@ -72,7 +100,7 @@ Amazon EC2 P instances with high-performance processors. GPU instances use hardw
 
 * [Amazon EC2 Accelerated Computing Instances](https://aws.amazon.com/ec2/instance-types/#Compute_Optimized)
 
-All nodes of a cluster are labeled with node type (Common, Spot, GPU, CPU). When you deploy an app, you can use Kubernetes tools to specify which group of nodes to deploy this particular app to.
+All nodes of a cluster are labeled with node type (Common, GPU, CPU). When you deploy an app, you can use Kubernetes tools to specify which group of nodes to deploy this particular app to.
 
 * [Check all Amazon EC2 Instance Types.](https://aws.amazon.com/ec2/instance-types/)
 
@@ -86,17 +114,8 @@ All nodes of a cluster are labeled with node type (Common, Spot, GPU, CPU). When
 |`on_demand_common_instance_type`   	| Amazon EC2 instance types in order of priority|`"m5.large", "m5.xlarge", "m5.2xlarge"`
 |`on_demand_common_allocation_strategy`  | Allocation strategy that will define priority and number of different on-demand EC2 instance types in your cluster. Valid values: `prioritized`. |`prioritized`
 |`on_demand_common_base_capacity`        | Percent of EC2 instances of this type in a cluster. Controls how much of the initial cluster capacity is made up of Common on-demand EC2 instances. Set to 0 indicates that you prefer to launch them as a percentage of the total group capacity that is running at any given time.    |`0`
-|`on_demand_common_percentage_above_base_capacity `  | Controls the percentage of the add-on to the initial group that is made up of on-demand EC2 Instances versus the percentage that is made up of Spot Instances.|`0`
+|`on_demand_common_percentage_above_base_capacity `  | Controls the percentage of the add-on to the initial group that is made up of on-demand EC2 Instances versus the percentage that is made up of Spot Instances.|`100`
 |`on_demand_common_asg_recreate_on_change`        	| When true, recreates an ASG group if changes have been made. |`true`
-
-<a name="spotvars"></a>
-### Variables of Spot EC2 Instances
-Spot instances have all the same variables as on-demand instances do, but also have two more additional ones listed below. 
-
-|Name               	|Description                    |Default / Example
-|-----------------------|-------------------------------|-------------------------------
-|`spot_instance_pools` | Number of Spot pools per availability zone to allocate capacity. EC2 Auto Scaling selects the cheapest Spot pools and evenly allocates Spot capacity across the number of Spot pools that you specify. |`10`
-|`spot_max_price` | Maximum price per unit hour that the user is willing to pay for the Spot instances. Default: an empty string which means the on-demand price. |` `
 
 <a name="gpunodes"></a>
 ## Using GPU Instances 
