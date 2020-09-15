@@ -72,45 +72,36 @@ admin_arns = [
 
 #Version of EKS cluster
 # Use EKS 1.15 if deploying Kubeflow !!!
-cluster_version = "1.15"
+cluster_version = "1.16"
 
 # Type and number of worker node
 #Common
 on_demand_common_max_cluster_size               = "5"
 on_demand_common_min_cluster_size               = "1"
-on_demand_common_desired_capacity               = "2"
+on_demand_common_desired_capacity               = "1"
 on_demand_common_instance_type                  = ["m5.large", "m5.xlarge", "m5.2xlarge"]
 on_demand_common_allocation_strategy            = "prioritized"
 on_demand_common_base_capacity                  = "0"
-on_demand_common_percentage_above_base_capacity = "0"
+on_demand_common_percentage_above_base_capacity = "100" //How many on-demand vs spot instance
 on_demand_common_asg_recreate_on_change         = "true"
-#Spot
-spot_max_cluster_size       = "10"
-spot_min_cluster_size       = "0"
-spot_desired_capacity       = "0"
-spot_instance_type          = ["m5.large", "m5.xlarge", "m5.2xlarge"]
-spot_instance_pools         = "10"
-spot_asg_recreate_on_change = "true"
-spot_allocation_strategy    = "lowest-price"
-spot_max_price              = ""
 
 #CPU
-on_demand_cpu_max_cluster_size               = "2"
+on_demand_cpu_max_cluster_size               = "1"
 on_demand_cpu_min_cluster_size               = "0"
 on_demand_cpu_desired_capacity               = "0"
 on_demand_cpu_instance_type                  = ["c5.xlarge", "c5.2xlarge", "c5n.xlarge"]
 on_demand_cpu_allocation_strategy            = "prioritized"
 on_demand_cpu_base_capacity                  = "0"
-on_demand_cpu_percentage_above_base_capacity = "0"
+on_demand_cpu_percentage_above_base_capacity = "100"
 on_demand_cpu_asg_recreate_on_change         = "true"
 #GPU
-on_demand_gpu_max_cluster_size               = "2"
+on_demand_gpu_max_cluster_size               = "1"
 on_demand_gpu_min_cluster_size               = "0"
 on_demand_gpu_desired_capacity               = "0"
 on_demand_gpu_instance_type                  = ["p3.2xlarge", "p2.xlarge"]
 on_demand_gpu_allocation_strategy            = "prioritized"
 on_demand_gpu_base_capacity                  = "0"
-on_demand_gpu_percentage_above_base_capacity = "0"
+on_demand_gpu_percentage_above_base_capacity = "100"
 on_demand_gpu_asg_recreate_on_change         = "true"
 
 

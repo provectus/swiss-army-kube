@@ -8,16 +8,16 @@ module "network" {
   network            = var.network
 }
 
-module "acm" {
-  source  = "terraform-aws-modules/acm/aws"
-  version = "~> v2.0"
+# module "acm" {
+#   source  = "terraform-aws-modules/acm/aws"
+#   version = "~> v2.0"
 
-  domain_name               = var.domains[0]
-  subject_alternative_names = ["*.${var.domains[0]}"]
-  zone_id                   = module.system.route53_zone[0].zone_id
-  validate_certificate      = var.aws_private == "false" ? true : false
-  tags                      = local.tags
-}
+#   domain_name               = var.domains[0]
+#   subject_alternative_names = ["*.${var.domains[0]}"]
+#   zone_id                   = module.system.route53_zone[0].zone_id
+#   validate_certificate      = var.aws_private == "false" ? true : false
+#   tags                      = local.tags
+# }
 
 module "kubernetes" {
   source = "../modules/kubernetes"
@@ -92,51 +92,51 @@ module "scaling" {
 }
 
 # Ingress
-module "nginx" {
-  module_depends_on = [module.system.cert-manager]
-  source            = "../modules/ingress/nginx"
+# module "nginx" {
+#   module_depends_on = [module.system.cert-manager]
+#   source            = "../modules/ingress/nginx"
 
-  cluster_name = var.cluster_name
-  aws_private  = var.aws_private
-  domains      = var.domains
-  config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
+#   cluster_name = var.cluster_name
+#   aws_private  = var.aws_private
+#   domains      = var.domains
+#   config_path  = "${path.module}/kubeconfig_${var.cluster_name}"
 
-  #Need oauth2-proxy github auth? Use id and secret in base64
-  github-auth          = var.github-auth
-  github-client-id     = var.github-client-id
-  github-org           = var.github-org
-  github-client-secret = var.github-client-secret
-  cookie-secret        = var.cookie-secret
+#   #Need oauth2-proxy github auth? Use id and secret in base64
+#   github-auth          = var.github-auth
+#   github-client-id     = var.github-client-id
+#   github-org           = var.github-org
+#   github-client-secret = var.github-client-secret
+#   cookie-secret        = var.cookie-secret
 
-  #Settings for oauth2-proxy google auth
-  google-auth          = var.google-auth
-  google-client-id     = var.google-client-id
-  google-client-secret = var.google-client-secret
-  google-cookie-secret = var.google-cookie-secret
-}
+#   #Settings for oauth2-proxy google auth
+#   google-auth          = var.google-auth
+#   google-client-id     = var.google-client-id
+#   google-client-secret = var.google-client-secret
+#   google-cookie-secret = var.google-cookie-secret
+# }
 
-module "alb-ingress" {
-  module_depends_on = [module.system.cert-manager]
-  source            = "../modules/ingress/alb-ingress"
-  cluster_name      = module.kubernetes.cluster_name
-  domains           = var.domains
-  vpc_id            = module.network.vpc_id
-  aws_region        = var.aws_region
-  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
-  certificates_arns = [module.acm.this_acm_certificate_arn]
-  cluster_oidc_url  = module.kubernetes.cluster_oidc_url
-}
+# module "alb-ingress" {
+#   module_depends_on = [module.system.cert-manager]
+#   source            = "../modules/ingress/alb-ingress"
+#   cluster_name      = module.kubernetes.cluster_name
+#   domains           = var.domains
+#   vpc_id            = module.network.vpc_id
+#   aws_region        = var.aws_region
+#   config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
+#   certificates_arns = [module.acm.this_acm_certificate_arn]
+#   cluster_oidc_url  = module.kubernetes.cluster_oidc_url
+# }
 
-# Argoproj: all-in-one
-module "argo" {
-  module_depends_on = [module.system.cluster_available]
-  source            = "../modules/cicd/argo"
-  cluster_name      = var.cluster_name
-  domains           = var.domains
-  environment       = var.environment
-  project           = var.project
-  cluster_oidc_url  = module.kubernetes.cluster_oidc_url
-}
+# # Argoproj: all-in-one
+# module "argo" {
+#   module_depends_on = [module.system.cluster_available]
+#   source            = "../modules/cicd/argo"
+#   cluster_name      = var.cluster_name
+#   domains           = var.domains
+#   environment       = var.environment
+#   project           = var.project
+#   cluster_oidc_url  = module.kubernetes.cluster_oidc_url
+# }
 
 ## Kubeflow
 ## Use EKS 1.15 in terraform.tfvars if deploying Kubeflow !!!
@@ -159,24 +159,24 @@ module "argo" {
 #}
 
 # Jenkins
-module "jenkins" {
-  module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
-  source            = "../modules/cicd/jenkins"
+# module "jenkins" {
+#   module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
+#   source            = "../modules/cicd/jenkins"
 
-  domains          = var.domains
-  jenkins_password = var.jenkins_password
+#   domains          = var.domains
+#   jenkins_password = var.jenkins_password
 
-  environment      = var.environment
-  project          = var.project
-  cluster_name     = var.cluster_name
-  cluster_oidc_url = module.kubernetes.cluster_oidc_url
-  cluster_oidc_arn = module.system.oidc_arn
+#   environment      = var.environment
+#   project          = var.project
+#   cluster_name     = var.cluster_name
+#   cluster_oidc_url = module.kubernetes.cluster_oidc_url
+#   cluster_oidc_arn = module.system.oidc_arn
 
-  master_policy = var.master_policy
-  agent_policy  = var.agent_policy
+#   master_policy = var.master_policy
+#   agent_policy  = var.agent_policy
 
-  config_path = "${path.module}/kubeconfig_${var.cluster_name}"
-}
+#   config_path = "${path.module}/kubeconfig_${var.cluster_name}"
+# }
 
 ## Monitoring
 #module "prometheus" {

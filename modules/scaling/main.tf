@@ -16,17 +16,12 @@ resource "kubernetes_namespace" "this" {
   }
 }
 
-data "helm_repository" "stable" {
-  name = "stable"
-  url  = "https://kubernetes-charts.storage.googleapis.com/"
-}
-
 resource "helm_release" "cluster_autoscaler" {
   depends_on = [
     var.module_depends_on
   ]
   name       = "aws-cluster-autoscaler"
-  repository = data.helm_repository.stable.metadata[0].name
+  repository = "https://kubernetes-charts.storage.googleapis.com/"
   chart      = "cluster-autoscaler"
   version    = "7.2.2"
   namespace  = var.namespace
@@ -106,7 +101,7 @@ locals {
   autoscaler_conf_defaults = {
     "cloudProvider"                                                 = "aws"
     "image.repository"                                              = "us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler"
-    "image.tag"                                                     = "v1.16.5"
+    "image.tag"                                                     = "v1.16.6"
     "autoDiscovery.clusterName"                                     = var.cluster_name,
     "autoDiscovery.enabled"                                         = true
     "awsRegion"                                                     = data.aws_region.current.name,
