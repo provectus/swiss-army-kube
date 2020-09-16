@@ -68,28 +68,28 @@ module "kubernetes" {
   on_demand_gpu_asg_recreate_on_change         = var.on_demand_gpu_asg_recreate_on_change
 }
 
-module "system" {
-  module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, module.kubernetes.workers_launch_template_ids]
-  source            = "../modules/system"
+# module "system" {
+#   module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, module.kubernetes.workers_launch_template_ids]
+#   source            = "../modules/system"
 
-  environment        = var.environment
-  project            = var.project
-  cluster_name       = var.cluster_name
-  vpc_id             = module.network.vpc_id
-  aws_private        = var.aws_private
-  domains            = var.domains
-  mainzoneid         = var.mainzoneid
-  config_path        = "${path.module}/kubeconfig_${var.cluster_name}"
-  cert_manager_email = var.cert_manager_email
-  cluster_oidc_url   = module.kubernetes.cluster_oidc_url
-  cluster_roles      = var.cluster_roles
-}
+#   environment        = var.environment
+#   project            = var.project
+#   cluster_name       = var.cluster_name
+#   vpc_id             = module.network.vpc_id
+#   aws_private        = var.aws_private
+#   domains            = var.domains
+#   mainzoneid         = var.mainzoneid
+#   config_path        = "${path.module}/kubeconfig_${var.cluster_name}"
+#   cert_manager_email = var.cert_manager_email
+#   cluster_oidc_url   = module.kubernetes.cluster_oidc_url
+#   cluster_roles      = var.cluster_roles
+# }
 
-module "scaling" {
-  module_depends_on = [module.system.cert-manager]
-  source            = "../modules/scaling"
-  cluster_name      = module.kubernetes.cluster_name
-}
+# module "scaling" {
+#   module_depends_on = [module.system.cert-manager]
+#   source            = "../modules/scaling"
+#   cluster_name      = module.kubernetes.cluster_name
+# }
 
 # Ingress
 # module "nginx" {
