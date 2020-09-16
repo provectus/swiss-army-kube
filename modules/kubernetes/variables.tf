@@ -27,6 +27,11 @@ variable "vpc_id" {
   description = "VPC id"
 }
 
+variable "availability_zones" {
+  type        = list(string)
+  description = "List of use avilability_zones"
+}
+
 variable "subnets" {
   type        = list
   description = "vpc subnets"
