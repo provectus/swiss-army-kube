@@ -1,6 +1,7 @@
 [![Maintenance](https://img.shields.io/maintenance/yes/2020?style=for-the-badge)]()
 [![Apache2](https://img.shields.io/badge/license-Apache2-green.svg?style=for-the-badge)](https://www.apache.org/licenses/LICENSE-2.0)
-[![GitHub contributors](https://img.shields.io/github/contributors/provectus/swiss-army-kube?style=for-the-badge)](https://github.com/provectus/swiss-army-kube/graphs/contributors)![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/provectus/swiss-army-kube?style=for-the-badge)
+[![GitHub contributors](https://img.shields.io/github/contributors/provectus/swiss-army-kube?style=for-the-badge)](https://github.com/provectus/swiss-army-kube/graphs/contributors)
+![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/provectus/swiss-army-kube?style=for-the-badge)
 
 <!-- Swiss-Army-Kube_README -->
 **[Quickstart](./QUICKSTART.md)** • **[Modules](./modules/README.md)** • **[Configure Deployment](./example/CONFIGURE.md)** • **[Troubleshooting](./docs/TROUBLESHOOTING.md)** • **[Contributing](./CONTRIBUTING.md)** • **[Provectus](https://provectus.com/)**
