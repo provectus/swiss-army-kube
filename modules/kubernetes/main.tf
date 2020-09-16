@@ -27,11 +27,6 @@ module "eks" {
 
   workers_additional_policies = [
     "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
-    "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess",
-    "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
-    "arn:aws:iam::aws:policy/AmazonRoute53AutoNamingFullAccess",
-    "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess",
   ]
 
   workers_group_defaults = {
@@ -45,4 +40,10 @@ module "eks" {
   #   After that autoscaler is able to see the resources on that ASG.
   #
   worker_groups_launch_template = concat(local.common, local.cpu, local.gpu)
+}
+
+resource aws_iam_openid_connect_provider this {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da2b0ab7280"]
+  url             = module.eks.cluster_oidc_issuer_url
 }

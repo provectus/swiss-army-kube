@@ -1,5 +1,5 @@
 # For depends_on queqe
-variable "module_depends_on" {
+variable module_depends_on {
   default = []
 }
 
@@ -13,4 +13,14 @@ variable namespace {
 
 variable cluster_name {
   type = string
+}
+
+variable chart_version {
+  type    = string
+  default = "8.0.0"
+}
+
+variable image_tag {
+  type    = string
+  default = "1.17.1"
 }
