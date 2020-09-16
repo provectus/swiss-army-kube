@@ -7,7 +7,7 @@ metadata:
   - resources-finalizer.argocd.argoproj.io
 spec:
   destination:
-    namespace: helm-guestbook
+    namespace: default
     server: https://kubernetes.default.svc
   project: default
   source:
