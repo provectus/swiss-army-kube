@@ -5,10 +5,10 @@ aws_region = "us-west-2"
 aws_private = "false"
 
 # List of aws region availability_zones
-availability_zones = ["us-west-2b", "us-west-2a", "us-west-2c"]
+availability_zones = ["us-west-2a", "us-west-2b"]
 
 # Name of kubernetes cluster. It's tag for cluster
-cluster_name = "swiss-army-new"
+cluster_name = "swiss-army"
 
 # Deploy environment name
 environment = "dev"
@@ -17,10 +17,10 @@ environment = "dev"
 project = "EDUCATION"
 
 #Main route53 zone id if exist (Change It)
-mainzoneid = "Z02149423PVQ0YMP19F13"
+mainzoneid = ""
 
 # Name of domains (create route53 zone and ingress). Set as array, first main ingress fqdn ["example.com", "example.io"]
-domains = ["swiss-army.edu.provectus.io"]
+domains = ["swiss-army.example.io"]
 
 # The kubernetes config file path
 config_path = "kubeconfig_swiss-army"
@@ -31,8 +31,8 @@ network = 10
 # ARNs of users which would have admin permissions. (Change It)
 admin_arns = [
   {
-    userarn  = "arn:aws:iam::245582572290:user/dkharlamov"
-    username = "dkharlamov"
+    userarn  = "arn:aws:iam::xxxxxxxx:user/username"
+    username = "username"
     groups   = ["system:masters"]
   },
 ]
@@ -40,7 +40,7 @@ admin_arns = [
 ## ARNs of users which would have provided permissions. (Change It)
 #user_arns = [
 #  {
-#    userarn  = "arn:aws:iam::245582572290:user/developer"
+#    userarn  = "arn:aws:iam::xxxxxxx:user/developer"
 #    username = "developer"
 #    groups   = ["system:developers"]
 #  },
@@ -106,7 +106,7 @@ on_demand_gpu_asg_recreate_on_change         = "true"
 
 
 #Cert-manager (Change It)
-cert_manager_email = "dkharlamov@provectus.com"
+cert_manager_email = "username@provectus.com"
 
 #Ingress github auth setting (client id and secret in base64 from https://github.com/settings/applications/new )
 github-auth          = "false"
@@ -127,7 +127,7 @@ elasticDataSize = "30Gi"
 #Enables oauth2 for Kibana with specified oauth2 domain
 #efk_oauth2_domain = "oauth2-google"
 
-#Jenkins (Change It)
+#Jenkins (Change It) //TODO - random gen and store to paramstore
 jenkins_password = "password"
 ## Uncomment to attach S3 readonly policy for Jenkins master and agent IAM roles, or customize to add needed policies
 #agent_policy = <<EOF
@@ -168,36 +168,36 @@ jenkins_password = "password"
 #grafana_allowed_domains = "provectus.com"
 
 #RDS
-rds_database_name                 = "exampledb"
-rds_database_engine               = "postgres" # postgres mysql oracle-ee sqlserver-ex
-rds_database_engine_version       = "9.6.9"    #(postgres - 9.6.9, mysql - 5.7.19, oracle-ee - 12.1.0.2.v8, sqlserver-ex - 14.00.1000.169.v1 )
-rds_database_major_engine_version = "9"
-rds_database_instance             = "db.t3.large"
-rds_database_username             = "exampleuser"
-rds_database_password             = ""
-rds_kms_key_id                    = ""
-rds_allocated_storage             = "10"
-rds_storage_encrypted             = false
-rds_maintenance_window            = "Mon:00:00-Mon:03:00"
-rds_backup_window                 = "03:00-06:00"
-rds_database_multi_az             = true
-rds_database_delete_protection    = false
-rds_database_tags                 = { "test" = "tags" }
-#Airflow
-airflow_username = "user"
-airflow_password = ""
-#about fernetKey https://bcb.github.io/airflow/fernet-key
-airflow_fernetKey = "GFqrDfu-0oac6x2ATKLsx-Mr2yHKWFpa5hY4pYeWmXw="
-#If use local postgresql, host and port ignore
-airflow_postgresql_local    = true
-airflow_postgresql_host     = ""
-airflow_postgresql_port     = "5432"
-airflow_postgresql_username = "postgresqluser"
-airflow_postgresql_password = ""
-airflow_postgresql_database = "airflow"
-#If use local redis, set password and ignore other settings
-airflow_redis_local    = true
-airflow_redis_host     = ""
-airflow_redis_port     = "6379"
-airflow_redis_username = "redisuser"
-airflow_redis_password = ""
+# rds_database_name                 = "exampledb"
+# rds_database_engine               = "postgres" # postgres mysql oracle-ee sqlserver-ex
+# rds_database_engine_version       = "9.6.9"    #(postgres - 9.6.9, mysql - 5.7.19, oracle-ee - 12.1.0.2.v8, sqlserver-ex - 14.00.1000.169.v1 )
+# rds_database_major_engine_version = "9"
+# rds_database_instance             = "db.t3.large"
+# rds_database_username             = "exampleuser"
+# rds_database_password             = ""
+# rds_kms_key_id                    = ""
+# rds_allocated_storage             = "10"
+# rds_storage_encrypted             = false
+# rds_maintenance_window            = "Mon:00:00-Mon:03:00"
+# rds_backup_window                 = "03:00-06:00"
+# rds_database_multi_az             = true
+# rds_database_delete_protection    = false
+# rds_database_tags                 = { "test" = "tags" }
+# Airflow
+# airflow_username = "user"
+# airflow_password = ""
+# about fernetKey https://bcb.github.io/airflow/fernet-key
+# airflow_fernetKey = "GFqrDfu-0oac6x2ATKLsx-Mr2yHKWFpa5hY4pYeWmXw="
+# If use local postgresql, host and port ignore
+# airflow_postgresql_local    = true
+# airflow_postgresql_host     = ""
+# airflow_postgresql_port     = "5432"
+# airflow_postgresql_username = "postgresqluser"
+# airflow_postgresql_password = ""
+# airflow_postgresql_database = "airflow"
+# If use local redis, set password and ignore other settings
+# airflow_redis_local    = true
+# airflow_redis_host     = ""
+# airflow_redis_port     = "6379"
+# airflow_redis_username = "redisuser"
+# airflow_redis_password = ""
