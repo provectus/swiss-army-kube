@@ -1,3 +1,18 @@
+variable branch {
+  type        = string
+  description = "describe your variable"
+}
+
+variable owner {
+  type        = string
+  description = "describe your variable"
+}
+
+variable repository {
+  type        = string
+  description = "describe your variable"
+}
+
 variable "aws_region" {
   description = "Name the aws region (us-central-1, us-west-2 and etc.)"
 }

@@ -4,13 +4,6 @@ variable chart_version {
   default     = "2.7.0"
 }
 
-variable namespace {
-  type        = string
-  description = "A target namespace for ArgoCD deployment"
-  default     = "argocd"
-}
-
-
 variable conf {
   type        = map(string)
   description = "A custom configuration for ArgoCD deployment"
@@ -23,18 +16,27 @@ variable module_depends_on {
   description = "A dependency list"
 }
 
-
 variable branch {
   type        = string
-  description = "describe your variable"
+  description = "A GitHub reference"
 }
 
 variable repository {
   type        = string
-  description = "describe your variable"
+  description = "A GitHub repository wich would be used for IaC needs"
 }
 
 variable owner {
   type        = string
-  description = "describe your variable"
+  description = "An owner of GitHub repository"
+}
+
+variable cluster_name {
+  type        = string
+  description = "A name of the EKS cluster"
+}
+
+variable domains {
+  type        = list(string)
+  description = "A list of domains to use"
 }
