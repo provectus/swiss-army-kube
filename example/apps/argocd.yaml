@@ -12,10 +12,14 @@
     "chart": "argo-cd"
     "helm":
       "parameters":
+      - "name": "global.image.repository"
+        "value": "provectuslabs/argocd"
+      - "name": "global.image.tag"
+        "value": "v1.7.4"
       - "name": "installCRDs"
         "value": "false"
       - "name": "configs.secret.argocdServerAdminPassword"
-        "value": "$2a$10$iicZmz8ovrvvGh8YsGnZmeAyHIPgHp0l4sDZHj43FeGmRVWXGoNpe"
+        "value": "$2a$10$9bphOMMmrWfj4YoN54V2I.PSBy7GM4GhO14Evhb9KALCxRmUpXgzG"
       - "name": "server.ingress.enabled"
         "value": "true"
       - "name": "server.config.url"
