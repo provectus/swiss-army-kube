@@ -168,11 +168,11 @@ locals {
         "helm" = {
           "parameters" = local.values
         }
-        "syncPolicy" = {
-          "automated" = {
-            "prune"    = "true"
-            "selfHeal" = "true"
-          }
+      }
+      "syncPolicy" = {
+        "automated" = {
+          "prune"    = true
+          "selfHeal" = true
         }
       }
     }

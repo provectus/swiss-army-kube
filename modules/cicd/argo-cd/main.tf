@@ -3,7 +3,7 @@ resource kubernetes_namespace this {
     var.module_depends_on
   ]
   metadata {
-    name = var.namespace
+    name = "argocd"
   }
 }
 
@@ -37,6 +37,18 @@ resource local_file this {
   filename = "${path.root}/apps/${local.name}.yaml"
 }
 
+resource random_password this {
+  length  = 20
+  special = true
+}
+
+resource aws_ssm_parameter this {
+  name        = "/${var.cluster_name}/argocd/password"
+  type        = "SecureString"
+  value       = random_password.this.result
+  description = "A password for accessing ArgoCD installation in ${var.cluster_name} EKS cluster"
+}
+
 locals {
   repository = "https://argoproj.github.io/argo-helm"
   name       = "argocd"
@@ -44,7 +56,6 @@ locals {
   conf = {
     "installCRDs" = false
 
-    # Application which point to current working SAK repository
     "server.additionalApplications[0].name"                          = "swiss-army-kube"
     "server.additionalApplications[0].namespace"                     = kubernetes_namespace.this.metadata[0].name
     "server.additionalApplications[0].project"                       = "default"
@@ -56,15 +67,46 @@ locals {
     "server.additionalApplications[0].syncPolicy.automated.prune"    = "true"
     "server.additionalApplications[0].syncPolicy.automated.selfHeal" = "true"
   }
-  # conf_defaults = merge({
-  #   "installCRDs"            = false
-  #   "server.ingress.enabled" = true,
-  #   "server.config.url"      = "https://argo-cd.${var.domains[0]}",
-  #   },
-  #   { for i, domain in tolist(var.domains) : "server.ingress.tls[${i}].hosts[0]" => "argo-cd.${domain}" },
-  #   { for i, domain in tolist(var.domains) : "server.ingress.hosts[${i}]" => "argo-cd.${domain}" },
-  #   { for i, domain in tolist(var.domains) : "server.ingress.tls[${i}].secretName" => "argo-cd-${domain}-tls" }
-  # )
+  values = concat([
+    {
+      "name"  = "installCRDs"
+      "value" = "false"
+    },
+    {
+      "name"  = "configs.secret.argocdServerAdminPassword"
+      "value" = bcrypt(random_password.this.result, 10)
+    },
+    {
+      "name"  = "server.ingress.enabled"
+      "value" = "true"
+    },
+    {
+      "name"  = "server.config.url"
+      "value" = "https://argo-cd.${var.domains[0]}"
+    }
+    ],
+    values({
+      for i, domain in tolist(var.domains) :
+      "key" => {
+        "name"  = "server.ingress.tls[${i}].hosts[0]"
+        "value" = "argo-cd.${domain}"
+      }
+    }),
+    values({
+      for i, domain in tolist(var.domains) :
+      "key" => {
+        "name"  = "server.ingress.hosts[${i}]"
+        "value" = "argo-cd.${domain}"
+      }
+    }),
+    values({
+      for i, domain in tolist(var.domains) :
+      "key" => {
+        "name"  = "server.ingress.tls[${i}].secretName"
+        "value" = "argo-cd-${domain}-tls"
+      }
+    })
+  )
   application = {
     "apiVersion" = "argoproj.io/v1alpha1"
     "kind"       = "Application"
@@ -83,22 +125,13 @@ locals {
         "targetRevision" = var.chart_version
         "chart"          = local.chart
         "helm" = {
-          "parameters" = [
-            {
-              "name"  = "installCRDs"
-              "value" = "false"
-            },
-            {
-              "name"  = "configs.secret.argocdServerAdminPassword"
-              "value" = bcrypt("password", 10)
-            }
-          ]
+          "parameters" = local.values
         }
-        "syncPolicy" = {
-          "automated" = {
-            "prune"    = "true"
-            "selfHeal" = "true"
-          }
+      }
+      "syncPolicy" = {
+        "automated" = {
+          "prune"    = true
+          "selfHeal" = true
         }
       }
     }

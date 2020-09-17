@@ -43,8 +43,8 @@
       - "name": "resources.requests.memory"
         "value": "300Mi"
     "repoURL": "https://kubernetes-charts.storage.googleapis.com/"
-    "syncPolicy":
-      "automated":
-        "prune": "true"
-        "selfHeal": "true"
     "targetRevision": "8.0.0"
+  "syncPolicy":
+    "automated":
+      "prune": true
+      "selfHeal": true
