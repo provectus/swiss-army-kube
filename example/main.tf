@@ -118,14 +118,11 @@ module "kubernetes" {
 
 # module "alb-ingress" {
 #   module_depends_on = [module.system.cert-manager]
-#   source            = "../modules/ingress/alb-ingress"
+#   source            = "../modules/ingress/aws-alb"
 #   cluster_name      = module.kubernetes.cluster_name
 #   domains           = var.domains
 #   vpc_id            = module.network.vpc_id
-#   aws_region        = var.aws_region
-#   config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
 #   certificates_arns = [module.acm.this_acm_certificate_arn]
-#   cluster_oidc_url  = module.kubernetes.cluster_oidc_url
 # }
 
 # # Argoproj: all-in-one
