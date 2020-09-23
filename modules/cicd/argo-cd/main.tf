@@ -59,9 +59,9 @@ locals {
     "server.additionalApplications[0].name"                          = "swiss-army-kube"
     "server.additionalApplications[0].namespace"                     = kubernetes_namespace.this.metadata[0].name
     "server.additionalApplications[0].project"                       = "default"
-    "server.additionalApplications[0].source.repoURL"                = "https://github.com/${var.owner}/${var.repository}"
+    "server.additionalApplications[0].source.repoURL"                = "https://${var.vcs}/${var.owner}/${var.repository}"
     "server.additionalApplications[0].source.targetRevision"         = var.branch
-    "server.additionalApplications[0].source.path"                   = "example/apps"
+    "server.additionalApplications[0].source.path"                   = "apps"
     "server.additionalApplications[0].destination.server"            = "https://kubernetes.default.svc"
     "server.additionalApplications[0].destination.namespace"         = kubernetes_namespace.this.metadata[0].name
     "server.additionalApplications[0].syncPolicy.automated.prune"    = "true"

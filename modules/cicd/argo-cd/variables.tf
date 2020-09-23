@@ -40,3 +40,9 @@ variable domains {
   type        = list(string)
   description = "A list of domains to use"
 }
+
+variable vcs {
+  type        = string
+  description = ""
+  default     = "github.com"
+}
