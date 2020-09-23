@@ -17,6 +17,7 @@ variable "aws_private" {
 
 variable "domains" {
   description = "domain name for ingress"
+  default     = []
 }
 
 variable "config_path" {
@@ -26,6 +27,7 @@ variable "config_path" {
 
 variable "github-auth" {
   description = "Trigger for enable or disable deploy oauth2-proxy"
+  default     = false
 }
 
 variable "github-client-id" {

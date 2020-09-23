@@ -22,14 +22,15 @@ module "network" {
 module "kubernetes" {
   source = "../modules/kubernetes"
 
-  environment     = var.environment
-  project         = var.project
-  cluster_name    = var.cluster_name
-  cluster_version = var.cluster_version
-  vpc_id          = module.network.vpc_id
-  subnets         = module.network.private_subnets
-  admin_arns      = var.admin_arns
-  user_arns       = var.user_arns
+  environment        = var.environment
+  project            = var.project
+  availability_zones = var.availability_zones
+  cluster_name       = var.cluster_name
+  cluster_version    = var.cluster_version
+  vpc_id             = module.network.vpc_id
+  subnets            = module.network.private_subnets
+  admin_arns         = var.admin_arns
+  user_arns          = var.user_arns
   #On-demand
   on_demand_common_max_cluster_size               = var.on_demand_common_max_cluster_size
   on_demand_common_min_cluster_size               = var.on_demand_common_min_cluster_size

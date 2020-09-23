@@ -8,54 +8,6 @@ data aws_eks_cluster this {
 
 data aws_region current {}
 
-resource aws_route53_record ns {
-  depends_on = [
-    var.module_depends_on,
-  ]
-  count   = var.mainzoneid == "" ? 0 : length(var.domains)
-  zone_id = var.mainzoneid
-  name    = element(var.domains, count.index)
-  type    = "NS"
-  ttl     = "30"
-
-  records = [
-    aws_route53_zone.public[count.index].name_servers[0],
-    aws_route53_zone.public[count.index].name_servers[1],
-    aws_route53_zone.public[count.index].name_servers[2],
-    aws_route53_zone.public[count.index].name_servers[3]
-  ]
-}
-
-resource aws_route53_zone public {
-  depends_on = [
-    var.module_depends_on,
-  ]
-
-  count = var.aws_private == "false" ? length(var.domains) : 0
-  name  = element(var.domains, count.index)
-
-  tags = {
-    Environment = var.environment
-    Project     = var.project
-  }
-  force_destroy = true
-}
-
-resource aws_route53_zone private {
-  depends_on = [
-    var.module_depends_on,
-  ]
-  count = var.aws_private == "true" ? length(var.domains) : 0
-  name  = element(var.domains, count.index)
-  vpc {
-    vpc_id = data.aws_vpc.main.id
-  }
-  tags = {
-    Environment = var.environment
-    Project     = var.project
-  }
-  force_destroy = true
-}
 
 module iam_assumable_role_admin {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
@@ -133,7 +85,7 @@ locals {
   chart      = "external-dns"
   values = concat([
     {
-      "name"  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+      "name"  = "rbac.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"
       "value" = module.iam_assumable_role_admin.this_iam_role_arn
     },
     {

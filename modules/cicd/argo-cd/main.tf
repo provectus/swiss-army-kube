@@ -69,6 +69,14 @@ locals {
   }
   values = concat([
     {
+      "name"  = "global.image.repository"
+      "value" = "provectuslabs/argocd"
+    },
+    {
+      "name"  = "global.image.tag"
+      "value" = "v1.7.4"
+    },
+    {
       "name"  = "installCRDs"
       "value" = "false"
     },
