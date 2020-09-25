@@ -69,6 +69,10 @@ locals {
   }
   values = concat([
     {
+      "name"  = "server.service.type"
+      "value" = "NodePort"
+    },
+    {
       "name"  = "global.image.repository"
       "value" = "provectuslabs/argocd"
     },
