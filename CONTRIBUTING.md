@@ -2,17 +2,17 @@
 
 ## What You Can Help With
 
-Currently, we accept contributions to the documentation of modules, specifically README.md files of each module. You can contribute in the following ways: 
-* Create a new Readme that is currently missing, add structure and write it in full or in part 
-* Add missing sections, paragraphs, and information to existing READMEs 
+Currently, we accept contributions to the documentation of modules, specifically README.md files of each module. You can contribute in the following ways:
+* Create a new Readme that is currently missing, add structure and write it in full or in part
+* Add missing sections, paragraphs, and information to existing READMEs
 * Correct typos and formatting issues
 * Add/propose graphics to illustrate documentation
 
 ## Getting Started
 
-Swiss Army Kube documentation welcomes improvements from all contributors, new and experienced. Anyone can contribute to the `github.com/provectus/swiss-army-kube` repository in the following formats: 
+Swiss Army Kube documentation welcomes improvements from all contributors, new and experienced. Anyone can contribute to the `github.com/provectus/swiss-army-kube` repository in the following formats:
 1. Open an issue about the documentation
-2. Propose a change with a pull request (PR) 
+2. Propose a change with a pull request (PR)
 3. Propose minor text/formatting edits right on GitHub without cloning
 
 All you need is being comfortable with Git and GitHub.
@@ -24,11 +24,11 @@ Find an [issue](https://github.com/provectus/swiss-army-kube/issues) to work on 
 ## Contributing Pull Requests (PRs)
 
 Please check our guide on how to contribute to Swiss Army Kube with PRs:
-* [Contributing Pull Requests](https://github.com/provectus/swiss-army-kube/blob/feature/new_docs/docs/CONTRIBUTE_PR.md)
+* [Contributing Pull Requests](https://github.com/provectus/swiss-army-kube/blob/master/docs/CONTRIBUTE_PR.md)
 
 ## Select a Module to Contribute
 
-The list of all Swiss Army Kube modules below includes information on the current state of documentation for each Module. 
+The list of all Swiss Army Kube modules below includes information on the current state of documentation for each Module.
 Please select a module to contribute:
 *  [airflow](https://github.com/provectus/swiss-army-kube/tree/master/modules/airflow)                          (has short annotation)
 *  [cicd](https://github.com/provectus/swiss-army-kube/tree/master/modules/cicd)                                (no Readme)
@@ -62,6 +62,6 @@ Approximate structure of a README.md document:
 * Configuration
 * Overrides
 
-In some cases, modules won't need some of these sections or require additional ones. Change it according to a particular module.    
+In some cases, modules won't need some of these sections or require additional ones. Change it according to a particular module.
 
 <a href="#top">Back to top</a>
