@@ -126,12 +126,12 @@ locals {
       "apiVersion" = "cert-manager.io/v1alpha2"
       "kind"       = "ClusterIssuer"
       "metadata" = {
-        "name" = "staging"
+        "name" = "letsencrypt-staging"
       }
       "spec" = {
         "acme" = {
           "server" = "https://acme-staging-v02.api.letsencrypt.org/directory"
-          "email"  = "var.email"
+          "email"  = var.email
           "privateKeySecretRef" = {
             "name" = "letsencrypt-staging"
           }
@@ -152,12 +152,12 @@ locals {
       "apiVersion" = "cert-manager.io/v1alpha2"
       "kind"       = "ClusterIssuer"
       "metadata" = {
-        "name" = "prod"
+        "name" = "letsencrypt-prod"
       }
       "spec" = {
         "acme" = {
           "server" = "https://acme-v02.api.letsencrypt.org/directory"
-          "email"  = "var.email"
+          "email"  = var.email
           "privateKeySecretRef" = {
             "name" = "letsencrypt-prod"
           }
