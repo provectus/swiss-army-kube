@@ -13,12 +13,12 @@ resource local_file this {
     var.module_depends_on
   ]
   content  = yamlencode(local.application)
-  filename = "${path.root}/apps/${local.name}.yaml"
+  filename = "${path.root}/${var.argocd.path}/${local.name}.yaml"
 }
 
 locals {
   repository = "https://kubernetes-charts.storage.googleapis.com"
-  name       = "nginx"
+  name       = "nginx-ingress"
   chart      = "nginx-ingress"
   values = [
     {
@@ -31,7 +31,7 @@ locals {
     "kind"       = "Application"
     "metadata" = {
       "name"      = local.name
-      "namespace" = "argocd"
+      "namespace" = var.argocd.namespace
     }
     "spec" = {
       "destination" = {

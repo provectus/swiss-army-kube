@@ -34,7 +34,7 @@ resource local_file this {
     helm_release.this
   ]
   content  = yamlencode(local.application)
-  filename = "${path.root}/apps/${local.name}.yaml"
+  filename = "${path.root}/${path_prefix}apps/${local.name}.yaml"
 }
 
 resource random_password this {
@@ -50,6 +50,7 @@ resource aws_ssm_parameter this {
 }
 
 locals {
+  repoURL    = "https://${var.vcs}/${var.owner}/${var.repository}"
   repository = "https://argoproj.github.io/argo-helm"
   name       = "argocd"
   chart      = "argo-cd"
@@ -59,9 +60,9 @@ locals {
     "server.additionalApplications[0].name"                          = "swiss-army-kube"
     "server.additionalApplications[0].namespace"                     = kubernetes_namespace.this.metadata[0].name
     "server.additionalApplications[0].project"                       = "default"
-    "server.additionalApplications[0].source.repoURL"                = "https://${var.vcs}/${var.owner}/${var.repository}"
+    "server.additionalApplications[0].source.repoURL"                = local.repoURL
     "server.additionalApplications[0].source.targetRevision"         = var.branch
-    "server.additionalApplications[0].source.path"                   = "apps"
+    "server.additionalApplications[0].source.path"                   = "${path_prefix}apps"
     "server.additionalApplications[0].destination.server"            = "https://kubernetes.default.svc"
     "server.additionalApplications[0].destination.namespace"         = kubernetes_namespace.this.metadata[0].name
     "server.additionalApplications[0].syncPolicy.automated.prune"    = "true"
@@ -69,16 +70,8 @@ locals {
   }
   values = concat([
     {
-      "name"  = "server.service.type"
-      "value" = "NodePort"
-    },
-    {
-      "name"  = "global.image.repository"
-      "value" = "provectuslabs/argocd"
-    },
-    {
-      "name"  = "global.image.tag"
-      "value" = "v1.7.4"
+      "name"  = "dex.enabled"
+      "value" = "false"
     },
     {
       "name"  = "installCRDs"
@@ -94,28 +87,28 @@ locals {
     },
     {
       "name"  = "server.config.url"
-      "value" = "https://argo-cd.${var.domains[0]}"
+      "value" = "https://argocd.${var.domains[0]}"
     }
     ],
     values({
       for i, domain in tolist(var.domains) :
       "key" => {
         "name"  = "server.ingress.tls[${i}].hosts[0]"
-        "value" = "argo-cd.${domain}"
+        "value" = "argocd.${domain}"
       }
     }),
     values({
       for i, domain in tolist(var.domains) :
       "key" => {
         "name"  = "server.ingress.hosts[${i}]"
-        "value" = "argo-cd.${domain}"
+        "value" = "argocd.${domain}"
       }
     }),
     values({
       for i, domain in tolist(var.domains) :
       "key" => {
         "name"  = "server.ingress.tls[${i}].secretName"
-        "value" = "argo-cd-${domain}-tls"
+        "value" = "argocd-${domain}-tls"
       }
     })
   )

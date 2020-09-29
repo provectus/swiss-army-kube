@@ -129,7 +129,7 @@ data aws_iam_policy_document this {
 
 resource local_file this {
   content  = yamlencode(local.application)
-  filename = "${path.root}/apps/${local.name}.yaml"
+  filename = "${path.root}/${var.argocd.path}/${local.name}.yaml"
 }
 
 locals {
@@ -177,7 +177,7 @@ locals {
     "kind"       = "Application"
     "metadata" = {
       "name"      = local.name
-      "namespace" = "argocd"
+      "namespace" = var.argocd.namespace
     }
     "spec" = {
       "destination" = {

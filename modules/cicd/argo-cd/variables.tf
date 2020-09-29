@@ -46,3 +46,9 @@ variable vcs {
   description = ""
   default     = "github.com"
 }
+
+variable path_prefix {
+  type        = string
+  description = "A path inside a repository"
+  default     = ""
+}

@@ -43,3 +43,13 @@ variable vpc_id {
   default = ""
 }
 
+variable argocd {
+  type        = map(string)
+  description = "A set of variables for enabling ArgoCD"
+  default = {
+    namespace  = ""
+    path       = ""
+    repository = ""
+    branch     = ""
+  }
+}

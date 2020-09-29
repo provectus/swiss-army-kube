@@ -24,3 +24,14 @@ variable image_tag {
   type    = string
   default = "1.17.1"
 }
+
+variable argocd {
+  type        = map(string)
+  description = "A set of variables for enabling ArgoCD"
+  default = {
+    namespace  = ""
+    path       = ""
+    repository = ""
+    branch     = ""
+  }
+}

@@ -13,7 +13,7 @@ module "iam_assumable_role_admin" {
   role_name                     = "${var.cluster_name}_cluster-autoscaler"
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
   role_policy_arns              = [aws_iam_policy.cluster_autoscaler.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:aws-cluster-autoscaler"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${var.namespace}:aws-cluster-autoscaler"]
 }
 
 resource "aws_iam_policy" "cluster_autoscaler" {
@@ -79,7 +79,7 @@ resource kubernetes_namespace this {
 
 resource local_file this {
   content  = yamlencode(local.application)
-  filename = "${path.root}/apps/${local.name}.yaml"
+  filename = "${path.root}/${var.argocd.path}/${local.name}.yaml"
 }
 
 locals {
@@ -153,7 +153,7 @@ locals {
     "kind"       = "Application"
     "metadata" = {
       "name"      = local.name
-      "namespace" = "argocd"
+      "namespace" = var.argocd.namespace
     }
     "spec" = {
       "destination" = {
@@ -162,8 +162,8 @@ locals {
       }
       "project" = "default"
       "source" = {
-        "repoURL"        = local.repository
-        "targetRevision" = var.chart_version
+        "repoURL"        = var.argocd.repository
+        "targetRevision" = var.argocd.branch
         "chart"          = local.chart
         "helm" = {
           "parameters" = local.values

@@ -81,7 +81,7 @@ resource local_file this {
     var.module_depends_on
   ]
   content  = yamlencode(local.application)
-  filename = "${path.root}/apps/${local.name}.yaml"
+  filename = "${path.root}/${var.argocd.path}/${local.name}.yaml"
 }
 
 resource local_file issuers {
@@ -90,7 +90,7 @@ resource local_file issuers {
     var.module_depends_on
   ]
   content  = yamlencode(each.value)
-  filename = "${path.root}/apps/${local.name}-issuer-${each.key}.yaml"
+  filename = "${path.root}/${var.argocd.path}/${local.name}-issuer-${each.key}.yaml"
 }
 
 locals {
@@ -126,12 +126,12 @@ locals {
       "apiVersion" = "cert-manager.io/v1alpha2"
       "kind"       = "ClusterIssuer"
       "metadata" = {
-        "name" = "staging"
+        "name" = "letsencrypt-staging"
       }
       "spec" = {
         "acme" = {
           "server" = "https://acme-staging-v02.api.letsencrypt.org/directory"
-          "email"  = "var.email"
+          "email"  = var.email
           "privateKeySecretRef" = {
             "name" = "letsencrypt-staging"
           }
@@ -152,12 +152,12 @@ locals {
       "apiVersion" = "cert-manager.io/v1alpha2"
       "kind"       = "ClusterIssuer"
       "metadata" = {
-        "name" = "prod"
+        "name" = "letsencrypt-prod"
       }
       "spec" = {
         "acme" = {
           "server" = "https://acme-v02.api.letsencrypt.org/directory"
-          "email"  = "var.email"
+          "email"  = var.email
           "privateKeySecretRef" = {
             "name" = "letsencrypt-prod"
           }
@@ -180,7 +180,7 @@ locals {
     "kind"       = "Application"
     "metadata" = {
       "name"      = local.name
-      "namespace" = "argocd"
+      "namespace" = var.argocd.namespace
     }
     "spec" = {
       "destination" = {

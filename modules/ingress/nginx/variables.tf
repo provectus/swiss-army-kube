@@ -70,3 +70,14 @@ variable "google-cookie-secret" {
   default     = ""
   description = "random_string make gen command python -c 'import os,base64; print base64.b64encode(os.urandom(16))'"
 }
+
+variable argocd {
+  type        = map(string)
+  description = "A set of variables for enabling ArgoCD"
+  default = {
+    namespace  = ""
+    path       = ""
+    repository = ""
+    branch     = ""
+  }
+}
