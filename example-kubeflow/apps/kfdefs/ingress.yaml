@@ -1,0 +1,27 @@
+"apiVersion": "networking.k8s.io/v1beta1"
+"kind": "Ingress"
+"metadata":
+  "annotations":
+    "alb.ingress.kubernetes.io/auth-idp-cognito": "{\"UserPoolArn\":\"arn:aws:cognito-idp:us-east-2:245582572290:userpool/us-east-2_14eLomqwW\",\"UserPoolClientId\":\"ii2d74q65bt7pilj9mo8bid29\",\"UserPoolDomain\":\"auth.kf-example.edu.provectus.io\"}"
+    "alb.ingress.kubernetes.io/auth-type": "cognito"
+    "alb.ingress.kubernetes.io/certificate-arn": "arn:aws:acm:us-east-2:245582572290:certificate/72f717cb-61c5-4a87-a9b4-56cd60261184"
+    "alb.ingress.kubernetes.io/listen-ports": "[{\"HTTPS\":443}]"
+    "alb.ingress.kubernetes.io/scheme": "internet-facing"
+    "kubernetes.io/ingress.class": "alb"
+  "labels":
+    "app": "kubeflow"
+  "name": "istio-ingress"
+  "namespace": "istio-system"
+"spec":
+  "rules":
+  - "host": "kubeflow.kf-example.edu.provectus.io"
+    "http":
+      "paths":
+      - "backend":
+          "serviceName": "istio-ingressgateway"
+          "servicePort": 80
+        "path": "/*"
+  "tls":
+  - "hosts":
+    - "kubeflow.kf-example.edu.provectus.io"
+    "secretName": "kubeflow-tls-certs"

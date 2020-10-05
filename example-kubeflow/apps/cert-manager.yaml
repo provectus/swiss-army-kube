@@ -1,0 +1,28 @@
+"apiVersion": "argoproj.io/v1alpha1"
+"kind": "Application"
+"metadata":
+  "name": "cert-manager"
+  "namespace": "argocd"
+"spec":
+  "destination":
+    "namespace": "cert-manager"
+    "server": "https://kubernetes.default.svc"
+  "project": "default"
+  "source":
+    "chart": "cert-manager"
+    "helm":
+      "parameters":
+      - "name": "installCRDs"
+        "value": "true"
+      - "name": "rbac.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"
+        "value": "arn:aws:iam::245582572290:role/kf-example_cert-manager"
+      - "name": "aws.region"
+        "value": "us-east-2"
+      - "name": "domainFilters[0]"
+        "value": "kf-example.edu.provectus.io"
+    "repoURL": "https://charts.jetstack.io"
+    "targetRevision": "v0.15.1"
+  "syncPolicy":
+    "automated":
+      "prune": true
+      "selfHeal": true

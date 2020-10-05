@@ -1,0 +1,15 @@
+"apiVersion": "cert-manager.io/v1alpha2"
+"kind": "ClusterIssuer"
+"metadata":
+  "name": "letsencrypt-prod"
+"spec":
+  "acme":
+    "email": "rgimadiev@provectus.com"
+    "privateKeySecretRef":
+      "name": "letsencrypt-prod"
+    "server": "https://acme-v02.api.letsencrypt.org/directory"
+    "solvers":
+    - "dns01":
+        "route53":
+          "hostedZoneID": "Z00256311TYYGIC2JTICD"
+          "region": "us-east-2"

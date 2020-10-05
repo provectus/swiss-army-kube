@@ -100,7 +100,7 @@ locals {
           "kustomizeConfig" = {
             "repoRef" = {
               "name" = "manifests"
-              "path" = "istio/istio/base"
+              "path" = "stacks/aws/application/istio"
             }
           }
           "name" = "istio"
@@ -149,6 +149,15 @@ locals {
             }
           }
           "name" = "kfserving"
+        },
+        {
+          "kustomizeConfig" = {
+            "repoRef" = {
+              "name" = "manifests"
+              "path" = "aws/aws-istio-authz-adaptor/base_v3"
+            }
+          }
+          "name" = "aws-istio-authz-adaptor"
         }
       ]
       "repos" = [
@@ -235,7 +244,7 @@ resource local_file kubeflow {
       "source" = {
         "repoURL"        = var.argocd.repository
         "targetRevision" = var.argocd.branch
-        "path"           = "${var.argocd.path}/kfdefs"
+        "path"           = "${var.argocd.full_path}/kfdefs"
       }
       "syncPolicy" = {
         "syncOptions" = [

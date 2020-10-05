@@ -17,20 +17,35 @@ module argocd {
   cluster_name  = module.kubernetes.cluster_name
   domains       = var.domains
   chart_version = "2.7.4"
+  path_prefix   = "example-kubeflow/"
+  oidc = {
+    secret = aws_cognito_user_pool_client.argocd.client_secret
+    pool   = module.cognito.pool_id
+    name   = "Cognito"
+    id     = aws_cognito_user_pool_client.argocd.id
+  }
+  ingress_annotations = {
+    "kubernetes.io/ingress.class"               = "alb"
+    "alb.ingress.kubernetes.io/scheme"          = "internet-facing"
+    "alb.ingress.kubernetes.io/certificate-arn" = module.acm.this_acm_certificate_arn
+    "alb.ingress.kubernetes.io/listen-ports" = jsonencode(
+      [{ "HTTPS" = 443 }]
+    )
+  }
 }
 
 module kubeflow {
   source = "../modules/kubeflow-operator"
   ingress_annotations = {
-    "kubernetes.io/ingress.class"         = "alb"
-    "alb.ingress.kubernetes.io/scheme"    = "internet-facing"
-    "alb.ingress.kubernetes.io/auth-type" = "cognito"
+    "kubernetes.io/ingress.class"               = "alb"
+    "alb.ingress.kubernetes.io/scheme"          = "internet-facing"
+    "alb.ingress.kubernetes.io/certificate-arn" = module.acm.this_acm_certificate_arn
+    "alb.ingress.kubernetes.io/auth-type"       = "cognito"
     "alb.ingress.kubernetes.io/auth-idp-cognito" = jsonencode({
       "UserPoolArn"      = module.cognito.pool_arn
       "UserPoolClientId" = aws_cognito_user_pool_client.kubeflow.id
       "UserPoolDomain"   = module.cognito.domain
     })
-    "alb.ingress.kubernetes.io/certificate-arn" = module.acm.this_acm_certificate_arn
     "alb.ingress.kubernetes.io/listen-ports" = jsonencode(
       [{ "HTTPS" = 443 }]
     )
@@ -106,7 +121,7 @@ resource aws_cognito_user_pool_client argocd {
   user_pool_id                         = module.cognito.pool_id
   callback_urls                        = ["https://argocd.${var.domains[0]}/auth/callback"]
   allowed_oauth_flows_user_pool_client = true
-  allowed_oauth_scopes                 = ["openid", "profile", "email"] // TODO: what to do with required "groups"?
+  allowed_oauth_scopes                 = ["openid", "profile", "email"]
   allowed_oauth_flows                  = ["code"]
   supported_identity_providers         = ["COGNITO"]
   generate_secret                      = true

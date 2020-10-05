@@ -1,0 +1,26 @@
+"apiVersion": "argoproj.io/v1alpha1"
+"kind": "Application"
+"metadata":
+  "name": "external-dns"
+  "namespace": "argocd"
+"spec":
+  "destination":
+    "namespace": "kube-system"
+    "server": "https://kubernetes.default.svc"
+  "project": "default"
+  "source":
+    "chart": "external-dns"
+    "helm":
+      "parameters":
+      - "name": "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+        "value": "arn:aws:iam::245582572290:role/kf-example_external-dns"
+      - "name": "aws.region"
+        "value": "us-east-2"
+      - "name": "domainFilters[0]"
+        "value": "kf-example.edu.provectus.io"
+    "repoURL": "https://charts.bitnami.com/bitnami"
+    "targetRevision": "3.4.0"
+  "syncPolicy":
+    "automated":
+      "prune": true
+      "selfHeal": true

@@ -58,3 +58,20 @@ variable apps_dir {
   description = "A folder for ArgoCD apps"
   default     = "apps"
 }
+
+variable ingress_annotations {
+  type        = map(string)
+  description = "A set of annotations for ArgoCD Ingress"
+  default     = {}
+}
+
+variable oidc {
+  type        = map(string)
+  description = "describe your variable"
+  default = {
+    id     = ""
+    secret = ""
+    issuer = ""
+    name   = ""
+  }
+}
