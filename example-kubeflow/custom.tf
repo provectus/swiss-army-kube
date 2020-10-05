@@ -17,7 +17,6 @@ module argocd {
   cluster_name  = module.kubernetes.cluster_name
   domains       = var.domains
   chart_version = "2.7.4"
-  argocd        = module.argocd.state
 }
 
 module kubeflow {
@@ -84,9 +83,11 @@ module external_dns {
 }
 
 module cognito {
-  source  = "../modules/cognito"
-  domain  = var.domains[0]
-  zone_id = var.zone_id
+  source       = "../modules/cognito"
+  domain       = var.domains[0]
+  zone_id      = module.external_dns.zone_id
+  cluster_name = module.kubernetes.cluster_name
+  tags         = local.tags
 }
 
 resource aws_cognito_user_pool_client kubeflow {
@@ -105,7 +106,7 @@ resource aws_cognito_user_pool_client argocd {
   user_pool_id                         = module.cognito.pool_id
   callback_urls                        = ["https://argocd.${var.domains[0]}/auth/callback"]
   allowed_oauth_flows_user_pool_client = true
-  allowed_oauth_scopes                 = ["openid", "profile", "email", "groups"]
+  allowed_oauth_scopes                 = ["openid", "profile", "email"] // TODO: what to do with required "groups"?
   allowed_oauth_flows                  = ["code"]
   supported_identity_providers         = ["COGNITO"]
   generate_secret                      = true

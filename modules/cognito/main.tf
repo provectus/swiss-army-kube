@@ -19,6 +19,14 @@ resource aws_route53_record this {
   }
 }
 
+resource aws_route53_record root {
+  name    = var.domain
+  type    = "A"
+  zone_id = var.zone_id
+  ttl     = 60
+  records = ["127.0.0.1"]
+}
+
 module cognito_acm {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> v2.0"
@@ -30,6 +38,8 @@ module cognito_acm {
   providers = {
     aws = aws.cognito
   }
+
+  tags = var.tags
 }
 
 provider aws {

@@ -34,7 +34,7 @@ resource local_file this {
     helm_release.this
   ]
   content  = yamlencode(local.application)
-  filename = "${path.root}/${path_prefix}apps/${local.name}.yaml"
+  filename = "${path.root}/${var.path_prefix}${var.apps_dir}/${local.name}.yaml"
 }
 
 resource random_password this {
@@ -56,13 +56,14 @@ locals {
   chart      = "argo-cd"
   conf = {
     "installCRDs" = false
+    "dex.enabled" = false
 
     "server.additionalApplications[0].name"                          = "swiss-army-kube"
     "server.additionalApplications[0].namespace"                     = kubernetes_namespace.this.metadata[0].name
     "server.additionalApplications[0].project"                       = "default"
     "server.additionalApplications[0].source.repoURL"                = local.repoURL
     "server.additionalApplications[0].source.targetRevision"         = var.branch
-    "server.additionalApplications[0].source.path"                   = "${path_prefix}apps"
+    "server.additionalApplications[0].source.path"                   = "${var.path_prefix}${var.apps_dir}"
     "server.additionalApplications[0].destination.server"            = "https://kubernetes.default.svc"
     "server.additionalApplications[0].destination.namespace"         = kubernetes_namespace.this.metadata[0].name
     "server.additionalApplications[0].syncPolicy.automated.prune"    = "true"

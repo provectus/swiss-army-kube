@@ -52,3 +52,9 @@ variable path_prefix {
   description = "A path inside a repository"
   default     = ""
 }
+
+variable apps_dir {
+  type        = string
+  description = "A folder for ArgoCD apps"
+  default     = "apps"
+}
