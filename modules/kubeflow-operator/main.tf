@@ -82,7 +82,7 @@ locals {
           "kustomizeConfig" = {
             "repoRef" = {
               "name" = "manifests"
-              "path" = "stacks/kubernetes/application/istio-1-3-1-stack"
+              "path" = "stacks/aws/application/istio-stack"
             }
           }
           "name" = "istio-stack"
@@ -91,7 +91,7 @@ locals {
           "kustomizeConfig" = {
             "repoRef" = {
               "name" = "manifests"
-              "path" = "stacks/kubernetes/application/cluster-local-gateway-1-3-1"
+              "path" = "stacks/aws/application/cluster-local-gateway"
             }
           }
           "name" = "cluster-local-gateway"
