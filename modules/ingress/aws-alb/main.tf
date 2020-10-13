@@ -1,14 +1,7 @@
-data kubernetes_namespace this {
-  metadata {
-    name = var.namespace
-  }
-}
-
 resource kubernetes_namespace this {
   depends_on = [
     var.module_depends_on
   ]
-  count = lookup(data.kubernetes_namespace.this, "id") != null ? 0 : 1
   metadata {
     name = var.namespace
   }
@@ -133,7 +126,7 @@ resource local_file this {
 }
 
 locals {
-  namespace  = lookup(data.kubernetes_namespace.this, "id") != null ? data.kubernetes_namespace.this.id : kubernetes_namespace.this[0].id
+  namespace  = kubernetes_namespace.this.id
   repository = "https://kubernetes-charts-incubator.storage.googleapis.com"
   name       = "aws-alb-ingress-controller"
   chart      = "aws-alb-ingress-controller"

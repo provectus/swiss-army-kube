@@ -83,7 +83,7 @@ variable "on_demand_common_instance_type" {
 
 variable "on_demand_common_allocation_strategy" {
   description = "Strategy to use when launching on-demand instances. Valid values: prioritized"
-  default     = "null"
+  default     = "prioritized"
 }
 
 variable "on_demand_common_base_capacity" {
