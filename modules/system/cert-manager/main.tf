@@ -60,17 +60,10 @@ resource aws_iam_policy this {
   )
 }
 
-data kubernetes_namespace this {
-  metadata {
-    name = var.namespace
-  }
-}
-
 resource kubernetes_namespace this {
   depends_on = [
     var.module_depends_on
   ]
-  count = lookup(data.kubernetes_namespace.this, "id") != null ? 0 : 1
   metadata {
     name = var.namespace
   }
@@ -84,17 +77,25 @@ resource local_file this {
   filename = "${path.root}/${var.argocd.path}/${local.name}.yaml"
 }
 
+resource local_file issuers_bom {
+  depends_on = [
+    var.module_depends_on
+  ]
+  content  = yamlencode(local.issuers_application)
+  filename = "${path.root}/${var.argocd.path}/${local.name}-issuers.yaml"
+}
+
 resource local_file issuers {
   for_each = local.issuers
   depends_on = [
     var.module_depends_on
   ]
   content  = yamlencode(each.value)
-  filename = "${path.root}/${var.argocd.path}/${local.name}-issuer-${each.key}.yaml"
+  filename = "${path.root}/${var.argocd.path}/issuers/${local.name}-${each.key}.yaml"
 }
 
 locals {
-  namespace  = lookup(data.kubernetes_namespace.this, "id") != null ? data.kubernetes_namespace.this.id : kubernetes_namespace.this[0].id
+  namespace  = kubernetes_namespace.this.id
   repository = "https://charts.jetstack.io"
   name       = "cert-manager"
   chart      = "cert-manager"
@@ -171,6 +172,32 @@ locals {
               }
             }
           ]
+        }
+      }
+    }
+  }
+  issuers_application = {
+    "apiVersion" = "argoproj.io/v1alpha1"
+    "kind"       = "Application"
+    "metadata" = {
+      "name"      = "${local.name}-issuers"
+      "namespace" = var.argocd.namespace
+    }
+    "spec" = {
+      "destination" = {
+        "namespace" = local.namespace
+        "server"    = "https://kubernetes.default.svc"
+      }
+      "project" = "default"
+      "source" = {
+        "repoURL"        = var.argocd.repository
+        "targetRevision" = var.argocd.branch
+        "path"           = "${var.argocd.full_path}/issuers"
+      }
+      "syncPolicy" = {
+        "automated" = {
+          "prune"    = true
+          "selfHeal" = true
         }
       }
     }

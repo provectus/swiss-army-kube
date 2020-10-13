@@ -1,5 +1,8 @@
 resource aws_cognito_user_pool this {
   name = var.cluster_name
+  admin_create_user_config = {
+    invite_message_template = var.email_template
+  }
 }
 
 resource aws_cognito_user_pool_domain this {

@@ -162,8 +162,8 @@ locals {
       }
       "project" = "default"
       "source" = {
-        "repoURL"        = var.argocd.repository
-        "targetRevision" = var.argocd.branch
+        "repoURL"        = local.repository
+        "targetRevision" = var.chart_version
         "chart"          = local.chart
         "helm" = {
           "parameters" = local.values
