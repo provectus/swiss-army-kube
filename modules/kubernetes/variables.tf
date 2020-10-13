@@ -173,7 +173,7 @@ variable "on_demand_gpu_instance_type" {
 
 variable "on_demand_gpu_allocation_strategy" {
   description = "Strategy to use when launching on-demand instances. Valid values: prioritized"
-  default     = "null"
+  default     = "prioritized"
 }
 
 variable "on_demand_gpu_base_capacity" {
@@ -218,7 +218,7 @@ variable "on_demand_cpu_instance_type" {
 
 variable "on_demand_cpu_allocation_strategy" {
   description = "Strategy to use when launching on-demand instances. Valid values: prioritized"
-  default     = "null"
+  default     = "prioritized"
 }
 
 variable "on_demand_cpu_base_capacity" {
