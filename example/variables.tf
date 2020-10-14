@@ -393,16 +393,19 @@ variable "grafana_allowed_domains" {
 variable "rds_database_name" {
   type        = string
   description = "Database name"
+  default     = "exampledb"
 }
 
 variable "rds_database_engine" {
   type        = string
   description = "What server use? postgres | mysql | oracle-ee | sqlserver-ex"
+  default     = "postgres"
 }
 
 variable "rds_database_engine_version" {
   type        = string
   description = "Engine version"
+  default     = "9.6.9"
 }
 
 variable "rds_database_major_engine_version" {
@@ -462,11 +465,13 @@ variable "rds_backup_window" {
 variable "rds_database_multi_az" {
   type        = bool
   description = "Enabled multi_az for RDS"
+  default     = "true"
 }
 
 variable "rds_database_delete_protection" {
   type        = bool
   description = "enabled delete protection for database"
+  default     = "false"
 }
 
 variable "rds_database_tags" {
