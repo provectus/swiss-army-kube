@@ -7,6 +7,9 @@ data "aws_eks_cluster" "this" {
 }
 
 data "kubernetes_namespace" "this" {
+  depends_on = [
+    var.module_depends_on
+  ]
   count = var.hpa_enabled || var.cluster_autoscaler_enabled ? 1 : 0
   metadata {
     name = var.namespace == "kube-system" ? "kube-system" : kubernetes_namespace.this[0].metadata[0].name
