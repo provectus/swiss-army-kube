@@ -36,7 +36,7 @@ variable "config_path" {
 variable "rds_database_name" {
   type        = string
   description = "Database name"
-  default     = ""
+  default     = "exampledb"
 }
 
 variable "rds_database_multi_az" {

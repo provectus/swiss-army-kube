@@ -393,7 +393,7 @@ variable "grafana_allowed_domains" {
 variable "rds_database_name" {
   type        = string
   description = "Database name"
-  default     = ""
+  default     = "exampledb"
 }
 
 variable "rds_database_engine" {
