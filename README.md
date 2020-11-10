@@ -16,7 +16,7 @@ Swiss Army Kube (SAK) is an open-source IaC (Infrastructure as Code) collection 
 
 Swiss Army Kube uses Terraform to describe the desired state of your infrastructure (resources that need to be provisioned like IAM roles, ASG, Route 53, subnets, etc.) and build a Kubernetes cluster on AWS EC2 instances.   
 
-SAK provides an examples directories that you can use as an easily modifiable template to set up your cluster deployment configuration in minutes. All you need is to edit a couple of files to include modules and set variables. This way you can quickly configure and provision multiple dedicated EKS Kubernetes clusters with different configurations of modules, variables, networks, and Kubernetes versions.
+SAK provides example directories that you can use as easily modifiable templates to set up your cluster deployment configuration in minutes. All you need is to edit a couple of files to include modules and set variables. This way you can quickly configure and provision multiple dedicated EKS Kubernetes clusters with different configurations of modules, variables, networks, and Kubernetes versions.
 
 We believe that any developer or organization should be able to focus on their applications without having to worry too much about the nitty-gritty of infrastructure deployment.
 
@@ -59,7 +59,7 @@ Configure and deploy as many projects as you want.
    + Clone this repository
    + Install prerequisites via script (MacOS users) or manually (other users)
 3. Configure your EKS cluster deployment using one of the `examples/` directories as a project template
-   + Configure modules 
+   + Configure modules and variables
 4. Deploy your EKS Kubernetes cluster with Terraform commands
 5. Configure `kubectl` to manage your Kubernetes cluster 
 6. Manage your EKS Kubernetes cluster and deploy your containerized apps on it

@@ -79,6 +79,10 @@ The `examples/common` directory contains the common project structure. You can u
 
 Edit the `.tf` files to set cluster variables according to your project requirements. Check the [Configure Deployment](./examples/common/CONFIGURE.md) page to learn more. 
 
+A `providers.tf` file contains configuration for Terraform providers, that define how to connect to each platform for working with it such as an AWS cloud or Kubernetes cluster, for example: to change AWS region from _us-west-2_ to another need to modify `region` option of provider `aws`.
+
+A `main.tf` files are consist of modules, each module provides infrastructure things. To add them you can uncomment modules block for specific services, some properties of modules are required, so please follow to module documentation  under `modules` folder for additional information.
+
 ### 4. Deploy your pre-configured EKS cluster on Amazon with Terraform commands 
 
 ``` 
@@ -164,7 +168,7 @@ The Swiss Army Kube repository has three main directories that provide a minimal
 
 ### Project Structure (Example Directory) 
 
-The `swiss-army-kube/examples` directory are a boilerplates for your projects, use them as a template. You can rename it to your project name for convenience. Make as many projects as you need by cloning and modifying this directory.
+The `swiss-army-kube/examples` directory contains project examples that you can use as boilerplates to start your new projects. Pick one, rename it to your project name for convenience, and modify the directory as required. This way you can create as many projects as you need really fast.
 
 To configure your project cluster for deployment, just [include modules](./modules) that you need and [set variables](./examples/CONFIGURE.md) in the `.tf` files before deploying your EKS cluster with Terraform commands. 
 
@@ -184,7 +188,8 @@ The `examples/common` directory contains a set of `.tf` files:
 4. Run `terraform apply plan`
 5. Send `kubeconfig_internal-projects` config and IAM user tokens to the developer
 
-NOTE: To change developers permissions on Kubernetes cluster manipulate `cluster_roles` variable in the `main.tf` file.
+NOTE: To change developers' permissions on the Kubernetes cluster edit the `cluster_roles` variable in the `main.tf` file.
+
 ### Developer steps
 1. Configure the AWS CLI with received tokens from DevOps engineer:
  ```
