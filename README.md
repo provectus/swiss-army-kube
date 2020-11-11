@@ -4,7 +4,7 @@
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/provectus/swiss-army-kube?style=for-the-badge)
 
 <!-- Swiss-Army-Kube_README -->
-**[Quickstart](./QUICKSTART.md)** • **[Modules](./modules/README.md)** • **[Configure Deployment](./example/CONFIGURE.md)** • **[Troubleshooting](./docs/TROUBLESHOOTING.md)** • **[Contributing](./CONTRIBUTING.md)** • **[Provectus](https://provectus.com/)**
+**[Quickstart](./QUICKSTART.md)** • **[Modules](./modules/README.md)** • **[Configure Deployment](./examples/common/CONFIGURE.md)** • **[Troubleshooting](./docs/TROUBLESHOOTING.md)** • **[Contributing](./CONTRIBUTING.md)** • **[Provectus](https://provectus.com/)**
 
 
 # Swiss Army Kube - Free IaC Tool for Easy EKS Kubernetes Cluster Deployment.  
@@ -16,7 +16,7 @@ Swiss Army Kube (SAK) is an open-source IaC (Infrastructure as Code) collection 
 
 Swiss Army Kube uses Terraform to describe the desired state of your infrastructure (resources that need to be provisioned like IAM roles, ASG, Route 53, subnets, etc.) and build a Kubernetes cluster on AWS EC2 instances.   
 
-SAK provides an example directory that you can use as an easily modifiable template to set up your cluster deployment configuration in minutes. All you need is to edit a couple of files to include modules and set variables. This way you can quickly configure and provision multiple dedicated EKS Kubernetes clusters with different configurations of modules, variables, networks, and Kubernetes versions.
+SAK provides example directories that you can use as easily modifiable templates to set up your cluster deployment configuration in minutes. All you need is to edit a couple of files to include modules and set variables. This way you can quickly configure and provision multiple dedicated EKS Kubernetes clusters with different configurations of modules, variables, networks, and Kubernetes versions.
 
 We believe that any developer or organization should be able to focus on their applications without having to worry too much about the nitty-gritty of infrastructure deployment.
 
@@ -58,10 +58,8 @@ Configure and deploy as many projects as you want.
 2. Install Prerequisites
    + Clone this repository
    + Install prerequisites via script (MacOS users) or manually (other users)
-   + Rename `example.tfvars` to `terraform.tfvars`
-3. Configure your EKS cluster deployment using example directory as a project template
-   + Configure modules 
-   + Configure variables 
+3. Configure your EKS cluster deployment using one of the `examples/` directories as a project template
+   + Configure modules and variables
 4. Deploy your EKS Kubernetes cluster with Terraform commands
 5. Configure `kubectl` to manage your Kubernetes cluster 
 6. Manage your EKS Kubernetes cluster and deploy your containerized apps on it
@@ -69,7 +67,7 @@ Configure and deploy as many projects as you want.
 
 ## Get Started
 
-Visit our [Quickstart](./QUICKSTART.md) to install and configure prerequisites, set up your project deployment with desired modules in `modules.tf` and variables in `example.tfvars`, and deploy your infrastructure with Terraform commands:
+Visit our [Quickstart](./QUICKSTART.md) to install and configure prerequisites, set up your project deployment with desired modules and configurations in `*.tf` files, and deploy your infrastructure with Terraform commands:
 
 ``` 
 terraform init

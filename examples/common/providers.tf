@@ -4,7 +4,7 @@ terraform {
 
 provider "aws" {
   version = "2.66"
-  region  = var.aws_region
+  region  = "us-west-2"
 }
 
 provider "kubernetes" {
