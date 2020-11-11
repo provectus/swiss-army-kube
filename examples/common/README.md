@@ -27,15 +27,9 @@
 `bash swiss-army-kube/prerequisites_install.sh` 
 
 # Structure
-  main.tf - data from modules
-
-  modules.tf - list of modules and their redefined values
+  main.tf - the main Terraform file with infrastructure code
 
   providers.tf - list of providers and their values
-
-  variables.tf - definition of variables used in modules and their default values
-
-  terraform.tfvars - list of values for variables. **Customize it for your project data!**
 
 # Deploy cluster
 Change terraform.tfvars, choose modules in modules.tf and do the following:

@@ -17,13 +17,17 @@ pipeline {
       }
     }
 
-    stage('Run test') {
-      steps {
-          sh """
-            cd example
+    stage('Run tests') {
+      parallel {
+        stage("Common example") {
+          steps {
+            sh """
+            cd examples/common
             terraform init
-            TFLINT_LOG=info tflint --deep --force --module --var-file example.tfvars .
-          """
+            TFLINT_LOG=info tflint --deep --force --module .
+            """
+          }
+        }
       }
     }
   }
