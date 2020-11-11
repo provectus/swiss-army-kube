@@ -111,6 +111,21 @@ resource aws_ssm_parameter this {
   type        = "SecureString"
   value       = random_password.this.result
   description = "A password for accessing ArgoCD installation in ${var.cluster_name} EKS cluster"
+
+  lifecycle {
+    ignore_changes = [value]
+  }
+}
+
+resource aws_ssm_parameter encrypted {
+  name        = "/${var.cluster_name}/argocd/password/encrypted"
+  type        = "SecureString"
+  value       = bcrypt(random_password.this.result, 10)
+  description = "An encrypted password for accessing ArgoCD installation in ${var.cluster_name} EKS cluster"
+
+  lifecycle {
+    ignore_changes = [value]
+  }
 }
 
 resource aws_kms_key this {
@@ -119,6 +134,7 @@ resource aws_kms_key this {
 }
 
 resource aws_kms_ciphertext client_secret {
+  count     = length(var.oidc) == 0 ? 0 : 1
   key_id    = aws_kms_key.this.key_id
   plaintext = lookup(var.oidc, "secret", "")
 }
@@ -128,8 +144,8 @@ locals {
   # TODO: cleanup
   legacy_defaults = merge({
     "installCRDs"            = false
-    "server.ingress.enabled" = true,
-    "server.config.url"      = "https://argo-cd.${var.domains[0]}",
+    "server.ingress.enabled" = length(var.domains) > 0 ? true : false
+    "server.config.url"      = length(var.domains) > 0 ? "https://argocd.${var.domains[0]}" : ""
     },
     { for i, domain in tolist(var.domains) : "server.ingress.tls[${i}].hosts[0]" => "argo-cd.${domain}" },
     { for i, domain in tolist(var.domains) : "server.ingress.hosts[${i}]" => "argo-cd.${domain}" },
@@ -156,6 +172,7 @@ locals {
     "installCRDs" = "false"
     "dex.enabled" = "false"
 
+    "configs.secret.argocdServerAdminPassword"                             = aws_ssm_parameter.encrypted.value
     "global.securityContext.fsGroup"                                       = "999"
     "repoServer.env[0].name"                                               = "AWS_DEFAULT_REGION"
     "repoServer.env[0].value"                                              = data.aws_region.current.name
@@ -192,14 +209,14 @@ locals {
 g, administrators, role:admin
 EOF
     },
-    {
+    length(var.oidc) == 0 ? null : {
       "name" = "server.config.oidc\\.config"
-      "value" = length(var.oidc) == 0 ? yamlencode({}) : yamlencode(
+      "value" = yamlencode(
         {
           "name"            = "Cognito"
           "issuer"          = "https://cognito-idp.${data.aws_region.current.name}.amazonaws.com/${lookup(var.oidc, "pool", "")}"
           "clientID"        = lookup(var.oidc, "id", "")
-          "clientSecret"    = "KMS_ENC:${aws_kms_ciphertext.client_secret.ciphertext_blob}:"
+          "clientSecret"    = "KMS_ENC:${aws_kms_ciphertext.client_secret[0].ciphertext_blob}:"
           "requestedScopes" = ["openid", "profile", "email"]
           "requestedIDTokenClaims" = {
             "cognito:groups" = {
@@ -222,14 +239,10 @@ EOF
       "value" = "NodePort"
     },
     {
-      "name"  = "configs.secret.argocdServerAdminPassword"
-      "value" = bcrypt(random_password.this.result, 10)
-    },
-    {
       "name"  = "server.ingress.enabled"
-      "value" = "true"
+      "value" = length(var.domains) > 0 ? "true" : "false"
     },
-    {
+    length(var.domains) == 0 ? null : {
       "name"  = "server.config.url"
       "value" = "https://argocd.${var.domains[0]}"
     }

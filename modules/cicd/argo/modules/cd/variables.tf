@@ -11,7 +11,7 @@ variable cd_conf {
 
 variable namespace {
   type        = string
-  default     = "argocd"
+  default     = ""
   description = "A name of the existing namespace"
 }
 
@@ -34,7 +34,7 @@ variable conf {
 }
 
 variable module_depends_on {
-  type        = list
+  type        = list(any)
   default     = []
   description = "A dependency list"
 }
@@ -64,6 +64,7 @@ variable cluster_name {
 
 variable domains {
   type        = list(string)
+  default     = []
   description = "A list of domains to use"
 }
 
