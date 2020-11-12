@@ -1,16 +1,16 @@
-resource "helm_release" "cluster_autoscaler" {
+resource helm_release cluster_autoscaler {
   depends_on = [
     var.module_depends_on
   ]
-  count      = var.cluster_autoscaler_enabled ? 1 : 0
-  name       = "aws-cluster-autoscaler"
-  repository = "https://kubernetes-charts.storage.googleapis.com/"
-  chart      = "cluster-autoscaler"
+  count      = var.cluster_autoscaler_enabled ? 1 - local.argocd_enabled : 0
+  name       = local.cluster_autoscaler_name
+  repository = local.cluster_autoscaler_chart_repository
+  chart      = local.cluster_autoscaler_chart
   version    = var.cluster_autoscaler_chart_version
-  namespace  = data.kubernetes_namespace.this[0].metadata[0].name
+  namespace  = local.namespace
   timeout    = 1200
   dynamic set {
-    for_each = merge(local.cluster_autoscaler_conf_defaults, var.cluster_autoscaler_conf)
+    for_each = local.cluster_autoscaler_conf
 
     content {
       name  = set.key
@@ -19,17 +19,17 @@ resource "helm_release" "cluster_autoscaler" {
   }
 }
 
-module "iam_assumable_role_admin" {
+module iam_assumable_role_admin {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v2.6.0"
   create_role                   = var.cluster_autoscaler_enabled
   role_name                     = "${var.cluster_name}_cluster-autoscaler"
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
   role_policy_arns              = [aws_iam_policy.cluster_autoscaler[0].arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:kube-system:aws-cluster-autoscaler"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.namespace}:aws-cluster-autoscaler"]
 }
 
-resource "aws_iam_policy" "cluster_autoscaler" {
+resource aws_iam_policy cluster_autoscaler {
   depends_on = [
     var.module_depends_on
   ]
@@ -39,7 +39,7 @@ resource "aws_iam_policy" "cluster_autoscaler" {
   policy      = data.aws_iam_policy_document.cluster_autoscaler.json
 }
 
-data "aws_iam_policy_document" "cluster_autoscaler" {
+data aws_iam_policy_document cluster_autoscaler {
   statement {
     sid    = "clusterAutoscalerAll"
     effect = "Allow"
@@ -81,7 +81,52 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
   }
 }
 
+resource local_file cluster_autoscaler {
+  count    = var.cluster_autoscaler_enabled ? local.argocd_enabled : 0
+  content  = yamlencode(local.cluster_autoscaler_app)
+  filename = "${var.argocd.path}/${local.cluster_autoscaler_name}.yaml"
+}
+
 locals {
+  cluster_autoscaler_chart_repository = "https://kubernetes-charts.storage.googleapis.com/"
+  cluster_autoscaler_name             = "aws-cluster-autoscaler"
+  cluster_autoscaler_chart            = "cluster-autoscaler"
+  cluster_autoscaler_app = {
+    "apiVersion" = "argoproj.io/v1alpha1"
+    "kind"       = "Application"
+    "metadata" = {
+      "name"      = local.cluster_autoscaler_name
+      "namespace" = var.argocd.namespace
+    }
+    "spec" = {
+      "destination" = {
+        "namespace" = local.namespace
+        "server"    = "https://kubernetes.default.svc"
+      }
+      "project" = "default"
+      "source" = {
+        "repoURL"        = local.cluster_autoscaler_chart_repository
+        "targetRevision" = var.cluster_autoscaler_chart_version
+        "chart"          = local.cluster_autoscaler_chart
+        "helm" = {
+          "parameters" = values({
+            for key, value in local.cluster_autoscaler_conf :
+            key => {
+              "name"  = key
+              "value" = tostring(value)
+            }
+          })
+        }
+      }
+      "syncPolicy" = {
+        "automated" = {
+          "prune"    = true
+          "selfHeal" = true
+        }
+      }
+    }
+  }
+  cluster_autoscaler_conf = merge(local.cluster_autoscaler_conf_defaults, var.cluster_autoscaler_conf)
   cluster_autoscaler_conf_defaults = {
     "cloudProvider"                                                 = "aws"
     "image.repository"                                              = "us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler"

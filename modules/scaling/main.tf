@@ -1,27 +1,17 @@
-data "aws_region" "current" {}
+data aws_region current {}
 
-data "aws_caller_identity" "this" {}
-
-data "aws_eks_cluster" "this" {
+data aws_eks_cluster this {
   name = var.cluster_name
 }
 
-data "kubernetes_namespace" "this" {
-  depends_on = [
-    var.module_depends_on
-  ]
-  count = var.hpa_enabled || var.cluster_autoscaler_enabled ? 1 : 0
+resource kubernetes_namespace this {
+  count = var.namespace == "kube-system" ? 1 : 0
   metadata {
-    name = var.namespace == "kube-system" ? "kube-system" : kubernetes_namespace.this[0].metadata[0].name
+    name = var.namespace_name
   }
 }
 
-resource "kubernetes_namespace" "this" {
-  depends_on = [
-    var.module_depends_on
-  ]
-  count = var.namespace != "kube-system" && (var.hpa_enabled || var.cluster_autoscaler_enabled) ? 1 : 0
-  metadata {
-    name = var.namespace
-  }
+locals {
+  argocd_enabled = length(var.argocd) > 0 ? 1 : 0
+  namespace      = coalescelist(kubernetes_namespace.this, [{ "metadata" = [{ "name" = var.namespace }] }])[0].metadata[0].name
 }
