@@ -55,11 +55,10 @@ module "argocd" {
   module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name]
   source            = "../../modules/cicd/argo/modules/cd"
 
-  branch        = "feature-argocd-module"
-  owner         = "provectus"
-  repository    = "swiss-army-kube"
-  cluster_name  = module.kubernetes.cluster_name
-  chart_version = "2.7.4"
-  path_prefix   = "examples/argocd/"
-  apps_dir      = "applications"
+  branch       = "feature-argocd-module"
+  owner        = "provectus"
+  repository   = "swiss-army-kube"
+  cluster_name = module.kubernetes.cluster_name
+  path_prefix  = "examples/argocd/"
+  apps_dir     = "applications"
 }

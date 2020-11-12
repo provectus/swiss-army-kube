@@ -1,14 +1,3 @@
-variable enabled {
-  type        = bool
-  default     = true
-  description = "Set to false to disable native ArgoCD behaviour with tracking"
-}
-
-variable cd_conf {
-  type    = map(string)
-  default = {}
-}
-
 variable namespace {
   type        = string
   default     = ""
@@ -24,7 +13,7 @@ variable namespace_name {
 variable chart_version {
   type        = string
   description = "An ArgoCD Helm Chart version"
-  default     = "2.7.0"
+  default     = "2.7.4"
 }
 
 variable conf {
@@ -70,14 +59,13 @@ variable domains {
 
 variable vcs {
   type        = string
-  description = ""
+  description = "A host name of VCS"
   default     = "github.com"
 }
 
 variable path_prefix {
   type        = string
-  description = "A path inside a repository"
-  default     = ""
+  description = "A path inside a repository, it should contain a trailing slash"
 }
 
 variable apps_dir {
@@ -94,6 +82,16 @@ variable ingress_annotations {
 
 variable oidc {
   type        = map(string)
-  description = "describe your variable"
-  default     = {}
+  description = "A set of variables required for enabling OIDC"
+  default = {
+    pool   = null
+    id     = null
+    secret = null
+  }
+}
+
+variable project_name {
+  type        = string
+  description = "A name of the ArgoCD project for deploying SAK"
+  default     = "default"
 }

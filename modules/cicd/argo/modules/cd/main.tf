@@ -15,7 +15,7 @@ resource helm_release this {
   timeout       = 1200
 
   dynamic set {
-    for_each = merge(var.enabled ? merge(local.init_conf, local.conf) : local.legacy_defaults, var.cd_conf)
+    for_each = merge(local.enabled ? merge(local.init_conf, local.conf) : local.legacy_defaults, var.conf)
     content {
       name  = set.key
       value = set.value
@@ -93,7 +93,7 @@ for file in glob.glob('./*.y*ml'):
 }
 
 resource local_file this {
-  count = var.enabled ? 1 : 0
+  count = local.enabled ? 1 : 0
   depends_on = [
     helm_release.this
   ]
@@ -134,12 +134,13 @@ resource aws_kms_key this {
 }
 
 resource aws_kms_ciphertext client_secret {
-  count     = length(var.oidc) == 0 ? 0 : 1
+  count     = lookup(var.oidc, "secret", null) == null ? 0 : 1
   key_id    = aws_kms_key.this.key_id
-  plaintext = lookup(var.oidc, "secret", "")
+  plaintext = lookup(var.oidc, "secret", null)
 }
 
 locals {
+  enabled   = var.branch != "" && var.owner != "" && var.repository != ""
   namespace = coalescelist(kubernetes_namespace.this, [{ "metadata" = [{ "name" = var.namespace }] }])[0].metadata[0].name
   # TODO: cleanup
   legacy_defaults = merge({
@@ -155,19 +156,31 @@ locals {
   repository = "https://argoproj.github.io/argo-helm"
   name       = "argocd"
   chart      = "argo-cd"
-  init_conf = {
-    "server.additionalApplications[0].name"                          = "swiss-army-kube"
-    "server.additionalApplications[0].namespace"                     = local.namespace
-    "server.additionalApplications[0].project"                       = "default"
-    "server.additionalApplications[0].source.repoURL"                = local.repoURL
-    "server.additionalApplications[0].source.targetRevision"         = var.branch
-    "server.additionalApplications[0].source.path"                   = "${var.path_prefix}${var.apps_dir}"
-    "server.additionalApplications[0].source.plugin.name"            = "decryptor"
-    "server.additionalApplications[0].destination.server"            = "https://kubernetes.default.svc"
-    "server.additionalApplications[0].destination.namespace"         = local.namespace
-    "server.additionalApplications[0].syncPolicy.automated.prune"    = "true"
-    "server.additionalApplications[0].syncPolicy.automated.selfHeal" = "true"
-  }
+  init_conf = merge(
+    {
+      "server.additionalApplications[0].name"                          = "swiss-army-kube"
+      "server.additionalApplications[0].namespace"                     = local.namespace
+      "server.additionalApplications[0].project"                       = var.project_name
+      "server.additionalApplications[0].source.repoURL"                = local.repoURL
+      "server.additionalApplications[0].source.targetRevision"         = var.branch
+      "server.additionalApplications[0].source.path"                   = "${var.path_prefix}${var.apps_dir}"
+      "server.additionalApplications[0].source.plugin.name"            = "decryptor"
+      "server.additionalApplications[0].destination.server"            = "https://kubernetes.default.svc"
+      "server.additionalApplications[0].destination.namespace"         = local.namespace
+      "server.additionalApplications[0].syncPolicy.automated.prune"    = "true"
+      "server.additionalApplications[0].syncPolicy.automated.selfHeal" = "true"
+    },
+    var.project_name == "default" ? {} : {
+      "server.additionalProjects[0].name"                              = var.project_name
+      "server.additionalProjects[0].namespace"                         = local.namespace
+      "server.additionalProjects[0].description"                       = "A project for Swiss-Army-Kube components"
+      "server.additionalProjects[0].clusterResourceWhitelist[0].group" = "*"
+      "server.additionalProjects[0].clusterResourceWhitelist[0].kind"  = "*"
+      "server.additionalProjects[0].destinations[0].namespace"         = "*"
+      "server.additionalProjects[0].destinations[0].server"            = "*"
+      "server.additionalProjects[0].sourceRepos[0]"                    = "*"
+    }
+  )
   conf = {
     "installCRDs" = "false"
     "dex.enabled" = "false"
@@ -209,7 +222,7 @@ locals {
 g, administrators, role:admin
 EOF
     },
-    length(var.oidc) == 0 ? null : {
+    lookup(var.oidc, "id", null) == null && lookup(var.oidc, "pool", null) == null ? null : {
       "name" = "server.config.oidc\\.config"
       "value" = yamlencode(
         {
@@ -296,7 +309,7 @@ EOF
         "namespace" = local.namespace
         "server"    = "https://kubernetes.default.svc"
       }
-      "project" = "default"
+      "project" = var.project_name
       "source" = {
         "repoURL"        = local.repository
         "targetRevision" = var.chart_version
