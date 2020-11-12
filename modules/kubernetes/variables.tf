@@ -83,7 +83,7 @@ variable "on_demand_common_instance_type" {
 
 variable "on_demand_common_allocation_strategy" {
   description = "Strategy to use when launching on-demand instances. Valid values: prioritized"
-  default     = "null"
+  default     = "prioritized"
 }
 
 variable "on_demand_common_base_capacity" {
@@ -138,12 +138,12 @@ variable "spot_asg_recreate_on_change" {
 
 variable "spot_allocation_strategy" {
   description = "Valid options are 'lowest-price' and 'capacity-optimized'. If 'lowest-price', the Auto Scaling group launches instances using the Spot pools with the lowest price, and evenly allocates your instances across the number of Spot pools. If 'capacity-optimized', the Auto Scaling group launches instances using Spot pools that are optimally chosen based on the available Spot capacity."
-  default     = "lowest-price"
+  default     = "prioritized"
 }
 
 variable "spot_max_price" {
   type        = string
-  default     = ""
+  default     = "1"
   description = "Maximum price per unit hour that the user is willing to pay for the Spot instances. Default is the on-demand price"
 }
 
@@ -173,7 +173,7 @@ variable "on_demand_gpu_instance_type" {
 
 variable "on_demand_gpu_allocation_strategy" {
   description = "Strategy to use when launching on-demand instances. Valid values: prioritized"
-  default     = "null"
+  default     = "prioritized"
 }
 
 variable "on_demand_gpu_base_capacity" {
@@ -218,7 +218,7 @@ variable "on_demand_cpu_instance_type" {
 
 variable "on_demand_cpu_allocation_strategy" {
   description = "Strategy to use when launching on-demand instances. Valid values: prioritized"
-  default     = "null"
+  default     = "prioritized"
 }
 
 variable "on_demand_cpu_base_capacity" {
