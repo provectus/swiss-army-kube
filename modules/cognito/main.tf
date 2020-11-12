@@ -33,16 +33,14 @@ resource aws_route53_record root {
 module cognito_acm {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> v2.0"
-
-  domain_name          = "auth.${var.domain}"
-  zone_id              = var.zone_id
-  validate_certificate = true
-
   providers = {
     aws = aws.cognito
   }
 
-  tags = var.tags
+  domain_name          = "auth.${var.domain}"
+  zone_id              = var.zone_id
+  validate_certificate = true
+  tags                 = var.tags
 }
 
 # AWS Cognito uses the N.Virginia region to deploying its own CDN system,
