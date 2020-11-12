@@ -182,8 +182,9 @@ locals {
     }
   )
   conf = {
-    "installCRDs" = "false"
-    "dex.enabled" = "false"
+    "server.extraArgs[0]" = "--insecure"
+    "installCRDs"         = "false"
+    "dex.enabled"         = "false"
 
     "configs.secret.argocdServerAdminPassword"                             = aws_ssm_parameter.encrypted.value
     "global.securityContext.fsGroup"                                       = "999"
@@ -211,7 +212,7 @@ locals {
       }]
     )
   }
-  values = concat([
+  values = concat(coalescelist([
     {
       "name"  = "server.rbacConfig.policy\\.default"
       "value" = "role:readonly"
@@ -222,30 +223,9 @@ locals {
 g, administrators, role:admin
 EOF
     },
-    lookup(var.oidc, "id", null) == null && lookup(var.oidc, "pool", null) == null ? null : {
-      "name" = "server.config.oidc\\.config"
-      "value" = yamlencode(
-        {
-          "name"            = "Cognito"
-          "issuer"          = "https://cognito-idp.${data.aws_region.current.name}.amazonaws.com/${lookup(var.oidc, "pool", "")}"
-          "clientID"        = lookup(var.oidc, "id", "")
-          "clientSecret"    = "KMS_ENC:${aws_kms_ciphertext.client_secret[0].ciphertext_blob}:"
-          "requestedScopes" = ["openid", "profile", "email"]
-          "requestedIDTokenClaims" = {
-            "cognito:groups" = {
-              "essential" = true
-            }
-          }
-        }
-      )
-    },
     {
       "name"  = "server.ingress.paths[0]"
       "value" = "/*"
-    },
-    {
-      "name"  = "server.extraArgs[0]"
-      "value" = "--insecure"
     },
     {
       "name"  = "server.service.type"
@@ -254,13 +234,33 @@ EOF
     {
       "name"  = "server.ingress.enabled"
       "value" = length(var.domains) > 0 ? "true" : "false"
-    },
-    length(var.domains) == 0 ? null : {
-      "name"  = "server.config.url"
-      "value" = "https://argocd.${var.domains[0]}"
     }
-
     ],
+    [
+      length(var.domains) == 0 ? null : {
+        "name"  = "server.config.url"
+        "value" = "https://argocd.${var.domains[0]}"
+      }
+    ],
+    [
+      lookup(var.oidc, "id", null) == null && lookup(var.oidc, "pool", null) == null ? null : {
+        "name" = "server.config.oidc\\.config"
+        "value" = yamlencode(
+          {
+            "name"            = "Cognito"
+            "issuer"          = "https://cognito-idp.${data.aws_region.current.name}.amazonaws.com/${lookup(var.oidc, "pool", "")}"
+            "clientID"        = lookup(var.oidc, "id", "")
+            "clientSecret"    = "KMS_ENC:${aws_kms_ciphertext.client_secret[0].ciphertext_blob}:"
+            "requestedScopes" = ["openid", "profile", "email"]
+            "requestedIDTokenClaims" = {
+              "cognito:groups" = {
+                "essential" = true
+              }
+            }
+          }
+        )
+      }
+    ]),
     values({
       for i, domain in tolist(var.domains) :
       "key" => {
