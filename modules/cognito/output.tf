@@ -1,11 +1,14 @@
 output pool_arn {
-  value = aws_cognito_user_pool.this.arn
+  description = "An ARN of the new created AWS Cognito User Pool"
+  value       = aws_cognito_user_pool.this.arn
 }
 
 output pool_id {
-  value = aws_cognito_user_pool.this.id
+  description = "An ID of the new created AWS Cognito User Pool"
+  value       = aws_cognito_user_pool.this.id
 }
 
 output domain {
-  value = aws_cognito_user_pool_domain.this.domain
+  description = "A custom domain name of the AWS Cognito endpoint"
+  value       = aws_cognito_user_pool_domain.this.domain
 }
