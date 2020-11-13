@@ -57,30 +57,6 @@ To destroy some module just remove them from modules.tf and run
 `terraform plan -out plan && terraform apply plan`
 
 
-## Use GPU nodes
-
-NVIDIA GPUs can now be consumed via container level resource requirements using the resource name nvidia.com/gpu:
-
-```
-apiVersion: v1
-kind: Pod
-metadata:
-  name: gpu-pod
-spec:
-  containers:
-    - name: cuda-container
-      image: nvidia/cuda:9.0-devel
-      resources:
-        limits:
-          nvidia.com/gpu: 2 # requesting 2 GPUs
-    - name: digits-container
-      image: nvidia/digits:6.0
-      resources:
-        limits:
-          nvidia.com/gpu: 2 # requesting 2 GPUs
-```          
-WARNING: if you don't request GPUs when using the device plugin with NVIDIA images all the GPUs on the machine will be exposed inside your container.
-
 ## Troubleshooting
 Enable terraform logs verbose
 `export TF_LOG=trace`

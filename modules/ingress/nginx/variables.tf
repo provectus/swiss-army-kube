@@ -1,70 +1,38 @@
-# For depends_on queqe
-variable "module_depends_on" {
-  default = []
-}
-
-variable "cluster_name" {
+variable namespace {
   type        = string
-  description = "Name of the kubernetes cluster"
-  default     = "test"
+  default     = ""
+  description = "A name of the existing namespace"
 }
 
-variable "aws_private" {
+variable namespace_name {
   type        = string
-  description = "Use private or public infrastructure"
-  default     = "true"
+  default     = "ingress-system"
+  description = "A name of namespace for creating"
 }
 
-variable "domains" {
-  description = "domain name for ingress"
+variable module_depends_on {
+  default     = []
+  description = "A list of explicit dependencies for the module"
 }
 
-variable "config_path" {
-  description = "location of the kubeconfig file"
-  default     = "~/.kube/config"
+variable cluster_name {
+  type        = string
+  description = "The name of the cluster the charts will be deployed to"
 }
 
-variable "github-auth" {
-  description = "Trigger for enable or disable deploy oauth2-proxy"
-}
-
-variable "github-client-id" {
-  default     = ""
-  description = "Client id for auth github (create it https://github.com/settings/applications/new)"
-}
-
-variable "github-client-secret" {
-  default     = ""
-  description = "Client secrets"
-}
-
-variable "cookie-secret" {
-  default     = ""
-  description = "random_string make gen command python -c 'import os,base64; print base64.b64encode(os.urandom(16))'"
-}
-
-variable "github-org" {
-  default     = ""
-  description = "Github organization"
-}
-
-#Ingress google auth settings
-variable "google-auth" {
-  description = "Enables Google auth"
+variable aws_private {
+  type        = bool
+  description = "Set true or false to use private or public infrastructure"
   default     = false
 }
 
-variable "google-client-id" {
-  description = "Client ID for Google auth"
-  default     = ""
+variable argocd {
+  type        = map(string)
+  description = "A set of values for enabling deployment through ArgoCD"
+  default     = {}
 }
 
-variable "google-client-secret" {
-  description = "Client secret for Google auth"
-  default     = ""
-}
-
-variable "google-cookie-secret" {
-  default     = ""
-  description = "random_string make gen command python -c 'import os,base64; print base64.b64encode(os.urandom(16))'"
+variable conf {
+  default     = {}
+  description = "A set of parameters to pass to Nginx Ingress Controller chart"
 }

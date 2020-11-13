@@ -6,10 +6,16 @@ data aws_eks_cluster_auth cluster {
   name = module.kubernetes.cluster_name
 }
 
+data aws_route53_zone this {
+  name         = "edu.provectus.io."
+  private_zone = false
+}
+
 locals {
   environment  = "dev"
   project      = "EDUCATION"
   cluster_name = "sak-argocd-full"
+  domain       = ["${local.cluster_name}.edu.provectus.io"]
   tags = {
     environment = local.environment
     project     = local.project
@@ -41,15 +47,40 @@ module argocd {
   module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name]
   source            = "../../modules/cicd/argo/modules/cd"
 
-  branch       = "feature/scaling-refactoring"
+  branch       = "feature/system-refactoring"
   owner        = "provectus"
   repository   = "swiss-army-kube"
   cluster_name = module.kubernetes.cluster_name
   path_prefix  = "examples/argocd-with-applications/"
+
+  domains = local.domain
+  ingress_annotations = {
+    "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
+    "kubernetes.io/ingress.class"              = "nginx"
+  }
+  conf = {
+    "server.service.type"     = "ClusterIP"
+    "server.ingress.paths[0]" = "/"
+  }
 }
 
 module scaling {
   source       = "../../modules/scaling"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
+}
+
+module ingress {
+  source       = "../../modules/ingress/nginx"
+  cluster_name = module.kubernetes.cluster_name
+  argocd       = module.argocd.state
+}
+
+module external_dns {
+  source       = "../../modules/system/external-dns"
+  cluster_name = module.kubernetes.cluster_name
+  argocd       = module.argocd.state
+  mainzoneid   = data.aws_route53_zone.this.zone_id
+  domains      = local.domain
+  tags         = local.tags
 }
