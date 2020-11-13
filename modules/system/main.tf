@@ -88,17 +88,6 @@ resource "aws_route53_zone" "private" {
   }
 }
 
-# OIDC cluster EKS settings
-resource "aws_iam_openid_connect_provider" "cluster" {
-  depends_on = [
-    var.module_depends_on,
-    null_resource.wait-eks
-  ]
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da2b0ab7280"]
-  url             = var.cluster_oidc_url
-}
-
 # Enabling IAM Roles for Service Accounts
 data "aws_caller_identity" "current" {}
 

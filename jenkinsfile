@@ -37,6 +37,15 @@ pipeline {
             """
           }
         }
+        stage("Full ArgoCD example") {
+          steps {
+            sh """
+            cd examples/argocd-with-applications
+            terraform init
+            TFLINT_LOG=info tflint --deep --force --module .
+            """
+          }
+        }
       }
     }
   }

@@ -1,5 +1,5 @@
 # For depends_on queqe
-variable "module_depends_on" {
+variable module_depends_on {
   default     = []
   description = "A list of explicit dependencies for the module"
 }
@@ -15,8 +15,15 @@ variable hpa_conf {
 }
 
 variable namespace {
+  type        = string
   default     = "kube-system"
-  description = "A namespace where Helm charts will be deployed to"
+  description = "A name of the existing namespace"
+}
+
+variable namespace_name {
+  type        = string
+  default     = "scaling"
+  description = "A name of namespace for creating"
 }
 
 variable cluster_name {
@@ -42,4 +49,10 @@ variable cluster_autoscaler_chart_version {
 variable hpa_chart_version {
   default     = "0.2.4"
   description = "Version of Horizontal Pod Autoscaler chart"
+}
+
+variable argocd {
+  type        = map(string)
+  description = "A set of values for enabling deployment through ArgoCD"
+  default     = {}
 }
