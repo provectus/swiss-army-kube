@@ -3,6 +3,15 @@ variable "module_depends_on" {
   default = []
 }
 
+variable "environment" {}
+
+variable "project" {}
+
+variable "create_namespace" {
+  description = "Whether to create new kubernetes namespace"
+  default     = true
+}
+
 variable "namespace_name" {
   description = "Name of the namespace where install charts"
   default     = "logging"
@@ -12,8 +21,21 @@ variable "cluster_name" {
   description = "Name of the kubernetes cluster"
 }
 
+variable "cluster_oidc_arn" {
+  description = "OIDC EKS cluster ARN"
+}
+
+variable "cluster_oidc_url" {
+  description = "OIDC EKS cluster endpoint"
+}
+
 variable "aws_region" {
   description = "Fluent Bit target's AWS Region"
+}
+
+variable "aws_account" {
+  description = "AWS Account ID for IAM policy"
+  default     = "*"
 }
 
 variable "cloudwatch_enabled" {
@@ -51,7 +73,7 @@ variable "cloudwatch_log_format" {
   description = "Format of the log data"
 }
 
-variable "cloudwatch_role_arn" {
+variable "cloudwatch_cross_account_role_arn" {
   default     = ""
   description = "ARN of an IAM role to assume (cross-account access)"
 }
@@ -91,7 +113,7 @@ variable "firehose_data_keys" {
   description = "Log record key value of which will be sent to Firehose. By default whole message will be sent"
 }
 
-variable "firehose_role_arn" {
+variable "firehose_cross_account_role_arn" {
   default     = ""
   description = "ARN of an IAM role to assume (cross-account access)"
 }
@@ -141,7 +163,7 @@ variable "kinesis_data_keys" {
   description = "Log record key value of which will be sent to Firehose. By default whole message will be sent"
 }
 
-variable "kinesis_role_arn" {
+variable "kinesis_cross_account_role_arn" {
   default     = ""
   description = "ARN of an IAM role to assume (cross-account access)"
 }
@@ -242,9 +264,4 @@ variable "service_account_auto_create" {
 variable "service_account_name" {
   default     = "aws-for-fluent-bit"
   description = "Service account name"
-}
-
-variable "service_account_annotations" {
-  default     = ""
-  description = "Service account annotations"
 }

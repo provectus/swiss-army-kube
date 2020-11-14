@@ -1,13 +1,43 @@
-# Create namespace logging
-resource "kubernetes_namespace" "logging" {
+resource "kubernetes_namespace" "this" {
+  count = var.create_namespace ? 1 : 0
   depends_on = [
     var.module_depends_on
   ]
+
   metadata {
     name = var.namespace_name
   }
 }
 
+data "aws_iam_policy_document" "aws_for_fluent_bit_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    effect  = "Allow"
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(var.cluster_oidc_url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:${local.namespace}:${var.service_account_name}"]
+    }
+
+    principals {
+      identifiers = [var.cluster_oidc_arn]
+      type        = "Federated"
+    }
+  }
+}
+
+resource "aws_iam_role" "aws_for_fluent_bit_iam_role" {
+  name               = "${var.cluster_name}-aws-for-fluent-bit"
+  assume_role_policy = data.aws_iam_policy_document.aws_for_fluent_bit_assume_role_policy.json
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project
+  }
+}
+
+// Configuration: https://github.com/aws/eks-charts/blob/master/stable/aws-for-fluent-bit/README.md
 resource "helm_release" "aws-for-fluent-bit" {
   depends_on = [
     var.module_depends_on
@@ -17,16 +47,16 @@ resource "helm_release" "aws-for-fluent-bit" {
   repository = "https://aws.github.io/eks-charts"
   chart      = "aws-for-fluent-bit"
   version    = "0.1.3"
-  namespace  = var.namespace_name
+  namespace  = local.namespace
 
   values = [
     templatefile("${path.module}/values/aws-for-fluent-bit.yaml", {
-      aws_region                               = var.aws_region
-      namespace                                = var.namespace_name
+      aws_region = var.aws_region
+      namespace  = local.namespace
 
       service_account_auto_create              = var.service_account_auto_create
       service_account_name                     = var.service_account_name
-      service_account_annotations              = var.service_account_annotations
+      service_account_role_arn                 = aws_iam_role.aws_for_fluent_bit_iam_role.arn
 
       daemon_set_resources_limits_cpu          = var.daemon_set_resources_limits_cpu
       daemon_set_resources_limits_memory       = var.daemon_set_resources_limits_memory
@@ -40,19 +70,19 @@ resource "helm_release" "aws-for-fluent-bit" {
       cloudwatch_log_stream_prefix             = var.cloudwatch_log_stream_prefix
       cloudwatch_log_key                       = var.cloudwatch_log_key
       cloudwatch_log_format                    = var.cloudwatch_log_format
-      cloudwatch_role_arn                      = var.cloudwatch_role_arn
       cloudwatch_auto_create_group             = var.cloudwatch_auto_create_group
       cloudwatch_endpoint                      = var.cloudwatch_endpoint
       cloudwatch_credentials_endpoint          = var.cloudwatch_credentials_endpoint
+      cloudwatch_cross_account_role_arn        = var.cloudwatch_cross_account_role_arn
 
       firehose_enabled                         = var.firehose_enabled
       firehose_match                           = var.firehose_match
       firehose_delivery_stream                 = var.firehose_delivery_stream
       firehose_data_keys                       = var.firehose_data_keys
-      firehose_role_arn                        = var.firehose_role_arn
       firehose_endpoint                        = var.firehose_endpoint
       firehose_time_key                        = var.firehose_time_key
       firehose_time_key_format                 = var.firehose_time_key_format
+      firehose_cross_account_role_arn          = var.firehose_cross_account_role_arn
 
       kinesis_enabled                          = var.kinesis_enabled
       kinesis_match                            = var.kinesis_match
@@ -60,7 +90,6 @@ resource "helm_release" "aws-for-fluent-bit" {
       kinesis_partition_key                    = var.kinesis_partition_key
       kinesis_append_new_line                  = var.kinesis_append_new_line
       kinesis_data_keys                        = var.kinesis_data_keys
-      kinesis_role_arn                         = var.kinesis_role_arn
       kinesis_endpoint                         = var.kinesis_endpoint
       kinesis_sts_endpoint                     = var.kinesis_sts_endpoint
       kinesis_time_key                         = var.kinesis_time_key
@@ -69,6 +98,7 @@ resource "helm_release" "aws-for-fluent-bit" {
       kinesis_aggregation                      = var.kinesis_aggregation
       kinesis_experimental_concurrency         = var.kinesis_experimental_concurrency
       kinesis_experimental_concurrency_retries = var.kinesis_experimental_concurrency_retries
+      kinesis_cross_account_role_arn           = var.kinesis_cross_account_role_arn
 
       elastic_search                           = var.elastic_search_enabled
       elastic_match                            = var.elastic_match
@@ -79,4 +109,8 @@ resource "helm_release" "aws-for-fluent-bit" {
       elastic_retry_limit                      = var.elastic_retry_limit
     })
   ]
+}
+
+locals {
+  namespace = coalescelist(kubernetes_namespace.this, [{ metadata = [{ name = var.namespace_name }] }])[0].metadata[0].name
 }
