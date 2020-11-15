@@ -9,34 +9,6 @@ resource "kubernetes_namespace" "this" {
   }
 }
 
-data "aws_iam_policy_document" "aws_for_fluent_bit_assume_role_policy" {
-  statement {
-    actions = ["sts:AssumeRoleWithWebIdentity"]
-    effect  = "Allow"
-
-    condition {
-      test     = "StringEquals"
-      variable = "${replace(var.cluster_oidc_url, "https://", "")}:sub"
-      values   = ["system:serviceaccount:${local.namespace}:${var.service_account_name}"]
-    }
-
-    principals {
-      identifiers = [var.cluster_oidc_arn]
-      type        = "Federated"
-    }
-  }
-}
-
-resource "aws_iam_role" "aws_for_fluent_bit_iam_role" {
-  name               = "${var.cluster_name}-aws-for-fluent-bit"
-  assume_role_policy = data.aws_iam_policy_document.aws_for_fluent_bit_assume_role_policy.json
-
-  tags = {
-    Environment = var.environment
-    Project     = var.project
-  }
-}
-
 // Configuration: https://github.com/aws/eks-charts/blob/master/stable/aws-for-fluent-bit/README.md
 resource "helm_release" "aws-for-fluent-bit" {
   depends_on = [
