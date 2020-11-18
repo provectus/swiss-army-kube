@@ -46,7 +46,7 @@ jobs:
           reporter: github-pr-review # Optional. Change reporter
           fail_on_error: "true" # Optional. Fail action if errors are found
           filter_mode: "nofilter" # Optional. Check all files, not just the diff
-          flags: "--module" # Optional. Add custom tflint flags
+          flags: "--module --deep --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
 
       - name: tflint argocd
         uses: reviewdog/action-tflint@master
@@ -56,7 +56,7 @@ jobs:
           reporter: github-pr-review # Optional. Change reporter
           fail_on_error: "true" # Optional. Fail action if errors are found
           filter_mode: "nofilter" # Optional. Check all files, not just the diff
-          flags: "--module" # Optional. Add custom tflint flags
+          flags: "--module --deep --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
 
       - name: tflint argocd-with-applications
         uses: reviewdog/action-tflint@master
@@ -66,4 +66,4 @@ jobs:
           reporter: github-pr-review # Optional. Change reporter
           fail_on_error: "true" # Optional. Fail action if errors are found
           filter_mode: "nofilter" # Optional. Check all files, not just the diff
-          flags: "--module" # Optional. Add custom tflint flags
+          flags: "--module --deep --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
