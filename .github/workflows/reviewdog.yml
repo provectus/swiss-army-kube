@@ -41,7 +41,7 @@ jobs:
       - name: tflint common
         uses: reviewdog/action-tflint@master
         with:
-          github_token: ${{ secrets.GITHUBTOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           working_directory: "examples/common" # Optional. Change working directory
           reporter: github-pr-review # Optional. Change reporter
           fail_on_error: "true" # Optional. Fail action if errors are found
@@ -51,7 +51,7 @@ jobs:
       - name: tflint argocd
         uses: reviewdog/action-tflint@master
         with:
-          github_token: ${{ secrets.GITHUBTOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           working_directory: "examples/argocd" # Optional. Change working directory
           reporter: github-pr-review # Optional. Change reporter
           fail_on_error: "true" # Optional. Fail action if errors are found
@@ -61,7 +61,7 @@ jobs:
       - name: tflint argocd-with-applications
         uses: reviewdog/action-tflint@master
         with:
-          github_token: ${{ secrets.GITHUBTOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
           working_directory: "examples/argocd-with-applications" # Optional. Change working directory
           reporter: github-pr-review # Optional. Change reporter
           fail_on_error: "true" # Optional. Fail action if errors are found
