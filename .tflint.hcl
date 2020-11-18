@@ -1,6 +1,6 @@
 config {
   module = true
-  deep_check = true
+  deep_check = false
   force = false
   disabled_by_default = false
 }
