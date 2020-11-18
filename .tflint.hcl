@@ -1,7 +1,7 @@
 config {
   module = true
   deep_check = false
-  force = false
+  force = true
   disabled_by_default = false
 }
 
