@@ -1,0 +1,40 @@
+name: reviewdog
+on: [pull_request]
+jobs:
+  tflint:
+    name: runner / tflint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@master
+
+      # Install latest Terraform manually as
+      #  Docker-based GitHub Actions are
+      #  slow due to lack of caching
+      # Note: Terraform is not needed for tflint
+      - name: Install Terraform
+        run: |
+          brew install terraform
+
+      # Run init to get module code to be able to use `--module`
+      - name: Terraform init
+        run: |
+          terraform init
+
+      # Minimal example
+      - name: tflint
+        uses: reviewdog/action-tflint@master
+        with:
+          github_token: ${{ secrets.GITHUBTOKEN }}
+
+      # More complex example
+      - name: tflint
+        uses: reviewdog/action-tflint@master
+        with:
+          github_token: ${{ secrets.GITHUBTOKEN }}
+          working_directory: "testdata" # Optional. Change working directory
+          reporter: github-pr-review # Optional. Change reporter
+          fail_on_error: "true" # Optional. Fail action if errors are found
+          filter_mode: "nofilter" # Optional. Check all files, not just the diff
+          flags: "--module" # Optional. Add custom tflint flags
