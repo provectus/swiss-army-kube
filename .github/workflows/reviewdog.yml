@@ -15,12 +15,14 @@ jobs:
       # Note: Terraform is not needed for tflint
       - name: Install Terraform
         run: |
-          brew install terraform@0.12
+          brew install tfenv
+          tfenv install 0.12.29
 
       # Run init to get module code to be able to use `--module`
       - name: Terraform init common
         working-directory: ./examples/common
         run: |
+          terraform version
           terraform init
 
       - name: Terraform init argocd
