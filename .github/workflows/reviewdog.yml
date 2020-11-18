@@ -45,7 +45,7 @@ jobs:
           working_directory: "examples/common" # Optional. Change working directory
           reporter: github-pr-review # Optional. Change reporter
           fail_on_error: "true" # Optional. Fail action if errors are found
-          filter_mode: "nofilter" # Optional. Check all files, not just the diff
+          filter_mode: "added" # Optional. Check all files, not just the diff
           level: "warning"
           flags: "--module --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
 
@@ -56,7 +56,7 @@ jobs:
           working_directory: "examples/argocd" # Optional. Change working directory
           reporter: github-pr-review # Optional. Change reporter
           fail_on_error: "true" # Optional. Fail action if errors are found
-          filter_mode: "nofilter" # Optional. Check all files, not just the diff
+          filter_mode: "added" # Optional. Check all files, not just the diff
           level: "warning"
           flags: "--module --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
 
@@ -67,6 +67,6 @@ jobs:
           working_directory: "examples/argocd-with-applications" # Optional. Change working directory
           reporter: github-pr-review # Optional. Change reporter
           fail_on_error: "true" # Optional. Fail action if errors are found
-          filter_mode: "nofilter" # Optional. Check all files, not just the diff
+          filter_mode: "added" # Optional. Check all files, not just the diff
           level: "warning"
           flags: "--module --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
