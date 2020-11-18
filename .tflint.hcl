@@ -1,8 +1,9 @@
 config {
   module = true
   deep_check = false
-  force = true
+  force = false
   disabled_by_default = false
+  level = warning
 }
 
 rule "aws_instance_invalid_type" {
