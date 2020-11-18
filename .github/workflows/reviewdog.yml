@@ -15,7 +15,7 @@ jobs:
       # Note: Terraform is not needed for tflint
       - name: Install Terraform
         run: |
-          brew install terraform
+          brew install terraform@0.12
 
       # Run init to get module code to be able to use `--module`
       - name: Terraform init common
