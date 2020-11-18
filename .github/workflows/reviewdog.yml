@@ -41,29 +41,29 @@ jobs:
       - name: tflint common
         uses: reviewdog/action-tflint@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.github_token }}
           working_directory: "examples/common" # Optional. Change working directory
           reporter: github-pr-review # Optional. Change reporter
           fail_on_error: "true" # Optional. Fail action if errors are found
           filter_mode: "nofilter" # Optional. Check all files, not just the diff
-          flags: "--module --deep --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
+          flags: "--module --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
 
       - name: tflint argocd
         uses: reviewdog/action-tflint@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.github_token }}
           working_directory: "examples/argocd" # Optional. Change working directory
           reporter: github-pr-review # Optional. Change reporter
           fail_on_error: "true" # Optional. Fail action if errors are found
           filter_mode: "nofilter" # Optional. Check all files, not just the diff
-          flags: "--module --deep --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
+          flags: "--module --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
 
       - name: tflint argocd-with-applications
         uses: reviewdog/action-tflint@master
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.github_token }}
           working_directory: "examples/argocd-with-applications" # Optional. Change working directory
           reporter: github-pr-review # Optional. Change reporter
           fail_on_error: "true" # Optional. Fail action if errors are found
           filter_mode: "nofilter" # Optional. Check all files, not just the diff
-          flags: "--module --deep --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
+          flags: "--module --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
