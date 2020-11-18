@@ -1,19 +1,19 @@
-variable "environment" {
+variable environment {
   type        = string
-  description = "Environment Use in tags and annotations for identify EKS cluster"
-  default     = "test"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
-variable "project" {
+variable project {
   type        = string
-  description = "Project Use in tags and annotations for identify EKS cluster"
-  default     = "EDUCATION"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
-variable "cluster_name" {
+variable cluster_name {
   type        = string
-  description = "Name of EKS cluster"
   default     = "test"
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable "cluster_version" {
@@ -24,12 +24,15 @@ variable "cluster_version" {
 
 variable "vpc_id" {
   type        = string
-  description = "VPC id"
+  default     = null
+  description = "An ID of the existing AWS VPC"
 }
 
-variable "availability_zones" {
-  type        = list(string)
-  description = "List of use avilability_zones"
+
+variable availability_zones {
+  description = "A list of the availability zones to use"
+  type        = list
+  default     = []
 }
 
 variable "subnets" {

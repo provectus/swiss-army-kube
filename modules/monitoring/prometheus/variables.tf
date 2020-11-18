@@ -1,15 +1,14 @@
 # For depends_on queqe
-variable "module_depends_on" {
-  default = []
+variable module_depends_on {
+  default     = []
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
-variable "namespace_name" {
-  description = "Name of the namespace where install charts"
-  default     = "system"
-}
-
-variable "cluster_name" {
-  description = "Name of the kubernetes cluster"
+variable cluster_name {
+  type        = string
+  default     = null
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable "config_path" {
@@ -18,7 +17,9 @@ variable "config_path" {
 }
 
 variable "domains" {
-  description = "domain name for ingress"
+  type        = list(string)
+  default     = []
+  description = "A list of domains to use for ingresses"
 }
 
 #Grafana

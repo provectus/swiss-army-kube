@@ -1,10 +1,14 @@
 # For depends_on queqe
-variable "module_depends_on" {
-  default = []
+variable module_depends_on {
+  default     = []
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
-variable "namespace" {
-  default = "argo-workflow"
+variable namespace {
+  type        = string
+  default     = null
+  description = "A name of the existing namespace"
 }
 
 variable "s3_bucket" {
@@ -20,20 +24,26 @@ variable "argo_events_namespace" {
   type = string
 }
 
-variable "environment" {
+variable environment {
   type        = string
-  description = "Environment Use in tags and annotations for identify EKS cluster"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
-variable "project" {
+variable project {
   type        = string
-  description = "Project Use in tags and annotations for identify EKS cluster"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
-variable "cluster_name" {
-  description = "Name of the kubernetes cluster"
+variable cluster_name {
+  type        = string
+  default     = null
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable "cluster_oidc_url" {
-  type = string
+  type        = string
+  description = "An OIDC endpoint of the EKS cluster"
+  default     = ""
 }

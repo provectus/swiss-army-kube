@@ -6,7 +6,6 @@ import sys
 
 def get_variables():
 	variables = {}
-	result = 0
 	for file in glob.glob("**/variables.tf",recursive = True):
 		with open(file, "r") as f:
 			data = hcl2.load(f)
@@ -22,10 +21,10 @@ def get_variables():
 				else:
 					v_type = "NULL"
 				variables[name]["definitions"].append({"type":v_type, "description":v_description, "used_in":"/".join(file.split("/")[1:-1])})
-
 	return variables
 
 def validate():
+	result = 0
 	variables = get_variables()
 	for var_name in variables.keys():
 		var = variables[var_name]

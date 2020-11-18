@@ -1,22 +1,32 @@
 # For depends_on queqe
-variable "module_depends_on" {
-  default = []
+variable module_depends_on {
+  default     = []
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
-variable "cluster_name" {
-  description = "Name of the kubernetes cluster"
+variable cluster_name {
+  type        = string
+  default     = null
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable "domains" {
-  description = "domain name for ingress"
+  type        = list(string)
+  default     = []
+  description = "A list of domains to use for ingresses"
 }
 
 variable "vpc_id" {
-  description = "domain name for ingress"
+  type        = string
+  default     = null
+  description = "An ID of the existing AWS VPC"
 }
 
-variable "aws_region" {
-  description = "Name the aws region (us-central-1, us-west-2 and etc.)"
+variable aws_region {
+  type        = string
+  default     = null
+  description = "A name of the AWS region (us-central-1, us-west-2 and etc.)"
 }
 
 variable "config_path" {
@@ -31,5 +41,7 @@ variable "certificates_arns" {
 }
 
 variable "cluster_oidc_url" {
-  type = string
+  type        = string
+  description = "An OIDC endpoint of the EKS cluster"
+  default     = ""
 }

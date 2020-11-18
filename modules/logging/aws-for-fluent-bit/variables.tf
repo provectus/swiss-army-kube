@@ -1,36 +1,56 @@
 # For depends_on queue
-variable "module_depends_on" {
-  default = []
+variable module_depends_on {
+  default     = []
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
-variable "environment" {}
-
-variable "project" {}
-
-variable "create_namespace" {
-  description = "Whether to create new kubernetes namespace"
-  default     = true
+variable environment {
+  type        = string
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
-variable "namespace_name" {
-  description = "Name of the namespace where install charts"
+variable project {
+  type        = string
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
+}
+
+variable namespace {
+  type        = string
+  default     = ""
+  description = "A name of the existing namespace"
+}
+
+variable namespace_name {
+  type        = string
   default     = "logging"
+  description = "A name of namespace for creating"
 }
 
-variable "cluster_name" {
-  description = "Name of the kubernetes cluster"
+variable cluster_name {
+  type        = string
+  default     = null
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable "cluster_oidc_arn" {
-  description = "OIDC EKS cluster ARN"
+  type        = string
+  description = "An OIDC ARN of the EKS cluster"
+  default     = ""
 }
 
 variable "cluster_oidc_url" {
-  description = "OIDC EKS cluster endpoint"
+  type        = string
+  description = "An OIDC endpoint of the EKS cluster"
+  default     = ""
 }
 
-variable "aws_region" {
-  description = "Fluent Bit target's AWS Region"
+variable aws_region {
+  type        = string
+  default     = null
+  description = "A name of the AWS region (us-central-1, us-west-2 and etc.)"
 }
 
 variable "aws_account" {
