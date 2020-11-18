@@ -22,17 +22,19 @@ jobs:
       - name: Terraform init common
         working-directory: ./examples/common
         run: |
-          terraform version
+          tfenv use 0.12.29
           terraform init
 
       - name: Terraform init argocd
         working-directory: ./examples/argocd
         run: |
+          tfenv use 0.12.29
           terraform init
 
       - name: Terraform init argocd-with-applications
         working-directory: ./examples/argocd-with-applications
         run: |
+          tfenv use 0.12.29
           terraform init
 
       # More complex example
