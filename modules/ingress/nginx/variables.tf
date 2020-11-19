@@ -12,12 +12,14 @@ variable namespace_name {
 
 variable module_depends_on {
   default     = []
-  description = "A list of explicit dependencies for the module"
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
 variable cluster_name {
   type        = string
-  description = "The name of the cluster the charts will be deployed to"
+  default     = null
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable aws_private {

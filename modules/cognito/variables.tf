@@ -8,7 +8,8 @@ variable domain {
 
 variable cluster_name {
   type        = string
-  description = "A name of the cluster"
+  default     = null
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable tags {

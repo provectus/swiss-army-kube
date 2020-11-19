@@ -1,7 +1,7 @@
 resource "kubernetes_namespace" "this" {
   depends_on = [var.module_depends_on]
   metadata {
-    name = var.namespace
+    name = var.namespace_name
   }
 }
 
