@@ -23,9 +23,9 @@ variable conf {
 }
 
 variable module_depends_on {
-  type        = list(any)
   default     = []
-  description = "A dependency list"
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
 variable branch {
@@ -48,13 +48,14 @@ variable owner {
 
 variable cluster_name {
   type        = string
-  description = "A name of the EKS cluster"
+  default     = null
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable domains {
   type        = list(string)
   default     = []
-  description = "A list of domains to use"
+  description = "A list of domains to use for ingresses"
 }
 
 variable vcs {

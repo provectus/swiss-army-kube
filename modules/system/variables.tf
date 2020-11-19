@@ -1,6 +1,8 @@
 # For depends_on queqe
-variable "module_depends_on" {
-  default = []
+variable module_depends_on {
+  default     = []
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
 variable "aws_private" {
@@ -8,24 +10,28 @@ variable "aws_private" {
   description = "Use private or public infrastructure"
 }
 
-#Deploy environment name
-variable "environment" {
+variable environment {
   type        = string
-  description = "Environment Use in tags and annotations for identify EKS cluster"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
-variable "project" {
+variable project {
   type        = string
-  description = "Project Use in tags and annotations for identify EKS cluster"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
-variable "cluster_name" {
-  description = "Name of the kubernetes cluster"
+variable cluster_name {
+  type        = string
+  default     = null
+  description = "A name of the Amazon EKS cluster"
 }
 
-variable "vpc_id" {
+variable vpc_id {
   type        = string
-  description = "VPC id"
+  default     = null
+  description = "An ID of the existing AWS VPC"
 }
 
 variable "mainzoneid" {
@@ -39,7 +45,9 @@ variable "config_path" {
 }
 
 variable "domains" {
-  description = "domain name for ingress, set as coma-sepparate list"
+  type        = list(string)
+  default     = []
+  description = "A list of domains to use for ingresses"
 }
 
 #Cert-manager
@@ -50,7 +58,7 @@ variable "cert_manager_email" {
 
 variable "cluster_oidc_url" {
   type        = string
-  description = "OIDC EKS cluster endpoint"
+  description = "An OIDC endpoint of the EKS cluster"
   default     = ""
 }
 

@@ -1,12 +1,14 @@
 # For depends_on queqe
-variable "module_depends_on" {
-  default = []
+variable module_depends_on {
+  default     = []
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
-variable "cluster_name" {
+variable cluster_name {
   type        = string
-  description = "Name of the kubernetes cluster"
-  default     = "test"
+  default     = "null"
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable "aws_private" {
@@ -16,7 +18,9 @@ variable "aws_private" {
 }
 
 variable "domains" {
-  description = "domain name for ingress"
+  type        = list(string)
+  default     = []
+  description = "A list of domains to use for ingresses"
 }
 
 variable "config_path" {

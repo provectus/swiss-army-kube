@@ -1,10 +1,13 @@
-variable "module_depends_on" {
-  default = []
+variable module_depends_on {
+  default     = []
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
 variable "vpc_id" {
   type        = string
-  description = "VPC id"
+  default     = null
+  description = "An ID of the existing AWS VPC"
 }
 
 variable "subnets" {
@@ -12,20 +15,22 @@ variable "subnets" {
   description = "vpc subnets"
 }
 
-variable "environment" {
+variable environment {
   type        = string
-  description = "Environment Use in tags and annotations for identify EKS cluster"
-  default     = "test"
+  default     = "dev"
+  description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
-variable "project" {
+variable project {
   type        = string
-  description = "Project Use in tags and annotations for identify EKS cluster"
   default     = "EDUCATION"
+  description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
-variable "cluster_name" {
-  description = "Name of cluster"
+variable cluster_name {
+  type        = string
+  default     = null
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable "config_path" {

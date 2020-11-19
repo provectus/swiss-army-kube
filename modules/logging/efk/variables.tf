@@ -1,6 +1,8 @@
 # For depends_on queqe
-variable "module_depends_on" {
-  default = []
+variable module_depends_on {
+  default     = []
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
 variable "config_path" {
@@ -9,7 +11,9 @@ variable "config_path" {
 }
 
 variable "domains" {
-  description = "domain name for ingress"
+  type        = list(string)
+  default     = []
+  description = "A list of domains to use for ingresses"
 }
 
 variable "logstash" {
