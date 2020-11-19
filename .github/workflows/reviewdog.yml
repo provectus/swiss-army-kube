@@ -18,6 +18,7 @@ jobs:
           brew install tfenv
           tfenv install 0.12.29
 
+      #//TODO: Rewrite pipeline to recursive all folder in examples 
       # Run init to get module code to be able to use `--module`
       - name: Terraform init common
         working-directory: ./examples/common
@@ -37,7 +38,7 @@ jobs:
           tfenv use 0.12.29
           terraform init
 
-      # More complex example
+      # More complex example 
       - name: tflint common
         uses: reviewdog/action-tflint@master
         with:

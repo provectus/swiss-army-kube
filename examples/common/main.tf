@@ -31,9 +31,9 @@ module "kubernetes" {
 
   environment        = local.environment
   project            = local.project
-  availability_zones = ["us-west-2a", "us-west-2b", "us-west-2x"]
+  availability_zones = ["us-west-2a", "us-west-2b"]
   cluster_name       = local.cluster_name
-  cluster_version    = "1.25"
+  cluster_version    = "1.16"
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
   admin_arns = [
@@ -55,7 +55,7 @@ module "kubernetes" {
   on_demand_common_max_cluster_size = 5
   on_demand_common_min_cluster_size = 1
   on_demand_common_desired_capacity = 1
-  on_demand_common_instance_type    = ["t1.large", "m5.xlarge", "m5.2xlarge"]
+  on_demand_common_instance_type    = ["m5.large", "m5.xlarge", "m5.2xlarge"]
 
   #Spot
   spot_max_cluster_size = 5
