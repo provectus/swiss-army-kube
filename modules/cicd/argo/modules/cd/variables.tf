@@ -18,7 +18,7 @@ variable chart_version {
 
 variable conf {
   type        = map(string)
-  description = "A custom configuration for ArgoCD deployment"
+  description = "A custom configuration for deployment"
   default     = {}
 }
 

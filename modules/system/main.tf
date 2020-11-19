@@ -46,7 +46,7 @@ resource "aws_route53_zone" "cluster" {
     null_resource.wait-eks
   ]
 
-  count = var.aws_private == "false" ? length(var.domains) : 0
+  count = var.aws_private ? 0 : length(var.domains)
   name  = element(var.domains, count.index)
 
   tags = {
@@ -81,7 +81,7 @@ resource "aws_route53_zone" "private" {
     var.module_depends_on,
     null_resource.wait-eks
   ]
-  count = var.aws_private == "true" ? length(var.domains) : 0
+  count = var.aws_private ? length(var.domains) : 0
   name  = element(var.domains, count.index)
   vpc {
     vpc_id = data.aws_vpc.main.id

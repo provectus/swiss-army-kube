@@ -35,6 +35,7 @@ variable argocd {
 }
 
 variable conf {
+  type        = map(string)
+  description = "A custom configuration for deployment"
   default     = {}
-  description = "A set of parameters to pass to Nginx Ingress Controller chart"
 }

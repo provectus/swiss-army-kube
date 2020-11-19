@@ -28,20 +28,22 @@ variable namespace_name {
   description = "A name of namespace for creating"
 }
 
-variable domains {
-  type        = list(string)
-  default     = []
-  description = "A list of domains to use"
-}
-
 variable module_depends_on {
   default     = []
-  description = "A list of explicit dependencies for the module"
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
 variable cluster_name {
   type        = string
-  description = "A name of the cluster the charts will be deployed to"
+  default     = null
+  description = "A name of the Amazon EKS cluster"
+}
+
+variable domains {
+  type        = list(string)
+  default     = []
+  description = "A list of domains to use for ingresses"
 }
 
 variable argocd {
@@ -51,6 +53,7 @@ variable argocd {
 }
 
 variable conf {
+  type        = map(string)
+  description = "A custom configuration for deployment"
   default     = {}
-  description = "A set of parameters to pass to OAuth2 Proxy chart"
 }

@@ -1,13 +1,3 @@
-variable module_depends_on {
-  default     = []
-  description = "A list of explicit dependencies for the module"
-}
-
-variable cluster_name {
-  type        = string
-  description = "The name of the cluster the charts will be deployed to"
-}
-
 variable aws_private {
   type        = bool
   description = "Set true or false to use private or public infrastructure"
@@ -21,13 +11,14 @@ variable argocd {
 }
 
 variable conf {
+  type        = map(string)
+  description = "A custom configuration for deployment"
   default     = {}
-  description = "A set of parameters to pass to Nginx Ingress Controller chart"
 }
 
-variable domains {
-  type        = list
-  description = "A list of domains to use"
+variable hostedzones {
+  type        = list(string)
+  description = "A list of Route53 hosted zones domains to create, need to provide a list of FQDN strings"
   default     = []
 }
 
@@ -49,6 +40,18 @@ variable namespace_name {
   description = "A name of namespace for creating"
 }
 
+variable module_depends_on {
+  default     = []
+  type        = list(any)
+  description = "A list of explicit dependencies"
+}
+
+variable cluster_name {
+  type        = string
+  default     = null
+  description = "A name of the Amazon EKS cluster"
+}
+
 variable tags {
   type        = map(string)
   default     = {}
@@ -57,6 +60,6 @@ variable tags {
 
 variable vpc_id {
   type        = string
-  default     = ""
-  description = "An ID of the VPC for the private Route53 zone"
+  default     = null
+  description = "An ID of the existing AWS VPC"
 }

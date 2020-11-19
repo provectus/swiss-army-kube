@@ -43,9 +43,9 @@ resource aws_route53_record ns {
   depends_on = [
     var.module_depends_on,
   ]
-  count   = var.mainzoneid == "" ? 0 : length(var.domains)
+  count   = var.mainzoneid == "" ? 0 : length(var.hostedzones)
   zone_id = var.mainzoneid
-  name    = element(var.domains, count.index)
+  name    = element(var.hostedzones, count.index)
   type    = "NS"
   ttl     = "30"
 
@@ -62,8 +62,8 @@ resource aws_route53_zone public {
     var.module_depends_on,
   ]
 
-  count = var.aws_private ? 0 : length(var.domains)
-  name  = element(var.domains, count.index)
+  count = var.aws_private ? 0 : length(var.hostedzones)
+  name  = element(var.hostedzones, count.index)
 
   tags          = var.tags
   force_destroy = true
@@ -73,8 +73,8 @@ resource aws_route53_zone private {
   depends_on = [
     var.module_depends_on,
   ]
-  count = var.aws_private ? length(var.domains) : 0
-  name  = element(var.domains, count.index)
+  count = var.aws_private ? length(var.hostedzones) : 0
+  name  = element(var.hostedzones, count.index)
   vpc {
     vpc_id = var.vpc_id
   }
@@ -156,8 +156,8 @@ locals {
     "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn" = module.iam_assumable_role_admin.this_iam_role_arn
     },
     {
-      for i, domain in tolist(var.domains) :
-      "domainFilters[${i}]" => domain
+      for i, zone in tolist(var.hostedzones) :
+      "domainFilters[${i}]" => zone
     }
   )
   application = {

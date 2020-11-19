@@ -5,9 +5,10 @@ variable module_depends_on {
   description = "A list of explicit dependencies"
 }
 
-variable "aws_private" {
-  type        = string
-  description = "Use private or public infrastructure"
+variable aws_private {
+  type        = bool
+  description = "Set true or false to use private or public infrastructure"
+  default     = false
 }
 
 variable environment {
@@ -34,9 +35,10 @@ variable vpc_id {
   description = "An ID of the existing AWS VPC"
 }
 
-variable "mainzoneid" {
+variable mainzoneid {
   type        = string
-  description = "ID of main route53 zone if exist"
+  default     = ""
+  description = "An ID of the root Route53 zone for creating sub-domains"
 }
 
 variable "config_path" {
@@ -44,7 +46,7 @@ variable "config_path" {
   default     = "~/.kube/config"
 }
 
-variable "domains" {
+variable domains {
   type        = list(string)
   default     = []
   description = "A list of domains to use for ingresses"

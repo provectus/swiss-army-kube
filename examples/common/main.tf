@@ -80,7 +80,7 @@ module "system" {
   project            = local.project
   cluster_name       = module.kubernetes.cluster_name
   vpc_id             = module.network.vpc_id
-  aws_private        = "false"
+  aws_private        = false
   domains            = ["swiss-army.example.io"]
   mainzoneid         = ""
   cert_manager_email = "username@example.io"

@@ -81,6 +81,6 @@ module external_dns {
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
   mainzoneid   = data.aws_route53_zone.this.zone_id
-  domains      = local.domain
+  hostedzones  = local.domain
   tags         = local.tags
 }
