@@ -17,7 +17,7 @@ data "aws_iam_policy_document" "aws_for_fluent_bit_assume_role_policy" {
 }
 
 resource "aws_iam_role" "aws_for_fluent_bit_iam_role" {
-  name               = "${var.cluster_name}-aws-for-fluent-bit"
+  name               = "${var.cluster_name}-aws-for-fluent-bit-${var.environment}"
   assume_role_policy = data.aws_iam_policy_document.aws_for_fluent_bit_assume_role_policy.json
 
   tags = {
@@ -29,7 +29,7 @@ resource "aws_iam_role" "aws_for_fluent_bit_iam_role" {
 resource "aws_iam_policy" "cloudwatch_logs_policy" {
   count = var.cloudwatch_enabled ? 1 : 0
 
-  name   = "${var.cluster_name}-aws-for-fluent-bit-cloudwatch-policy"
+  name   = "${var.cluster_name}-aws-for-fluent-bit-cloudwatch-policy-${var.environment}"
   policy = <<POLICY
 {
   "Version": "2012-10-17",
@@ -61,7 +61,7 @@ resource "aws_iam_role_policy_attachment" "cloudwatch_logs_role_policy_attachmen
 
 resource "aws_iam_policy" "firehose_policy" {
   count = var.firehose_enabled ? 1 : 0
-  name  = "${var.cluster_name}-aws-for-fluent-bit-firehose-policy"
+  name  = "${var.cluster_name}-aws-for-fluent-bit-firehose-policy-${var.environment}"
 
   policy = <<POLICY
 {
@@ -91,7 +91,7 @@ resource "aws_iam_role_policy_attachment" "firehose_role_policy_attachment" {
 
 resource "aws_iam_policy" "kinesis_policy" {
   count = var.kinesis_enabled ? 1 : 0
-  name  = "${var.cluster_name}-aws-for-fluent-bit-kinesis-policy"
+  name  = "${var.cluster_name}-aws-for-fluent-bit-kinesis-policy-${var.environment}"
 
   policy = <<POLICY
 {
