@@ -1,7 +1,11 @@
 resource aws_cognito_user_pool this {
   name = var.cluster_name
-  admin_create_user_config = {
-    invite_message_template = var.email_template
+  admin_create_user_config {
+    invite_message_template {
+      email_message = var.invite_template.email_message
+      email_subject = var.invite_template.email_subject
+      sms_message   = var.invite_template.sms_message
+    }
   }
 }
 

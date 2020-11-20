@@ -17,11 +17,14 @@ variable tags {
   default     = {}
 }
 
-variable email_template {
+variable invite_template {
   type        = map(string)
-  description = "A template for the email with credentials"
+  description = "A template for the invite email with credentials"
   default = {
-    email_message = null
-    email_subject = null
+    email_message = <<EOT
+Your Swiss Army Kube username is {username} and temporary password is {####}.
+EOT
+    email_subject = "Your Swiss Army Kube temporary password"
+    sms_message   = "Your Swiss Army Kube username is {username} and temporary password is {####}"
   }
 }
