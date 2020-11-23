@@ -163,10 +163,10 @@ locals {
       "repos" = [
         {
           "name" = "manifests"
-          "uri"  = "https://github.com/kubeflow/manifests/archive/v1.1-branch.tar.gz"
+          "uri"  = "https://github.com/kubeflow/manifests/archive/v1.2-branch.tar.gz"
         }
       ]
-      "version" = "v1.1-branch"
+      "version" = "v1.2-branch"
     }
   }
 }
@@ -187,7 +187,7 @@ resource local_file kubeflow_operator {
       "project" = "default"
       "source" = {
         "repoURL"        = "https://github.com/kubeflow/kfctl"
-        "targetRevision" = "v1.1-branch"
+        "targetRevision" = "v1.2-branch"
         "path"           = "deploy"
         "kustomize" = {
           "images" = ["aipipeline/kubeflow-operator=provectuslabs/kubeflow-operator:master"]
