@@ -17,7 +17,7 @@ variable cluster_name {
 
 variable chart_version {
   type    = string
-  default = "8.0.0"
+  default = "1.1.1"
 }
 
 variable image_tag {
