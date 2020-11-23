@@ -13,7 +13,7 @@ module "iam_assumable_role_admin" {
   role_name                     = "${var.cluster_name}_cluster-autoscaler"
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
   role_policy_arns              = [aws_iam_policy.cluster_autoscaler.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${var.namespace}:aws-cluster-autoscaler"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${var.namespace}:aws-cluster-autoscaler-chart"]
 }
 
 resource "aws_iam_policy" "cluster_autoscaler" {
@@ -83,9 +83,9 @@ resource local_file this {
 }
 
 locals {
-  repository = "https://kubernetes-charts.storage.googleapis.com/"
-  name       = "aws-cluster-autoscaler"
-  chart      = "cluster-autoscaler"
+  repository = "https://kubernetes.github.io/autoscaler"
+  name       = "aws-cluster-autoscaler-chart"
+  chart      = "cluster-autoscaler-chart"
   values = [
     {
       "name"  = "rbac.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"
