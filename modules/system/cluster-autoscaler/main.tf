@@ -88,7 +88,7 @@ locals {
   chart      = "cluster-autoscaler-chart"
   values = [
     {
-      "name"  = "rbac.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"
+      "name"  = "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
       "value" = module.iam_assumable_role_admin.this_iam_role_arn
     },
     {
