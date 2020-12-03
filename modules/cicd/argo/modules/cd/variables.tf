@@ -12,8 +12,14 @@ variable namespace_name {
 
 variable chart_version {
   type        = string
-  description = "An ArgoCD Helm Chart version"
+  description = "A Helm Chart version"
   default     = "2.7.4"
+}
+
+variable tags {
+  type        = map(string)
+  default     = {}
+  description = "A tags for attaching to new created AWS resources"
 }
 
 variable conf {

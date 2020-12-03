@@ -58,3 +58,10 @@ variable argocd {
   description = "A set of values for enabling deployment through ArgoCD"
   default     = {}
 }
+
+variable tags {
+  type        = map(string)
+  default     = {}
+  description = "A tags for attaching to new created AWS resources"
+}
+
