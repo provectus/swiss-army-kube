@@ -14,6 +14,6 @@ variable cluster_name {
 
 variable tags {
   type        = map(string)
-  description = "A set of tags"
   default     = {}
+  description = "A tags for attaching to new created AWS resources"
 }

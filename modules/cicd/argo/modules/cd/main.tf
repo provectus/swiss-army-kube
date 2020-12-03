@@ -14,6 +14,10 @@ resource helm_release this {
   recreate_pods = true
   timeout       = 1200
 
+  lifecycle {
+    ignore_changes = [set, version]
+  }
+
   dynamic set {
     for_each = merge(local.enabled ? merge(local.init_conf, local.conf) : local.legacy_defaults, var.conf)
     content {
@@ -93,10 +97,7 @@ for file in glob.glob('./*.y*ml'):
 }
 
 resource local_file this {
-  count = local.enabled ? 1 : 0
-  depends_on = [
-    helm_release.this
-  ]
+  count    = local.enabled ? 1 : 0
   content  = yamlencode(local.application)
   filename = "${path.root}/${var.apps_dir}/${local.name}.yaml"
 }
@@ -182,9 +183,10 @@ locals {
     }
   )
   conf = {
-    "server.extraArgs[0]" = "--insecure"
-    "installCRDs"         = "false"
-    "dex.enabled"         = "false"
+    "server.extraArgs[0]"                = "--insecure"
+    "installCRDs"                        = "false"
+    "dex.enabled"                        = "false"
+    "server.rbacConfig.policy\\.default" = "role:readonly"
 
     "configs.secret.argocdServerAdminPassword"                             = aws_ssm_parameter.encrypted.value
     "global.securityContext.fsGroup"                                       = "999"
@@ -211,30 +213,18 @@ locals {
         }
       }]
     )
+
+    "server.service.type"    = "NodePort"
+    "server.ingress.enabled" = length(var.domains) > 0 ? "true" : "false"
   }
-  values = concat(coalescelist([
-    {
-      "name"  = "server.rbacConfig.policy\\.default"
-      "value" = "role:readonly"
-    },
-    {
-      "name"  = "server.rbacConfig.policy\\.csv"
-      "value" = <<EOF
+  values = concat(coalescelist(
+    [
+      {
+        "name"  = "server.rbacConfig.policy\\.csv"
+        "value" = <<EOF
 g, administrators, role:admin
 EOF
-    },
-    {
-      "name"  = "server.ingress.paths[0]"
-      "value" = "/*"
-    },
-    {
-      "name"  = "server.service.type"
-      "value" = "NodePort"
-    },
-    {
-      "name"  = "server.ingress.enabled"
-      "value" = length(var.domains) > 0 ? "true" : "false"
-    }
+      }
     ],
     [
       length(var.domains) == 0 ? null : {
@@ -290,7 +280,7 @@ EOF
       }
     }),
     values({
-      for key, value in local.conf :
+      for key, value in merge(local.conf, var.conf) :
       key => {
         "name"  = key
         "value" = tostring(value)

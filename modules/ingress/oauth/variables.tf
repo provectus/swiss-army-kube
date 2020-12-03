@@ -1,3 +1,21 @@
+variable client_id {
+  type        = string
+  default     = ""
+  description = "A client id for oauth"
+}
+
+variable client_secret {
+  type        = string
+  default     = ""
+  description = "A client secrets for oauth"
+}
+
+variable cookie_secret {
+  type        = string
+  default     = ""
+  description = "A random_string make gen command python -c 'import os,base64; print base64.b64encode(os.urandom(16))'"
+}
+
 variable namespace {
   type        = string
   default     = ""
@@ -22,10 +40,10 @@ variable cluster_name {
   description = "A name of the Amazon EKS cluster"
 }
 
-variable aws_private {
-  type        = bool
-  description = "Set true or false to use private or public infrastructure"
-  default     = false
+variable domains {
+  type        = list(string)
+  default     = []
+  description = "A list of domains to use for ingresses"
 }
 
 variable argocd {

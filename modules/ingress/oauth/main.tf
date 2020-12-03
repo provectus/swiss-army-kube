@@ -1,14 +1,15 @@
-data aws_eks_cluster this {
-  name = var.cluster_name
-}
-
-resource kubernetes_namespace this {
+resource kubernetes_secret this {
   depends_on = [
     var.module_depends_on
   ]
-  count = var.namespace == "" ? 1 : 0
   metadata {
-    name = var.namespace_name
+    name      = "${local.name}-secret"
+    namespace = local.namespace
+  }
+  data = {
+    "client-id"     = var.client_id
+    "client-secret" = var.client_secret
+    "cookie-secret" = var.cookie_secret
   }
 }
 
@@ -17,12 +18,12 @@ resource helm_release this {
   depends_on = [
     var.module_depends_on
   ]
-  name       = local.name
-  repository = local.repository
-  chart      = local.chart
-  version    = local.version
-  namespace  = local.namespace
-  timeout    = 1200
+  name          = local.name
+  repository    = local.repository
+  chart         = local.chart
+  version       = local.version
+  namespace     = local.namespace
+  recreate_pods = true
 
   dynamic set {
     for_each = local.conf
@@ -44,10 +45,10 @@ locals {
   argocd_enabled = length(var.argocd) > 0 ? 1 : 0
   namespace      = coalescelist(kubernetes_namespace.this, [{ "metadata" = [{ "name" = var.namespace }] }])[0].metadata[0].name
 
-  name       = "ingress-nginx"
-  repository = "https://kubernetes.github.io/ingress-nginx"
-  chart      = "ingress-nginx"
-  version    = "2.16.0"
+  name       = "oauth2-proxy"
+  repository = "https://kubernetes-charts.storage.googleapis.com"
+  chart      = "oauth2-proxy"
+  version    = "3.1.0"
 
 
   app = {
@@ -88,16 +89,19 @@ locals {
 
   conf = merge(local.conf_defaults, var.conf)
   conf_defaults = merge(
-    var.aws_private ? {
-      "controller.service.internal.enabled"                                                        = true
-      "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-internal" = "0.0.0.0"
-    } : {},
     {
-      "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type" = "nlb"
-      "rbac.create"                                                                            = true
-      "resources.limits.cpu"                                                                   = "100m",
-      "resources.limits.memory"                                                                = "300Mi",
-      "resources.requests.cpu"                                                                 = "100m",
-      "resources.requests.memory"                                                              = "300Mi",
-  })
+      "rbac.create"                = true
+      "resources.limits.cpu"       = "100m",
+      "resources.limits.memory"    = "300Mi",
+      "resources.requests.cpu"     = "100m",
+      "resources.requests.memory"  = "300Mi",
+      "config.existingSecret"      = kubernetes_secret.this[0].metadata[0].name,
+      "extraArgs.cookie-domain"    = join(", ", formatlist(".%s", var.domains)),
+      "extraArgs.whitelist-domain" = join(", ", formatlist(".%s", var.domains))
+    },
+    {
+      for i, domain in tolist(var.domains) :
+      "ingress.hosts[${set.key}]" => "oauth2.${set.value}"
+    }
+  )
 }
