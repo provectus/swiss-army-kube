@@ -57,3 +57,9 @@ variable conf {
   description = "A custom configuration for deployment"
   default     = {}
 }
+
+variable chart_version {
+  type        = string
+  description = "A Helm Chart version"
+  default     = "3.1.0"
+}

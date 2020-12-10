@@ -144,7 +144,7 @@ locals {
   repository    = "https://charts.bitnami.com/bitnami"
   name          = "external-dns"
   chart         = "external-dns"
-  chart_version = "3.4.1"
+  chart_version = var.chart_version
   conf          = merge(local.conf_defaults, var.conf)
   conf_defaults = merge({
     "rbac.create"                                               = true,

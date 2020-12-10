@@ -22,6 +22,12 @@ variable cluster_name {
   description = "A name of the Amazon EKS cluster"
 }
 
+variable chart_version {
+  type        = string
+  description = "A Helm Chart version"
+  default     = "2.16.0"
+}
+
 variable aws_private {
   type        = bool
   description = "Set true or false to use private or public infrastructure"

@@ -41,6 +41,7 @@ module iam_assumable_role_admin {
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
   role_policy_arns              = [aws_iam_policy.this.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.namespace}:argocd"]
+  tags                          = var.tags
 }
 
 resource aws_iam_policy this {
@@ -116,6 +117,8 @@ resource aws_ssm_parameter this {
   lifecycle {
     ignore_changes = [value]
   }
+
+  tags = var.tags
 }
 
 resource aws_ssm_parameter encrypted {
@@ -127,11 +130,15 @@ resource aws_ssm_parameter encrypted {
   lifecycle {
     ignore_changes = [value]
   }
+
+  tags = var.tags
 }
 
 resource aws_kms_key this {
   description = "ArgoCD key"
   is_enabled  = true
+
+  tags = var.tags
 }
 
 resource aws_kms_ciphertext client_secret {

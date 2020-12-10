@@ -47,7 +47,7 @@ locals {
   name       = "ingress-nginx"
   repository = "https://kubernetes.github.io/ingress-nginx"
   chart      = "ingress-nginx"
-  version    = "2.16.0"
+  version    = var.chart_version
 
 
   app = {

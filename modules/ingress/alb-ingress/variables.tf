@@ -16,6 +16,12 @@ variable domains {
   description = "A list of domains to use for ingresses"
 }
 
+variable chart_version {
+  type        = string
+  description = "A Helm Chart version"
+  default     = "2.7.4"
+}
+
 variable vpc_id {
   type        = string
   default     = null

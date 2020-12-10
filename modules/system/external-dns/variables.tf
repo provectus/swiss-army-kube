@@ -52,6 +52,12 @@ variable cluster_name {
   description = "A name of the Amazon EKS cluster"
 }
 
+variable chart_version {
+  type        = string
+  description = "A Helm Chart version"
+  default     = "3.4.1"
+}
+
 variable tags {
   type        = map(string)
   default     = {}

@@ -27,6 +27,8 @@ module iam_assumable_role_admin {
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
   role_policy_arns              = [aws_iam_policy.cluster_autoscaler[0].arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.namespace}:aws-cluster-autoscaler"]
+
+  tags = var.tags
 }
 
 resource aws_iam_policy cluster_autoscaler {

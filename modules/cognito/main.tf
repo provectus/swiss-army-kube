@@ -1,5 +1,7 @@
 resource aws_cognito_user_pool this {
   name = var.cluster_name
+
+  tags = vat.tags
 }
 
 resource aws_cognito_user_pool_domain this {
