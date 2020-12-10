@@ -78,6 +78,17 @@ spec:
             }
           }
         }
+        stage("Argoproj example") {
+          steps {
+            container('terraform12') {
+              sh """
+              cd examples/argoproj
+              terraform init
+              TFLINT_LOG=info /home/jenkins/agent/tflint --deep --force --module .
+              """
+            }
+          }
+        }
       }
     }
 
