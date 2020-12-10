@@ -4,10 +4,6 @@ pipeline {
     disableConcurrentBuilds()
   }
 
-  tools {
-    terraform 'terraform-12'
-  }
-
   agent {
     kubernetes {
         label 'swiss-army-kube'
@@ -22,6 +18,12 @@ spec:
     - sleep
     args:
     - 1h
+  - name: terraform12
+    image: hashicorp/terraform:0.12.29
+    command:
+    - sleep
+    args:
+    - 1h
 '''
     }
   }
@@ -29,12 +31,15 @@ spec:
   stages {
     stage('Prepare') {
       steps {
-        sh """
-        terraform --version
-        curl -L "\$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip
-        unzip tflint.zip -d /home/jenkins/agent
-        /home/jenkins/agent/tflint --version
-        """
+        container('terraform12') {
+          sh """
+          terraform --version
+          apk add curl
+          curl -L "\$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip
+          unzip tflint.zip -d /home/jenkins/agent
+          /home/jenkins/agent/tflint --version
+          """
+        }
       }
     }
 
@@ -42,29 +47,35 @@ spec:
       parallel {
         stage("Common example") {
           steps {
-            sh """
-            cd examples/common
-            terraform init
-            TFLINT_LOG=info /home/jenkins/agent/tflint --deep --force --module .
-            """
+            container('terraform12') {
+              sh """
+              cd examples/common
+              terraform init
+              TFLINT_LOG=info /home/jenkins/agent/tflint --deep --force --module .
+              """
+            }
           }
         }
         stage("ArgoCD example") {
           steps {
-            sh """
-            cd examples/argocd
-            terraform init
-            TFLINT_LOG=info /home/jenkins/agent/tflint --deep --force --module .
-            """
+            container('terraform12') {
+              sh """
+              cd examples/argocd
+              terraform init
+              TFLINT_LOG=info /home/jenkins/agent/tflint --deep --force --module .
+              """
+            }
           }
         }
         stage("Full ArgoCD example") {
           steps {
-            sh """
-            cd examples/argocd-with-applications
-            terraform init
-            TFLINT_LOG=info /home/jenkins/agent/tflint --deep --force --module .
-            """
+            container('terraform12') {
+              sh """
+              cd examples/argocd-with-applications
+              terraform init
+              TFLINT_LOG=info /home/jenkins/agent/tflint --deep --force --module .
+              """
+            }
           }
         }
       }
