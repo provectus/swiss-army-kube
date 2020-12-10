@@ -43,7 +43,7 @@ resource aws_route53_record ns {
   depends_on = [
     var.module_depends_on,
   ]
-  count   = var.mainzoneid == "" && var.aws_private ? 0 : length(var.hostedzones)
+  count   = var.mainzoneid != "" && var.aws_private ? 0 : length(var.hostedzones)
   zone_id = var.mainzoneid
   name    = element(var.hostedzones, count.index)
   type    = "NS"
