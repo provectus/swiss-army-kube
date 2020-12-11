@@ -5,6 +5,7 @@ terraform {
 provider aws {
   version = "2.66"
   region  = "us-west-2"
+  profile = "provectus"
 }
 
 provider kubernetes {

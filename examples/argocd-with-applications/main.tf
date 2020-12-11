@@ -14,7 +14,7 @@ data aws_route53_zone this {
 locals {
   environment  = "dev"
   project      = "EDUCATION"
-  cluster_name = "sak-argocd-full"
+  cluster_name = "ml-demo"
   domain       = ["${local.cluster_name}.edu.provectus.io"]
   tags = {
     environment = local.environment
@@ -47,7 +47,7 @@ module argocd {
   module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name]
   source            = "../../modules/cicd/argo/modules/cd"
 
-  branch       = "feature/system-refactoring"
+  branch       = "ml-demo"
   owner        = "provectus"
   repository   = "swiss-army-kube"
   cluster_name = module.kubernetes.cluster_name
