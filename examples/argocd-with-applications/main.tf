@@ -84,3 +84,10 @@ module external_dns {
   hostedzones  = local.domain
   tags         = local.tags
 }
+
+module "external-secrets" {
+  source         = "../../modules/system/external-secrets"
+  cluster_output = module.kubernetes.this
+  argocd         = module.argocd.state
+  tags           = local.tags
+}

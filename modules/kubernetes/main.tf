@@ -17,6 +17,7 @@ module "eks" {
   kubeconfig_name = var.cluster_name
   subnets         = var.subnets
   vpc_id          = var.vpc_id
+  enable_irsa     = true
 
   map_users = concat(var.admin_arns, var.user_arns)
 
