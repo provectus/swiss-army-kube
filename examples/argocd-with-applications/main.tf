@@ -85,7 +85,7 @@ module external_dns {
   tags         = local.tags
 }
 
-module "external-secrets" {
+module "external_secrets" {
   source         = "../../modules/system/external-secrets"
   cluster_output = module.kubernetes.this
   argocd         = module.argocd.state
