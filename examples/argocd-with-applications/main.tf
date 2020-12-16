@@ -47,7 +47,7 @@ module argocd {
   module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name]
   source            = "../../modules/cicd/argo/modules/cd"
 
-  branch       = "feature/system-refactoring"
+  branch       = "feature/monitoring"
   owner        = "provectus"
   repository   = "swiss-army-kube"
   cluster_name = module.kubernetes.cluster_name
@@ -83,4 +83,12 @@ module external_dns {
   mainzoneid   = data.aws_route53_zone.this.zone_id
   hostedzones  = local.domain
   tags         = local.tags
+}
+
+module monitoring {
+  module_depends_on = [module.argocd.state.path, module.kubernetes.cluster_name]
+  source            = "../../modules/monitoring/prometheus"
+  cluster_name      = module.kubernetes.cluster_name
+  argocd            = module.argocd.state
+  domains           = local.domain
 }
