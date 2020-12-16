@@ -1,12 +1,12 @@
 variable "aws_region" {
   type        = string
-  description = "AWS Region with Secrets manager to access default - current"
+  description = "A name of the AWS region (us-central-1, us-west-2 and etc.)"
   default     = ""
 }
 
 variable "chart_version" {
   type        = string
-  description = "Version of the helm chart for External Secrets"
+  description = "A Helm Chart version"
   default     = "6.0.0"
 }
 
@@ -17,8 +17,7 @@ variable "poller_interval" {
 }
 
 variable "cluster_output" {
-  description = "cluster output object from Kubernetes module"
-
+  description = "Cluster output object from Kubernetes module"
 }
 
 variable "chart_repository" {
@@ -47,7 +46,9 @@ variable "chart_parameters_as_string" {
 }
 
 variable "tags" {
-  default = {}
+  type        = map(string)
+  default     = {}
+  description = "A tags for attaching to new created AWS resources"
 }
 
 variable "allowed_secrets_prefix" {
