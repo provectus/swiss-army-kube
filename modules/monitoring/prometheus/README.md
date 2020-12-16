@@ -32,7 +32,7 @@ module scaling {
 | grafana\_client\_id | The id of the client for Grafana Google auth | `string` | `""` | no |
 | grafana\_client\_secret | The token of the client for Grafana Google auth | `string` | `""` | no |
 | grafana\_google\_auth | Enables Google auth for Grafana | `string` | `false` | no |
-| grafana\_password | Password for grafana admin | `string` | `"password"` | no |
+| grafana\_password | Password for grafana admin | `string` | `""` | no |
 | module\_depends\_on | A list of explicit dependencies | `list(any)` | `[]` | no |
 | namespace | A name of the existing namespace | `string` | `""` | no |
 | namespace\_name | A name of namespace for creating | `string` | `"monitoring"` | no |

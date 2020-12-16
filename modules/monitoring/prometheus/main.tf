@@ -16,7 +16,7 @@ resource random_password grafana_password {
 resource aws_ssm_parameter grafana_password {
   name  = "/${var.cluster_name}/grafana/password"
   type  = "SecureString"
-  value = random_password.grafana_password.result
+  value = local.password
 }
 
 resource kubernetes_namespace this {
@@ -56,7 +56,7 @@ resource aws_kms_ciphertext grafana_client_secret {
 resource aws_kms_ciphertext grafana_password {
   count     = local.argocd_enabled
   key_id    = var.argocd.kms_key_id
-  plaintext = var.grafana_password
+  plaintext = local.password
 }
 
 resource local_file namespace {
@@ -139,19 +139,18 @@ locals {
   repository = "https://prometheus-community.github.io/helm-charts"
   chart      = "kube-prometheus-stack"
   conf       = merge(local.conf_defaults, var.conf)
+  password   = var.grafana_password == "" ? random_password.grafana_password.result : var.grafana_password
   conf_defaults = {
     "alertmanager.enabled"       = true
-    "alertmanager.host"          = "alertmanager.${var.domains[0]}"
     "grafana.enabled"            = true
     "grafana.pvc.enabled"        = true
     "grafana.ingress.enabled"    = true
-    "grafana.admin.password"     = local.argocd_enabled > 0 ? "KMS_ENC:${aws_kms_ciphertext.grafana_password[0].ciphertext_blob}:" : var.grafana_password
-    "grafana.url"                = "grafana.${var.domains[0]}"
+    "grafana.ingress.hosts[0]"   = "grafana.${var.domains[0]}"
+    "grafana.adminPassword"      = local.argocd_enabled > 0 ? "KMS_ENC:${aws_kms_ciphertext.grafana_password[0].ciphertext_blob}:" : local.password
     "grafana.google.auth"        = var.grafana_google_auth
     "grafana.allowed.domains"    = var.grafana_allowed_domains
     "prometheus.enabled"         = true
     "prometheus.ingress.enabled" = false
-    "prometheus.url"             = "prometheus.${var.domains[0]}"
     "namespace"                  = local.namespace
     "rbac.create"                = true,
     "resources.limits.cpu"       = "100m",

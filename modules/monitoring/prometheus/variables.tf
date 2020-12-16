@@ -55,7 +55,7 @@ variable tags {
 variable grafana_password {
   type        = string
   description = "Password for grafana admin"
-  default     = "password"
+  default     = ""
 }
 
 variable grafana_google_auth {
