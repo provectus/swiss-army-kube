@@ -24,6 +24,7 @@ module nginx {
 | module\_depends\_on | A list of explicit dependencies for the module | `list` | `[]` | no |
 | namespace | A name of the existing namespace | `string` | `""` | no |
 | namespace\_name | A name of namespace for creating | `string` | `"ingress-system"` | no |
+| tags | A tags for attaching to new created AWS resources | `map(string)` | `{}` | no |
 
 ## Outputs
 No output.
