@@ -92,3 +92,10 @@ module monitoring {
   argocd            = module.argocd.state
   domains           = local.domain
 }
+
+module external_secrets {
+  source         = "../../modules/system/external-secrets"
+  cluster_output = module.kubernetes.this
+  argocd         = module.argocd.state
+  tags           = local.tags
+}
