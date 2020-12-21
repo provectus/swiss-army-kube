@@ -102,23 +102,3 @@ locals {
       "resources.requests.memory"                                                                                  = "300Mi",
   })
 }
-
-
-
-# controller:
-#   service:
-#     labels:
-#       dns: "route53"
-#     internal:
-#       enabled: ${nginx-elb-internal}
-#     targetPorts:
-#       http: http
-#       https: http
-#     annotations:
-#       service.beta.kubernetes.io/aws-load-balancer-internal: 0.0.0.0/0
-#       service.beta.kubernetes.io/aws-load-balancer-ssl-cert: ${nginx-ssl-cert}
-#       service.beta.kubernetes.io/aws-load-balancer-backend-protocol: "http"
-#       service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "https"
-#       service.beta.kubernetes.io/aws-load-balancer-connection-idle-timeout: '3600'
-#       external-dns.alpha.kubernetes.io/hostname: ${nginx-dns-domain}
-#       domainName: ${nginx-dns-domain}
