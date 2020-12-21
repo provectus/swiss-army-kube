@@ -66,8 +66,8 @@ variable domains {
 
 variable vcs {
   type        = string
-  description = "A host name of VCS"
-  default     = "github.com"
+  description = "An URI of VCS"
+  default     = "https://github.com"
 }
 
 variable path_prefix {

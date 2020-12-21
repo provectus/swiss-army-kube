@@ -85,7 +85,7 @@ def decrypt(string):
   return plaintext.decode()
 
 for file in glob.glob('./*.y*ml'):
-  print("---")
+  print("\n---")
   with open(file) as f:
     for line in f:
       if line.find("KMS_ENC:") > 0:
@@ -160,7 +160,7 @@ locals {
     { for i, domain in tolist(var.domains) : "server.ingress.hosts[${i}]" => "argo-cd.${domain}" },
     { for i, domain in tolist(var.domains) : "server.ingress.tls[${i}].secretName" => "argo-cd-${domain}-tls" }
   )
-  repoURL    = "https://${var.vcs}/${var.owner}/${var.repository}"
+  repoURL    = "${var.vcs}/${var.owner}/${var.repository}"
   repository = "https://argoproj.github.io/argo-helm"
   name       = "argocd"
   chart      = "argo-cd"
