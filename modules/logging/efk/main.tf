@@ -14,7 +14,7 @@ resource "helm_release" "elastic-stack" {
   ]
 
   name       = "elastic"
-  repository = "https://kubernetes-charts.storage.googleapis.com"
+  repository = "https://charts.helm.sh/stable"
   chart      = "elastic-stack"
   version    = "2.0.1"
   namespace  = "efk"

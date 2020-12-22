@@ -10,10 +10,10 @@ locals {
   environment  = "dev"
   project      = "EDUCATION"
   cluster_name = "swiss-army"
-  tags = {
-    environment = local.environment
-    project     = local.project
-  }
+  # tags = {
+  #   environment = local.environment
+  #   project     = local.project
+  # }
 }
 
 module "network" {

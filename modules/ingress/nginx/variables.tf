@@ -45,3 +45,9 @@ variable conf {
   description = "A custom configuration for deployment"
   default     = {}
 }
+
+variable tags {
+  type        = map(string)
+  default     = {}
+  description = "A tags for attaching to new created AWS resources"
+}

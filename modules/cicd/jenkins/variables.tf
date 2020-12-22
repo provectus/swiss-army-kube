@@ -41,7 +41,7 @@ variable cluster_name {
 
 variable "cluster_oidc_arn" {
   type        = string
-  description = "An OIDC ARN of the EKS cluster"
+  description = "An OIDC arn of the EKS cluster"
   default     = ""
 }
 

@@ -19,7 +19,7 @@ variable cluster_name {
 variable "cluster_version" {
   type        = string
   description = "EKS cluster version"
-  default     = "1.16"
+  default     = "1.18"
 }
 
 variable "vpc_id" {
@@ -30,7 +30,7 @@ variable "vpc_id" {
 
 
 variable availability_zones {
-  description = "A list of the availability zones to use"
+  description = "Availability zones for project"
   type        = list
   default     = []
 }

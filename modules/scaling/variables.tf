@@ -64,4 +64,3 @@ variable tags {
   default     = {}
   description = "A tags for attaching to new created AWS resources"
 }
-

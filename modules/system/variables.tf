@@ -64,6 +64,12 @@ variable "cluster_oidc_url" {
   default     = ""
 }
 
+variable "cluster_oidc_arn" {
+  type        = string
+  description = "An OIDC arn of the EKS cluster"
+  default     = ""
+}
+
 variable "cluster_roles" {
   description = "Additional cluster roles."
   type = list(object({

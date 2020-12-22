@@ -3,7 +3,7 @@ output "cert-manager" {
 }
 
 output "oidc_arn" {
-  value = aws_iam_openid_connect_provider.cluster.arn
+  value = var.cluster_oidc_arn
 }
 
 output "route53_zone" {

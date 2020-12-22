@@ -14,7 +14,7 @@ resource "helm_release" "jenkins" {
   ]
 
   name          = "jenkins"
-  repository    = "https://kubernetes-charts.storage.googleapis.com"
+  repository    = "https://charts.helm.sh/stable"
   chart         = "jenkins"
   version       = "1.27.0"
   namespace     = kubernetes_namespace.jenkins.metadata[0].name

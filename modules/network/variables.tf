@@ -35,7 +35,7 @@ variable cluster_name {
 }
 
 variable availability_zones {
-  description = "A list of the availability zones to use"
+  description = "Availability zones for project"
   type        = list
   default     = []
 }

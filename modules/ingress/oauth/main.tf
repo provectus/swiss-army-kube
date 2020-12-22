@@ -46,7 +46,7 @@ locals {
   namespace      = coalescelist(kubernetes_namespace.this, [{ "metadata" = [{ "name" = var.namespace }] }])[0].metadata[0].name
 
   name       = "oauth2-proxy"
-  repository = "https://kubernetes-charts.storage.googleapis.com"
+  repository = "https://charts.helm.sh/stable"
   chart      = "oauth2-proxy"
   version    = var.chart_version
 

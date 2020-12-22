@@ -18,8 +18,8 @@ spec:
     - sleep
     args:
     - 1h
-  - name: terraform12
-    image: hashicorp/terraform:0.12.29
+  - name: terraform14
+    image: hashicorp/terraform:0.14.2
     command:
     - sleep
     args:
@@ -31,7 +31,7 @@ spec:
   stages {
     stage('Prepare') {
       steps {
-        container('terraform12') {
+        container('terraform14') {
           sh """
           terraform --version
           apk add curl
@@ -47,7 +47,7 @@ spec:
       parallel {
         stage("Common example") {
           steps {
-            container('terraform12') {
+            container('terraform14') {
               sh """
               cd examples/common
               terraform init
@@ -58,7 +58,7 @@ spec:
         }
         stage("ArgoCD example") {
           steps {
-            container('terraform12') {
+            container('terraform14') {
               sh """
               cd examples/argocd
               terraform init
@@ -69,7 +69,7 @@ spec:
         }
         stage("Full ArgoCD example") {
           steps {
-            container('terraform12') {
+            container('terraform14') {
               sh """
               cd examples/argocd-with-applications
               terraform init
@@ -80,7 +80,7 @@ spec:
         }
         stage("Argoproj example") {
           steps {
-            container('terraform12') {
+            container('terraform14') {
               sh """
               cd examples/argoproj
               terraform init

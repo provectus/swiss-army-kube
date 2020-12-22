@@ -21,7 +21,7 @@ resource helm_release cluster_autoscaler {
 
 module iam_assumable_role_admin {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.6.0"
+  version                       = "~> v3.6.0"
   create_role                   = var.cluster_autoscaler_enabled
   role_name                     = "${var.cluster_name}_cluster-autoscaler"
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
@@ -90,7 +90,7 @@ resource local_file cluster_autoscaler {
 }
 
 locals {
-  cluster_autoscaler_chart_repository = "https://kubernetes-charts.storage.googleapis.com/"
+  cluster_autoscaler_chart_repository = "https://charts.helm.sh/stable"
   cluster_autoscaler_name             = "aws-cluster-autoscaler"
   cluster_autoscaler_chart            = "cluster-autoscaler"
   cluster_autoscaler_app = {

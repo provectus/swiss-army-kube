@@ -1,5 +1,6 @@
 variable zone_id {
   type = string
+  description = "Default zone id for root domain"
 }
 
 variable domain {
