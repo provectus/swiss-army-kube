@@ -103,7 +103,7 @@ data "aws_iam_policy_document" "external_dns_assume_role_policy" {
     }
 
     principals {
-      identifiers = [aws_iam_openid_connect_provider.cluster.arn]
+      identifiers = [var.cluster_oidc_arn]
       type        = "Federated"
     }
   }
@@ -282,7 +282,7 @@ resource "helm_release" "issuers" {
     var.module_depends_on
   ]
   name      = "issuers"
-  chart     = "../charts/cluster-issuers"
+  chart     = "../../charts/cluster-issuers"
   version   = "0.1.0"
   namespace = kubernetes_namespace.cert-manager.metadata[0].name
 
@@ -330,7 +330,7 @@ resource "helm_release" "metrics-server" {
   ]
 
   name       = "state"
-  repository = "https://kubernetes-charts.storage.googleapis.com"
+  repository = "https://charts.helm.sh/stable"
   chart      = "metrics-server"
   version    = "2.11.1"
   namespace  = "kube-system"
@@ -344,14 +344,14 @@ resource "null_resource" "sealed-secrets-crd" {
   provisioner "local-exec" {
     command = <<EOC
 kubectl --kubeconfig ${path.root}/${var.config_path} -n kube-system apply -f ${path.module}/manifests/sealed-secrets-crd.yaml
-    EOC
+EOC
   }
 }
 # Deploy saled-secrets
 resource "helm_release" "sealed-secrets" {
   depends_on = [null_resource.sealed-secrets-crd]
   name       = "sealed-secrets"
-  repository = "https://kubernetes-charts.storage.googleapis.com"
+  repository = "https://charts.helm.sh/stable"
   chart      = "sealed-secrets"
   version    = "1.10.3"
   namespace  = "kube-system"

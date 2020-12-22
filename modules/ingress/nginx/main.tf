@@ -94,6 +94,7 @@ locals {
     } : {},
     {
       "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type" = "nlb"
+      "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-additional-resource-tags" = join(",", values({ for t in keys(var.tags) : t => "${t}=${var.tags[t]}" }))
       "rbac.create"                                                                            = true
       "resources.limits.cpu"                                                                   = "100m",
       "resources.limits.memory"                                                                = "300Mi",
