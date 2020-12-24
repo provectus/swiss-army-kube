@@ -171,7 +171,17 @@ variable "on_demand_gpu_desired_capacity" {
 
 variable "on_demand_gpu_instance_type" {
   description = "EC2 on_demand Instance type"
+  default     = "p2.xlarge"
+}
+
+variable "on_demand_gpu_override_instance_types" {
+  description = "EC2 on_demand Instance types for overriding"
   default     = ["p2.xlarge", "g4dn.xlarge", "p3.2xlarge"]
+}
+
+variable "on_demand_gpu_resource_count" {
+  description = "A number of GPUs resopurces for the instance type"
+  default     = 1
 }
 
 variable "on_demand_gpu_allocation_strategy" {
@@ -182,7 +192,6 @@ variable "on_demand_gpu_allocation_strategy" {
 variable "on_demand_gpu_base_capacity" {
   description = "Absolute minimum amount of desired capacity that must be fulfilled by on-demand instances"
   default     = "0"
-
 }
 
 variable "on_demand_gpu_percentage_above_base_capacity" {
