@@ -8,15 +8,15 @@ data aws_eks_cluster_auth cluster {
 
 data aws_route53_zone this {
   # name         = "edu.provectus.io."
-  zone_id      = "" # put zoneid here
+  zone_id      = var.zone_id
   private_zone = false
 }
 
 locals {
-  environment  = "dev"
-  project      = "EDUCATION"
-  cluster_name = "" # set cluster name here
-  domain       = ["${local.cluster_name}.edu.provectus.io"]
+  environment  = var.environment
+  project      = var.project
+  cluster_name = var.cluster_name
+  domain       = ["${local.cluster_name}.${var.domain_name}"]
   tags = {
     environment = local.environment
     project     = local.project
@@ -26,7 +26,7 @@ locals {
 module network {
   source = "../../modules/network"
 
-  availability_zones = ["eu-north-1a", "eu-north-1b"]
+  availability_zones = var.availability_zones
   environment        = local.environment
   project            = local.project
   cluster_name       = local.cluster_name
@@ -39,7 +39,7 @@ module kubernetes {
 
   environment        = local.environment
   project            = local.project
-  availability_zones = ["eu-north-1a", "eu-north-1b"]
+  availability_zones = var.availability_zones
   cluster_name       = local.cluster_name
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
@@ -51,9 +51,9 @@ module argocd {
   depends_on = [module.network.vpc_id, module.kubernetes.cluster_name]
   source     = "../../modules/cicd/argo/modules/cd"
 
-  branch       = "BRANCH"
-  owner        = "OWNER"
-  repository   = "REPOSITORY"
+  branch       = var.argocd.branch
+  owner        = var.argocd.owner
+  repository   = var.argocd.repository
   cluster_name = module.kubernetes.cluster_name
   path_prefix  = "examples/argocd-with-applications/"
 
