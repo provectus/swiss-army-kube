@@ -1,5 +1,5 @@
 variable "cluster_name" {
-  default = "swiss-army-grusakov"
+  default = "swiss-army-dkharlamov"
 }
 
 variable "region" {
@@ -11,7 +11,7 @@ variable "availability_zones" {
 }
 
 variable "zone_id" {
-  default = ""
+  default = "Z02149423PVQ0YMP19F13"
 }
 
 variable "environment" {
@@ -30,6 +30,6 @@ variable "argocd" {
   default = {
     repository = "swiss-army-kube"
     branch     = "feature/kubernetes-1.18"
-    owner      = "gfrntz"
+    owner      = "akastav"
   }
 }

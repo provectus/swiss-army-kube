@@ -13,7 +13,7 @@
     "helm":
       "parameters":
       - "name": "autoDiscovery.clusterName"
-        "value": "swiss-army-grusakov"
+        "value": "swiss-army-dkharlamov"
       - "name": "autoDiscovery.enabled"
         "value": "true"
       - "name": "awsRegion"
@@ -33,7 +33,7 @@
       - "name": "rbac.pspEnabled"
         "value": "true"
       - "name": "rbac.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"
-        "value": "arn:aws:iam::060183668755:role/swiss-army-grusakov_cluster-autoscaler"
+        "value": "arn:aws:iam::245582572290:role/swiss-army-dkharlamov_cluster-autoscaler"
       - "name": "resources.limits.cpu"
         "value": "100m"
       - "name": "resources.limits.memory"
