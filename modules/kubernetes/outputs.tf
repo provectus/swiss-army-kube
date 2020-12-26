@@ -13,11 +13,6 @@ output "cluster_oidc_url" {
   description = "Oidc issuer url for EKS cluster"
 }
 
-output "cluster_oidc_arn" {
-  value = aws_iam_openid_connect_provider.cluster.arn
-  description = "Oidc cluster arn"
-}
-
 output "cluster_output" {
   value = {
     "cluster_oidc_issuer_url" = module.eks.cluster_oidc_issuer_url,

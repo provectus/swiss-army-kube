@@ -3,7 +3,8 @@ locals {
     for index, az in var.availability_zones :
     az => {
       name_prefix                              = "on-demand-common-${index}"
-      override_instance_types                  = var.on_demand_common_instance_type
+      instance_type                            = var.on_demand_common_instance_type
+      override_instance_types                  = var.on_demand_common_override_instance_types
       asg_max_size                             = var.on_demand_common_max_cluster_size
       asg_min_size                             = var.on_demand_common_min_cluster_size
       asg_desired_capacity                     = var.on_demand_common_desired_capacity
@@ -38,7 +39,8 @@ locals {
   cpu = values({
     "cpu" = {
       name_prefix                              = "on-demand-cpu-"
-      override_instance_types                  = var.on_demand_cpu_instance_type
+      instance_type                            = var.on_demand_cpu_instance_type
+      override_instance_types                  = var.on_demand_cpu_override_instance_types
       asg_max_size                             = var.on_demand_cpu_max_cluster_size
       asg_min_size                             = var.on_demand_cpu_min_cluster_size
       asg_desired_capacity                     = var.on_demand_cpu_desired_capacity

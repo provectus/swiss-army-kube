@@ -44,7 +44,6 @@ module kubernetes {
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
 
-  on_demand_gpu_instance_type = ["g4dn.xlarge"]
 }
 
 module argocd {
