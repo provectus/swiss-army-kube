@@ -78,7 +78,8 @@ locals {
   gpu = values({
     "gpu" = {
       name_prefix                              = "on-demand-gpu-"
-      override_instance_types                  = var.on_demand_gpu_instance_type
+      instance_type                            = var.on_demand_gpu_instance_type
+      override_instance_types                  = var.on_demand_gpu_override_instance_types
       asg_max_size                             = var.on_demand_gpu_max_cluster_size
       asg_min_size                             = var.on_demand_gpu_min_cluster_size
       asg_desired_capacity                     = var.on_demand_gpu_desired_capacity
@@ -125,7 +126,7 @@ locals {
         {
           "key"                 = "k8s.io/cluster-autoscaler/node-template/resources/nvidia.com/gpu"
           "propagate_at_launch" = "false"
-          "value"               = "1" # Change to the number of GPUs on your node type
+          "value"               = var.on_demand_gpu_resource_count
         }
       ]
     }
