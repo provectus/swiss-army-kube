@@ -1,16 +1,16 @@
-variable environment {
+variable "environment" {
   type        = string
   default     = null
   description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
-variable project {
+variable "project" {
   type        = string
   default     = null
   description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
-variable cluster_name {
+variable "cluster_name" {
   type        = string
   default     = "test"
   description = "A name of the Amazon EKS cluster"
@@ -29,14 +29,14 @@ variable "vpc_id" {
 }
 
 
-variable availability_zones {
+variable "availability_zones" {
   description = "Availability zones for project"
-  type        = list
+  type        = list(any)
   default     = []
 }
 
 variable "subnets" {
-  type        = list
+  type        = list(any)
   description = "vpc subnets"
 }
 

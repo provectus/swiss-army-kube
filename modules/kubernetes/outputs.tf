@@ -16,8 +16,8 @@ output "cluster_oidc_url" {
 output "cluster_output" {
   value = {
     "cluster_oidc_issuer_url" = module.eks.cluster_oidc_issuer_url,
-    "oidc_provider_arn" = aws_iam_openid_connect_provider.cluster.arn,
-    "cluster_id"       = module.eks.cluster_id
+    "oidc_provider_arn"       = aws_iam_openid_connect_provider.cluster.arn,
+    "cluster_id"              = module.eks.cluster_id
   }
 }
 
