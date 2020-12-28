@@ -22,5 +22,3 @@ echo
 echo "Installed jq version:"
 jq --version
 echo
-
-bash "$SCRIPTPATH/kfctl_install.sh"

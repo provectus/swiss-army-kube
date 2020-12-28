@@ -25,7 +25,6 @@ Next, you have to install:
 * [Amazon CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)
 * [AWS IAM Authenticator for Kubernetes](https://docs.aws.amazon.com/eks/latest/userguide/install-aws-iam-authenticator.html)
 * [Terraform](https://learn.hashicorp.com/terraform/getting-started/install.html)
-* [Kubeflow CLI (kfctl)](https://www.kubeflow.org/docs/aws/deploy/install-kubeflow/)
 * [Jq](https://stedolan.github.io/jq/)
 
 ### Installing Prerequisites on MacOS
@@ -49,11 +48,8 @@ $ brew install kubernetes-cli
 $ brew install awscli
 $ brew install aws-iam-authenticator
 $ brew install terraform
-$ bash swiss-army-kube/kfctl_install.sh
 $ brew install jq
 ``` 
-
-The [kfctl_install.sh](https://github.com/provectus/swiss-army-kube/blob/master/kfctl_install.sh) script installs kfctl. To run kfctl, go to the `/usr/local/bin/kfctl` binary file in Finder, right-click and select Open. Then click Open again to confirm that you want to open the app.  
  
 ### Installing Prerequisites on Linux
 
@@ -176,6 +172,10 @@ The `examples/common` directory contains a set of `.tf` files:
 
 * `main.tf`        - main file with infrastructure code
 * `providers.tf`   - list of providers and their values
+
+The `examples/argocd-with-applications` the folder contains an example of deploying infrastructure in aws and applications for cluster operation (like external-dns, prometheus, cluster-autoscaler, etc.)
+
+The `examples/argocd` the folder contains an example of deploying infrastructure in aws and argo-cd server without any applications.
 
 <a name="adddevs"></a>
 ## Adding Developers to Kubernetes Cluster
