@@ -1,8 +1,8 @@
-data aws_eks_cluster this {
+data "aws_eks_cluster" "this" {
   name = var.cluster_name
 }
 
-resource kubernetes_namespace this {
+resource "kubernetes_namespace" "this" {
   depends_on = [
     var.module_depends_on
   ]
@@ -12,7 +12,7 @@ resource kubernetes_namespace this {
   }
 }
 
-resource helm_release this {
+resource "helm_release" "this" {
   count = 1 - local.argocd_enabled
   depends_on = [
     var.module_depends_on
@@ -24,7 +24,7 @@ resource helm_release this {
   namespace  = local.namespace
   timeout    = 1200
 
-  dynamic set {
+  dynamic "set" {
     for_each = local.conf
 
     content {
@@ -34,7 +34,7 @@ resource helm_release this {
   }
 }
 
-resource local_file this {
+resource "local_file" "this" {
   count    = local.argocd_enabled
   content  = yamlencode(local.app)
   filename = "${var.argocd.path}/${local.name}.yaml"
@@ -93,11 +93,12 @@ locals {
       "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-internal" = "0.0.0.0"
     } : {},
     {
-      "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type" = "nlb"
-      "rbac.create"                                                                            = true
-      "resources.limits.cpu"                                                                   = "100m",
-      "resources.limits.memory"                                                                = "300Mi",
-      "resources.requests.cpu"                                                                 = "100m",
-      "resources.requests.memory"                                                              = "300Mi",
+      "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"                     = "nlb"
+      "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-additional-resource-tags" = join(",", values({ for t in keys(var.tags) : t => "${t}=${var.tags[t]}" }))
+      "rbac.create"                                                                                                = true
+      "resources.limits.cpu"                                                                                       = "100m",
+      "resources.limits.memory"                                                                                    = "300Mi",
+      "resources.requests.cpu"                                                                                     = "100m",
+      "resources.requests.memory"                                                                                  = "300Mi",
   })
 }

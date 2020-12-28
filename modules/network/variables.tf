@@ -16,26 +16,26 @@ variable "network" {
   default     = "10"
 }
 
-variable environment {
+variable "environment" {
   type        = string
   default     = null
   description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
-variable project {
+variable "project" {
   type        = string
   default     = null
   description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
-variable cluster_name {
+variable "cluster_name" {
   type        = string
   default     = "cluster-name"
   description = "A name of the Amazon EKS cluster"
 }
 
-variable availability_zones {
-  description = "A list of the availability zones to use"
-  type        = list
+variable "availability_zones" {
+  description = "Availability zones for project"
+  type        = list(any)
   default     = []
 }

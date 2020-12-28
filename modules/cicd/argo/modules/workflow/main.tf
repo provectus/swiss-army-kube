@@ -62,7 +62,7 @@ resource "helm_release" "argo-workflow" {
   namespace     = var.namespace
   recreate_pods = true
   timeout       = 1200
-  dynamic set {
+  dynamic "set" {
     for_each = merge(local.workflow_conf_defaults, var.workflow_conf)
 
     content {

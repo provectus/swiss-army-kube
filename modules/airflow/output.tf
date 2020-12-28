@@ -1,3 +1,3 @@
 output "airflow" {
-  value = "${helm_release.airflow}"
+  value = helm_release.airflow
 }

@@ -11,13 +11,13 @@ data "aws_ami" "eks_gpu_worker" {
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "v12.0.0"
+  version         = "v13.2.1"
   cluster_version = var.cluster_version
   cluster_name    = var.cluster_name
   kubeconfig_name = var.cluster_name
   subnets         = var.subnets
   vpc_id          = var.vpc_id
-  enable_irsa     = true
+  enable_irsa     = false
 
   map_users = concat(var.admin_arns, var.user_arns)
 
@@ -46,4 +46,11 @@ module "eks" {
   #   After that autoscaler is able to see the resources on that ASG.
   #
   worker_groups_launch_template = concat(local.common, local.cpu, local.gpu)
+}
+
+# OIDC cluster EKS settings
+resource "aws_iam_openid_connect_provider" "cluster" {
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da2b0ab7280"]
+  url             = module.eks.cluster_oidc_issuer_url
 }

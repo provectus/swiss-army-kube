@@ -30,7 +30,7 @@ module external_secrets {
 | chart\_repository | n/a | `string` | `"https://external-secrets.github.io/kubernetes-external-secrets/"` | no |
 | chart\_values | Chart values | `string` | `""` | no |
 | chart\_version | A Helm Chart version | `string` | `"6.0.0"` | no |
-| cluster\_output | Cluster output object from Kubernetes module | `any` | n/a | yes |
+| cluster\_output | Cluster output object from Kubernetes module | `map` | n/a | yes |
 | poller\_interval | Interval of refreshing values from secrets manager in ms | `string` | `"30000"` | no |
 | tags | A tags for attaching to new created AWS resources | `map(string)` | `{}` | no |
 

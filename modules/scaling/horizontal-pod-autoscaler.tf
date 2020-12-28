@@ -1,4 +1,4 @@
-resource helm_release hpa_operator {
+resource "helm_release" "hpa_operator" {
   depends_on = [
     var.module_depends_on
   ]
@@ -9,7 +9,7 @@ resource helm_release hpa_operator {
   version    = var.hpa_chart_version
   namespace  = local.namespace
   timeout    = 1200
-  dynamic set {
+  dynamic "set" {
     for_each = merge(local.hpa_conf_defaults, var.hpa_conf)
 
     content {
@@ -19,7 +19,7 @@ resource helm_release hpa_operator {
   }
 }
 
-resource local_file hpa {
+resource "local_file" "hpa" {
   count    = var.hpa_enabled ? local.argocd_enabled : 0
   content  = yamlencode(local.hpa_app)
   filename = "${var.argocd.path}/${local.hpa_name}.yaml"

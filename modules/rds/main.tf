@@ -46,7 +46,7 @@ module "db" {
   # user cannot be used as it is a reserved word used by the engine"
   username = var.rds_database_username
   password = var.rds_database_password != "" ? var.rds_database_password : random_password.rds_password.result
-  port     = "${lookup(var.rds_port_mapping, var.rds_database_engine)}"
+  port     = lookup(var.rds_port_mapping, var.rds_database_engine)
 
   vpc_security_group_ids = [data.aws_security_group.default.id]
 

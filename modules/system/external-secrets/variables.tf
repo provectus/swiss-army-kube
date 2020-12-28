@@ -1,3 +1,9 @@
+variable "namespace" {
+  type        = string
+  default     = "kube-system"
+  description = "A name of the existing namespace"
+}
+
 variable "aws_region" {
   type        = string
   description = "A name of the AWS region (us-central-1, us-west-2 and etc.)"
@@ -17,6 +23,7 @@ variable "poller_interval" {
 }
 
 variable "cluster_output" {
+  type        = map(string)
   description = "Cluster output object from Kubernetes module"
 }
 

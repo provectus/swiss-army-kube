@@ -1,5 +1,5 @@
 # For depends_on queqe
-variable module_depends_on {
+variable "module_depends_on" {
   default     = []
   type        = list(any)
   description = "A list of explicit dependencies"
@@ -21,19 +21,19 @@ variable "config_path" {
   default     = "~/.kube/config"
 }
 
-variable environment {
+variable "environment" {
   type        = string
   default     = null
   description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
-variable project {
+variable "project" {
   type        = string
   default     = null
   description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
-variable cluster_name {
+variable "cluster_name" {
   type        = string
   default     = null
   description = "A name of the Amazon EKS cluster"
@@ -41,7 +41,7 @@ variable cluster_name {
 
 variable "cluster_oidc_arn" {
   type        = string
-  description = "An OIDC ARN of the EKS cluster"
+  description = "An OIDC arn of the EKS cluster"
   default     = ""
 }
 

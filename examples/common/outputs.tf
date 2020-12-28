@@ -1,4 +1,3 @@
-
 output "cluster_name" {
   value = module.kubernetes.cluster_name
 }

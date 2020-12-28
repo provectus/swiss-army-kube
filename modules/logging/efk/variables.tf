@@ -1,5 +1,5 @@
 # For depends_on queqe
-variable module_depends_on {
+variable "module_depends_on" {
   default     = []
   type        = list(any)
   description = "A list of explicit dependencies"
