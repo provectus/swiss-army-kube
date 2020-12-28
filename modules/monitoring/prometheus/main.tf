@@ -1,10 +1,10 @@
-data aws_eks_cluster this {
+data "aws_eks_cluster" "this" {
   name = var.cluster_name
 }
 
-data aws_region current {}
+data "aws_region" "current" {}
 
-resource random_password grafana_password {
+resource "random_password" "grafana_password" {
   depends_on = [
     var.module_depends_on
   ]
@@ -13,13 +13,13 @@ resource random_password grafana_password {
   override_special = "!#%&*()-_=+[]{}<>:?"
 }
 
-resource aws_ssm_parameter grafana_password {
+resource "aws_ssm_parameter" "grafana_password" {
   name  = "/${var.cluster_name}/grafana/password"
   type  = "SecureString"
   value = local.password
 }
 
-resource kubernetes_namespace this {
+resource "kubernetes_namespace" "this" {
   depends_on = [
     var.module_depends_on
   ]
@@ -29,7 +29,7 @@ resource kubernetes_namespace this {
   }
 }
 
-resource kubernetes_secret grafana_auth {
+resource "kubernetes_secret" "grafana_auth" {
   depends_on = [
     var.module_depends_on
   ]
@@ -47,19 +47,19 @@ resource kubernetes_secret grafana_auth {
   }
 }
 
-resource aws_kms_ciphertext grafana_client_secret {
+resource "aws_kms_ciphertext" "grafana_client_secret" {
   count     = var.grafana_google_auth == true && local.argocd_enabled > 0 ? 1 : 0
   key_id    = var.argocd.kms_key_id
   plaintext = base64encode(var.grafana_client_secret)
 }
 
-resource aws_kms_ciphertext grafana_password {
+resource "aws_kms_ciphertext" "grafana_password" {
   count     = local.argocd_enabled
   key_id    = var.argocd.kms_key_id
   plaintext = local.password
 }
 
-resource local_file namespace {
+resource "local_file" "namespace" {
   count = local.argocd_enabled
   depends_on = [
     var.module_depends_on
@@ -74,7 +74,7 @@ resource local_file namespace {
   filename = "${path.root}/${var.argocd.path}/ns-${local.namespace}.yaml"
 }
 
-resource local_file grafana_auth {
+resource "local_file" "grafana_auth" {
   count = var.grafana_google_auth == true ? local.argocd_enabled : 0
   depends_on = [
     var.module_depends_on
@@ -99,7 +99,7 @@ locals {
   namespace      = coalescelist(var.namespace == "" && local.argocd_enabled > 0 ? [{ "metadata" = [{ "name" = var.namespace_name }] }] : kubernetes_namespace.this, [{ "metadata" = [{ "name" = var.namespace }] }])[0].metadata[0].name
 }
 
-resource helm_release this {
+resource "helm_release" "this" {
   count = 1 - local.argocd_enabled
 
   depends_on = [
@@ -114,7 +114,7 @@ resource helm_release this {
   recreate_pods = true
   timeout       = 1200
 
-  dynamic set {
+  dynamic "set" {
     for_each = merge(local.conf)
 
     content {
@@ -124,7 +124,7 @@ resource helm_release this {
   }
 }
 
-resource local_file this {
+resource "local_file" "this" {
   count = local.argocd_enabled
   depends_on = [
     var.module_depends_on

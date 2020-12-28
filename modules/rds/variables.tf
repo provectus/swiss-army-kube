@@ -1,4 +1,4 @@
-variable module_depends_on {
+variable "module_depends_on" {
   default     = []
   type        = list(any)
   description = "A list of explicit dependencies"
@@ -11,23 +11,23 @@ variable "vpc_id" {
 }
 
 variable "subnets" {
-  type        = list
+  type        = list(any)
   description = "vpc subnets"
 }
 
-variable environment {
+variable "environment" {
   type        = string
   default     = "dev"
   description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
-variable project {
+variable "project" {
   type        = string
   default     = "EDUCATION"
   description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
-variable cluster_name {
+variable "cluster_name" {
   type        = string
   default     = null
   description = "A name of the Amazon EKS cluster"

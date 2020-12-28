@@ -1,4 +1,4 @@
-variable cluster_name {
+variable "cluster_name" {
   type        = string
   default     = null
   description = "A name of the Amazon EKS cluster"
@@ -8,18 +8,18 @@ variable "domains" {
   default     = []
   description = "A list of domains to use for ingresses"
 }
-variable environment {
+variable "environment" {
   type        = string
   default     = null
   description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
-variable project {
+variable "project" {
   type        = string
   default     = null
   description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
-variable namespace_name {
+variable "namespace_name" {
   type        = string
   default     = "argo"
   description = "A name of namespace for creating"
@@ -33,7 +33,7 @@ variable "install_events" {
 variable "install_workflows" {
   default = true
 }
-variable module_depends_on {
+variable "module_depends_on" {
   default     = []
   type        = list(any)
   description = "A list of explicit dependencies"

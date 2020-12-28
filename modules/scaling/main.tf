@@ -1,10 +1,10 @@
-data aws_region current {}
+data "aws_region" "current" {}
 
-data aws_eks_cluster this {
+data "aws_eks_cluster" "this" {
   name = var.cluster_name
 }
 
-resource kubernetes_namespace this {
+resource "kubernetes_namespace" "this" {
   count = var.namespace == "kube-system" ? 1 : 0
   metadata {
     name = var.namespace_name

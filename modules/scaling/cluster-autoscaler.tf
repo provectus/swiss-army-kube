@@ -1,4 +1,4 @@
-resource helm_release cluster_autoscaler {
+resource "helm_release" "cluster_autoscaler" {
   depends_on = [
     var.module_depends_on
   ]
@@ -9,7 +9,7 @@ resource helm_release cluster_autoscaler {
   version    = var.cluster_autoscaler_chart_version
   namespace  = local.namespace
   timeout    = 1200
-  dynamic set {
+  dynamic "set" {
     for_each = local.cluster_autoscaler_conf
 
     content {
@@ -19,7 +19,7 @@ resource helm_release cluster_autoscaler {
   }
 }
 
-module iam_assumable_role_admin {
+module "iam_assumable_role_admin" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v3.6.0"
   create_role                   = var.cluster_autoscaler_enabled
@@ -31,7 +31,7 @@ module iam_assumable_role_admin {
   tags = var.tags
 }
 
-resource aws_iam_policy cluster_autoscaler {
+resource "aws_iam_policy" "cluster_autoscaler" {
   depends_on = [
     var.module_depends_on
   ]
@@ -41,7 +41,7 @@ resource aws_iam_policy cluster_autoscaler {
   policy      = data.aws_iam_policy_document.cluster_autoscaler.json
 }
 
-data aws_iam_policy_document cluster_autoscaler {
+data "aws_iam_policy_document" "cluster_autoscaler" {
   statement {
     sid    = "clusterAutoscalerAll"
     effect = "Allow"
@@ -83,7 +83,7 @@ data aws_iam_policy_document cluster_autoscaler {
   }
 }
 
-resource local_file cluster_autoscaler {
+resource "local_file" "cluster_autoscaler" {
   count    = var.cluster_autoscaler_enabled ? local.argocd_enabled : 0
   content  = yamlencode(local.cluster_autoscaler_app)
   filename = "${var.argocd.path}/${local.cluster_autoscaler_name}.yaml"

@@ -1,8 +1,8 @@
-data aws_eks_cluster cluster {
+data "aws_eks_cluster" "cluster" {
   name = module.kubernetes.cluster_name
 }
 
-data aws_eks_cluster_auth cluster {
+data "aws_eks_cluster_auth" "cluster" {
   name = module.kubernetes.cluster_name
 }
 
@@ -17,7 +17,7 @@ locals {
   }
 }
 
-module network {
+module "network" {
   source = "../../modules/network"
 
   availability_zones = var.availability_zones
@@ -27,7 +27,7 @@ module network {
   network            = 10
 }
 #
-module kubernetes {
+module "kubernetes" {
   depends_on = [module.network]
   source     = "../../modules/kubernetes"
 
@@ -41,7 +41,7 @@ module kubernetes {
   on_demand_gpu_instance_type = ["g4dn.xlarge"]
 }
 
-module argocd {
+module "argocd" {
   depends_on = [module.network.vpc_id, module.kubernetes.cluster_name]
   source     = "../../modules/cicd/argo/modules/cd"
 
@@ -62,7 +62,7 @@ module argocd {
   }
 }
 
-module argo_events {
+module "argo_events" {
   source       = "../../modules/cicd/argo/modules/events"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state

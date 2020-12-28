@@ -12,7 +12,7 @@ variable "region" {
 
 variable "availability_zones" {
   default     = ["eu-north-1a", "eu-north-1b"]
-  type        = list
+  type        = list(any)
   description = "Availability zones for project"
 }
 
@@ -35,7 +35,7 @@ variable "domain_name" {
 }
 
 variable "argocd" {
-  default     = {
+  default = {
     repository = "swiss-army-kube"
     branch     = "feature/kubernetes-1.18"
     owner      = "gfrntz"

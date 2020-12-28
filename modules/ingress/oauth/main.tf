@@ -1,4 +1,4 @@
-resource kubernetes_secret this {
+resource "kubernetes_secret" "this" {
   depends_on = [
     var.module_depends_on
   ]
@@ -13,7 +13,7 @@ resource kubernetes_secret this {
   }
 }
 
-resource helm_release this {
+resource "helm_release" "this" {
   count = 1 - local.argocd_enabled
   depends_on = [
     var.module_depends_on
@@ -25,7 +25,7 @@ resource helm_release this {
   namespace     = local.namespace
   recreate_pods = true
 
-  dynamic set {
+  dynamic "set" {
     for_each = local.conf
 
     content {
@@ -35,7 +35,7 @@ resource helm_release this {
   }
 }
 
-resource local_file this {
+resource "local_file" "this" {
   count    = local.argocd_enabled
   content  = yamlencode(local.app)
   filename = "${var.argocd.path}/${local.name}.yaml"

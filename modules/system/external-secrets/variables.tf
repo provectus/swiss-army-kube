@@ -23,7 +23,7 @@ variable "poller_interval" {
 }
 
 variable "cluster_output" {
-  type = map(string)
+  type        = map(string)
   description = "Cluster output object from Kubernetes module"
 }
 

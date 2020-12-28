@@ -1,4 +1,4 @@
-output state {
+output "state" {
   description = "A set of values that required for other modules in case of enabling ArgoCD"
   value = local.enabled ? {
     repository = local.repoURL

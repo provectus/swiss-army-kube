@@ -1,35 +1,35 @@
 # For depends_on queue
-variable module_depends_on {
+variable "module_depends_on" {
   default     = []
   type        = list(any)
   description = "A list of explicit dependencies"
 }
 
-variable environment {
+variable "environment" {
   type        = string
   default     = null
   description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
-variable project {
+variable "project" {
   type        = string
   default     = null
   description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
-variable namespace {
+variable "namespace" {
   type        = string
   default     = ""
   description = "A name of the existing namespace"
 }
 
-variable namespace_name {
+variable "namespace_name" {
   type        = string
   default     = "logging"
   description = "A name of namespace for creating"
 }
 
-variable cluster_name {
+variable "cluster_name" {
   type        = string
   default     = null
   description = "A name of the Amazon EKS cluster"
@@ -47,7 +47,7 @@ variable "cluster_oidc_url" {
   default     = ""
 }
 
-variable aws_region {
+variable "aws_region" {
   type        = string
   default     = null
   description = "A name of the AWS region (us-central-1, us-west-2 and etc.)"

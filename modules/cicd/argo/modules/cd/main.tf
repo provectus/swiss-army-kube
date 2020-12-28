@@ -1,11 +1,11 @@
-resource kubernetes_namespace this {
+resource "kubernetes_namespace" "this" {
   count = var.namespace == "" ? 1 : 0
   metadata {
     name = var.namespace_name
   }
 }
 
-resource helm_release this {
+resource "helm_release" "this" {
   name          = local.name
   repository    = local.repository
   chart         = local.chart
@@ -18,7 +18,7 @@ resource helm_release this {
     ignore_changes = [set, version]
   }
 
-  dynamic set {
+  dynamic "set" {
     for_each = merge(local.enabled ? merge(local.init_conf, local.conf) : local.legacy_defaults, var.conf)
     content {
       name  = set.key
@@ -27,13 +27,13 @@ resource helm_release this {
   }
 }
 
-data aws_region current {}
+data "aws_region" "current" {}
 
-data aws_eks_cluster this {
+data "aws_eks_cluster" "this" {
   name = var.cluster_name
 }
 
-module iam_assumable_role_admin {
+module "iam_assumable_role_admin" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v3.6.0"
   create_role                   = true
@@ -44,13 +44,13 @@ module iam_assumable_role_admin {
   tags                          = var.tags
 }
 
-resource aws_iam_policy this {
+resource "aws_iam_policy" "this" {
   name_prefix = "argocd"
   description = "EKS ArgoCD policy for cluster ${data.aws_eks_cluster.this.id}"
   policy      = data.aws_iam_policy_document.this.json
 }
 
-data aws_iam_policy_document this {
+data "aws_iam_policy_document" "this" {
   statement {
     sid    = "ArgoCDOwn"
     effect = "Allow"
@@ -63,7 +63,7 @@ data aws_iam_policy_document this {
   }
 }
 
-resource kubernetes_config_map decryptor {
+resource "kubernetes_config_map" "decryptor" {
   metadata {
     name      = "argocd-decryptor"
     namespace = local.namespace
@@ -97,18 +97,18 @@ for file in glob.glob('./*.y*ml'):
   }
 }
 
-resource local_file this {
+resource "local_file" "this" {
   count    = local.enabled ? 1 : 0
   content  = yamlencode(local.application)
   filename = "${path.root}/${var.apps_dir}/${local.name}.yaml"
 }
 
-resource random_password this {
+resource "random_password" "this" {
   length  = 20
   special = true
 }
 
-resource aws_ssm_parameter this {
+resource "aws_ssm_parameter" "this" {
   name        = "/${var.cluster_name}/argocd/password"
   type        = "SecureString"
   value       = random_password.this.result
@@ -121,7 +121,7 @@ resource aws_ssm_parameter this {
   tags = var.tags
 }
 
-resource aws_ssm_parameter encrypted {
+resource "aws_ssm_parameter" "encrypted" {
   name        = "/${var.cluster_name}/argocd/password/encrypted"
   type        = "SecureString"
   value       = bcrypt(random_password.this.result, 10)
@@ -134,14 +134,14 @@ resource aws_ssm_parameter encrypted {
   tags = var.tags
 }
 
-resource aws_kms_key this {
+resource "aws_kms_key" "this" {
   description = "ArgoCD key"
   is_enabled  = true
 
   tags = var.tags
 }
 
-resource aws_kms_ciphertext client_secret {
+resource "aws_kms_ciphertext" "client_secret" {
   count     = lookup(var.oidc, "secret", null) == null ? 0 : 1
   key_id    = aws_kms_key.this.key_id
   plaintext = lookup(var.oidc, "secret", null)

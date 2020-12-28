@@ -1,17 +1,17 @@
-data aws_eks_cluster this {
+data "aws_eks_cluster" "this" {
   name = var.cluster_name
 }
 
-data aws_region current {}
+data "aws_region" "current" {}
 
-resource kubernetes_namespace this {
+resource "kubernetes_namespace" "this" {
   count = var.namespace == "" ? 1 - local.argocd_enabled : 0
   metadata {
     name = var.namespace_name
   }
 }
 
-resource local_file namespace {
+resource "local_file" "namespace" {
   count = local.argocd_enabled
   depends_on = [
     var.module_depends_on
@@ -31,7 +31,7 @@ locals {
   namespace      = coalescelist(var.namespace == "" && local.argocd_enabled > 0 ? [{ "metadata" = [{ "name" = var.namespace_name }] }] : kubernetes_namespace.this, [{ "metadata" = [{ "name" = var.namespace }] }])[0].metadata[0].name
 }
 
-resource helm_release this {
+resource "helm_release" "this" {
   count = 1 - local.argocd_enabled
 
   depends_on = [
@@ -46,7 +46,7 @@ resource helm_release this {
   recreate_pods = true
   timeout       = 1200
 
-  dynamic set {
+  dynamic "set" {
     for_each = merge(local.conf)
 
     content {
@@ -56,7 +56,7 @@ resource helm_release this {
   }
 }
 
-module iam_assumable_role_admin {
+module "iam_assumable_role_admin" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> 3.6.0"
   create_role                   = true
@@ -67,7 +67,7 @@ module iam_assumable_role_admin {
   tags                          = var.tags
 }
 
-resource aws_iam_policy this {
+resource "aws_iam_policy" "this" {
   count = length(var.iam_policy) > 0 ? 1 : 0
   depends_on = [
     var.module_depends_on
@@ -77,7 +77,7 @@ resource aws_iam_policy this {
   policy      = var.iam_policy
 }
 
-resource local_file this {
+resource "local_file" "this" {
   count = local.argocd_enabled
   depends_on = [
     var.module_depends_on

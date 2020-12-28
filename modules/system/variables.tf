@@ -1,41 +1,41 @@
 # For depends_on queqe
-variable module_depends_on {
+variable "module_depends_on" {
   default     = []
   type        = list(any)
   description = "A list of explicit dependencies"
 }
 
-variable aws_private {
+variable "aws_private" {
   type        = bool
   description = "Set true or false to use private or public infrastructure"
   default     = false
 }
 
-variable environment {
+variable "environment" {
   type        = string
   default     = null
   description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
-variable project {
+variable "project" {
   type        = string
   default     = null
   description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
-variable cluster_name {
+variable "cluster_name" {
   type        = string
   default     = null
   description = "A name of the Amazon EKS cluster"
 }
 
-variable vpc_id {
+variable "vpc_id" {
   type        = string
   default     = null
   description = "An ID of the existing AWS VPC"
 }
 
-variable mainzoneid {
+variable "mainzoneid" {
   type        = string
   default     = ""
   description = "An ID of the root Route53 zone for creating sub-domains"
@@ -46,7 +46,7 @@ variable "config_path" {
   default     = "~/.kube/config"
 }
 
-variable domains {
+variable "domains" {
   type        = list(string)
   default     = []
   description = "A list of domains to use for ingresses"
