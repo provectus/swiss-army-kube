@@ -1,3 +1,15 @@
-This chart installs an elasticsearch cluster with kibana, elastic-curator and filebeat by default. You can optionally enable logstash and install Fluentd if you prefer. It also optionally installs nginx-ldapauth-proxy.
+## Elastic Kibana Filebeat
 
-[Elastick-stack Documentation](https://github.com/helm/charts/tree/master/stable/elastic-stack)
+https://helm.elastic.co/
+
+## Example how add with module
+```
+module "efk" {
+  module_depends_on = [module.argocd.state.path]
+  source            = "../modules/logging/efk"
+  cluster_name      = module.kubernetes.cluster_name
+  argocd            = module.argocd.state
+  efk_oauth2_domain = ""
+  domains           = local.domain
+}
+```

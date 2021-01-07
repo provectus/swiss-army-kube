@@ -1,8 +1,18 @@
 # For depends_on queqe
 variable "module_depends_on" {
-  default     = []
-  type        = list(any)
-  description = "A list of explicit dependencies"
+  default = []
+}
+
+variable "namespace" {
+  type        = string
+  default     = ""
+  description = "A name of the existing namespace"
+}
+
+variable "namespace_name" {
+  type        = string
+  default     = "logging"
+  description = "A name of namespace for creating"
 }
 
 variable "config_path" {
@@ -10,43 +20,79 @@ variable "config_path" {
   default     = "~/.kube/config"
 }
 
+variable "cluster_name" {
+  type        = string
+  default     = null
+  description = "A name of the Amazon EKS cluster"
+}
+
+variable "elastic_chart_version" {
+  type        = string
+  description = "A Helm Chart version"
+  default     = "7.10.1"
+}
+
+variable "kibana_chart_version" {
+  type        = string
+  description = "A Helm Chart version"
+  default     = "7.10.1"
+}
+
+variable "filebeat_chart_version" {
+  type        = string
+  description = "A Helm Chart version"
+  default     = "7.10.1"
+}
+
 variable "domains" {
-  type        = list(string)
-  default     = []
-  description = "A list of domains to use for ingresses"
+  description = "domain name for ingress"
+  default     = "example.com"
 }
 
-variable "logstash" {
-  description = "logstash"
-  default     = "false"
+variable "argocd" {
+  type        = map(string)
+  description = "A set of values for enabling deployment through ArgoCD"
+  default     = {}
 }
 
-variable "filebeat" {
-  description = "Enable filebeat"
-  default     = "true"
+variable "filebeat_conf" {
+  type        = map(string)
+  description = "A custom configuration for deployment"
+  default     = {}
 }
 
-variable "elasticsearch-curator" {
-  description = "Enable elasticsearch-curator"
-  default     = "true"
+variable "kibana_conf" {
+  type        = map(string)
+  description = "A custom configuration for deployment"
+  default     = {}
 }
 
-variable "failed_limit" {
-  description = "elasticsearch-curator failed jobs history limit"
-  default     = 2
-}
-
-variable "success_limit" {
-  description = "elasticsearch-curator successfull jobs history limit"
-  default     = 2
-}
-
-variable "elasticDataSize" {
-  description = "Size of pvc for elastic data"
-  default     = "30Gi"
+variable "elastic_conf" {
+  type        = map(string)
+  description = "A custom configuration for deployment"
+  default     = {}
 }
 
 variable "efk_oauth2_domain" {
-  description = "oauth2 domain for EFK"
+  type        = string
+  description = "Domain name for Google auth"
   default     = ""
+}
+
+variable "elasticReplicas" {
+  type        = string
+  description = "Number of elasticsearch nodes"
+  default     = "3"
+}
+
+variable "elasticMinMasters" {
+  type        = string
+  description = "Number of minimum elasticsearch master nodes. Keep this number low or equals that Replicas"
+  default     = "2"
+}
+
+variable "elasticDataSize" {
+  type        = string
+  description = "Request pvc size for elastic volume data size"
+  default     = "30Gi"
 }
