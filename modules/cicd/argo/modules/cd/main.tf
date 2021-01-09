@@ -39,6 +39,7 @@ module "iam_assumable_role_admin" {
   create_role                   = true
   role_name                     = "${var.cluster_name}_argocd"
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
+  role_permissions_boundary_arn = var.permissions_boundary
   role_policy_arns              = [aws_iam_policy.this.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.namespace}:argocd"]
   tags                          = var.tags

@@ -102,3 +102,9 @@ variable "project_name" {
   description = "A name of the ArgoCD project for deploying SAK"
   default     = "default"
 }
+
+variable "permissions_boundary" {
+  type        = string
+  description = "Permissions boundary ARN to use for IAM role"
+  default     = ""
+}
