@@ -7,19 +7,19 @@ data "aws_eks_cluster_auth" "cluster" {
 }
 
 locals {
-  environment  = "dev"
-  project      = "EDUCATION"
-  cluster_name = "swiss-army"
-  # tags = {
-  #   environment = local.environment
-  #   project     = local.project
-  # }
+  environment  = var.environment
+  project      = var.project
+  cluster_name = var.cluster_name
+  tags = {
+    environment = local.environment
+    project     = local.project
+  }
 }
 
 module "network" {
   source = "../../modules/network"
 
-  availability_zones = ["us-west-2a", "us-west-2b"]
+  availability_zones = var.availability_zones
   environment        = local.environment
   project            = local.project
   cluster_name       = local.cluster_name
@@ -27,13 +27,13 @@ module "network" {
 }
 
 module "kubernetes" {
+  depends_on = [module.network]
   source = "../../modules/kubernetes"
 
   environment        = local.environment
   project            = local.project
-  availability_zones = ["us-west-2a", "us-west-2b"]
+  availability_zones = var.availability_zones
   cluster_name       = local.cluster_name
-  cluster_version    = "1.16"
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
   admin_arns = [
@@ -55,13 +55,8 @@ module "kubernetes" {
   on_demand_common_max_cluster_size = 5
   on_demand_common_min_cluster_size = 1
   on_demand_common_desired_capacity = 1
-  on_demand_common_instance_type    = ["m5.large", "m5.xlarge", "m5.2xlarge"]
+  on_demand_common_instance_type    = "m5.large"
 
-  #Spot
-  spot_max_cluster_size = 5
-  spot_min_cluster_size = 0
-  spot_desired_capacity = 1
-  spot_instance_type    = ["m5.large", "m5.xlarge", "m5.2xlarge"]
   #CPU
   on_demand_cpu_max_cluster_size = 0
   on_demand_cpu_min_cluster_size = 0
@@ -70,10 +65,12 @@ module "kubernetes" {
   on_demand_gpu_max_cluster_size = 0
   on_demand_gpu_min_cluster_size = 0
   on_demand_gpu_desired_capacity = 0
-}
 
+  on_demand_gpu_instance_type = "g4dn.xlarge"
+}
+#
 module "system" {
-  module_depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, module.kubernetes.workers_launch_template_ids]
+  depends_on = [module.network.vpc_id, module.kubernetes.cluster_name]
   source            = "../../modules/system"
 
   environment        = local.environment
@@ -81,29 +78,31 @@ module "system" {
   cluster_name       = module.kubernetes.cluster_name
   vpc_id             = module.network.vpc_id
   aws_private        = false
-  domains            = ["swiss-army.example.io"]
-  mainzoneid         = ""
-  cert_manager_email = "username@example.io"
+  domains            = ["${var.cluster_name}.edu.provectus.io"]
+  config_path        = "kubeconfig_${var.cluster_name}"
+  mainzoneid         = var.mainzoneid
+  cert_manager_email = "example@example.com"
   cluster_oidc_url   = module.kubernetes.cluster_oidc_url
+  cluster_oidc_arn   = module.kubernetes.cluster_output.oidc_provider_arn
   cluster_roles      = []
 }
-
-module "scaling" {
-  module_depends_on = [module.system.cert-manager]
-  source            = "../../modules/scaling"
-  cluster_name      = module.kubernetes.cluster_name
-}
-
-# module "acm" {
-#   source  = "terraform-aws-modules/acm/aws"
-#   version = "~> v2.0"
-
-#   domain_name               = "swiss-army.example.io"
-#   subject_alternative_names = ["*.swiss-army.example.io"]
-#   zone_id                   = module.system.route53_zone[0].zone_id
-#   validate_certificate      = false
-#   tags                      = local.tags
+#
+# module "scaling" {
+#   module_depends_on = [module.system.cert-manager]
+#   source            = "../../modules/scaling"
+#   cluster_name      = module.kubernetes.cluster_name
 # }
+
+module "acm" {
+  source  = "terraform-aws-modules/acm/aws"
+  version = "~> v2.0"
+
+  domain_name               = "${var.cluster_name}.edu.provectus.io"
+  subject_alternative_names = ["*.${var.cluster_name}.edu.provectus.io"]
+  zone_id                   = module.system.route53_zone[0].zone_id
+  validate_certificate      = false
+  tags                      = local.tags
+}
 
 # module "nginx" {
 #   module_depends_on = [module.system.cert-manager]
@@ -148,22 +147,6 @@ module "scaling" {
 #   cluster_oidc_url  = module.kubernetes.cluster_oidc_url
 # }
 
-## Use EKS 1.15 if you want to deploy Kubeflow !!!
-#module "kubeflow" {
-#  module_depends_on = [module.system.cert-manager, module.argo]
-#  source            = "../../modules/kubeflow"
-#  vpc               = module.network.vpc
-#  cluster_name      = module.kubernetes.cluster_name
-#  cluster           = module.kubernetes.this
-#  artifacts         = module.argo.artifacts
-#}
-
-# module "efs" {
-#  module_depends_on = [module.system.cert-manager]
-#  source            = "../../modules/storage/efs"
-#  vpc               = module.network.vpc
-#  cluster_name      = module.kubernetes.cluster_name
-# }
 
 # module "jenkins" {
 #   module_depends_on = [module.system.cert-manager, module.nginx.nginx-ingress]
