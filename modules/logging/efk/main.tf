@@ -167,8 +167,8 @@ locals {
     "ingress.enabled"                                                   = "true"
     "ingress.hosts[0]"                                                  = "kibana.${var.domains[0]}"
     "ingress.annotations.kubernetes\\.io/ingress\\.class"               = "nginx"
-    //local.oauth2_enabled > 0 ? "ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-url" = "https://${var.efk_oauth2_domain}.${var.domains[0]}/oauth2/auth" : "" 
-    //local.oauth2_enabled > 0 ? "ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-signin" = "https://${var.efk_oauth2_domain}.${var.domains[0]}/oauth2/sign_in?rd=$scheme://$host$request_uri" : ""
+    "ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-url"    = "https://${var.efk_oauth2_domain}.${var.domains[0]}/oauth2/auth"
+    "ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-signin" = "https://${var.efk_oauth2_domain}.${var.domains[0]}/oauth2/sign_in?rd=https://$host$request_uri"
   }
   filebeat_conf_defaults = {
     "daemonset.filebeatConfig.filebeat\\.yml" = yamlencode(
