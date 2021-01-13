@@ -1,3 +1,8 @@
+locals {
+  argocd_enabled = length(var.argocd) > 0 ? 1 : 0
+  namespace      = coalescelist(var.namespace == "" && local.argocd_enabled > 0 ? [{ "metadata" = [{ "name" = var.namespace_name }] }] : kubernetes_namespace.this, [{ "metadata" = [{ "name" = var.namespace }] }])[0].metadata[0].name
+}
+
 data "aws_eks_cluster" "this" {
   name = var.cluster_name
 }
@@ -34,7 +39,7 @@ resource "kubernetes_secret" "grafana_auth" {
     var.module_depends_on
   ]
 
-  count = var.grafana_google_auth == true ? 1 - local.argocd_enabled : 0
+  count = var.grafana_client_id > 0 ? 1 : 0
 
   metadata {
     name      = "grafana-auth"
@@ -48,7 +53,7 @@ resource "kubernetes_secret" "grafana_auth" {
 }
 
 resource "aws_kms_ciphertext" "grafana_client_secret" {
-  count     = var.grafana_google_auth == true && local.argocd_enabled > 0 ? 1 : 0
+  count     = var.grafana_google_auth && local.argocd_enabled > 0 ? 1 : 0
   key_id    = var.argocd.kms_key_id
   plaintext = base64encode(var.grafana_client_secret)
 }
@@ -75,7 +80,7 @@ resource "local_file" "namespace" {
 }
 
 resource "local_file" "grafana_auth" {
-  count = var.grafana_google_auth == true ? local.argocd_enabled : 0
+  count = var.grafana_google_auth ? local.argocd_enabled : 0
   depends_on = [
     var.module_depends_on
   ]
@@ -92,11 +97,6 @@ resource "local_file" "grafana_auth" {
     }
   })
   filename = "${path.root}/${var.argocd.path}/secret-grafana-auth.yaml"
-}
-
-locals {
-  argocd_enabled = length(var.argocd) > 0 ? 1 : 0
-  namespace      = coalescelist(var.namespace == "" && local.argocd_enabled > 0 ? [{ "metadata" = [{ "name" = var.namespace_name }] }] : kubernetes_namespace.this, [{ "metadata" = [{ "name" = var.namespace }] }])[0].metadata[0].name
 }
 
 resource "helm_release" "this" {
@@ -141,22 +141,28 @@ locals {
   conf       = merge(local.conf_defaults, var.conf)
   password   = var.grafana_password == "" ? random_password.grafana_password.result : var.grafana_password
   conf_defaults = {
-    "alertmanager.enabled"       = true
-    "grafana.enabled"            = true
-    "grafana.pvc.enabled"        = true
-    "grafana.ingress.enabled"    = true
-    "grafana.ingress.hosts[0]"   = "grafana.${var.domains[0]}"
-    "grafana.adminPassword"      = local.argocd_enabled > 0 ? "KMS_ENC:${aws_kms_ciphertext.grafana_password[0].ciphertext_blob}:" : local.password
-    "grafana.google.auth"        = var.grafana_google_auth
-    "grafana.allowed.domains"    = var.grafana_allowed_domains
-    "prometheus.enabled"         = true
-    "prometheus.ingress.enabled" = false
-    "namespace"                  = local.namespace
-    "rbac.create"                = true,
-    "resources.limits.cpu"       = "100m",
-    "resources.limits.memory"    = "300Mi",
-    "resources.requests.cpu"     = "100m",
-    "resources.requests.memory"  = "300Mi"
+    "alertmanager.enabled"                                        = true
+    "grafana.enabled"                                             = true
+    "grafana.pvc.enabled"                                         = true
+    "grafana.ingress.enabled"                                     = true
+    "grafana.ingress.hosts[0]"                                    = "grafana.${var.domains[0]}"
+    "grafana.adminPassword"                                       = local.argocd_enabled > 0 ? "KMS_ENC:${aws_kms_ciphertext.grafana_password[0].ciphertext_blob}:" : local.password
+    "grafana.ingress.annotations.kubernetes\\.io/ingress\\.class" = "nginx"
+    "grafana.grafana\\.ini.server.root_url"                       = "https://grafana.${var.domains[0]}"
+    "grafana.grafana\\.ini.server.domain"                         = "grafana.${var.domains[0]}"
+    "grafana.grafana\\.ini.server.enable_gzip"                    = true
+    "grafana.grafana\\.ini.auth\\.google.enabled"                 = var.grafana_google_auth
+    "grafana.grafana\\.ini.auth\\.google.allowed.domains"         = var.grafana_allowed_domains
+    "grafana.grafana\\.ini.server.enable_gzip"                    = true
+    "grafana.envFromSecret"                                       = "grafana-auth"
+    "prometheus.enabled"                                          = true
+    "prometheus.ingress.enabled"                                  = false
+    "namespace"                                                   = local.namespace
+    "rbac.create"                                                 = true,
+    "resources.limits.cpu"                                        = "100m",
+    "resources.limits.memory"                                     = "300Mi",
+    "resources.requests.cpu"                                      = "100m",
+    "resources.requests.memory"                                   = "300Mi"
   }
   application = {
     "apiVersion" = "argoproj.io/v1alpha1"
