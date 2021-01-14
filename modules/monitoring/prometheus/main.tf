@@ -28,7 +28,7 @@ resource "kubernetes_namespace" "this" {
   depends_on = [
     var.module_depends_on
   ]
-  count = var.namespace == "" ? 1 - local.argocd_enabled : 0
+  count = length(var.namespace) > 0 ? 1 - local.argocd_enabled : 0
   metadata {
     name = var.namespace_name
   }
@@ -39,7 +39,7 @@ resource "kubernetes_secret" "grafana_auth" {
     var.module_depends_on
   ]
 
-  count = var.grafana_client_id > 0 ? 1 : 0
+  count = length(var.grafana_client_id) > 0 ? 1 - local.argocd_enabled : 0
 
   metadata {
     name      = "grafana-auth"
@@ -80,7 +80,7 @@ resource "local_file" "namespace" {
 }
 
 resource "local_file" "grafana_auth" {
-  count = var.grafana_google_auth ? local.argocd_enabled : 0
+  count = length(var.grafana_client_id) > 0 ? local.argocd_enabled : 0
   depends_on = [
     var.module_depends_on
   ]
