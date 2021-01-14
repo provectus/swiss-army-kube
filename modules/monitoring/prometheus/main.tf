@@ -28,9 +28,9 @@ resource "kubernetes_namespace" "this" {
   depends_on = [
     var.module_depends_on
   ]
-  count = length(var.namespace) > 0 ? 1 - local.argocd_enabled : 0
+  count = length(var.namespace) > 0 ? 0 : 1 - local.argocd_enabled
   metadata {
-    name = var.namespace_name
+    name = local.namespace
   }
 }
 
