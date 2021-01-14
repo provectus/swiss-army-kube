@@ -126,13 +126,13 @@ module "ingress" {
 }
 
 module "monitoring" {
-  module_depends_on = [module.argocd.state.path]
-  source            = "../../modules/monitoring/prometheus"
-  cluster_name      = module.kubernetes.cluster_name
-  argocd            = module.argocd.state
-  domains           = local.domain
-  grafana_google_auth   = true
-  grafana_client_id     = ""
-  grafana_client_secret = ""
+  module_depends_on       = [module.argocd.state.path]
+  source                  = "../../modules/monitoring/prometheus"
+  cluster_name            = module.kubernetes.cluster_name
+  argocd                  = module.argocd.state
+  domains                 = local.domain
+  grafana_google_auth     = true
+  grafana_client_id       = ""
+  grafana_client_secret   = ""
   grafana_allowed_domains = var.domain_name
 }
