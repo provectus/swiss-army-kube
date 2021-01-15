@@ -1,3 +1,8 @@
+plugin "aws" {
+  enabled = true
+  deep_check = true
+}
+
 config {
   module = true
   deep_check = false

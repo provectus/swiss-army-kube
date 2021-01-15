@@ -51,7 +51,7 @@ spec:
               sh """
               cd examples/common
               terraform init
-              TFLINT_LOG=info /home/jenkins/agent/tflint --deep --force --module .
+              TFLINT_LOG=info /home/jenkins/agent/tflint --force --module .
               """
             }
           }
@@ -62,7 +62,7 @@ spec:
               sh """
               cd examples/argocd
               terraform init
-              TFLINT_LOG=info /home/jenkins/agent/tflint --deep --force --module .
+              TFLINT_LOG=info /home/jenkins/agent/tflint --force --module .
               """
             }
           }
@@ -73,7 +73,7 @@ spec:
               sh """
               cd examples/argocd-with-applications
               terraform init
-              TFLINT_LOG=info /home/jenkins/agent/tflint --deep --force --module .
+              TFLINT_LOG=info /home/jenkins/agent/tflint --force --module .
               """
             }
           }
@@ -84,7 +84,7 @@ spec:
               sh """
               cd examples/argoproj
               terraform init
-              TFLINT_LOG=info /home/jenkins/agent/tflint --deep --force --module .
+              TFLINT_LOG=info /home/jenkins/agent/tflint --force --module .
               """
             }
           }
