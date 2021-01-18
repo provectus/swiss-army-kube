@@ -2,6 +2,8 @@ name: reviewdog
 on: [pull_request]
 jobs:
   tflint:
+    env:
+      TERRAFORM_VERSION: "0.14.4"
     name: runner / tflint
     runs-on: ubuntu-latest
 
@@ -16,26 +18,26 @@ jobs:
       - name: Install Terraform
         run: |
           brew install tfenv
-          tfenv install 0.14.2
+          tfenv install ${TERRAFORM_VERSION}
 
       #//TODO: Rewrite pipeline to recursive all folder in examples
       # Run init to get module code to be able to use `--module`
       - name: Terraform init common
         working-directory: ./examples/common
         run: |
-          tfenv use 0.14.2
+          tfenv use ${TERRAFORM_VERSION}
           terraform init
 
       - name: Terraform init argocd
         working-directory: ./examples/argocd
         run: |
-          tfenv use 0.14.2
+          tfenv use ${TERRAFORM_VERSION}
           terraform init
 
       - name: Terraform init argocd-with-applications
         working-directory: ./examples/argocd-with-applications
         run: |
-          tfenv use 0.14.2
+          tfenv use ${TERRAFORM_VERSION}
           terraform init
 
       # More complex example
@@ -71,3 +73,28 @@ jobs:
           filter_mode: "added" # Optional. Check all files, not just the diff
           level: "warning"
           flags: "--module --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
+  terraformPlan:
+    env:
+      TERRAFORM_VERSION: "0.14.4"
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+    name: runner / terraform plan
+    runs-on: ubuntu-latest
+    needs: tflint
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@master
+
+      - name: Install Terraform
+        run: |
+          brew install tfenv
+          tfenv install ${TERRAFORM_VERSION}
+
+      - name: Terraform plan argocd
+          working-directory: ./examples/argocd
+          run: |
+            tfenv use ${TERRAFORM_VERSION}
+            terraform init
+            terraform plan -var 'cluster_name=swiss-army-github-ci'
