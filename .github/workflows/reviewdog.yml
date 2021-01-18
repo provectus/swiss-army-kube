@@ -1,9 +1,10 @@
 name: reviewdog
 on: [pull_request]
+env:
+  TERRAFORM_VERSION: "0.14.4"
+
 jobs:
   tflint:
-    env:
-      TERRAFORM_VERSION: "0.14.4"
     name: runner / tflint
     runs-on: ubuntu-latest
 
@@ -73,13 +74,13 @@ jobs:
           filter_mode: "added" # Optional. Check all files, not just the diff
           level: "warning"
           flags: "--module --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
-  terraformPlan:
+  terraformPlanArgocd:
     env:
-      TERRAFORM_VERSION: "0.14.4"
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ZONE_ID: ${{ secrets.ZONE_ID }}
 
-    name: runner / terraform plan
+    name: runner / argocd
     runs-on: ubuntu-latest
     needs: tflint
 
@@ -93,8 +94,60 @@ jobs:
           tfenv install ${TERRAFORM_VERSION}
 
       - name: Terraform plan argocd
-          working-directory: ./examples/argocd
-          run: |
-            tfenv use ${TERRAFORM_VERSION}
-            terraform init
-            terraform plan -var 'cluster_name=swiss-army-github-ci'
+        working-directory: ./examples/argocd
+        run: |
+          tfenv use ${TERRAFORM_VERSION}
+          terraform init
+          terraform plan -var 'cluster_name=swiss-army-github-ci'
+
+  terraformPlanArgocdWithApplications:
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ZONE_ID: ${{ secrets.ZONE_ID }}
+
+    name: runner / argocd-with-applications
+    runs-on: ubuntu-latest
+    needs: tflint
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@master
+
+      - name: Install Terraform
+        run: |
+          brew install tfenv
+          tfenv install ${TERRAFORM_VERSION}
+
+      - name: Terraform plan argocd-with-applications
+        working-directory: ./examples/argocd-with-applications
+        run: |
+          tfenv use ${TERRAFORM_VERSION}
+          terraform init
+          terraform plan -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci'
+
+  terraformPlanCommon:
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ZONE_ID: ${{ secrets.ZONE_ID }}
+
+    name: runner / common
+    runs-on: ubuntu-latest
+    needs: tflint
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@master
+
+      - name: Install Terraform
+        run: |
+          brew install tfenv
+          tfenv install ${TERRAFORM_VERSION}
+
+      - name: Terraform plan common example
+        working-directory: ./examples/common
+        run: |
+          tfenv use ${TERRAFORM_VERSION}
+          terraform init
+          terraform plan -var 'cluster_name=swiss-army-github-ci' -var 'domains=["edu.provectus.io"]'

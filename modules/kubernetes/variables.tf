@@ -213,3 +213,47 @@ variable "on_demand_cpu_asg_recreate_on_change" {
   description = "Recreate the autoscaling group when the Launch Template or Launch Configuration change."
   default     = "false"
 }
+
+variable "spot_max_cluster_size" {
+  type        = string
+  description = "Max number of spot instances in EKS autoscaling group"
+  default     = "2"
+}
+
+variable "spot_min_cluster_size" {
+  type        = string
+  description = "Min number of spot instances in EKS autoscaling group"
+  default     = "0"
+}
+
+variable "spot_desired_capacity" {
+  type        = string
+  description = "Desired number of spot instances in EKS autoscaling group"
+  default     = "0"
+}
+
+variable "spot_instance_type" {
+  description = "EC2 spot Instance type"
+  default     = ["m5.large", "m5.xlarge", "m5.2xlarge"]
+}
+
+variable "spot_instance_pools" {
+  description = "Number of Spot pools per availability zone to allocate capacity. EC2 Auto Scaling selects the cheapest Spot pools and evenly allocates Spot capacity across the number of Spot pools that you specify."
+  default     = "10"
+}
+
+variable "spot_asg_recreate_on_change" {
+  description = "Recreate the autoscaling group when the Launch Template or Launch Configuration change."
+  default     = "false"
+}
+
+variable "spot_allocation_strategy" {
+  description = "Valid options are 'lowest-price' and 'capacity-optimized'. If 'lowest-price', the Auto Scaling group launches instances using the Spot pools with the lowest price, and evenly allocates your instances across the number of Spot pools. If 'capacity-optimized', the Auto Scaling group launches instances using Spot pools that are optimally chosen based on the available Spot capacity."
+  default     = "prioritized"
+}
+
+variable "spot_max_price" {
+  type        = string
+  default     = "1"
+  description = "Maximum price per unit hour that the user is willing to pay for the Spot instances. Default is the on-demand price"
+}

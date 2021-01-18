@@ -1,5 +1,5 @@
 variable "cluster_name" {
-  default     = "swiss-army-dkharlamov"
+  default     = "swiss-army"
   type        = string
   description = "A name of the Amazon EKS cluster"
 }
@@ -17,7 +17,7 @@ variable "availability_zones" {
 }
 
 variable "zone_id" {
-  default     = "Z02149423PVQ0YMP19F13"
+  default     = ""
   type        = string
   description = "Default zone id for root domain"
 }
@@ -44,7 +44,7 @@ variable "argocd" {
   default = {
     repository = "swiss-army-kube"
     branch     = "feature/kubernetes-1.18"
-    owner      = "akastav"
+    owner      = "gfrntz"
   }
   type        = map(string)
   description = "A set of values for enabling deployment through ArgoCD"
