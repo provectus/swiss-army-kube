@@ -47,7 +47,7 @@ resource "aws_iam_policy" "this" {
             "route53:ChangeResourceRecordSets",
             "route53:ListResourceRecordSets"
           ],
-          Resource = formatlist("arn:aws:route53:::hostedzone/%s",var.hostedZoneID)
+          Resource = formatlist("arn:aws:route53:::hostedzone/%s", var.hostedZoneID)
         },
         {
           Effect = "Allow",
@@ -100,20 +100,20 @@ locals {
   argocd_enabled = length(var.argocd) > 0 ? 1 : 0
   namespace      = coalescelist(kubernetes_namespace.this, [{ "metadata" = [{ "name" = var.namespace }] }])[0].metadata[0].name
 
-  name       = "cert-manager"
-  repository = "https://charts.jetstack.io"
-  chart      = "cert-manager"
-  version    = var.chart_version
-  email      = var.email
-  domains    = var.domain
-  region     = data.aws_region.current.name
+  name         = "cert-manager"
+  repository   = "https://charts.jetstack.io"
+  chart        = "cert-manager"
+  version      = var.chart_version
+  email        = var.email
+  domains      = var.domain
+  region       = data.aws_region.current.name
   hostedZoneID = var.hostedZoneID
 
   issuer = {
     "apiVersion" = "cert-manager.io/v1"
     "kind"       = "ClusterIssuer"
     "metadata" = {
-      "name"     = "letsencrypt-prod"
+      "name" = "letsencrypt-prod"
     }
     "spec" = {
       "acme" = {
@@ -129,7 +129,7 @@ locals {
             }
             "dns01" = {
               "route53" = {
-                "region" = local.region
+                "region"       = local.region
                 "hostedZoneID" = local.hostedZoneID
               }
             }
@@ -180,13 +180,13 @@ locals {
       //TODO: set external DNS and issuers
     } : {},
     {
-      "installCRDs" = true
-      "securityContext.enabled" = true
-      "securityContext.fsGroup" = "1001"
+      "installCRDs"                                               = true
+      "securityContext.enabled"                                   = true
+      "securityContext.fsGroup"                                   = "1001"
       "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn" = module.iam_assumable_role_admin.this_iam_role_arn
-      "ingressShim.defaultIssuerName" = "letsencrypt-prod"//TODO:metadata.name.issuer
-      "ingressShim.defaultIssuerKind" = "ClusterIssuer"
-      "global.leaderElection.namespace" = local.namespace
+      "ingressShim.defaultIssuerName"                             = "letsencrypt-prod" //TODO:metadata.name.issuer
+      "ingressShim.defaultIssuerKind"                             = "ClusterIssuer"
+      "global.leaderElection.namespace"                           = local.namespace
 
   })
 }
