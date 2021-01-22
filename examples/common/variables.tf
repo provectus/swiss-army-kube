@@ -4,12 +4,6 @@ variable "region" {
   description = "Set default region"
 }
 
-variable "cluster_name" {
-  default     = "swiss-army"
-  type        = string
-  description = "A name of the Amazon EKS cluster"
-}
-
 variable "availability_zones" {
   default     = ["eu-north-1a", "eu-north-1b"]
   type        = list(any)
@@ -28,8 +22,26 @@ variable "cert_manager_email" {
   description = "Email to cert-manager"
 }
 
-variable "mainzoneid" {
+variable "environment" {
+  default     = "dev"
   type        = string
+  description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
+}
+
+variable "project" {
+  default     = "EDUCATION"
+  type        = string
+  description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
+}
+
+variable "cluster_name" {
+  default     = "swiss-army"
+  type        = string
+  description = "A name of the Amazon EKS cluster"
+}
+
+variable "mainzoneid" {
   default     = ""
+  type        = string
   description = "An ID of the root Route53 zone for creating sub-domains"
 }

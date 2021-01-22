@@ -79,7 +79,8 @@ module "system" {
   cluster_name       = module.kubernetes.cluster_name
   vpc_id             = module.network.vpc_id
   aws_private        = false
-  domains            = var.domains
+  domains            = ["${var.cluster_name}.${var.domains[0]}"]
+  config_path        = "kubeconfig_${var.cluster_name}"
   mainzoneid         = var.mainzoneid
   cert_manager_email = var.cert_manager_email
   cluster_oidc_url   = module.kubernetes.cluster_oidc_url
@@ -93,22 +94,22 @@ module "system" {
 #   cluster_name      = module.kubernetes.cluster_name
 # }
 
- # module "scaling" {
- #   module_depends_on = [module.system.cert-manager]
- #   source            = "../../modules/scaling"
- #   cluster_name      = module.kubernetes.cluster_name
- # }
+# module "scaling" {
+#   module_depends_on = [module.system.cert-manager]
+#   source            = "../../modules/scaling"
+#   cluster_name      = module.kubernetes.cluster_name
+# }
 
 # module "acm" {
 #   source  = "terraform-aws-modules/acm/aws"
 #   version = "~> v2.0"
 
-  domain_name               = "${var.cluster_name}.edu.provectus.io"
-  subject_alternative_names = ["*.${var.cluster_name}.edu.provectus.io"]
-  zone_id                   = module.system.route53_zone[0].zone_id
-  validate_certificate      = false
-  tags                      = local.tags
-}
+#  domain_name               = "${var.cluster_name}.edu.provectus.io"
+#  subject_alternative_names = ["*.${var.cluster_name}.edu.provectus.io"]
+#  zone_id                   = module.system.route53_zone[0].zone_id
+#  validate_certificate      = false
+#  tags                      = local.tags
+# }
 
 # module "nginx" {
 #   module_depends_on = [module.system.cert-manager]
