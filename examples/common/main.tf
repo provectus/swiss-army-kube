@@ -34,6 +34,7 @@ module "kubernetes" {
   project            = local.project
   availability_zones = var.availability_zones
   cluster_name       = local.cluster_name
+  cluster_version    = "1.18"
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
   admin_arns = [
@@ -78,10 +79,10 @@ module "system" {
   cluster_name       = module.kubernetes.cluster_name
   vpc_id             = module.network.vpc_id
   aws_private        = false
-  domains            = ["${var.cluster_name}.edu.provectus.io"]
+  domains            = ["${var.cluster_name}.${var.domains[0]}"]
   config_path        = "kubeconfig_${var.cluster_name}"
   mainzoneid         = var.mainzoneid
-  cert_manager_email = "example@example.com"
+  cert_manager_email = var.cert_manager_email
   cluster_oidc_url   = module.kubernetes.cluster_oidc_url
   cluster_oidc_arn   = module.kubernetes.cluster_output.oidc_provider_arn
   cluster_roles      = []
@@ -93,16 +94,22 @@ module "system" {
 #   cluster_name      = module.kubernetes.cluster_name
 # }
 
-module "acm" {
-  source  = "terraform-aws-modules/acm/aws"
-  version = "~> v2.0"
+# module "scaling" {
+#   module_depends_on = [module.system.cert-manager]
+#   source            = "../../modules/scaling"
+#   cluster_name      = module.kubernetes.cluster_name
+# }
 
-  domain_name               = "${var.cluster_name}.edu.provectus.io"
-  subject_alternative_names = ["*.${var.cluster_name}.edu.provectus.io"]
-  zone_id                   = module.system.route53_zone[0].zone_id
-  validate_certificate      = false
-  tags                      = local.tags
-}
+# module "acm" {
+#   source  = "terraform-aws-modules/acm/aws"
+#   version = "~> v2.0"
+
+#  domain_name               = "${var.cluster_name}.edu.provectus.io"
+#  subject_alternative_names = ["*.${var.cluster_name}.edu.provectus.io"]
+#  zone_id                   = module.system.route53_zone[0].zone_id
+#  validate_certificate      = false
+#  tags                      = local.tags
+# }
 
 # module "nginx" {
 #   module_depends_on = [module.system.cert-manager]

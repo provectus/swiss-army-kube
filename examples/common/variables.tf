@@ -10,6 +10,18 @@ variable "availability_zones" {
   description = "Availability zones for project"
 }
 
+variable "domains" {
+  type        = list(string)
+  default     = ["edu.provectus.io"]
+  description = "A list of domains to use for ingresses"
+}
+
+variable "cert_manager_email" {
+  type        = string
+  default     = "test@example.com"
+  description = "Email to cert-manager"
+}
+
 variable "environment" {
   default     = "dev"
   type        = string
