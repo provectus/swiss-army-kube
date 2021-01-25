@@ -31,7 +31,6 @@ resource "local_file" "namespace" {
 
 locals {
   argocd_enabled = length(var.argocd) > 0 ? 1 : 0
-  oauth2_enabled = length(var.efk_oauth2_domain) > 0 ? 1 : 0
   namespace      = coalescelist(var.namespace == "" && local.argocd_enabled > 0 ? [{ "metadata" = [{ "name" = var.namespace_name }] }] : kubernetes_namespace.this, [{ "metadata" = [{ "name" = var.namespace }] }])[0].metadata[0].name
 }
 

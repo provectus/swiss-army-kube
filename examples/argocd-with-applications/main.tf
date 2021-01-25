@@ -132,3 +132,16 @@ module "monitoring" {
   argocd            = module.argocd.state
   domains           = local.domain
 }
+
+module "efk" {
+  module_depends_on = [module.argocd.state.path]
+  source            = "../../modules/logging/efk"
+  cluster_name      = module.kubernetes.cluster_name
+  argocd            = module.argocd.state
+  domains           = local.domain
+  kibana_conf       = {
+    "ingress.annotations.kubernetes\\.io/ingress\\.class" = "nginx"
+    #"ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-url"    = "https://auth.example.com/oauth2/auth"
+    #"ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-signin" = "https://auth.example.com/oauth2/sign_in?rd=https://$host$request_uri"
+  }
+}
