@@ -55,6 +55,7 @@ variable "domains" {
 #Cert-manager
 variable "cert_manager_email" {
   type        = string
+  default     = "test@example.com"
   description = "Email to cert-manager"
 }
 
