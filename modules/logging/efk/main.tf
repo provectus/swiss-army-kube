@@ -158,17 +158,14 @@ locals {
   filebeat_chart      = "filebeat"
   filebeat_conf       = merge(local.filebeat_conf_defaults, var.filebeat_conf)
   elastic_conf_defaults = {
-    "replicas" = var.elasticReplicas
-    "minimumMasterNodes" = var.elasticMinMasters
+    "replicas"                                       = var.elasticReplicas
+    "minimumMasterNodes"                             = var.elasticMinMasters
     "volumeClaimTemplate.resources.requests.storage" = var.elasticDataSize
   }
   kibana_conf_defaults = {
     "elasticsearchHosts" = "http://elasticsearch-master:9200"
-    "ingress.enabled"                                                   = "true"
-    "ingress.hosts[0]"                                                  = "kibana.${var.domains[0]}"
-    "ingress.annotations.kubernetes\\.io/ingress\\.class"               = "nginx"
-    "ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-url"    = "https://${var.efk_oauth2_domain}.${var.domains[0]}/oauth2/auth"
-    "ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/auth-signin" = "https://${var.efk_oauth2_domain}.${var.domains[0]}/oauth2/sign_in?rd=https://$host$request_uri"
+    "ingress.enabled"    = "true"
+    "ingress.hosts[0]"   = "kibana.${var.domains[0]}"
   }
   filebeat_conf_defaults = {
     "daemonset.filebeatConfig.filebeat\\.yml" = yamlencode(

@@ -45,8 +45,9 @@ variable "filebeat_chart_version" {
 }
 
 variable "domains" {
-  description = "domain name for ingress"
-  default     = "example.com"
+  type        = list(string)
+  default     = ["local"]
+  description = "A list of domains to use for ingresses"
 }
 
 variable "argocd" {
@@ -71,12 +72,6 @@ variable "elastic_conf" {
   type        = map(string)
   description = "A custom configuration for deployment"
   default     = {}
-}
-
-variable "efk_oauth2_domain" {
-  type        = string
-  description = "Domain name for Google auth"
-  default     = ""
 }
 
 variable "elasticReplicas" {
