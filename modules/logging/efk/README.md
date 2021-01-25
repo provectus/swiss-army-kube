@@ -62,7 +62,6 @@ No requirements.
 | cluster\_name | A name of the Amazon EKS cluster | `string` | `null` | no |
 | config\_path | location of the kubeconfig file | `string` | `"~/.kube/config"` | no |
 | domains | A list of domains to use for ingresses | `list(string)` | <pre>[<br>  "local"<br>]</pre> | no |
-| efk\_oauth2\_domain | Domain name for Google auth | `string` | `""` | no |
 | elasticDataSize | Request pvc size for elastic volume data size | `string` | `"30Gi"` | no |
 | elasticMinMasters | Number of minimum elasticsearch master nodes. Keep this number low or equals that Replicas | `string` | `"2"` | no |
 | elasticReplicas | Number of elasticsearch nodes | `string` | `"3"` | no |
