@@ -29,6 +29,7 @@ variable "cluster_output" {
 
 variable "chart_repository" {
   type    = string
+  description = "A chart repository"
   default = "https://external-secrets.github.io/kubernetes-external-secrets/"
 }
 
