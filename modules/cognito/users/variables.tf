@@ -9,7 +9,7 @@ variable pool_id {
 
 variable user_groups {
   description = "Cognito user-groups to be created"
-  type = string
+  type = list(string)
 }
 
 variable users {
