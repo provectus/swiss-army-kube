@@ -18,7 +18,7 @@ locals {
         { "Name": "email_verified", "Value": "true"}
       ],
       "Username" : "${user.email}",
-      "UserPoolId" : "${module.cognito.pool_id}"
+      "UserPoolId" : "${var.pool_id}"
       }
     },
     "${user.user_group_hash}": {
@@ -26,7 +26,7 @@ locals {
       "Properties" : {
         "GroupName" : "${aws_cognito_user_group.default.name}",
         "Username" : "${user.email}",
-        "UserPoolId" : "${module.cognito.pool_id}"
+        "UserPoolId" : "${var.pool_id}"
       },
       "DependsOn" : "${user.user_hash}"
     }
