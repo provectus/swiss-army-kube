@@ -37,6 +37,12 @@ variable "subnets" {
   description = "vpc subnets"
 }
 
+variable "wait_for_cluster_interpreter" {
+  type        = list(string)
+  description = "Interpreter in which to run 'wait for cluster' command"
+  default     = ["/bin/sh", "-c"]
+}
+
 variable "aws_auth_user_mapping" {
   description = "Additional IAM users to add to the aws-auth configmap."
   type = list(object({
