@@ -37,7 +37,7 @@ variable "subnets" {
   description = "vpc subnets"
 }
 
-variable "admin_arns" {
+variable "aws_auth_user_mapping" {
   description = "Additional IAM users to add to the aws-auth configmap."
   type = list(object({
     userarn  = string
@@ -47,15 +47,16 @@ variable "admin_arns" {
   default = []
 }
 
-variable "user_arns" {
-  description = "Additional IAM users to add to the aws-auth configmap."
+variable "aws_auth_role_mapping" {
+  description = "Additional IAM ro9les to add to the aws-auth configmap."
   type = list(object({
-    userarn  = string
+    rolearn  = string
     username = string
     groups   = list(string)
   }))
   default = []
 }
+
 
 # On-demand instance
 variable "on_demand_common_max_cluster_size" {

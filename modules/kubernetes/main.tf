@@ -18,7 +18,8 @@ module "eks" {
   subnets         = var.subnets
   vpc_id          = var.vpc_id
 
-  map_users = concat(var.admin_arns, var.user_arns)
+  map_users = var.aws_auth_user_mapping
+  map_roles = var.aws_auth_role_mapping
 
   tags = {
     Environment = var.environment

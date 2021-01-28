@@ -61,7 +61,7 @@ variable "network" {
   description = "Number would be used to template CIDR 10.X.0.0/16."
 }
 
-variable "admin_arns" {
+variable "aws_auth_user_mapping" {
   description = "Additional IAM users to add to the aws-auth configmap."
   type = list(object({
     userarn  = string
@@ -71,8 +71,8 @@ variable "admin_arns" {
   default = []
 }
 
-variable "user_arns" {
-  description = "Additional IAM users to add to the aws-auth configmap."
+variable "aws_auth_role_mapping" {
+  description = "Additional IAM roles to add to the aws-auth configmap."
   type = list(object({
     userarn  = string
     username = string
