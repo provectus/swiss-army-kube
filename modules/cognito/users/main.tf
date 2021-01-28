@@ -1,6 +1,6 @@
 resource "aws_cognito_user_group" "default" {
   name         = "default"
-  user_pool_id = module.cognito.pool_id
+  user_pool_id = var.pool_id
 }
 
 
@@ -33,7 +33,7 @@ locals {
 EOF
 ])
 
-  cloudformation_template_body = join("\n", ["{\"Resources\" : \n  {\n",local.cognito_rcloudformation_resourcesesources,"}\n}"])
+  cloudformation_template_body = join("\n", ["{\"Resources\" : \n  {\n",local.cloudformation_resources,"}\n}"])
 }
 
 resource "aws_cloudformation_stack" "cognito_users" {
