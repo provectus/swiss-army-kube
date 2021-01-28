@@ -1,45 +1,55 @@
-resource "aws_cognito_user_group" "default" {
-  name         = "default"
-  user_pool_id = module.cognito.pool_id
-}
-
-
-locals {
-  //constructs a cloudformation template for cognito users
-  //TODO add dynamic group construction, currently all users are assigned to "default"
-  cloudformation_resources = join(", \n", [
-    for user in var.users:
-          <<EOF
-  "${user.user_hash}": {
-    "Type" : "AWS::Cognito::UserPoolUser",
-    "Properties" : {
-      "UserAttributes" : [
-        { "Name": "email", "Value": "${user.email}"},
-        { "Name": "email_verified", "Value": "true"}
-      ],
-      "Username" : "${user.email}",
-      "UserPoolId" : "${module.cognito.pool_id}"
-      }
-    },
-    "${user.user_group_hash}": {
-      "Type" : "AWS::Cognito::UserPoolUserToGroupAttachment",
-      "Properties" : {
-        "GroupName" : "${aws_cognito_user_group.default.name}",
-        "Username" : "${user.email}",
-        "UserPoolId" : "${module.cognito.pool_id}"
-      },
-      "DependsOn" : "${user.user_hash}"
+resource aws_cognito_user_pool this {
+  name = var.cluster_name
+  admin_create_user_config {
+    invite_message_template {
+      email_message = var.invite_template.email_message
+      email_subject = var.invite_template.email_subject
+      sms_message   = var.invite_template.sms_message
     }
-EOF
-])
-
-  cloudformation_template_body = join("\n", ["{\"Resources\" : \n  {\n",local.cognito_rcloudformation_resourcesesources,"}\n}"])
+  }
 }
 
-resource "aws_cloudformation_stack" "cognito_users" {
-  name = var.cloudformation_stack_name
-  template_body = local.cloudformation_template_body
+resource aws_cognito_user_pool_domain this {
+  domain          = "auth.${var.domain}"
+  certificate_arn = module.cognito_acm.this_acm_certificate_arn
+  user_pool_id    = aws_cognito_user_pool.this.id
+}
+
+resource aws_route53_record this {
+  name    = aws_cognito_user_pool_domain.this.domain
+  type    = "A"
+  zone_id = var.zone_id
+  alias {
+    evaluate_target_health = false
+    name                   = aws_cognito_user_pool_domain.this.cloudfront_distribution_arn
+    zone_id                = "Z2FDTNDATAQYW2"
+  }
+}
+
+resource aws_route53_record root {
+  name    = var.domain
+  type    = "A"
+  zone_id = var.zone_id
+  ttl     = 60
+  records = ["127.0.0.1"]
+}
+
+module cognito_acm {
+  source  = "terraform-aws-modules/acm/aws"
+  version = "~> v2.0"
+
+  domain_name          = "auth.${var.domain}"
+  zone_id              = var.zone_id
+  validate_certificate = true
+
+  providers = {
+    aws = aws.cognito
+  }
+
   tags = var.tags
 }
 
-
+provider aws {
+  alias  = "cognito"
+  region = "us-east-1"
+}
