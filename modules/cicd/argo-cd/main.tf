@@ -37,7 +37,7 @@ data aws_eks_cluster this {
 
 module iam_assumable_role_admin {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.6.0"
+  # version                       = "~> v2.6.0"
   create_role                   = true
   role_name                     = "${var.cluster_name}_argocd"
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
