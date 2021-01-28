@@ -118,7 +118,7 @@ locals {
       for i, domain in tolist(var.domains) :
       "key" => {
         "name"  = "domainFilters[${i}]"
-        "value" = "${domain}"
+        "value" = domain
       }
     })
   )
