@@ -11,7 +11,7 @@ data "aws_ami" "eks_gpu_worker" {
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
-  version         = "v12.0.0"
+  version         = "v13.2.1"
   
   wait_for_cluster_interpreter = var.wait_for_cluster_interpreter
   cluster_version = var.cluster_version
