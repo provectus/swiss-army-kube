@@ -117,11 +117,13 @@ resource aws_ssm_parameter this {
   type        = "SecureString"
   value       = random_password.this.result
   description = "A password for accessing ArgoCD installation in ${var.cluster_name} EKS cluster"
+  tags        = var.tags
 }
 
 resource aws_kms_key this {
   description = "ArgoCD key"
   is_enabled  = true
+  tags        = var.tags
 }
 
 resource aws_kms_ciphertext client_secret {
