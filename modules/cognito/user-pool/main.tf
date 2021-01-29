@@ -7,6 +7,7 @@ resource aws_cognito_user_pool this {
       sms_message   = var.invite_template.sms_message
     }
   }
+  tags = var.tags
 }
 
 resource aws_cognito_user_pool_domain this {
