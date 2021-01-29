@@ -48,6 +48,7 @@ module "sa_assumable_role" {
   role_name                     = "${var.cluster_name}_argo-workflow"
   provider_url                  = var.cluster_oidc_url
   oidc_fully_qualified_subjects = ["system:serviceaccount:${var.namespace}:argo-*"]
+  tags                          = var.tags
 }
 
 resource "helm_release" "argo-workflow" {

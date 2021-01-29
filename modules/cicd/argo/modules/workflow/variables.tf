@@ -37,3 +37,8 @@ variable "cluster_name" {
 variable "cluster_oidc_url" {
   type = string
 }
+
+variable tags {
+  type = map(string)
+  default = {}
+}

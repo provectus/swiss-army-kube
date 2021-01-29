@@ -7,6 +7,9 @@ resource "aws_cognito_user_group" "default" {
 locals {
   //constructs a cloudformation template for cognito users
   //TODO add dynamic group construction, currently all users are assigned to "default"
+
+  // todo: add var.tags in UserPoolTags for AWS::Cognito::UserPoolUser
+
   cloudformation_resources = join(", \n", [
     for user in var.users:
           <<EOF

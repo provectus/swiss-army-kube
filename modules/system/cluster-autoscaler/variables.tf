@@ -35,3 +35,8 @@ variable argocd {
     branch     = ""
   }
 }
+
+variable tags {
+  type = map(string)
+  default = {}
+}
