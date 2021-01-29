@@ -17,7 +17,7 @@ resource local_file this {
 }
 
 locals {
-  repository = "https://kubernetes-charts.storage.googleapis.com"
+  repository = "https://charts.helm.sh/stable"
   name       = "nginx-ingress"
   chart      = "nginx-ingress"
   values = [
@@ -107,7 +107,7 @@ locals {
 #   ]
 
 #   name          = "oauth2-proxy"
-#   repository    = "https://kubernetes-charts.storage.googleapis.com"
+#   repository    = "https://charts.helm.sh/stable"
 #   chart         = "oauth2-proxy"
 #   version       = "3.1.0"
 #   namespace     = "ingress-system"
@@ -170,7 +170,7 @@ locals {
 #   ]
 
 #   name          = "oauth2-proxy-google"
-#   repository    = "https://kubernetes-charts.storage.googleapis.com"
+#   repository    = "https://charts.helm.sh/stable"
 #   chart         = "oauth2-proxy"
 #   version       = "3.1.0"
 #   namespace     = "ingress-system"

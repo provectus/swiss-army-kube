@@ -200,7 +200,7 @@ resource "helm_release" "metrics-server" {
   ]
 
   name       = "state"
-  repository = "https://kubernetes-charts.storage.googleapis.com"
+  repository = "https://charts.helm.sh/stable"
   chart      = "metrics-server"
   version    = "2.11.1"
   namespace  = "kube-system"
@@ -221,7 +221,7 @@ kubectl --kubeconfig ${path.root}/${var.config_path} -n kube-system apply -f ${p
 resource "helm_release" "sealed-secrets" {
   depends_on = [null_resource.sealed-secrets-crd]
   name       = "sealed-secrets"
-  repository = "https://kubernetes-charts.storage.googleapis.com"
+  repository = "https://charts.helm.sh/stable"
   chart      = "sealed-secrets"
   version    = "1.10.3"
   namespace  = "kube-system"

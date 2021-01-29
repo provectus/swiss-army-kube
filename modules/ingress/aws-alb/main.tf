@@ -128,7 +128,7 @@ resource local_file this {
 
 locals {
   namespace  = kubernetes_namespace.this.id
-  repository = "https://kubernetes-charts-incubator.storage.googleapis.com"
+  repository = "https://charts.helm.sh/incubator"
   name       = "aws-alb-ingress-controller"
   chart      = "aws-alb-ingress-controller"
   version    = "1.0.2"
