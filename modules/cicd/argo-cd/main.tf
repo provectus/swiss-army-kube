@@ -43,6 +43,7 @@ module iam_assumable_role_admin {
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
   role_policy_arns              = [aws_iam_policy.this.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${kubernetes_namespace.this.metadata[0].name}:argocd"]
+  tags                          = var.tags
 }
 
 resource aws_iam_policy this {

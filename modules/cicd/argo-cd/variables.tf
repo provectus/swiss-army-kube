@@ -75,3 +75,8 @@ variable oidc {
     name   = ""
   }
 }
+
+variable tags {
+  type = map(string)
+  default = {}
+}
