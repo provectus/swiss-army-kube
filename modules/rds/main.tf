@@ -26,7 +26,7 @@ resource "aws_ssm_parameter" "rds_password" {
 module "db" {
 
   source  = "terraform-aws-modules/rds/aws"
-  version = "~> 2.0"
+  version = "~> 2.20"
 
   identifier = var.rds_database_name
 
