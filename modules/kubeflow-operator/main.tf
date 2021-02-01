@@ -1,6 +1,6 @@
 locals {
   repository = "https://github.com/kubeflow/manifests"
-  ref        = "v1.1-branch"
+  ref        = "v1.2-branch"
   ingress = {
     "apiVersion" = "networking.k8s.io/v1beta1"
     "kind"       = "Ingress"

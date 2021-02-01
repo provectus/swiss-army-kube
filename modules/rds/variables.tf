@@ -127,3 +127,15 @@ variable "rds_database_tags" {
   description = "Additional tags for rds instance"
   type        = map(string)
 }
+
+
+
+variable "rds_iam_database_authentication_enabled" {
+  default     = false
+  description = "Set to true to authenticate to RDS using an IAM role"
+  type        = bool
+}
+
+
+
+
