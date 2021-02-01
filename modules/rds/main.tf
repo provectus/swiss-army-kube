@@ -70,7 +70,7 @@ module "db" {
   subnet_ids = var.subnets
 
   # DB parameter group
-  family = var.rds_database_engine == "postgres" ? "postgres9.6" : ""
+  family = "${var.rds_database_engine}${var.rds_database_major_engine_version}"
 
   # Snapshot name upon DB deletion
   final_snapshot_identifier = var.rds_database_name
