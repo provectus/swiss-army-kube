@@ -146,3 +146,11 @@ variable "rds_instance_name" {
   type        = string
 }
 
+
+variable "rds_publicly_accessible" {
+  description = "Set to true to enable accessing the RDS DB from outside the VPC"
+  default = false
+  type    = bool
+}
+
+

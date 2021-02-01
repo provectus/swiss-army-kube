@@ -77,4 +77,7 @@ module "db" {
 
   # Database Deletion Protection
   deletion_protection = var.rds_database_delete_protection
+
+  # Publicly accessible
+  publicly_accessible = var.rds_publicly_accessible
 }
