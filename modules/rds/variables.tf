@@ -55,8 +55,7 @@ variable "rds_database_engine_version" {
 
 variable "rds_database_major_engine_version" {
   type        = string
-  description = "Major Database enjine version"
-  default     = "9"
+  description = "Major Database engine version"
 }
 
 variable "rds_database_instance" {
