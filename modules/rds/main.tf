@@ -64,7 +64,7 @@ module "db" {
     },
   )
 
-  enabled_cloudwatch_logs_exports = var.rds_database_engine == "postgres" ? ["postgresql", "upgrade"] : ["alert", "audit", "error", "general", "listener", "slowquery"]
+  enabled_cloudwatch_logs_exports = var.rds_enabled_cloudwatch_logs_exports
 
   # DB subnet group
   subnet_ids = var.subnets

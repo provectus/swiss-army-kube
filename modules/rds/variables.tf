@@ -136,5 +136,10 @@ variable "rds_iam_database_authentication_enabled" {
 }
 
 
+variable "rds_enabled_cloudwatch_logs_exports" {
+  default     = []
+  description = "List of cloudwatch log types to enable"
+  type        = list(string)
+}
 
 
