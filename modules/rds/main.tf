@@ -28,7 +28,7 @@ module "db" {
   source  = "terraform-aws-modules/rds/aws"
   version = "~> 2.20"
 
-  identifier = var.rds_database_name
+  identifier = var.rds_instance_name
 
   engine               = var.rds_database_engine
   engine_version       = var.rds_database_engine_version

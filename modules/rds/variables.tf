@@ -141,5 +141,8 @@ variable "rds_enabled_cloudwatch_logs_exports" {
   description = "List of cloudwatch log types to enable"
   type        = list(string)
 }
-
+variable "rds_instance_name" {
+  description = "Name of the RDS instance"
+  type        = string
+}
 
