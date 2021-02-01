@@ -66,7 +66,7 @@ module "argocd" {
   }
 }
 
-
+#
 module "external_dns" {
   depends_on = [module.argocd]
 
@@ -125,9 +125,17 @@ module "ingress" {
   tags = local.tags
 }
 
-module "monitoring" {
-  module_depends_on = [module.argocd.state.path]
-  source            = "../../modules/monitoring/prometheus"
+# module "monitoring" {
+#   depends_on = [module.argocd]
+#   source            = "../../modules/monitoring/prometheus"
+#   cluster_name      = module.kubernetes.cluster_name
+#   argocd            = module.argocd.state
+#   domains           = local.domain
+# }
+
+module "victoriametrics_monitoring" {
+  depends_on = [module.argocd]
+  source            = "../../modules/monitoring/victoria-metrics"
   cluster_name      = module.kubernetes.cluster_name
   argocd            = module.argocd.state
   domains           = local.domain
