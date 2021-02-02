@@ -41,7 +41,7 @@ locals {
   }
 
   template = jsonencode({
-    "Resources" = merge(users, user_groups)
+    "Resources" = merge(local.users, local.user_groups)
   })
   
 
