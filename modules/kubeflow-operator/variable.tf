@@ -33,7 +33,7 @@ variable ref {
 }
 
 variable namespace {
-  type        = map(any)
+  type        = any
   description = "The Namespace resource definition"
   default     = {
     "apiVersion" = "v1"
