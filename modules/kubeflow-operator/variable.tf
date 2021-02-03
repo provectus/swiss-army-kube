@@ -15,7 +15,7 @@ variable argocd {
 }
 
 variable ingress_annotations {
-  type        = map(string)
+  type        = map(any)
   description = "A set of annotations for Kubeflow Ingress"
   default     = {}
 }
@@ -33,7 +33,7 @@ variable ref {
 }
 
 variable namespace {
-  type        = map(object)
+  type        = map(any)
   description = "The Namespace resource definition"
   default     = {
     "apiVersion" = "v1"
@@ -91,13 +91,13 @@ locals {
 }
 
 variable ingress {
-  type        = map(object)
+  type        = map(any)
   description = "The Ingress resource definition"
   default     = {}
 }
 
 variable issuer {
-  type        = map(object)
+  type        = map(any)
   description = "The Issuer resource definition"
   default = {
     "apiVersion" = "cert-manager.io/v1alpha2"
@@ -112,7 +112,7 @@ variable issuer {
 }
 
 variable kfdef {
-  type        = map(object)
+  type        = map(any)
   description = "The KfDef resouce definition"
   default     = {
     "apiVersion" = "kfdef.apps.kubeflow.org/v1"
