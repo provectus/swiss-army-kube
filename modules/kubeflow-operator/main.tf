@@ -47,7 +47,7 @@ resource local_file kfdef {
 }
 
 resource local_file ingress {
-  content  = yamlencode(var.ingress)
+  content  = yamlencode(local.ingress)
   filename = "${path.root}/${var.argocd.path}/kfdefs/ingress.yaml"
 }
 

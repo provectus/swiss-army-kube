@@ -54,10 +54,8 @@ variable namespace {
   }
 }
 
-variable ingress {
-  type        = object
-  description = "The Ingress resource definition"
-  default     = {
+locals {
+  ingress = var.ingress != {} ? var.ingress : {
     "apiVersion" = "networking.k8s.io/v1beta1"
     "kind"       = "Ingress"
     "metadata" = {
@@ -95,6 +93,13 @@ variable ingress {
       ]
     }
   }
+
+}
+
+variable ingress {
+  type        = object
+  description = "The Ingress resource definition"
+  default     = {}
 }
 
 variable issuer {
