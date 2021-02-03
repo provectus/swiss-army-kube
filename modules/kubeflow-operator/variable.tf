@@ -20,14 +20,11 @@ variable ingress_annotations {
   default     = {}
 }
 
-
-
 variable ingress_annotations {
   type        = map(string)
   description = "A set of annotations for Kubeflow Ingress"
   default     = {}
 }
-
 
 variable repository {
   type        = string
@@ -42,7 +39,7 @@ variable ref {
 }
 
 variable namespace {
-  type        = map(string)
+  type        = object
   description = "The Namespace resource definition"
   default     = {
     "apiVersion" = "v1"
@@ -58,7 +55,7 @@ variable namespace {
 }
 
 variable ingress {
-  type        = map(string)
+  type        = object
   description = "The Ingress resource definition"
   default     = {
     "apiVersion" = "networking.k8s.io/v1beta1"
@@ -101,7 +98,7 @@ variable ingress {
 }
 
 variable issuer {
-  type        = map(string)
+  type        = object
   description = "The Issuer resource definition"
   default = {
     "apiVersion" = "cert-manager.io/v1alpha2"
@@ -116,7 +113,7 @@ variable issuer {
 }
 
 variable kfdef {
-  type        = map(string)
+  type        = object
   description = "The KfDef resouce definition"
   default     = {
     "apiVersion" = "kfdef.apps.kubeflow.org/v1"
