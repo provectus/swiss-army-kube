@@ -113,6 +113,7 @@ variable issuer {
       "selfSigned" = {}
     }
   }
+}
 
 variable kfdef {
   type        = map(string)
@@ -232,5 +233,4 @@ variable kfdef {
   
 
 
-  
   
