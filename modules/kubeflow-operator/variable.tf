@@ -91,13 +91,13 @@ locals {
 }
 
 variable ingress {
-  type        = map(any)
+  type        = any
   description = "The Ingress resource definition"
   default     = {}
 }
 
 variable issuer {
-  type        = map(any)
+  type        = any
   description = "The Issuer resource definition"
   default = {
     "apiVersion" = "cert-manager.io/v1alpha2"
@@ -112,7 +112,7 @@ variable issuer {
 }
 
 variable kfdef {
-  type        = map(any)
+  type        = any
   description = "The KfDef resouce definition"
   default     = {
     "apiVersion" = "kfdef.apps.kubeflow.org/v1"
