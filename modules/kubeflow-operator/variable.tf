@@ -33,7 +33,7 @@ variable ref {
 }
 
 variable namespace {
-  type        = object
+  type        = map(object)
   description = "The Namespace resource definition"
   default     = {
     "apiVersion" = "v1"
@@ -91,13 +91,13 @@ locals {
 }
 
 variable ingress {
-  type        = map(string)
+  type        = map(object)
   description = "The Ingress resource definition"
   default     = {}
 }
 
 variable issuer {
-  type        = map(string)
+  type        = map(object)
   description = "The Issuer resource definition"
   default = {
     "apiVersion" = "cert-manager.io/v1alpha2"
@@ -112,7 +112,7 @@ variable issuer {
 }
 
 variable kfdef {
-  type        = map(string)
+  type        = map(object)
   description = "The KfDef resouce definition"
   default     = {
     "apiVersion" = "kfdef.apps.kubeflow.org/v1"
