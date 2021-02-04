@@ -9,16 +9,17 @@ resource aws_cognito_user_pool this {
   }
   tags = var.tags
 
-  recovery_mechanism = [
-    {
-      name = verified_email
+  account_recovery_setting {
+    recovery_mechanism {
+      name     = "verified_email"
       priority = 1
-    },
-    {
-      name = admin_only
+    }
+    recovery_mechanism {
+      name     = "admin_only"
       priority = 2
     }
-  ]
+  }
+
 }
 
 resource aws_cognito_user_pool_domain this {
