@@ -1,5 +1,5 @@
 locals {
-  ingress = var.ingress != null ? var.ingress : {
+  ingress = var.ingress != null ? var.ingress : yamlencode({
     "apiVersion" = "networking.k8s.io/v1beta1"
     "kind"       = "Ingress"
     "metadata" = {
@@ -36,6 +36,6 @@ locals {
         }
       ]
     }
-  }
+  })
 
 }

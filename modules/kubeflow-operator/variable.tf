@@ -15,7 +15,7 @@ variable argocd {
 }
 
 variable ingress_annotations {
-  type        = map(any)
+  type        = map(string)
   description = "A set of annotations for Kubeflow Ingress"
   default     = {}
 }
@@ -33,9 +33,9 @@ variable ref {
 }
 
 variable namespace {
-  type        = any
+  type        = string
   description = "The Namespace resource definition"
-  default     = {
+  default     = yamlencode({
     "apiVersion" = "v1"
     "kind"       = "Namespace"
     "metadata" = {
@@ -45,20 +45,20 @@ variable namespace {
         "istio-injection" = "enabled"
       }
     }
-  }
+  })
 }
 
 
 variable ingress {
-  type        = any
+  type        = string
   description = "The Ingress resource definition"
   default = null
 }
 
 variable issuer {
-  type        = any
+  type        = string
   description = "The Issuer resource definition"
-  default = {
+  default = yamlencode({
     "apiVersion" = "cert-manager.io/v1alpha2"
     "kind"       = "ClusterIssuer"
     "metadata" = {
@@ -67,13 +67,13 @@ variable issuer {
     "spec" = {
       "selfSigned" = {}
     }
-  }
+  })
 }
 
 variable kfdef {
-  type        = any
+  type        = string
   description = "The KfDef resouce definition"
-  default     = {
+  default     = yamlencode({
     "apiVersion" = "kfdef.apps.kubeflow.org/v1"
     "kind"       = "KfDef"
     "metadata" = {
@@ -181,7 +181,7 @@ variable kfdef {
       ]
       "version" = "v1.2-branch"
     }
-  }
+  })
 }
 
 

@@ -36,25 +36,6 @@ resource local_file kubeflow_operator {
   filename = "${path.root}/${var.argocd.path}/kubeflow-operator.yaml"
 }
 
-resource local_file namespace {
-  content  = yamlencode(var.namespace)
-  filename = "${path.root}/${var.argocd.path}/kubeflow-namespace.yaml"
-}
-
-resource local_file kfdef {
-  content  = yamlencode(var.kfdef)
-  filename = "${path.root}/${var.argocd.path}/kfdefs/kfdef.yaml"
-}
-
-resource local_file ingress {
-  content  = yamlencode(local.ingress)
-  filename = "${path.root}/${var.argocd.path}/kfdefs/ingress.yaml"
-}
-
-resource local_file issuer {
-  content  = yamlencode(var.issuer)
-  filename = "${path.root}/${var.argocd.path}/kfdefs/issuer.yaml"
-}
 
 resource local_file kubeflow {
   content = yamlencode({
@@ -87,4 +68,25 @@ resource local_file kubeflow {
     }
   })
   filename = "${path.root}/${var.argocd.path}/kubeflow.yaml"
+}
+
+
+resource local_file namespace {
+  content  = var.namespace
+  filename = "${path.root}/${var.argocd.path}/kubeflow-namespace.yaml"
+}
+
+resource local_file kfdef {
+  content  = var.kfdef
+  filename = "${path.root}/${var.argocd.path}/kfdefs/kfdef.yaml"
+}
+
+resource local_file ingress {
+  content  = local.ingress
+  filename = "${path.root}/${var.argocd.path}/kfdefs/ingress.yaml"
+}
+
+resource local_file issuer {
+  content  = var.issuer
+  filename = "${path.root}/${var.argocd.path}/kfdefs/issuer.yaml"
 }
