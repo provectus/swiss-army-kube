@@ -13,7 +13,7 @@ locals {
     })
 
 
-  mlflow = var.mlflow != null ? var.mlflow : <<EOT
+  mlflow_def = var.mlflow_def != null ? var.mlflow_def : <<EOT
   apiVersion: apps/v1
   kind: Deployment
   metadata:

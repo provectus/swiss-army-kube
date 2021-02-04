@@ -1,8 +1,8 @@
 
 
 resource local_file mlflow_def {
-  content = local.mlflow
-  filename = "${path.root}/${var.argocd.path}/mlflow-defs/mlflow.yaml"
+  content = local.mlflow_def
+  filename = "${path.root}/${var.argocd.path}/mlflow-defs/mlflow_def.yaml"
 }
 
 
