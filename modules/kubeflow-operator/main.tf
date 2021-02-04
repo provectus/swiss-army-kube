@@ -19,7 +19,7 @@ resource local_file kubeflow_operator {
         "targetRevision" = "v1.2-branch"
         "path"           = "deploy"
         "kustomize" = {
-          "images" = ["aipipeline/kubeflow-operator=provectuslabs/kubeflow-operator:master"]
+          "images" = ["aipipeline/kubeflow-operator:v1.2.0"]
         }
       }
       "syncPolicy" = {
