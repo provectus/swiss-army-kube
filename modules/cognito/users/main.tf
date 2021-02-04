@@ -23,6 +23,7 @@ locals {
           ],
           "Username" = user.email
           "UserPoolId" = var.pool_id
+          "DesiredDeliveryMediums" = ["EMAIL"]
         }
       }      
   }
