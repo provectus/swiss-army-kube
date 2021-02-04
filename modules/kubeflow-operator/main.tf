@@ -72,12 +72,12 @@ resource local_file kubeflow {
 
 
 resource local_file namespace {
-  content  = var.namespace
+  content  = local.namespace
   filename = "${path.root}/${var.argocd.path}/kubeflow-namespace.yaml"
 }
 
 resource local_file kfdef {
-  content  = var.kfdef
+  content  = local.kfdef
   filename = "${path.root}/${var.argocd.path}/kfdefs/kfdef.yaml"
 }
 
@@ -87,6 +87,6 @@ resource local_file ingress {
 }
 
 resource local_file issuer {
-  content  = var.issuer
+  content  = local.issuer
   filename = "${path.root}/${var.argocd.path}/kfdefs/issuer.yaml"
 }
