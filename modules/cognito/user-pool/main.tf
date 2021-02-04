@@ -14,10 +14,6 @@ resource aws_cognito_user_pool this {
       name     = "verified_email"
       priority = 1
     }
-    recovery_mechanism {
-      name     = "admin_only"
-      priority = 2
-    }
   }
 
 }
