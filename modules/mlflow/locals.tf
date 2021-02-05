@@ -36,7 +36,7 @@ spec:
       containers:
         - name: mlflow
           securityContext: {}
-          image: "atcommons/mlflow:latest"
+          image: "atcommons/mlflow-server:latest"
           imagePullPolicy: Always
           args:
             - --host=0.0.0.0
