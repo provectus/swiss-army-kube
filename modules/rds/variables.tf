@@ -154,3 +154,9 @@ variable "rds_publicly_accessible" {
 }
 
 
+variable worker_security_group_id {
+  description = "ID of the EKS workers' security group"
+  type = string
+
+}
+
