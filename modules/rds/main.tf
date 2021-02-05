@@ -25,7 +25,7 @@ resource "aws_security_group" "eks_workers" {
     from_port = 0
     to_port = 0
     protocol = "tcp"
-    security_groups = [security_groups = [var.worker_security_group_id]
+    security_groups = [var.worker_security_group_id]
   }
 }
 
