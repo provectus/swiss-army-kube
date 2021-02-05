@@ -38,12 +38,12 @@ spec:
           securityContext: {}
           image: "atcommons/mlflow-server:latest"
           imagePullPolicy: Always
-          command: ["mlflow", "server"]
+          command: ["sh", "-c", "mlflow", "server"]
           args:
             - --host=0.0.0.0
             - --port=5000
-            - --backend-store-uri=mysql://\$(rds_username):\$(rds_password)@\$(rds_host):\$(rds_port)/mlflow
-            - --default-artifact-root=s3://\$(s3_bucket)/modeling/experiments
+            - --backend-store-uri=mysql://$${rds_username}:$${rds_password}@$${ds_host}:$${rds_port}/mlflow
+            - --default-artifact-root=s3://$${s3_bucket}/modeling/experiments
           envFrom:         
           - secretRef:
               name: off-cluster-storage-secret
