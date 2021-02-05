@@ -41,8 +41,8 @@ spec:
           args:
             - --host=0.0.0.0
             - --port=5000
-            - --backend-store-uri=mysql://\$(RDS_USERNAME):\$(RDS_PASSWORD)@\$(RDS_HOST):\$(RDS_PORT)/mlflow
-            - --default-artifact-root=s3://\$(S3_BUCKET)/modeling/experiments
+            - --backend-store-uri=mysql://\$(rds_usercase):\$(rds_password)@\$(rds_host):\$(rds_port)/mlflow
+            - --default-artifact-root=s3://\$(s3_bucket)/modeling/experiments
           envFrom:         
           - secretRef:
               name: off-cluster-storage-secret
