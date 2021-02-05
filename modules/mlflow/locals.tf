@@ -20,7 +20,7 @@ metadata:
   name: mlflow
   labels:
     app: mlflow
-  namespace: mllow
+  namespace: mlflow
 spec:
   replicas: 1
   selector:
