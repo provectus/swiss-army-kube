@@ -38,6 +38,7 @@ spec:
           securityContext: {}
           image: "atcommons/mlflow-server:latest"
           imagePullPolicy: Always
+          command: ["mlflow", "serve"]
           args:
             - --host=0.0.0.0
             - --port=5000
