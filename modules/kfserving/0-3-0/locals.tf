@@ -7,7 +7,7 @@ locals {
         "name" = "kfserving"
         "labels" = {
           "control-plane"   = "kubeflow"
-          "istio-injection" = "enabled"
+          "istio-injection" = "disabled"
         }
       }
     })
