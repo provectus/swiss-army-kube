@@ -78,7 +78,7 @@ module "db" {
   tags = merge(
     var.rds_database_tags,
     {
-      Owner       = var.project
+      Project     = var.project
       Environment = var.environment
     },
   )
