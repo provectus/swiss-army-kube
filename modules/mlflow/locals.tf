@@ -45,7 +45,7 @@ spec:
             - --default-artifact-root=s3://$(s3_bucket)/modeling/experiments
           envFrom:         
           - secretRef:
-              name: off-cluster-storage-secret
+              name: aws-storage-secret
           ports:
             - name: http
               containerPort: 5000
