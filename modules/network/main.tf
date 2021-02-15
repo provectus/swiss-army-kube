@@ -36,7 +36,7 @@ module "vpc" {
   enable_dns_support   = true
 
   public_subnet_tags = merge({
-    Name                                        = "${var.environment}-${var.cluster_name}-public"
+    Name                                        = "${var.cluster_name}-public"
     KubernetesCluster                           = var.cluster_name
     Environment                                 = var.environment
     Project                                     = var.project
@@ -46,12 +46,12 @@ module "vpc" {
   }, var.tags)
 
   private_subnet_tags = merge({
-    Name                                        = "${var.environment}-${var.cluster_name}-private"
+    Name                                        = "${var.cluster_name}-private"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }, var.tags)
 
   tags = merge({
-    Name        = "${var.environment}-${var.cluster_name}"
+    Name        = var.cluster_name
     Environment = var.environment
     Project     = var.project
     Terraform   = "true"
