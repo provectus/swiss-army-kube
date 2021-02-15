@@ -50,10 +50,10 @@ module "vpc" {
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }, var.tags)
 
-  tags = {
+  tags = merge({
     Name        = "${var.environment}-${var.cluster_name}"
     Environment = var.environment
     Project     = var.project
     Terraform   = "true"
-  }
+  }, var.tags)
 }
