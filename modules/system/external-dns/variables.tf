@@ -79,3 +79,4 @@ variable argocd {
     repository = ""
     branch     = ""
   }
+}
