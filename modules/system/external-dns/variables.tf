@@ -4,12 +4,6 @@ variable "aws_private" {
   default     = false
 }
 
-variable "argocd" {
-  type        = map(string)
-  description = "A set of values for enabling deployment through ArgoCD"
-  default     = {}
-}
-
 variable "conf" {
   type        = map(string)
   description = "A custom configuration for deployment"
