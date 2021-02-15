@@ -35,7 +35,7 @@ module "vpc" {
   enable_dns_hostnames = true
   enable_dns_support   = true
 
-  public_subnet_tags = {
+  public_subnet_tags = merge({
     Name                                        = "${var.environment}-${var.cluster_name}-public"
     KubernetesCluster                           = var.cluster_name
     Environment                                 = var.environment
@@ -43,12 +43,12 @@ module "vpc" {
     "kubernetes.io/role/elb"                    = ""
     "kubernetes.io/cluster/${var.cluster_name}" = "owned"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-  }
+  }, var.tags)
 
-  private_subnet_tags = {
+  private_subnet_tags = merge({
     Name                                        = "${var.environment}-${var.cluster_name}-private"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
-  }
+  }, var.tags)
 
   tags = {
     Name        = "${var.environment}-${var.cluster_name}"
