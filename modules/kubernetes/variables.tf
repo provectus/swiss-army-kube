@@ -265,3 +265,9 @@ variable "spot_max_price" {
   default     = ""
   description = "Maximum price per unit hour that the user is willing to pay for the Spot instances. Default is the on-demand price"
 }
+
+variable "workers_additional_policies" {
+  type  = list
+  default = []
+  description = "List of ARNs of additional policies to attach to workers"
+}
