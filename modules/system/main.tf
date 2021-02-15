@@ -49,6 +49,92 @@ resource "helm_release" "nvidia" {
 # Enabling IAM Roles for Service Accounts
 data "aws_caller_identity" "current" {}
 
+# Route53 hostedzone
+# TODO: need create ns records in main zone
+resource "aws_route53_zone" "cluster" {
+  depends_on = [
+    var.module_depends_on,
+    null_resource.wait-eks
+  ]
+
+  count = var.aws_private ? 0 : length(var.domains)
+  name  = element(var.domains, count.index)
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project
+  }
+  force_destroy = true
+}
+
+resource "aws_route53_record" "cluster-ns" {
+  depends_on = [
+    var.module_depends_on,
+    null_resource.wait-eks
+  ]
+  count   = var.mainzoneid == "" ? 0 : length(var.domains)
+  zone_id = var.mainzoneid
+  name    = element(var.domains, count.index)
+  type    = "NS"
+  ttl     = "30"
+
+  records = [
+    aws_route53_zone.cluster[count.index].name_servers[0],
+    aws_route53_zone.cluster[count.index].name_servers[1],
+    aws_route53_zone.cluster[count.index].name_servers[2],
+    aws_route53_zone.cluster[count.index].name_servers[3],
+  ]
+
+}
+
+resource "aws_route53_zone" "private" {
+  depends_on = [
+    var.module_depends_on,
+    null_resource.wait-eks
+  ]
+  count = var.aws_private ? length(var.domains) : 0
+  name  = element(var.domains, count.index)
+  vpc {
+    vpc_id = data.aws_vpc.main.id
+  }
+}
+
+# Enabling IAM Roles for Service Accounts
+data "aws_caller_identity" "current" {}
+
+data "aws_iam_policy_document" "external_dns_assume_role_policy" {
+  statement {
+    actions = ["sts:AssumeRoleWithWebIdentity"]
+    effect  = "Allow"
+
+    condition {
+      test     = "StringEquals"
+      variable = "${replace(var.cluster_oidc_url, "https://", "")}:sub"
+      values   = ["system:serviceaccount:kube-system:external-dns"]
+    }
+
+    principals {
+      identifiers = [var.cluster_oidc_arn]
+      type        = "Federated"
+    }
+  }
+}
+
+# Create role for external_dns
+resource "aws_iam_role" "external_dns" {
+  depends_on = [
+    var.module_depends_on,
+    null_resource.wait-eks
+  ]
+  assume_role_policy = data.aws_iam_policy_document.external_dns_assume_role_policy.json
+  name               = var.cluster_name
+
+  tags = {
+    Environment = var.environment
+    Project     = var.project
+  }
+
+}
 
 # Create policy for cert_manager
 resource "aws_iam_policy" "cert_manager" {
@@ -152,7 +238,7 @@ resource "helm_release" "issuers" {
     var.module_depends_on
   ]
   name      = "issuers"
-  chart     = "../charts/cluster-issuers"
+  chart     = "../../charts/cluster-issuers"
   version   = "0.1.0"
   namespace = kubernetes_namespace.cert-manager.metadata[0].name
 
@@ -214,7 +300,7 @@ resource "null_resource" "sealed-secrets-crd" {
   provisioner "local-exec" {
     command = <<EOC
 kubectl --kubeconfig ${path.root}/${var.config_path} -n kube-system apply -f ${path.module}/manifests/sealed-secrets-crd.yaml
-    EOC
+EOC
   }
 }
 # Deploy saled-secrets

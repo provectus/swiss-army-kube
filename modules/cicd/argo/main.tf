@@ -1,7 +1,7 @@
 resource "kubernetes_namespace" "this" {
   depends_on = [var.module_depends_on]
   metadata {
-    name = var.namespace
+    name = var.namespace_name
   }
 }
 
@@ -15,6 +15,7 @@ module "argo-cd" {
 module "argo-events" {
   source            = "./modules/events"
   module_depends_on = var.module_depends_on
+  cluster_name      = var.cluster_name
   namespace         = kubernetes_namespace.this.metadata[0].name
 }
 

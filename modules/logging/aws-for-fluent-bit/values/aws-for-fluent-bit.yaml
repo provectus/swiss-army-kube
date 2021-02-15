@@ -1,0 +1,136 @@
+global:
+  namespaceOverride: ${namespace}
+
+image:
+  repository: amazon/aws-for-fluent-bit
+  tag: 2.7.0
+  pullPolicy: IfNotPresent
+
+imagePullSecrets: []
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  parsersFiles:
+    - /fluent-bit/parsers/parsers.conf
+  # extraParsers: |
+  #   [PARSER]
+  #       Name   logfmt
+  #       Format logfmt
+
+input:
+  tag: "kube.*"
+  path: "/var/log/containers/*.log"
+  db: "/var/log/flb_kube.db"
+  parser: docker
+  dockerMode: "On"
+  memBufLimit: 5MB
+  skipLongLines: "On"
+  refreshInterval: 10
+
+# extraInputs: |
+#   [INPUT]
+#       Name         winlog
+#       Channels     Setup,Windows PowerShell
+#       Interval_Sec 1
+#       DB           winlog.sqlite
+
+filter:
+  match: "kube.*"
+  kubeURL: "https://kubernetes.default.svc.cluster.local:443"
+  mergeLog: "On"
+  mergeLogKey: "data"
+  k8sLoggingParser: "On"
+  k8sLoggingExclude: "On"
+
+# extraFilters: |
+#   [FILTER]
+#       Name   grep
+#       Match  *
+#       Exclude log lvl=debug*
+
+cloudWatch:
+  enabled: ${cloudwatch_enabled}
+  region: ${aws_region}
+  match: ${cloudwatch_match}
+  logGroupName: ${cloudwatch_log_group_name}
+  logStreamName: ${cloudwatch_log_stream_name}
+  logStreamPrefix: ${cloudwatch_log_stream_prefix}
+  logKey: ${cloudwatch_log_key}
+  logFormat: ${cloudwatch_log_format}
+  roleArn: ${cloudwatch_cross_account_role_arn}
+  autoCreateGroup: ${cloudwatch_auto_create_group}
+  endpoint: ${cloudwatch_endpoint}
+  credentialsEndpoint: ${cloudwatch_credentials_endpoint}
+
+firehose:
+  enabled: ${firehose_enabled}
+  region: ${aws_region}
+  match: ${firehose_match}
+  deliveryStream: ${firehose_delivery_stream}
+  dataKeys: ${firehose_data_keys}
+  roleArn: ${firehose_cross_account_role_arn}
+  endpoint: ${firehose_endpoint}
+  timeKey: ${firehose_time_key}
+  timeKeyFormat: ${firehose_time_key_format}
+
+kinesis:
+  enabled: ${kinesis_enabled}
+  region: ${aws_region}
+  match: ${kinesis_match}
+  stream: ${kinesis_stream}
+  partitionKey: ${kinesis_partition_key}
+  appendNewline: ${kinesis_append_new_line}
+  dataKeys: ${kinesis_data_keys}
+  roleArn: ${kinesis_cross_account_role_arn}
+  endpoint: ${kinesis_endpoint}
+  stsEndpoint: ${kinesis_sts_endpoint}
+  timeKey: ${kinesis_time_key}
+  timeKeyFormat: ${kinesis_time_key_format}
+  compression: ${kinesis_compression}
+  aggregation: ${kinesis_aggregation}
+  experimental:
+    concurrency: ${kinesis_experimental_concurrency}
+    concurrencyRetries: ${kinesis_experimental_concurrency_retries}
+
+elasticsearch:
+  enabled: ${elastic_search}
+  awsRegion: ${aws_region}
+  match: ${elastic_match}
+  host: ${elastic_host}
+  awsAuth: ${elastic_aws_auth}
+  tls: ${elastic_tls}
+  port: ${elastic_port}
+  retryLimit: ${elastic_retry_limit}
+
+# extraOutputs: |
+#   [OUTPUT]
+#     Name file
+#     Format template
+#     Template {time} used={Mem.used} free={Mem.free} total={Mem.total}
+
+serviceAccount:
+  create: ${service_account_auto_create}
+  annotations:
+    "eks.amazonaws.com/role-arn": ${service_account_role_arn}
+  name: ${service_account_name}
+
+resources:
+  limits:
+    cpu: ${daemon_set_resources_limits_cpu}
+    memory: ${daemon_set_resources_limits_memory}
+  requests:
+    cpu: ${daemon_set_resources_requests_cpu}
+    memory: ${daemon_set_resources_requests_memory}
+
+## Assign a PriorityClassName to pods if set
+# priorityClassName: system-node-critical
+
+updateStrategy:
+  type: RollingUpdate
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}

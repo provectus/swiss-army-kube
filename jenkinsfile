@@ -1,29 +1,107 @@
 pipeline {
-  agent any
-  tools {
-    terraform 'terraform-12'
+
+  options {
+    disableConcurrentBuilds()
+  }
+
+  agent {
+    kubernetes {
+        label 'swiss-army-kube'
+        yaml '''
+apiVersion: v1
+kind: Pod
+spec:
+  containers:
+  - name: python3
+    image: python:3
+    command:
+    - sleep
+    args:
+    - 1h
+  - name: terraform14
+    image: hashicorp/terraform:0.14.4
+    command:
+    - sleep
+    args:
+    - 1h
+'''
+    }
   }
 
   stages {
     stage('Prepare') {
       steps {
-        sh """
-        terraform --version
-        curl -L "\$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip
-        unzip tflint.zip -d /home/jenkins/tools/org.jenkinsci.plugins.terraform.TerraformInstallation/terraform-12
-        rm tflint.zip
-        tflint --version
-        """
+        container('terraform14') {
+          sh """
+          terraform --version
+          apk add curl
+          curl -L "\$(curl -Ls https://api.github.com/repos/terraform-linters/tflint/releases/latest | grep -o -E "https://.+?_linux_amd64.zip")" -o tflint.zip
+          unzip tflint.zip -d /home/jenkins/agent
+          /home/jenkins/agent/tflint --version
+          """
+        }
       }
     }
 
-    stage('Run test') {
+    stage('Run tests') {
+      parallel {
+        stage("Common example") {
+          steps {
+            container('terraform14') {
+              sh """
+              cd examples/common
+              terraform init
+              TFLINT_LOG=info /home/jenkins/agent/tflint --force --module .
+              """
+            }
+          }
+        }
+        stage("ArgoCD example") {
+          steps {
+            container('terraform14') {
+              sh """
+              cd examples/argocd
+              terraform init
+              TFLINT_LOG=info /home/jenkins/agent/tflint --force --module .
+              """
+            }
+          }
+        }
+        stage("Full ArgoCD example") {
+          steps {
+            container('terraform14') {
+              sh """
+              cd examples/argocd-with-applications
+              terraform init
+              TFLINT_LOG=info /home/jenkins/agent/tflint --force --module .
+              """
+            }
+          }
+        }
+        stage("Argoproj example") {
+          steps {
+            container('terraform14') {
+              sh """
+              cd examples/argoproj
+              terraform init
+              TFLINT_LOG=info /home/jenkins/agent/tflint --force --module .
+              """
+            }
+          }
+        }
+      }
+    }
+
+    stage('Check Terrafrom variables') {
       steps {
-          sh """
-            cd example
-            terraform init
-            TFLINT_LOG=info tflint --deep --force --module --var-file example.tfvars .
-          """
+        container('python3') {
+          script {
+            sh """
+            pip3 install -r .scripts/requirements.txt
+            python3 .scripts/validate_variables.py
+            """
+          }
+        }
       }
     }
   }

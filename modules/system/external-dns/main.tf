@@ -1,78 +1,98 @@
-data aws_vpc main {
-  id = var.vpc_id
-}
-
-data aws_eks_cluster this {
+data "aws_eks_cluster" "this" {
   name = var.cluster_name
 }
 
-data aws_region current {}
+data "aws_region" "current" {}
 
-resource aws_route53_record ns {
+resource "kubernetes_namespace" "this" {
+  count = var.namespace == "kube-system" ? 0 : 1
+  metadata {
+    name = var.namespace_name
+  }
+}
+
+locals {
+  argocd_enabled = length(var.argocd) > 0 ? 1 : 0
+  namespace      = coalescelist(kubernetes_namespace.this, [{ "metadata" = [{ "name" = var.namespace }] }])[0].metadata[0].name
+}
+
+resource "helm_release" "this" {
+  count = 1 - local.argocd_enabled
+  depends_on = [
+    var.module_depends_on
+  ]
+  name          = local.name
+  repository    = local.repository
+  chart         = local.chart
+  version       = local.chart_version
+  namespace     = local.namespace
+  recreate_pods = true
+  timeout       = 1200
+
+  dynamic "set" {
+    for_each = local.conf
+
+    content {
+      name  = set.key
+      value = set.value
+    }
+  }
+}
+
+resource "aws_route53_record" "ns" {
   depends_on = [
     var.module_depends_on,
   ]
-  count   = var.mainzoneid == "" ? 0 : length(var.domains)
+  count   = var.mainzoneid == "" ? 0 : length(var.hostedzones)
   zone_id = var.mainzoneid
-  name    = element(var.domains, count.index)
+  name    = element(var.hostedzones, count.index)
   type    = "NS"
   ttl     = "30"
 
   records = [
-    aws_route53_zone.public[count.index].name_servers[0],
-    aws_route53_zone.public[count.index].name_servers[1],
-    aws_route53_zone.public[count.index].name_servers[2],
-    aws_route53_zone.public[count.index].name_servers[3]
+    for num in range(4) :
+    element((var.aws_private ? aws_route53_zone.private : aws_route53_zone.public)[count.index].name_servers, num)
   ]
 }
 
-resource aws_route53_zone public {
+resource "aws_route53_zone" "public" {
   depends_on = [
     var.module_depends_on,
   ]
 
-  count = var.aws_private == "false" ? length(var.domains) : 0
-  name  = element(var.domains, count.index)
+  count = var.aws_private ? 0 : length(var.hostedzones)
+  name  = element(var.hostedzones, count.index)
 
-  tags = {
-    Environment = var.environment
-    Project     = var.project
-  }
+  tags          = var.tags
   force_destroy = true
 }
 
-resource aws_route53_zone private {
+resource "aws_route53_zone" "private" {
   depends_on = [
     var.module_depends_on,
   ]
-  count = var.aws_private == "true" ? length(var.domains) : 0
-  name  = element(var.domains, count.index)
+  count = var.aws_private ? length(var.hostedzones) : 0
+  name  = element(var.hostedzones, count.index)
   vpc {
-    vpc_id = data.aws_vpc.main.id
+    vpc_id = var.vpc_id
   }
-  tags = {
-    Environment = var.environment
-    Project     = var.project
-  }
+  tags          = var.tags
   force_destroy = true
 }
 
-module iam_assumable_role_admin {
+module "iam_assumable_role_admin" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  # version                       = "~> v2.6.0"
+  version                       = "~> v3.6.0"
   create_role                   = true
   role_name                     = "${data.aws_eks_cluster.this.id}_${local.name}"
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
   role_policy_arns              = [aws_iam_policy.this.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${var.namespace}:${local.name}"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.namespace}:${local.name}"]
 
-  tags = {
-    Environment = var.environment
-    Project     = var.project
-  }
+  tags = var.tags
 }
 
-resource aws_iam_policy this {
+resource "aws_iam_policy" "this" {
   depends_on = [
     var.module_depends_on
   ]
@@ -109,17 +129,8 @@ resource aws_iam_policy this {
   )
 }
 
-resource kubernetes_namespace this {
-  count = var.namespace == "kube-system" ? 0 : 1
-  depends_on = [
-    var.module_depends_on
-  ]
-  metadata {
-    name = var.namespace
-  }
-}
-
-resource local_file this {
+resource "local_file" "this" {
+  count = local.argocd_enabled
   depends_on = [
     var.module_depends_on
   ]
@@ -128,26 +139,24 @@ resource local_file this {
 }
 
 locals {
-  repository = "https://charts.bitnami.com/bitnami"
-  name       = "external-dns"
-  chart      = "external-dns"
-  values = concat([
-    {
-      "name"  = "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
-      "value" = module.iam_assumable_role_admin.this_iam_role_arn
+  repository    = "https://charts.bitnami.com/bitnami"
+  name          = "external-dns"
+  chart         = "external-dns"
+  chart_version = var.chart_version
+  conf          = merge(local.conf_defaults, var.conf)
+  conf_defaults = merge({
+    "rbac.create"                                               = true,
+    "resources.limits.cpu"                                      = "100m",
+    "resources.limits.memory"                                   = "300Mi",
+    "resources.requests.cpu"                                    = "100m",
+    "resources.requests.memory"                                 = "300Mi",
+    "aws.region"                                                = data.aws_region.current.name
+    "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn" = module.iam_assumable_role_admin.this_iam_role_arn
     },
     {
-      "name"  = "aws.region"
-      "value" = data.aws_region.current.name
+      for i, zone in tolist(var.hostedzones) :
+      "domainFilters[${i}]" => zone
     }
-    ],
-    values({
-      for i, domain in tolist(var.domains) :
-      "key" => {
-        "name"  = "domainFilters[${i}]"
-        "value" = domain
-      }
-    })
   )
   application = {
     "apiVersion" = "argoproj.io/v1alpha1"
@@ -158,16 +167,22 @@ locals {
     }
     "spec" = {
       "destination" = {
-        "namespace" = var.namespace
+        "namespace" = local.namespace
         "server"    = "https://kubernetes.default.svc"
       }
       "project" = "default"
       "source" = {
         "repoURL"        = local.repository
-        "targetRevision" = "3.4.0"
+        "targetRevision" = local.chart_version
         "chart"          = local.chart
         "helm" = {
-          "parameters" = local.values
+          "parameters" = values({
+            for key, value in local.conf :
+            key => {
+              "name"  = key
+              "value" = tostring(value)
+            }
+          })
         }
       }
       "syncPolicy" = {

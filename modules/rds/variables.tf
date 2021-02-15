@@ -1,31 +1,36 @@
 variable "module_depends_on" {
-  default = []
+  default     = []
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
 variable "vpc_id" {
   type        = string
-  description = "VPC id"
+  default     = null
+  description = "An ID of the existing AWS VPC"
 }
 
 variable "subnets" {
-  type        = list
+  type        = list(any)
   description = "vpc subnets"
 }
 
 variable "environment" {
   type        = string
-  description = "Environment Use in tags and annotations for identify EKS cluster"
-  default     = "test"
+  default     = "dev"
+  description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
 variable "project" {
   type        = string
-  description = "Project Use in tags and annotations for identify EKS cluster"
   default     = "EDUCATION"
+  description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
 variable "cluster_name" {
-  description = "Name of cluster"
+  type        = string
+  default     = null
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable "config_path" {
@@ -36,21 +41,25 @@ variable "config_path" {
 variable "rds_database_name" {
   type        = string
   description = "Database name"
+  default     = "exampledb"
 }
 
 variable "rds_database_multi_az" {
   type        = bool
   description = "Enabled multi_az for RDS"
+  default     = "true"
 }
 
 variable "rds_database_engine" {
   type        = string
   description = "What server use? postgres | mysql | oracle-ee | sqlserver-ex"
+  default     = "postgres"
 }
 
 variable "rds_database_engine_version" {
   type        = string
   description = "Engine version"
+  default     = "9.6.9"
 }
 
 variable "rds_database_major_engine_version" {
@@ -119,6 +128,7 @@ variable "rds_port_mapping" {
 variable "rds_database_delete_protection" {
   type        = bool
   description = "enabled delete protection for database"
+  default     = "false"
 }
 
 variable "rds_database_tags" {

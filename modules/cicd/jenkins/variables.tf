@@ -1,10 +1,14 @@
 # For depends_on queqe
 variable "module_depends_on" {
-  default = []
+  default     = []
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
 variable "domains" {
-  description = "domain name for ingress"
+  type        = list(string)
+  default     = []
+  description = "A list of domains to use for ingresses"
 }
 
 variable "jenkins_password" {
@@ -17,30 +21,33 @@ variable "config_path" {
   default     = "~/.kube/config"
 }
 
-#Deploy environment name
 variable "environment" {
   type        = string
-  description = "Environment Use in tags and annotations for identify EKS cluster"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
 variable "project" {
   type        = string
-  description = "Project Use in tags and annotations for identify EKS cluster"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
 variable "cluster_name" {
-  description = "Name of the kubernetes cluster"
+  type        = string
+  default     = null
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable "cluster_oidc_arn" {
   type        = string
-  description = "OIDC EKS cluster arn"
+  description = "An OIDC arn of the EKS cluster"
   default     = ""
 }
 
 variable "cluster_oidc_url" {
   type        = string
-  description = "OIDC EKS cluster endpoint"
+  description = "An OIDC endpoint of the EKS cluster"
   default     = ""
 }
 

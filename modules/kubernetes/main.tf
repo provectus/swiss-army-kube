@@ -19,6 +19,7 @@ module "eks" {
   kubeconfig_name = var.cluster_name
   subnets         = var.subnets
   vpc_id          = var.vpc_id
+  enable_irsa     = false
 
   map_users = var.aws_auth_user_mapping
   map_roles = var.aws_auth_role_mapping
@@ -45,7 +46,8 @@ module "eks" {
   worker_groups_launch_template = concat(local.common, local.cpu, local.gpu)
 }
 
-resource aws_iam_openid_connect_provider this {
+# OIDC cluster EKS settings
+resource "aws_iam_openid_connect_provider" "cluster" {
   client_id_list  = ["sts.amazonaws.com"]
   thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da2b0ab7280"]
   url             = module.eks.cluster_oidc_issuer_url

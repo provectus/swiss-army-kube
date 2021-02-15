@@ -1,36 +1,44 @@
 # For depends_on queqe
 variable "module_depends_on" {
-  default = []
+  default     = []
+  type        = list(any)
+  description = "A list of explicit dependencies"
 }
 
 variable "aws_private" {
-  type        = string
-  description = "Use private or public infrastructure"
+  type        = bool
+  description = "Set true or false to use private or public infrastructure"
+  default     = false
 }
 
-#Deploy environment name
 variable "environment" {
   type        = string
-  description = "Environment Use in tags and annotations for identify EKS cluster"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
 variable "project" {
   type        = string
-  description = "Project Use in tags and annotations for identify EKS cluster"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
 variable "cluster_name" {
-  description = "Name of the kubernetes cluster"
+  type        = string
+  default     = null
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable "vpc_id" {
   type        = string
-  description = "VPC id"
+  default     = null
+  description = "An ID of the existing AWS VPC"
 }
 
 variable "mainzoneid" {
   type        = string
-  description = "ID of main route53 zone if exist"
+  default     = ""
+  description = "An ID of the root Route53 zone for creating sub-domains"
 }
 
 variable "config_path" {
@@ -39,18 +47,27 @@ variable "config_path" {
 }
 
 variable "domains" {
-  description = "domain name for ingress, set as coma-sepparate list"
+  type        = list(string)
+  default     = []
+  description = "A list of domains to use for ingresses"
 }
 
 #Cert-manager
 variable "cert_manager_email" {
   type        = string
+  default     = "test@example.com"
   description = "Email to cert-manager"
 }
 
 variable "cluster_oidc_url" {
   type        = string
-  description = "OIDC EKS cluster endpoint"
+  description = "An OIDC endpoint of the EKS cluster"
+  default     = ""
+}
+
+variable "cluster_oidc_arn" {
+  type        = string
+  description = "An OIDC arn of the EKS cluster"
   default     = ""
 }
 

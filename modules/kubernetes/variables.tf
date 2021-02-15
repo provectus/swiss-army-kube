@@ -1,39 +1,42 @@
 variable "environment" {
   type        = string
-  description = "Environment Use in tags and annotations for identify EKS cluster"
-  default     = "test"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
 variable "project" {
   type        = string
-  description = "Project Use in tags and annotations for identify EKS cluster"
-  default     = "EDUCATION"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
 variable "cluster_name" {
   type        = string
-  description = "Name of EKS cluster"
   default     = "test"
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable "cluster_version" {
   type        = string
   description = "EKS cluster version"
-  default     = "1.14"
+  default     = "1.18"
 }
 
 variable "vpc_id" {
   type        = string
-  description = "VPC id"
+  default     = null
+  description = "An ID of the existing AWS VPC"
 }
 
+
 variable "availability_zones" {
-  type        = list(string)
-  description = "List of use avilability_zones"
+  description = "Availability zones for project"
+  type        = list(any)
+  default     = []
 }
 
 variable "subnets" {
-  type        = list
+  type        = list(any)
   description = "vpc subnets"
 }
 
@@ -85,6 +88,11 @@ variable "on_demand_common_desired_capacity" {
 
 variable "on_demand_common_instance_type" {
   description = "EC2 on_demand Instance type"
+  default     = "m5.large"
+}
+
+variable "on_demand_common_override_instance_types" {
+  description = "EC2 on_demand override instance types"
   default     = ["m5.large", "m5.xlarge", "m5.2xlarge"]
 }
 
@@ -109,51 +117,6 @@ variable "on_demand_common_asg_recreate_on_change" {
   default     = "false"
 }
 
-# Spot instance
-variable "spot_max_cluster_size" {
-  type        = string
-  description = "Max number of spot instances in EKS autoscaling group"
-  default     = "2"
-}
-
-variable "spot_min_cluster_size" {
-  type        = string
-  description = "Min number of spot instances in EKS autoscaling group"
-  default     = "0"
-}
-
-variable "spot_desired_capacity" {
-  type        = string
-  description = "Desired number of spot instances in EKS autoscaling group"
-  default     = "0"
-}
-
-variable "spot_instance_type" {
-  description = "EC2 spot Instance type"
-  default     = ["m5.large", "m5.xlarge", "m5.2xlarge"]
-}
-
-variable "spot_instance_pools" {
-  description = "Number of Spot pools per availability zone to allocate capacity. EC2 Auto Scaling selects the cheapest Spot pools and evenly allocates Spot capacity across the number of Spot pools that you specify."
-  default     = "10"
-}
-
-variable "spot_asg_recreate_on_change" {
-  description = "Recreate the autoscaling group when the Launch Template or Launch Configuration change."
-  default     = "false"
-}
-
-variable "spot_allocation_strategy" {
-  description = "Valid options are 'lowest-price' and 'capacity-optimized'. If 'lowest-price', the Auto Scaling group launches instances using the Spot pools with the lowest price, and evenly allocates your instances across the number of Spot pools. If 'capacity-optimized', the Auto Scaling group launches instances using Spot pools that are optimally chosen based on the available Spot capacity."
-  default     = "lowest-price"
-}
-
-variable "spot_max_price" {
-  type        = string
-  default     = ""
-  description = "Maximum price per unit hour that the user is willing to pay for the Spot instances. Default is the on-demand price"
-}
-
 # On-demand GPU instance
 variable "on_demand_gpu_max_cluster_size" {
   type        = string
@@ -175,7 +138,17 @@ variable "on_demand_gpu_desired_capacity" {
 
 variable "on_demand_gpu_instance_type" {
   description = "EC2 on_demand Instance type"
-  default     = ["p2.xlarge", "g4dn.xlarge", "p3.2xlarge"]
+  default     = "p2.xlarge"
+}
+
+variable "on_demand_gpu_override_instance_types" {
+  description = "EC2 on_demand Instance types for overriding"
+  default     = ["g4dn.xlarge"]
+}
+
+variable "on_demand_gpu_resource_count" {
+  description = "A number of GPUs resopurces for the instance type"
+  default     = 1
 }
 
 variable "on_demand_gpu_allocation_strategy" {
@@ -186,7 +159,6 @@ variable "on_demand_gpu_allocation_strategy" {
 variable "on_demand_gpu_base_capacity" {
   description = "Absolute minimum amount of desired capacity that must be fulfilled by on-demand instances"
   default     = "0"
-
 }
 
 variable "on_demand_gpu_percentage_above_base_capacity" {
@@ -219,6 +191,11 @@ variable "on_demand_cpu_desired_capacity" {
 }
 
 variable "on_demand_cpu_instance_type" {
+  description = "EC2 on_demand Instance type"
+  default     = "c5.xlarge"
+}
+
+variable "on_demand_cpu_override_instance_types" {
   description = "EC2 on_demand Instance type"
   default     = ["c5.xlarge", "c5.2xlarge", "c5n.xlarge"]
 }

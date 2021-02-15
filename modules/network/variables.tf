@@ -18,22 +18,24 @@ variable "network" {
 
 variable "environment" {
   type        = string
-  description = "Environment Use in tags and annotations for identify EKS cluster"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Environment` key"
 }
 
 variable "project" {
   type        = string
-  description = "Project Use in tags and annotations for identify EKS cluster"
+  default     = null
+  description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
 variable "cluster_name" {
   type        = string
-  description = "Name of cluster."
   default     = "cluster-name"
+  description = "A name of the Amazon EKS cluster"
 }
 
 variable "availability_zones" {
-  description = "A list of availability zones where need to create subnets"
-  type        = list
+  description = "Availability zones for project"
+  type        = list(any)
   default     = []
 }
