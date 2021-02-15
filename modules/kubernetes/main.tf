@@ -24,10 +24,7 @@ module "eks" {
   map_users = var.aws_auth_user_mapping
   map_roles = var.aws_auth_role_mapping
 
-  tags = {
-    Environment = var.environment
-    Project     = var.project
-  }
+  tags = local.tags
 
   workers_additional_policies = [
     "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",

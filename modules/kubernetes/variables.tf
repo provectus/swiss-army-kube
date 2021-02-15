@@ -271,3 +271,9 @@ variable "workers_additional_policies" {
   default = []
   description = "List of ARNs of additional policies to attach to workers"
 }
+
+variable "tags" {
+  type        = map(string)
+  description = "Tags to add to AWS resources"
+  default     = {}
+}
