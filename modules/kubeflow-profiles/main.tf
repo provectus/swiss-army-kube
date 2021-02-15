@@ -10,7 +10,7 @@ spec:
     kind: User
     name: ${each.value}
 EOT
-  filename = "${path.root}/${var.argocd.path}/profiles/profiles-${each.key}.yaml"
+  filename = "${path.root}/${var.argocd.path}/profiles/profile-${each.key}.yaml"
 }
 
 
