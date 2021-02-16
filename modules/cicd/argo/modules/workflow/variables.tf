@@ -47,3 +47,8 @@ variable "cluster_oidc_url" {
   description = "An OIDC endpoint of the EKS cluster"
   default     = ""
 }
+
+variable tags {
+  type = map(string)
+  default = {}
+}

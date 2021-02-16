@@ -43,11 +43,12 @@ resource "aws_iam_role_policy" "s3" {
 
 module "sa_assumable_role" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v2.14.0"
+  # version                       = "~> v2.14.0"
   create_role                   = true
   role_name                     = "${var.cluster_name}_argo-workflow"
   provider_url                  = var.cluster_oidc_url
   oidc_fully_qualified_subjects = ["system:serviceaccount:${var.namespace}:argo-*"]
+  tags                          = var.tags
 }
 
 resource "helm_release" "argo-workflow" {
