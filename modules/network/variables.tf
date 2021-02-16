@@ -4,6 +4,14 @@ variable "cidr" {
   default     = null
 }
 
+
+variable "vpc_name" {
+  description = "Name of the VPC"
+  type        = string
+  default     = null
+}
+
+
 variable "network_delimiter" {
   type        = string
   description = "TBD"

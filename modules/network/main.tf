@@ -21,7 +21,7 @@ module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
   version = "v2.64.0"
 
-  name = var.cluster_name
+  name = local.vpc_name
 
   cidr = local.cidr
 
@@ -36,7 +36,7 @@ module "vpc" {
   enable_dns_support   = true
 
   public_subnet_tags = merge({
-    Name                                        = "${var.cluster_name}-public"
+    Name                                        = "${local.vpc_name}-public"
     KubernetesCluster                           = var.cluster_name
     Environment                                 = var.environment
     Project                                     = var.project
@@ -46,7 +46,7 @@ module "vpc" {
   }, var.tags)
 
   private_subnet_tags = merge({
-    Name                                        = "${var.cluster_name}-private"
+    Name                                        = "${local.vpc_name}-private"
     "kubernetes.io/cluster/${var.cluster_name}" = "shared"
   }, var.tags)
 
