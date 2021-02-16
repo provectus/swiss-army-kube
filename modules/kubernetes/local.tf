@@ -1,10 +1,23 @@
 locals {
+
+  tags = var.tags != null ? var.tags : {
+    Environment = var.environment
+    Project     = var.project
+  }
+
+
+  workers_additional_policies = flatten(
+    [
+      ["arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"], var.workers_additional_policies
+    ]
+  )
+
   common = values({
     for index, az in var.availability_zones :
     az => {
+      workers_additional_policies              = local.workers_additional_policies
       name_prefix                              = "on-demand-common-${index}"
-      instance_type                            = var.on_demand_common_instance_type
-      override_instance_types                  = var.on_demand_common_override_instance_types
+      override_instance_types                  = var.on_demand_common_instance_type
       asg_max_size                             = var.on_demand_common_max_cluster_size
       asg_min_size                             = var.on_demand_common_min_cluster_size
       asg_desired_capacity                     = var.on_demand_common_desired_capacity
@@ -38,9 +51,9 @@ locals {
 
   cpu = values({
     "cpu" = {
+      workers_additional_policies              = local.workers_additional_policies
       name_prefix                              = "on-demand-cpu-"
-      instance_type                            = var.on_demand_cpu_instance_type
-      override_instance_types                  = var.on_demand_cpu_override_instance_types
+      override_instance_types                  = var.on_demand_cpu_instance_type
       asg_max_size                             = var.on_demand_cpu_max_cluster_size
       asg_min_size                             = var.on_demand_cpu_min_cluster_size
       asg_desired_capacity                     = var.on_demand_cpu_desired_capacity
@@ -79,9 +92,9 @@ locals {
 
   gpu = values({
     "gpu" = {
+      workers_additional_policies              = local.workers_additional_policies
       name_prefix                              = "on-demand-gpu-"
-      instance_type                            = var.on_demand_gpu_instance_type
-      override_instance_types                  = var.on_demand_gpu_override_instance_types
+      override_instance_types                  = var.on_demand_gpu_instance_type
       asg_max_size                             = var.on_demand_gpu_max_cluster_size
       asg_min_size                             = var.on_demand_gpu_min_cluster_size
       asg_desired_capacity                     = var.on_demand_gpu_desired_capacity
@@ -128,7 +141,7 @@ locals {
         {
           "key"                 = "k8s.io/cluster-autoscaler/node-template/resources/nvidia.com/gpu"
           "propagate_at_launch" = "false"
-          "value"               = var.on_demand_gpu_resource_count
+          "value"               = var.on_demand_gpu_resource_count # Change to the number of GPUs on your node type
         }
       ]
     }
