@@ -4,6 +4,14 @@ variable "cidr" {
   default     = null
 }
 
+
+variable "vpc_name" {
+  description = "Name of the VPC"
+  type        = string
+  default     = null
+}
+
+
 variable "network_delimiter" {
   type        = string
   description = "TBD"
@@ -38,4 +46,10 @@ variable "availability_zones" {
   description = "Availability zones for project"
   type        = list(any)
   default     = []
+}
+
+variable "tags" {
+  type        = map(string)
+  default     = {}
+  description = "A tags for attaching to new created AWS resources"
 }
