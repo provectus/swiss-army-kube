@@ -99,4 +99,8 @@ module "db" {
 
   # Publicly accessible
   publicly_accessible = var.rds_publicly_accessible
+
+  # For snapshot_identifier to be null
+  snapshot_identifier = null
+
 }
