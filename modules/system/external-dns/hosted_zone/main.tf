@@ -13,7 +13,7 @@ resource "aws_route53_zone" "public" {
   ]
 
   count = !var.aws_private && local.make_subdomain ? 1 : 0
-  name  = var.hosted_zone_domain
+  name  = var.hosted_zone_subdomain
 
   tags          = var.tags
   force_destroy = true
@@ -24,7 +24,7 @@ resource "aws_route53_zone" "private" {
     var.module_depends_on,
   ]
   count = var.aws_private && local.make_subdomain ? 1 : 0
-  name  = var.hosted_zone_domain
+  name  = var.hosted_zone_subdomain
   vpc {
     vpc_id = var.vpc_id
   }
