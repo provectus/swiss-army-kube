@@ -14,6 +14,8 @@ resource "kubernetes_namespace" "this" {
 locals {
   argocd_enabled = length(var.argocd) > 0 ? 1 : 0
   namespace      = coalescelist(kubernetes_namespace.this, [{ "metadata" = [{ "name" = var.namespace }] }])[0].metadata[0].name
+
+
 }
 
 resource "helm_release" "this" {
@@ -39,46 +41,16 @@ resource "helm_release" "this" {
   }
 }
 
-resource "aws_route53_record" "ns" {
-  depends_on = [
-    var.module_depends_on,
-  ]
-  count   = var.mainzoneid == "" ? 0 : length(var.hostedzones)
-  zone_id = var.mainzoneid
-  name    = element(var.hostedzones, count.index)
-  type    = "NS"
-  ttl     = "30"
-
-  records = [
-    for num in range(4) :
-    element((var.aws_private ? aws_route53_zone.private : aws_route53_zone.public)[count.index].name_servers, num)
-  ]
+module "hosted_zone" {
+  source = "./hosted_zone"
+  hosted_zone_domain = var.hosted_zone_domain
+  hosted_zone_subdomain = var.hosted_zone_subdomain
+  aws_private = var.aws_private
+  module_depends_on = var.module_depends_on
+  tags = var.tags
+  vpc_id = var.vpc_id
 }
 
-resource "aws_route53_zone" "public" {
-  depends_on = [
-    var.module_depends_on,
-  ]
-
-  count = var.aws_private ? 0 : length(var.hostedzones)
-  name  = element(var.hostedzones, count.index)
-
-  tags          = var.tags
-  force_destroy = true
-}
-
-resource "aws_route53_zone" "private" {
-  depends_on = [
-    var.module_depends_on,
-  ]
-  count = var.aws_private ? length(var.hostedzones) : 0
-  name  = element(var.hostedzones, count.index)
-  vpc {
-    vpc_id = var.vpc_id
-  }
-  tags          = var.tags
-  force_destroy = true
-}
 
 module "iam_assumable_role_admin" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
@@ -113,8 +85,7 @@ resource "aws_iam_policy" "this" {
             "route53:ChangeResourceRecordSets",
             "route53:ListResourceRecordSets"
           ],
-          Resource = formatlist("arn:aws:route53:::hostedzone/%s",
-          concat(aws_route53_zone.public.*.zone_id, aws_route53_zone.private.*.zone_id))
+          Resource = formatlist("arn:aws:route53:::hostedzone/%s",module.hosted_zone.zone_id)
         },
         {
           Effect = "Allow",
@@ -154,7 +125,7 @@ locals {
     "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn" = module.iam_assumable_role_admin.this_iam_role_arn
     },
     {
-      for i, zone in tolist(var.hostedzones) :
+      for i, zone in [module.hosted_zone.domain]:
       "domainFilters[${i}]" => zone
     }
   )

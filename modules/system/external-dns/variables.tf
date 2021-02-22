@@ -10,16 +10,15 @@ variable "conf" {
   default     = {}
 }
 
-variable "hostedzones" {
-  type        = list(string)
-  description = "A list of Route53 hosted zones domains to create, need to provide a list of FQDN strings"
-  default     = []
+variable "hosted_zone_domain" {
+  type        = string
+  description = "A route53 hosted zone domain to reuse"
 }
 
-variable "mainzoneid" {
+variable "hosted_zone_subdomain" {
   type        = string
-  default     = ""
-  description = "An ID of the root Route53 zone for creating sub-domains"
+  default     = null
+  description = "A route53 hosted zones domains to create, linked to the hosted_zone_domain"
 }
 
 variable "namespace" {
