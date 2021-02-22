@@ -92,11 +92,15 @@ module "db" {
   family = "${var.rds_database_engine}${var.rds_database_major_engine_version}"
 
   # Snapshot name upon DB deletion
-  final_snapshot_identifier = var.rds_database_name
+  final_snapshot_identifier = var.rds_instance_name
 
   # Database Deletion Protection
   deletion_protection = var.rds_database_delete_protection
 
   # Publicly accessible
   publicly_accessible = var.rds_publicly_accessible
+
+  # For snapshot_identifier to be null
+  snapshot_identifier = null
+
 }
