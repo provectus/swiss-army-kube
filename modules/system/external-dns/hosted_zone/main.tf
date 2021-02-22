@@ -38,7 +38,7 @@ resource "aws_route53_record" "ns" {
   ]
   count   = local.make_subdomain ? 1 : 0
   zone_id = data.aws_route53_zone.domain.zone_id
-  name    = var.aws_private ? aws_route53_zone.private[0].zone_id : aws_route53_zone.public[0].zone_id
+  name    = var.aws_private ? aws_route53_zone.private[0].name : aws_route53_zone.public[0].name
   type    = "NS"
   ttl     = "30"
 
