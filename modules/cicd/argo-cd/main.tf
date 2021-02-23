@@ -9,15 +9,37 @@ resource kubernetes_namespace this {
   }
 }
 
+
+
+resource kubernetes_secret ssh_repo_secret {
+
+  depends_on = [kubernetes_namespace.this]
+
+  metadata {
+    name = local.sync_repo_ssh_secret_name
+    namespace = "argocd"
+  }
+
+  data = { 
+    "username" = ""
+    "password" = ""
+    "sshPrivateKey" = var.sync_repo_ssh_private_key
+
+  }
+
+  type = "kubernetes.io/basic-auth"
+}
+
+
 resource helm_release this {
   depends_on = [
     kubernetes_namespace.this
   ]
 
   name          = local.name
-  repository    = local.repository
-  chart         = local.chart
-  version       = var.chart_version
+  repository    = local.helm_repo
+  chart         = local.helm_chart
+  version       = var.helm_chart_version
   namespace     = kubernetes_namespace.this.metadata[0].name
   recreate_pods = true
   timeout       = 1200
@@ -104,7 +126,7 @@ resource local_file this {
     helm_release.this
   ]
   content  = yamlencode(local.application)
-  filename = "${path.root}/${var.apps_dir}/${local.name}.yaml"
+  filename = "${path.root}/${var.sync_apps_dir}/${local.name}.yaml"
 }
 
 resource random_password this {
@@ -132,27 +154,35 @@ resource aws_kms_ciphertext client_secret {
 }
 
 locals {
-  repoURL    = "https://${var.vcs}/${var.owner}/${var.repository}"
-  repository = "https://argoproj.github.io/argo-helm"
-  name       = "argocd"
-  chart      = "argo-cd"
+  sync_repo_ssh_secret_name  = "argocd-ssh-secret"
+  sync_repo_url              = var.sync_repo_url == null ? "${var.sync_protocol}://${var.sync_vcs}/${var.sync_owner}/${var.sync_repository}" : var.sync_repo_url
+  helm_repo                  = "https://argoproj.github.io/argo-helm"
+  name                       = "argocd"
+  helm_chart                 = "argo-cd"
   init_conf = {
     "server.additionalApplications[0].name"                          = "swiss-army-kube"
     "server.additionalApplications[0].namespace"                     = kubernetes_namespace.this.metadata[0].name
     "server.additionalApplications[0].project"                       = "default"
-    "server.additionalApplications[0].source.repoURL"                = local.repoURL
+    "server.additionalApplications[0].source.repoURL"                = local.sync_repo_url
     "server.additionalApplications[0].source.targetRevision"         = var.branch
-    "server.additionalApplications[0].source.path"                   = "${var.path_prefix}${var.apps_dir}"
+    "server.additionalApplications[0].source.path"                   = "${var.sync_path_prefix}${var.sync_apps_dir}"
     "server.additionalApplications[0].source.plugin.name"            = "decryptor"
     "server.additionalApplications[0].destination.server"            = "https://kubernetes.default.svc"
     "server.additionalApplications[0].destination.namespace"         = kubernetes_namespace.this.metadata[0].name
     "server.additionalApplications[0].syncPolicy.automated.prune"    = "true"
     "server.additionalApplications[0].syncPolicy.automated.selfHeal" = "true"
+
   }
   conf = {
+    "configs.secret.createSecret" = true
+    "configs.secret.githubSecret" = var.github_secret
+    "configs.secret.gitlabSecret" = var.gitlab_secret
+    "configs.secret.bitbucketServerSecret" = var.bitbucket_server_secret
+    "configs.secret.bitbucketUUID" = var.bitbucket_uuid
+    "configs.secret.gogsSecret" = var.gogs_secret
+
     "installCRDs" = "false"
     "dex.enabled" = "false"
-
     "global.securityContext.fsGroup"                                       = "999"
     "repoServer.env[0].name"                                               = "AWS_DEFAULT_REGION"
     "repoServer.env[0].value"                                              = data.aws_region.current.name
@@ -177,6 +207,10 @@ locals {
         }
       }]
     )
+
+    "server.config.repositories[0].url"                              = local.sync_repo_url
+    "server.config.repositories[0].sshPrivateKeySecret.name"         = "argocd-ssh-secret"
+    "server.config.repositories[0].sshPrivateKeySecret.key"          = "sshPrivateKey"
   }
   values = concat([
     {
@@ -282,9 +316,9 @@ EOF
       }
       "project" = "default"
       "source" = {
-        "repoURL"        = local.repository
-        "targetRevision" = var.chart_version
-        "chart"          = local.chart
+        "repoURL"        = local.helm_repo
+        "targetRevision" = var.helm_chart_version
+        "chart"          = local.helm_chart
         "helm" = {
           "parameters" = local.values
         }
