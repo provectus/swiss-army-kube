@@ -31,16 +31,6 @@ variable sync_owner {
   description = "An owner of GitHub repository"
 }
 
-variable cluster_name {
-  type        = string
-  description = "A name of the EKS cluster"
-}
-
-variable domains {
-  type        = list(string)
-  description = "A list of domains to use"
-}
-
 variable sync_vcs {
   type        = string
   description = ""
@@ -64,6 +54,33 @@ variable sync_apps_dir {
   description = "A folder for ArgoCD apps"
   default     = "apps"
 }
+
+variable sync_repo_url {
+  type        = string
+  description = "The URL of the repo to sync from. If this is omitted, the URL will automatically be constructed"
+  default     = ""
+}
+
+variable sync_repo_ssh_private_key {
+  type        = string
+  description = "An SSH key for a private Repo from which to sync"
+  default     = ""
+}
+
+variable cluster_name {
+  type        = string
+  description = "A name of the EKS cluster"
+}
+
+variable domains {
+  type        = list(string)
+  description = "A list of domains to use"
+}
+
+
+
+
+
 
 variable ingress_annotations {
   type        = map(string)
@@ -122,18 +139,4 @@ variable gogs_secret {
   description = "A secret for Gogs Webhooks"
   default     = ""
 }
-
-variable sync_repo_ssh_private_key {
-  type        = string
-  description = "An SSH key for a private Repo from which to sync"
-  default     = ""
-}
-
-
-variable sync_repo_url {
-  type        = string
-  description = "The URL of the repo to sync from. If this is omitted, the URL will automatically be constructed"
-  default = null
-}
-
 

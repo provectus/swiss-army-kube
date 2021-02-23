@@ -24,7 +24,6 @@ resource kubernetes_secret ssh_repo_secret {
     "username" = ""
     "password" = ""
     "sshPrivateKey" = var.sync_repo_ssh_private_key
-
   }
 
   type = "kubernetes.io/basic-auth"
