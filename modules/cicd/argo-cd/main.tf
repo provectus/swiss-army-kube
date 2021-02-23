@@ -182,7 +182,7 @@ locals {
     "server.additionalApplications[0].namespace"                     = kubernetes_namespace.this.metadata[0].name
     "server.additionalApplications[0].project"                       = "default"
     "server.additionalApplications[0].source.repoURL"                = var.sync_repo_url
-    "server.additionalApplications[0].source.targetRevision"         = var.branch
+    "server.additionalApplications[0].source.targetRevision"         = var.sync_branch
     "server.additionalApplications[0].source.path"                   = "${var.sync_path_prefix}${var.sync_apps_dir}"
     "server.additionalApplications[0].source.plugin.name"            = "decryptor"
     "server.additionalApplications[0].destination.server"            = "https://kubernetes.default.svc"
