@@ -174,7 +174,7 @@ locals {
   }
 
 
-  secrets_conf = var.sync_repo_ssh_private_key == "" ? ssh_secrets_conf : https_secrets_conf
+  secrets_conf = var.sync_repo_ssh_private_key == "" ? local.ssh_secrets_conf : local.https_secrets_conf
 
 
   init_conf = {
