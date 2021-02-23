@@ -161,20 +161,20 @@ locals {
 
 
   ssh_secrets_conf = <<EOT
-      - url: ${var.sync_repo_url}
-        sshPrivateKeySecret:
-          name: ${local.sync_repo_credentials_secret_name}
-          key: sshPrivateKey
+- url: ${var.sync_repo_url}
+  sshPrivateKeySecret:
+    name: ${local.sync_repo_credentials_secret_name}
+    key: sshPrivateKey
   EOT
 
   https_secrets_conf = <<EOT
-      - url: ${var.sync_repo_url}
-        usernameSecret:
-          name: ${local.sync_repo_credentials_secret_name}
-          key: username
-        passwordSecret:
-          name: ${local.sync_repo_credentials_secret_name}
-          key: password
+- url: ${var.sync_repo_url}
+  usernameSecret:
+    name: ${local.sync_repo_credentials_secret_name}
+    key: username
+  passwordSecret:
+    name: ${local.sync_repo_credentials_secret_name}
+    key: password
   EOT
 
   secrets_conf = var.sync_repo_ssh_private_key == "" ? local.ssh_secrets_conf : local.https_secrets_conf
