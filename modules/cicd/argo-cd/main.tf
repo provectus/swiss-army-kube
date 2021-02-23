@@ -154,7 +154,6 @@ resource aws_kms_ciphertext client_secret {
 
 locals {
   sync_repo_ssh_secret_name  = "argocd-ssh-secret"
-  sync_repo_url              = var.sync_repo_url == null ? "${var.sync_protocol}://${var.sync_vcs}/${var.sync_owner}/${var.sync_repository}" : var.sync_repo_url
   helm_repo                  = "https://argoproj.github.io/argo-helm"
   name                       = "argocd"
   helm_chart                 = "argo-cd"
@@ -162,7 +161,7 @@ locals {
     "server.additionalApplications[0].name"                          = "swiss-army-kube"
     "server.additionalApplications[0].namespace"                     = kubernetes_namespace.this.metadata[0].name
     "server.additionalApplications[0].project"                       = "default"
-    "server.additionalApplications[0].source.repoURL"                = local.sync_repo_url
+    "server.additionalApplications[0].source.repoURL"                = var.sync_repo_url
     "server.additionalApplications[0].source.targetRevision"         = var.branch
     "server.additionalApplications[0].source.path"                   = "${var.sync_path_prefix}${var.sync_apps_dir}"
     "server.additionalApplications[0].source.plugin.name"            = "decryptor"
@@ -207,7 +206,7 @@ locals {
       }]
     )
 
-    "server.config.repositories[0].url"                              = local.sync_repo_url
+    "server.config.repositories[0].url"                              = var.sync_repo_url
     "server.config.repositories[0].sshPrivateKeySecret.name"         = "argocd-ssh-secret"
     "server.config.repositories[0].sshPrivateKeySecret.key"          = "sshPrivateKey"
   }

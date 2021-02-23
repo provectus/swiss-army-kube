@@ -18,29 +18,7 @@ variable module_depends_on {
 
 variable sync_branch {
   type        = string
-  description = "A GitHub reference"
-}
-
-variable sync_repository {
-  type        = string
-  description = "A GitHub repository wich would be used for IaC needs"
-}
-
-variable sync_owner {
-  type        = string
-  description = "An owner of GitHub repository"
-}
-
-variable sync_vcs {
-  type        = string
-  description = ""
-  default     = "github.com"
-}
-
-variable sync_protocol {
-  type        = string
-  description = ""
-  default     = "https"
+  description = "The branch or tag (ref) from which to sync"
 }
 
 variable sync_path_prefix {
@@ -57,8 +35,7 @@ variable sync_apps_dir {
 
 variable sync_repo_url {
   type        = string
-  description = "The URL of the repo to sync from. If this is omitted, the URL will automatically be constructed"
-  default     = ""
+  description = "The URL of the repo to sync from"
 }
 
 variable sync_repo_ssh_private_key {

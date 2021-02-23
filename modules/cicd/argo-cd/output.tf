@@ -1,6 +1,6 @@
 output state {
   value = {
-    repository = local.sync_repo_url
+    repository = var.sync_repo_url
     branch     = var.sync_branch
     namespace  = kubernetes_namespace.this.metadata[0].name
     path       = var.sync_apps_dir
