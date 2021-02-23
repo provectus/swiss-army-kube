@@ -18,7 +18,12 @@ resource kubernetes_secret sync_repo_secret {
   metadata {
     name = local.sync_repo_credentials_secret_name
     namespace = "argocd"
+    labels = {
+      "app.kubernetes.io/name": local.sync_repo_credentials_secret_name
+      "app.kubernetes.io/part-of": argocd
+    }
   }
+
 
   data = { 
     "username" = var.sync_repo_https_username
