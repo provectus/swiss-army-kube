@@ -159,20 +159,23 @@ locals {
   helm_chart                 = "argo-cd"
 
 
-  ssh_secrets_conf =     {
-    "server.config.repositories[0].url"                        = var.sync_repo_url
-    "server.config.repositories[0].sshPrivateKeySecret.name"   = local.sync_repo_credentials_secret_name
-    "server.config.repositories[0].sshPrivateKeySecret.key"    = "sshPrivateKey"
-  }
 
-  https_secrets_conf = {
-    "server.config.repositories[0].url"                   = var.sync_repo_url
-    "server.config.repositories[0].usernameSecret.name"   = local.sync_repo_credentials_secret_name
-    "server.config.repositories[0].usernameSecret.key"    = "username"
-    "server.config.repositories[0].passwordSecret.name"   = local.sync_repo_credentials_secret_name
-    "server.config.repositories[0].passwordSecret.key"    = "password"
-  }
+  ssh_secrets_conf = <<EOT
+      - url: ${var.sync_repo_url}
+        sshPrivateKeySecret:
+          name: ${local.sync_repo_credentials_secret_name}
+          key: sshPrivateKey
+  EOT
 
+  https_secrets_conf = <<EOT
+      - url: ${var.sync_repo_url}
+        usernameSecret:
+          name: ${local.sync_repo_credentials_secret_name}
+          key: username
+        passwordSecret:
+          name: ${local.sync_repo_credentials_secret_name}
+          key: password
+  EOT
 
   secrets_conf = var.sync_repo_ssh_private_key == "" ? local.ssh_secrets_conf : local.https_secrets_conf
 
@@ -213,6 +216,8 @@ locals {
     "repoServer.volumes[0].configMap.items[0].path"                        = "decryptor"
     "repoServer.volumeMounts[0].name"                                      = "decryptor"
     "repoServer.volumeMounts[0].mountPath"                                 = "/opt/decryptor/bin"
+
+    "server.config.repositories"                                           = local.secrets_conf
     "server.config.configManagementPlugins" = yamlencode(
       [{
         "name" = "decryptor"
