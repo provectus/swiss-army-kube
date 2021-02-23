@@ -44,6 +44,20 @@ variable sync_repo_ssh_private_key {
   default     = ""
 }
 
+variable sync_repo_https_username {
+  type        = string
+  description = "An HTTPS username for a private Repo from which to sync"
+  default     = ""
+}
+
+
+variable sync_repo_https_password {
+  type        = string
+  description = "An HTTPS password (or token) for a private Repo from which to sync"
+  default     = ""
+}
+
+
 variable cluster_name {
   type        = string
   description = "A name of the EKS cluster"

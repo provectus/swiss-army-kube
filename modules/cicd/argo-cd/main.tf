@@ -11,18 +11,18 @@ resource kubernetes_namespace this {
 
 
 
-resource kubernetes_secret ssh_repo_secret {
+resource kubernetes_secret sync_repo_secret {
 
   depends_on = [kubernetes_namespace.this]
 
   metadata {
-    name = local.sync_repo_ssh_secret_name
+    name = local.sync_repo_credentials_secret_name
     namespace = "argocd"
   }
 
   data = { 
-    "username" = ""
-    "password" = ""
+    "username" = var.sync_repo_https_username
+    "password" = var.sync_repo_https_password
     "sshPrivateKey" = var.sync_repo_ssh_private_key
   }
 
@@ -44,7 +44,7 @@ resource helm_release this {
   timeout       = 1200
 
   dynamic set {
-    for_each = merge(local.init_conf, local.conf)
+    for_each = merge(local.init_conf, local.conf, local.secrets_conf)
     content {
       name  = set.key
       value = set.value
@@ -153,10 +153,30 @@ resource aws_kms_ciphertext client_secret {
 }
 
 locals {
-  sync_repo_ssh_secret_name  = "argocd-ssh-secret"
+  sync_repo_credentials_secret_name  = "argocd-repo-credentials-secret"
   helm_repo                  = "https://argoproj.github.io/argo-helm"
   name                       = "argocd"
   helm_chart                 = "argo-cd"
+
+
+  ssh_secrets_conf =     {
+    "server.config.repositories[0].url"                        = var.sync_repo_url
+    "server.config.repositories[0].sshPrivateKeySecret.name"   = local.sync_repo_credentials_secret_name
+    "server.config.repositories[0].sshPrivateKeySecret.key"    = "sshPrivateKey"
+  }
+
+  https_secrets_conf = {
+    "server.config.repositories[0].url"                   = var.sync_repo_url
+    "server.config.repositories[0].usernameSecret.name"   = local.sync_repo_credentials_secret_name
+    "server.config.repositories[0].usernameSecret.key"    = "username"
+    "server.config.repositories[0].passwordSecret.name"   = local.sync_repo_credentials_secret_name
+    "server.config.repositories[0].passwordSecret.key"    = "password"
+  }
+
+
+  secrets_conf = var.sync_repo_ssh_private_key == "" ? ssh_secrets_conf : https_secrets_conf
+
+
   init_conf = {
     "server.additionalApplications[0].name"                          = "swiss-army-kube"
     "server.additionalApplications[0].namespace"                     = kubernetes_namespace.this.metadata[0].name
@@ -171,6 +191,7 @@ locals {
     "server.additionalApplications[0].syncPolicy.automated.selfHeal" = "true"
 
   }
+
   conf = {
     "configs.secret.createSecret" = true
     "configs.secret.githubSecret" = var.github_secret
@@ -205,10 +226,6 @@ locals {
         }
       }]
     )
-
-    "server.config.repositories[0].url"                              = var.sync_repo_url
-    "server.config.repositories[0].sshPrivateKeySecret.name"         = "argocd-ssh-secret"
-    "server.config.repositories[0].sshPrivateKeySecret.key"          = "sshPrivateKey"
   }
   values = concat([
     {
