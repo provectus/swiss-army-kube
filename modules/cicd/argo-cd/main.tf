@@ -44,7 +44,7 @@ resource helm_release this {
   timeout       = 1200
 
   dynamic set {
-    for_each = merge(local.init_conf, local.conf, local.secrets_conf)
+    for_each = merge(local.init_conf, local.conf)
     content {
       name  = set.key
       value = set.value
