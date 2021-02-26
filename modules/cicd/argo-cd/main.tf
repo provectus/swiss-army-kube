@@ -20,7 +20,7 @@ resource kubernetes_secret sync_repo_secret {
     namespace = "argocd"
     labels = {
       "app.kubernetes.io/name": local.sync_repo_credentials_secret_name
-      "app.kubernetes.io/part-of": argocd
+      "app.kubernetes.io/part-of": "argocd"
     }
   }
 
