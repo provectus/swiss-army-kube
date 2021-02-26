@@ -63,7 +63,7 @@ variable "runner_deployment_spec" {
   type        = any
   description = "A custom Github Runner configuration"
   default = {
-    "replicas" = 2
+    "replicas" = 1
     "template" = {
       "spec" = {
         "repository"                   = "%REPOSITORY%"
