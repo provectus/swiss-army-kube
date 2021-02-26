@@ -182,7 +182,7 @@ locals {
     key: password
   EOT
 
-  secrets_conf = var.sync_repo_ssh_private_key == "" ? local.ssh_secrets_conf : local.https_secrets_conf
+  secrets_conf = var.sync_repo_ssh_private_key == "" ? local.https_secrets_conf : local.ssh_secrets_conf
 
 
   init_conf = {
