@@ -98,7 +98,7 @@ resource "helm_release" "this" {
   timeout       = 1200
 
   dynamic "set" {
-    for_each = merge(local.conf)
+    for_each = local.conf
 
     content {
       name  = set.key

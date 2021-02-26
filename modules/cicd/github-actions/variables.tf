@@ -50,6 +50,7 @@ variable "github_token" {
   type        = string
   description = "A GitHub token for application"
   default     = null
+  sensitive   = true
 }
 
 variable "actions_repositories" {
