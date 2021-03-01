@@ -60,7 +60,7 @@ spec:
           args:
             - --host=0.0.0.0
             - --port=5000
-            - --backend-store-uri=mysql://$(rds_username):$(rds_password)@${var.rds_host}:${var.rds_port}/mlflow
+            - --backend-store-uri="mysql://$(rds_username):$(rds_password)@${var.rds_host}:${var.rds_port}/mlflow"
             - --default-artifact-root=s3://${var.s3_bucket_name}/modeling/experiments
           envFrom:         
           - secretRef:
