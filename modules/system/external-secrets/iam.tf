@@ -15,7 +15,7 @@ resource "aws_iam_role" "external_secrets" {
       "Action": "sts:AssumeRoleWithWebIdentity",
       "Condition": {
         "StringLike": {
-           "${replace(var.cluster_output.cluster_oidc_issuer_url, "https://", "")}:sub": "system:serviceaccount:${local.app_name}:*"
+           "${replace(var.cluster_output.cluster_oidc_issuer_url, "https://", "")}:sub": "system:serviceaccount:kube-system:external-secrets-kubernetes-external-secrets:*"
         }
       }
     }
