@@ -1,6 +1,6 @@
 resource "aws_iam_role" "external_secrets" {
   count = var.chart_values != "" || var.aws_assume_role_arn != "" ? 0 : 1
-  name  = "${local.cluster_name}-external-secrets"
+  name  = "${local.cluster_name}_external-secrets"
   tags  = var.tags
 
   assume_role_policy = <<EOF
