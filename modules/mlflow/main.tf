@@ -67,7 +67,7 @@ resource local_file mlflow_def {
 
 
 resource local_file namespace {
-  content = local.namespace
+  content = local.namespace_def
   filename = "${path.root}/${var.argocd.path}/mlflow-namespace.yaml"
 }
 

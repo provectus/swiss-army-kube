@@ -3,7 +3,7 @@
 locals {  
   name = "mlflow"
   namepace = "mlflow"
-  namespace_def = var.namespace_def != null ? var.namespace : yamlencode({
+  namespace_def = var.namespace_def != null ? var.namespace_def : yamlencode({
       "apiVersion" = "v1"
       "kind"       = "Namespace"
       "metadata" = {
