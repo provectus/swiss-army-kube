@@ -10,6 +10,21 @@ variable argocd {
 }
 
 
+variable "external_secrets_serviceaccount" {
+  type        = map(string)
+  default = {
+    "name" = "external-secrets-kubernetes-external-secrets"
+    "namespace" = "kube-system"
+  }
+}
+
+
+variable namespace {
+  type = string  
+  description = "Namespace where MLFlow should be rolled out"
+  default = "mlflow"
+
+}
 variable cluster_name {
   type = string  
   description = "Name of the EKS cluster"

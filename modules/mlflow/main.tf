@@ -31,7 +31,7 @@ module "iam_assumable_role" {
   role_name                     = "${data.aws_eks_cluster.this.id}_${local.name}"
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
   role_policy_arns              = [aws_iam_policy.this.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${local.namespace}:${local.name}"]
+  oidc_fully_qualified_subjects = ["system:serviceaccount:${var.external_secrets_serviceaccount.namespace}:${var.external_secrets_serviceaccount.name}"]
 
   tags = var.tags
 }
