@@ -27,6 +27,7 @@ metadata:
   namespace: ${local.namespace}
 spec:
   backendType: secretsManager
+  roleArn: ${module.iam_assumable_role.this_iam_role_arn}
   data:
     - key: ${var.cluster_name}/mlflow/rds_username
       name: rds_username    
