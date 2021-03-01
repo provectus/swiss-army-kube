@@ -20,7 +20,7 @@ resource aws_cognito_user_pool this {
 
 resource aws_cognito_user_pool_domain this {
   domain          = "auth.${var.domain}"
-  certificate_arn = module.cognito_acm.this_acm_certificate_arn
+  certificate_arn = local.acm_arn
   user_pool_id    = aws_cognito_user_pool.this.id
 }
 
@@ -43,9 +43,17 @@ resource aws_route53_record root {
   records = ["127.0.0.1"]
 }
 
-module cognito_acm {
+
+locals {
+  acm_arn = var.acm_arn == "" ? module.acm[0].this_acm_certificate_arn : var.acm_arn
+}
+
+module acm {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> v2.0"
+
+  count = var.acm_arn == "" ? 1 : 0 //only create if an existing ACM certificate hasn't been provided
+
 
   domain_name          = "auth.${var.domain}"
   zone_id              = var.zone_id

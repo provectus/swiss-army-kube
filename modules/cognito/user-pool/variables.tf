@@ -17,6 +17,11 @@ variable tags {
   default     = {}
 }
 
+variable acm_arn {
+  type = string
+  description = "The ARN of an ACM certificate to attach to the Cognito App Domain (must be in us-east-1)"
+  default = ""
+}
 variable invite_template {
   type        = map(string)
   description = "A template for the invite email with credentials"
