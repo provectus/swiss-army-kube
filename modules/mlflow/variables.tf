@@ -10,12 +10,8 @@ variable argocd {
 }
 
 
-variable "external_secrets_serviceaccount" {
-  type        = map(string)
-  default = {
-    "name" = "external-secrets-kubernetes-external-secrets"
-    "namespace" = "kube-system"
-  }
+variable "external_secrets_role_arn" {
+  type  = string
 }
 
 

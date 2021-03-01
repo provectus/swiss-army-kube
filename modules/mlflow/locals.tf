@@ -12,7 +12,7 @@ locals {
           "istio-injection" = "enabled"
         }
         "annotations" = {
-          "iam.amazonaws.com/permitted" = module.iam_assumable_role.this_iam_role_arn //restrict this namespace to only being able to assume this arn (wildcards are also possible, e.g. iam.amazonaws.com/permitted: "arn:aws:iam::123456789012:role/.*")
+          "iam.amazonaws.com/permitted" = var.external_secrets_role_arn //restrict this namespace to only being able to assume this arn (wildcards are also possible, e.g. iam.amazonaws.com/permitted: "arn:aws:iam::123456789012:role/.*")
         }
       }
     })
@@ -26,7 +26,7 @@ metadata:
   namespace: ${var.namespace}
 spec:
   backendType: secretsManager
-  roleArn: ${module.iam_assumable_role.this_iam_role_arn}
+  roleArn: ${var.external_secrets_role_arn}
   data:
     - key: ${var.cluster_name}/mlflow/rds_username
       name: rds_username    

@@ -24,42 +24,6 @@ resource "aws_secretsmanager_secret_version" "rds_password" {
 }
 
 
-module "iam_assumable_role" {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v3.6.0"
-  create_role                   = true
-  role_name                     = "${data.aws_eks_cluster.this.id}_${local.name}"
-  provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
-  role_policy_arns              = [aws_iam_policy.this.arn]
-  oidc_fully_qualified_subjects = ["system:serviceaccount:${var.external_secrets_serviceaccount.namespace}:${var.external_secrets_serviceaccount.name}"]
-
-  tags = var.tags
-}
-
-resource "aws_iam_policy" "this" {
-  name  = "mlflow-${var.cluster_name}-access"
-
-  policy = <<-EOF
-{
-  "Version": "2012-10-17",
-    "Statement": [
-        {
-            "Sid": "SecretsAccess",
-            "Effect": "Allow",
-            "Action": [
-                "secretsmanager:ListSecretVersionIds",
-                "secretsmanager:GetSecretValue",
-                "secretsmanager:GetResourcePolicy",
-                "secretsmanager:DescribeSecret"
-            ],
-            "Resource": "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.cluster_name}/${var.allowed_secret_prefix}*"
-        }
-    ]
-}
-  EOF
-}
-
-
 resource local_file mlflow_def {
   content = local.mlflow_def
   filename = "${path.root}/${var.argocd.path}/mlflow-defs/mlflow_def.yaml"

@@ -54,3 +54,4 @@ resource "aws_iam_role_policy" "external_secrets_access" {
 }
   EOF
 }
+
