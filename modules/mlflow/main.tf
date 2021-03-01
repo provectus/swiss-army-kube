@@ -36,7 +36,7 @@ module "iam_assumable_role" {
   tags = var.tags
 }
 
-resource "aws_iam_role_policy" "this" {
+resource "aws_iam_policy" "this" {
   name  = "mlflow-${var.cluster_name}-access"
 
   policy = <<-EOF
