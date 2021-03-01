@@ -17,7 +17,7 @@ variable tags {
   default     = {}
 }
 
-variable cognito_acm_arn {
+variable acm_arn {
   type = string
   description = "The ARN of an ACM certificate to attach to the Cognito App Domain (must be in us-east-1)"
   default = ""
