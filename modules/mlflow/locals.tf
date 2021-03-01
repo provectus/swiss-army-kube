@@ -1,14 +1,19 @@
 
 
 locals {  
-  namespace = var.namespace != null ? var.namespace : yamlencode({
+  name = "mlflow"
+  namepace = "mlflow"
+  namespace_def = var.namespace_def != null ? var.namespace : yamlencode({
       "apiVersion" = "v1"
       "kind"       = "Namespace"
       "metadata" = {
-        "name" = "mlflow"
+        "name" = local.namepace
         "labels" = {
           "control-plane"   = "kubeflow"
           "istio-injection" = "enabled"
+        }
+        "annotations" = {
+          "iam.amazonaws.com/permitted" = module.iam_assumable_role.arn //restrict this namespace to only being able to assume this arn (wildcards are also possible, e.g. iam.amazonaws.com/permitted: "arn:aws:iam::123456789012:role/.*")
         }
       }
     })
@@ -19,13 +24,13 @@ apiVersion: 'kubernetes-client.io/v1'
 kind: ExternalSecret
 metadata:
   name: mlflow-secret
-  namespace: mlflow
+  namespace: ${local.namespace}
 spec:
   backendType: secretsManager
   data:
-    - key: mlflow/rds_username
+    - key: ${var.cluster_name}/mlflow/rds_username
       name: rds_username    
-    - key: mlflow/rds_password
+    - key: ${var.cluster_name}/mlflow/rds_password
       name: rds_password
 ---
 apiVersion: apps/v1
@@ -34,7 +39,7 @@ metadata:
   name: mlflow
   labels:
     app: mlflow
-  namespace: mlflow
+  namespace: ${local.namespace}
 spec:
   replicas: 1
   selector:
@@ -78,7 +83,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mlflow
-  namespace: mlflow
+  namespace: ${local.namespace}
 spec:
   selector:
     app: mlflow
@@ -115,7 +120,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: mlflow
-  namespace: mlflow
+  namespace: ${local.namespace}
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
@@ -123,7 +128,7 @@ metadata:
   labels:
     app: mlflow
   name: mlflow
-  namespace: mlflow
+  namespace: ${local.namespace}
 rules: []
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1

@@ -9,13 +9,24 @@ variable argocd {
   }
 }
 
+
+variable cluster_name {
+  type = string  
+  description = "Name of the EKS cluster"
+
+}
+variable allowed_secret_prefix {
+  type = string
+  default = "mlflow/"
+
+}
 variable mlflow_def {
   type        = string
   description = "The resource definition for MLFlow"
   default = null //default is constructed dynmaically. See locals.tf
 }
 
-variable namespace {
+variable namespace_def {
   type        = string
   description = "The Namespace definition for MLFlow"
   default     = null //default is constructed dynmaically. See locals.tf
