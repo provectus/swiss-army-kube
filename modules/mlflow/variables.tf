@@ -30,9 +30,9 @@ variable cluster_name {
   description = "Name of the EKS cluster"
 
 }
-variable allowed_secret_prefix {
+variable secret_prefix {
   type = string
-  default = "mlflow/"
+  default = "eks/mlflow/"
 
 }
 variable mlflow_def {

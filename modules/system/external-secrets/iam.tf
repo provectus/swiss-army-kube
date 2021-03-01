@@ -1,6 +1,6 @@
 resource "aws_iam_role" "external_secrets" {
   count = var.chart_values != "" || var.aws_assume_role_arn != "" ? 0 : 1
-  name  = "external-secrets-${local.cluster_name}"
+  name  = "${local.cluster_name}-external-secrets"
   tags  = var.tags
 
   assume_role_policy = <<EOF
@@ -42,7 +42,7 @@ resource "aws_iam_role_policy" "external_secrets_access" {
                 "secretsmanager:GetResourcePolicy",
                 "secretsmanager:DescribeSecret"
             ],
-            "Resource": "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.allowed_secrets_prefix}*"
+            "Resource": "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.cluster_name}*"
         },
         {
             "Sid": "RoleAssume",
