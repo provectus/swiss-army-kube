@@ -7,7 +7,7 @@ locals {
       "apiVersion" = "v1"
       "kind"       = "Namespace"
       "metadata" = {
-        "name" = local.namepace
+        "name" = local.namespace
         "labels" = {
           "control-plane"   = "kubeflow"
           "istio-injection" = "enabled"

@@ -37,7 +37,7 @@ module "iam_assumable_role" {
 }
 
 resource "aws_iam_role_policy" "this" {
-  name  = "mlflow-${local.cluster_name}-access"
+  name  = "mlflow-${var.cluster_name}-access"
 
   policy = <<-EOF
 {
@@ -52,7 +52,7 @@ resource "aws_iam_role_policy" "this" {
                 "secretsmanager:GetResourcePolicy",
                 "secretsmanager:DescribeSecret"
             ],
-            "Resource": "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.cluster_name}/${var.allowed_secrets_prefix}*"
+            "Resource": "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.cluster_name}/${var.allowed_secret_prefix}*"
         }
     ]
 }

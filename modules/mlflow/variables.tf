@@ -65,3 +65,7 @@ variable s3_bucket_name {
   description = "Bucket where MLFlow artifacts will be stored"
 }
 
+variable tags {
+  type = map(string)
+  default = {}
+}
