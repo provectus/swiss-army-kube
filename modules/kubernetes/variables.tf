@@ -67,6 +67,12 @@ variable "aws_auth_role_mapping" {
 }
 
 
+variable enable_irsa {
+  type        = bool
+  description = "Set to true to enable IAM Roles for Service Accounts"
+  default     = false
+}
+
 # On-demand instance
 variable "on_demand_common_max_cluster_size" {
   type        = string

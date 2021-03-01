@@ -19,7 +19,7 @@ module "eks" {
   kubeconfig_name = var.cluster_name
   subnets         = var.subnets
   vpc_id          = var.vpc_id
-  enable_irsa     = false
+  enable_irsa     = var.enable_irsa
 
   map_users = var.aws_auth_user_mapping
   map_roles = var.aws_auth_role_mapping
