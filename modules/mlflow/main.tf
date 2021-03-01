@@ -3,8 +3,8 @@
 resource "aws_secretsmanager_secret" "rds_username" {
   name = "mlflow/rds_username"
 }
-resource "aws_secretsmanager_secret_version" "rds_user" {
-  secret_id     = aws_secretsmanager_secret.rds_user.id
+resource "aws_secretsmanager_secret_version" "rds_username" {
+  secret_id     = aws_secretsmanager_secret.rds_username.id
   secret_string = var.rds_username
 }
 resource "aws_secretsmanager_secret" "rds_password" {
