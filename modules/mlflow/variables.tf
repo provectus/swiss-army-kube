@@ -21,8 +21,30 @@ variable namespace {
   default     = null //default is constructed dynmaically. See locals.tf
 }
 
+variable rds_username {
+  type = string
+  description = "Username of the RDS database that MLFlow uses as its backend"
+  default = ""
+}
 
-  
+variable rds_password {
+  type = string
+  description = "Password of the RDS database that MLFlow uses as its backend"
+  default = ""
+}
 
 
-  
+variable rds_host {
+  type = string
+  description = "Endpoint of the RDS database that MLFlow uses as its backend"
+}
+
+variable rds_port {
+  type = string
+  description = "Endpoint of the RDS database that MLFlow uses as its backend"
+}
+
+variable s3_bucket_name {
+  type = string
+  description = "Bucket where MLFlow artifacts will be stored"
+}

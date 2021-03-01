@@ -1,3 +1,18 @@
+resource "aws_secretsmanager_secret" "rds_username" {
+  name = "mlflow/rds_username"
+}
+resource "aws_secretsmanager_secret_version" "rds_user" {
+  secret_id     = aws_secretsmanager_secret.rds_user.id
+  secret_string = var.rds_username
+}
+resource "aws_secretsmanager_secret" "rds_password" {
+  name = "mlflow/rds_password"
+}
+resource "aws_secretsmanager_secret_version" "rds_password" {
+  secret_id     = aws_secretsmanager_secret.rds_password.id
+  secret_string = var.rds_password
+}
+
 
 locals {  
   namespace = var.namespace != null ? var.namespace : yamlencode({
@@ -14,6 +29,18 @@ locals {
 
 
   mlflow_def = var.mlflow_def != null ? var.mlflow_def : <<EOT
+apiVersion: 'kubernetes-client.io/v1'
+kind: ExternalSecret
+metadata:
+  name: mlflow-secret
+spec:
+  backendType: secretsManager
+  data:
+    - key: mlflow/rds_username
+      name: rds_username    
+    - key: mlflow/rds_password
+      name: rds_password
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -41,11 +68,11 @@ spec:
           args:
             - --host=0.0.0.0
             - --port=5000
-            - --backend-store-uri=mysql://$(rds_username):$(rds_password)@$(rds_host):$(rds_port)/mlflow
-            - --default-artifact-root=s3://$(s3_bucket)/modeling/experiments
+            - --backend-store-uri=mysql://$(rds_username):$(rds_password)@${var.rds_host}:${var.rds_port}/mlflow
+            - --default-artifact-root=s3://${var.s3_bucket_name}/modeling/experiments
           envFrom:         
           - secretRef:
-              name: aws-storage-secret
+              name: mlflow-secret
           ports:
             - name: http
               containerPort: 5000
