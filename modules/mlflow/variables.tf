@@ -44,7 +44,13 @@ variable rds_port {
   description = "Endpoint of the RDS database that MLFlow uses as its backend"
 }
 
+variable db_name {
+  type = string
+  description = "Name of the DB on the RDS instance"
+}
+
 variable s3_bucket_name {
   type = string
   description = "Bucket where MLFlow artifacts will be stored"
 }
+
