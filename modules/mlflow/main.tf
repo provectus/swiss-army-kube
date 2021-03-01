@@ -1,5 +1,22 @@
 
 
+resource "aws_secretsmanager_secret" "rds_username" {
+  name = "mlflow/rds_username"
+}
+resource "aws_secretsmanager_secret_version" "rds_user" {
+  secret_id     = aws_secretsmanager_secret.rds_user.id
+  secret_string = var.rds_username
+}
+resource "aws_secretsmanager_secret" "rds_password" {
+  name = "mlflow/rds_password"
+}
+resource "aws_secretsmanager_secret_version" "rds_password" {
+  secret_id     = aws_secretsmanager_secret.rds_password.id
+  secret_string = var.rds_password
+}
+
+
+
 resource local_file mlflow_def {
   content = local.mlflow_def
   filename = "${path.root}/${var.argocd.path}/mlflow-defs/mlflow_def.yaml"
@@ -10,8 +27,6 @@ resource local_file namespace {
   content = local.namespace
   filename = "${path.root}/${var.argocd.path}/mlflow-namespace.yaml"
 }
-
-
 
 
 resource local_file mlflow {

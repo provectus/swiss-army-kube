@@ -1,17 +1,3 @@
-resource "aws_secretsmanager_secret" "rds_username" {
-  name = "mlflow/rds_username"
-}
-resource "aws_secretsmanager_secret_version" "rds_user" {
-  secret_id     = aws_secretsmanager_secret.rds_user.id
-  secret_string = var.rds_username
-}
-resource "aws_secretsmanager_secret" "rds_password" {
-  name = "mlflow/rds_password"
-}
-resource "aws_secretsmanager_secret_version" "rds_password" {
-  secret_id     = aws_secretsmanager_secret.rds_password.id
-  secret_string = var.rds_password
-}
 
 
 locals {  
@@ -33,6 +19,7 @@ apiVersion: 'kubernetes-client.io/v1'
 kind: ExternalSecret
 metadata:
   name: mlflow-secret
+  namespace: mlflow
 spec:
   backendType: secretsManager
   data:
