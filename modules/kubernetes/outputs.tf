@@ -36,3 +36,8 @@ output "worker_security_group_id" {
   value       = module.eks.worker_security_group_id
 }
 
+output "worker_iam_role_arn" {
+  description = "default IAM role ARN for EKS worker groups"
+  value       = module.eks.worker_iam_role_arn
+}
+
