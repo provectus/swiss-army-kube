@@ -30,7 +30,7 @@ locals {
   EOT
   ]
 
-  external_secret_data_string = join("\n",flatten(external_secret_data, [external_secret_data_rds_password]))
+  external_secret_data_string = join("\n",flatten(local.external_secret_data, [local.external_secret_data_rds_password]))
   
 
   external_secret = <<EOT
