@@ -227,25 +227,28 @@ metadata:
   namespace: ${var.namespace}
 data:
   config: |
-    {
-      executorImage: gcr.io/ml-pipeline/argoexec:v2.7.5-license-compliance,
-      containerRuntimeExecutor: docker,
-      workflowDefaults: {
-          metadata: {annotations: {"iam.amazonaws.com/role": "${var.pipelines_role_to_assume_role_arn}"}}
-      },
-      artifactRepository:
-      {
-        archiveLogs: true,
-        s3: {
-            bucket: "${var.s3_bucket_name}",
-            keyPrefix: artifacts,
-            endpoint: s3.amazonaws.com,
-            insecure: false,
-            region: "${data.aws_region.current.name}",
-            useSDKCreds: true
+  {
+    "executorImage":"gcr.io/ml-pipeline/argoexec:v2.7.5-license-compliance",
+    "containerRuntimeExecutor":"docker",
+    "workflowDefaults":{
+      "metadata":{
+        "annotations":{
+          "iam.amazonaws.com/role":"${var.pipelines_role_to_assume_role_arn}"
         }
       }
-    } 
+    },
+    "artifactRepository":{
+      "archiveLogs":true,
+      "s3":{
+        "bucket":"${var.s3_bucket_name}",
+        "keyPrefix":"artifacts",
+        "endpoint":"s3.amazonaws.com",
+        "insecure":false,
+        "region":"${data.aws_region.current.name}",
+        "useSDKCreds":true
+      }
+    }
+  }
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -255,49 +258,49 @@ metadata:
 data:
   "config.json": |
     {
-      "DBConfig": {
-          "Host": "${var.rds_host}",
-          "Port": "${var.rds_port}",
-          "DriverName": "mysql",
-          "DataSourceName": "",
-          "DBName": "${var.db_name_pipelines}",
-          "GroupConcatMaxLen": 4194304
+      "DBConfig":{
+        "Host":"${var.rds_host}",
+        "Port":"${var.rds_port}",
+        "DriverName":"mysql",
+        "DataSourceName":"",
+        "DBName":"${var.db_name_pipelines}",
+        "GroupConcatMaxLen":4194304
       },
-      "ObjectStoreConfig": {
-          "Host": "s3.amazonaws.com",
-          "Region": "${data.aws_region.current.name}",
-          "Secure": true,
-          "BucketName": "${var.s3_bucket_name}",
-          "PipelineFolder": "pipelines",
-          "PipelinePath": "pipelines",
-          "AccessKey": "",
-          "SecretAccessKey": ""
+      "ObjectStoreConfig":{
+        "Host":"s3.amazonaws.com",
+        "Region":"${data.aws_region.current.name}",
+        "Secure":true,
+        "BucketName":"${var.s3_bucket_name}",
+        "PipelineFolder":"pipelines",
+        "PipelinePath":"pipelines",
+        "AccessKey":"",
+        "SecretAccessKey":""
       },
-      "InitConnectionTimeout": "6m",
-      "DefaultPipelineRunnerServiceAccount": "pipeline-runner"
+      "InitConnectionTimeout":"6m",
+      "DefaultPipelineRunnerServiceAccount":"pipeline-runner"
     }
 
   "sample_config.json" = |
     [
       {
-          "name": "[Demo] XGBoost - Training with Confusion Matrix",
-          "description": "[source code](https://github.com/kubeflow/pipelines/blob/master/samples/core/xgboost_training_cm) [GCP Permission requirements](https://github.com/kubeflow/pipelines/blob/master/samples/core/xgboost_training_cm#requirements). A trainer that does end-to-end distributed training for XGBoost models.",
-          "file": "/samples/core/xgboost_training_cm/xgboost_training_cm.py.yaml"
+        "name":"[Demo] XGBoost - Training with Confusion Matrix",
+        "description":"[source code](https://github.com/kubeflow/pipelines/blob/master/samples/core/xgboost_training_cm) [GCP Permission requirements](https://github.com/kubeflow/pipelines/blob/master/samples/core/xgboost_training_cm#requirements). A trainer that does end-to-end distributed training for XGBoost models.",
+        "file":"/samples/core/xgboost_training_cm/xgboost_training_cm.py.yaml"
       },
       {
-          "name": "[Demo] TFX - Taxi Tip Prediction Model Trainer",
-          "description": "[source code](https://console.cloud.google.com/mlengine/notebooks/deploy-notebook?q=download_url%3Dhttps%253A%252F%252Fraw.githubusercontent.com%252Fkubeflow%252Fpipelines%252Fmaster%252Fsamples%252Fcore%252Fparameterized_tfx_oss%252Ftaxi_pipeline_notebook.ipynb) [GCP Permission requirements](https://github.com/kubeflow/pipelines/blob/master/samples/contrib/parameterized_tfx_oss#permission). Example pipeline that does classification with model analysis based on a public tax cab dataset.",
-          "file": "/samples/core/parameterized_tfx_oss/parameterized_tfx_oss.py.yaml"
+        "name":"[Demo] TFX - Taxi Tip Prediction Model Trainer",
+        "description":"[source code](https://console.cloud.google.com/mlengine/notebooks/deploy-notebook?q=download_url%3Dhttps%253A%252F%252Fraw.githubusercontent.com%252Fkubeflow%252Fpipelines%252Fmaster%252Fsamples%252Fcore%252Fparameterized_tfx_oss%252Ftaxi_pipeline_notebook.ipynb) [GCP Permission requirements](https://github.com/kubeflow/pipelines/blob/master/samples/contrib/parameterized_tfx_oss#permission). Example pipeline that does classification with model analysis based on a public tax cab dataset.",
+        "file":"/samples/core/parameterized_tfx_oss/parameterized_tfx_oss.py.yaml"
       },
       {
-          "name": "[Tutorial] Data passing in python components",
-          "description": "[source code](https://github.com/kubeflow/pipelines/tree/master/samples/tutorials/Data%20passing%20in%20python%20components) Shows how to pass data between python components.",
-          "file": "/samples/tutorials/Data passing in python components/Data passing in python components - Files.py.yaml"
+        "name":"[Tutorial] Data passing in python components",
+        "description":"[source code](https://github.com/kubeflow/pipelines/tree/master/samples/tutorials/Data%20passing%20in%20python%20components) Shows how to pass data between python components.",
+        "file":"/samples/tutorials/Data passing in python components/Data passing in python components - Files.py.yaml"
       },
       {
-          "name": "[Tutorial] DSL - Control structures",
-          "description": "[source code](https://github.com/kubeflow/pipelines/tree/master/samples/tutorials/DSL%20-%20Control%20structures) Shows how to use conditional execution and exit handlers. This pipeline will randomly fail to demonstrate that the exit handler gets executed even in case of failure.",
-          "file": "/samples/tutorials/DSL - Control structures/DSL - Control structures.py.yaml"
+        "name":"[Tutorial] DSL - Control structures",
+        "description":"[source code](https://github.com/kubeflow/pipelines/tree/master/samples/tutorials/DSL%20-%20Control%20structures) Shows how to use conditional execution and exit handlers. This pipeline will randomly fail to demonstrate that the exit handler gets executed even in case of failure.",
+        "file":"/samples/tutorials/DSL - Control structures/DSL - Control structures.py.yaml"
       }
     ]
 ---
@@ -308,43 +311,43 @@ metadata:
   namespace: ${var.namespace}
 data:
   "viewer-pod-template.json": |
-      {
-        "spec":{
-          "containers":[
-            {
-              "env":[
-                {
-                  "name":"AWS_ACCESS_KEY_ID",
-                  "valueFrom":{
-                    "secretKeyRef":{
-                      "name":"aws-storage-secret",
-                      "key":"s3_access_key"
-                    }
-                  }
-                },
-                {
-                  "name":"AWS_SECRET_ACCESS_KEY",
-                  "valueFrom":{
-                    "secretKeyRef":{
-                      "name":"aws-storage-secret",
-                      "key":"s3_secret_key"
-                    }
-                  }
-                },
-                {
-                  "name":"AWS_REGION",
-                  "valueFrom":{
-                    "secretKeyRef":{
-                      "name":"aws-storage-secret",
-                      "key":"s3_region"
-                    }
+    {
+      "spec":{
+        "containers":[
+          {
+            "env":[
+              {
+                "name":"AWS_ACCESS_KEY_ID",
+                "valueFrom":{
+                  "secretKeyRef":{
+                    "name":"aws-storage-secret",
+                    "key":"s3_access_key"
                   }
                 }
-              ]
-            }
-          ]
-        }
+              },
+              {
+                "name":"AWS_SECRET_ACCESS_KEY",
+                "valueFrom":{
+                  "secretKeyRef":{
+                    "name":"aws-storage-secret",
+                    "key":"s3_secret_key"
+                  }
+                }
+              },
+              {
+                "name":"AWS_REGION",
+                "valueFrom":{
+                  "secretKeyRef":{
+                    "name":"aws-storage-secret",
+                    "key":"s3_region"
+                  }
+                }
+              }
+            ]
+          }
+        ]
       }
+    }
 ---
 apiVersion: v1
 kind: ConfigMap
