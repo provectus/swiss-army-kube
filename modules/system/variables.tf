@@ -5,8 +5,6 @@ variable "module_depends_on" {
   description = "A list of explicit dependencies"
 }
 
-variable ""
-
 variable "aws_private" {
   type        = bool
   description = "Set true or false to use private or public infrastructure"
