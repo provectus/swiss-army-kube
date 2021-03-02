@@ -54,7 +54,7 @@ spec:
         - name: HOST
           value: ${var.rds_host}
         - name: PORT
-          value:: ${var.rds_port}
+          value: ${var.rds_port}
         - name: USERNAME
           valueFrom:
             secretKeyRef:
