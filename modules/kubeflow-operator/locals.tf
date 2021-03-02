@@ -5,7 +5,6 @@ locals {
     "rds_host" = var.rds_host
     "rds_port" = var.rds_port
     "rds_username" = var.rds_username
-    "rds_password" = var.rds_password
 
     "s3_bucket" = var.s3_bucket_name
     "s3_region" = data.aws_region.current.name
@@ -19,12 +18,20 @@ locals {
 
 
   role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? aws_iam_role.external_secrets_kubeflow[0].arn : var.external_secrets_secret_role_arn
+
+  external_secret_data_rds_password = <<EOT
+    - key: ${var.cluster_name}/${var.namespace}/rds_password
+    name: rds_password 
+  EOT
   
-  external_secret_data = join("\n",[for key, value in local.secret_data: <<EOT
+  external_secret_data = [for key, value in local.secret_data: <<EOT
     - key: ${var.cluster_name}/${var.namespace}/${key}
     name: ${key}   
   EOT
-  ])
+  ]
+
+  external_secret_data_string = join("\n",flatten(external_secret_data, [external_secret_data_rds_password]))
+  
 
   external_secret = <<EOT
   apiVersion: 'kubernetes-client.io/v1'
@@ -36,7 +43,7 @@ spec:
   backendType: secretsManager
   roleArn: ${local.role_to_assume_arn}
   data:
-    ${local.external_secret_data}
+    ${local.external_secret_data_string}
 EOT
 
 

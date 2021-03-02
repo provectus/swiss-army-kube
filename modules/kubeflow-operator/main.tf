@@ -13,7 +13,6 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 resource "aws_secretsmanager_secret" "this" {
-
   for_each = local.secret_data  
   name = "${var.cluster_name}/${var.namespace}/${each.value}"
 }
@@ -22,6 +21,15 @@ resource "aws_secretsmanager_secret_version" "this" {
   for_each      = local.secret_data  
   secret_id     = lookup(aws_secretsmanager_secret.this, each.key).id
   secret_string = each.value
+}
+
+resource "aws_secretsmanager_secret" "password" { //rds_password is a "sensitive" variable. It cannot be included in a for_each
+  name = "${var.cluster_name}/${var.namespace}/rds_password"
+}
+
+resource "aws_secretsmanager_secret_version" "password" {
+  secret_id     = aws_secretsmanager_secret.password.id
+  secret_string = var.rds_password
 }
 
 
