@@ -37,7 +37,7 @@ locals {
 apiVersion: 'kubernetes-client.io/v1'
 kind: ExternalSecret
 metadata:
-  name: aws-storage-secret"
+  name: aws-storage-secret
   namespace: ${var.namespace}
 spec:
   backendType: secretsManager

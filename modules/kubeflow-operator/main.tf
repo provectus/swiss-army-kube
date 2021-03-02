@@ -192,7 +192,7 @@ spec:
         "sidecar.istio.io/inject": "false"
     spec:
       containers:
-      - name: create-${var.namespace}-database
+      - name: create-${each.key}-database
         image: kschriek/mysql-db-creator
         env:
         - name: HOST
