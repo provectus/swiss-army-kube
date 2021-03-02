@@ -38,9 +38,3 @@ resource "aws_iam_policy" "this" {
 EOT
 }
 
-
-locals {
-  create_role = var.chart_values != "" || var.aws_assume_role_arn != "" 
-  create_full_access_policy = local.create_role && var.secret_manager_full_access  
-  role_policy_arns = local.create_full_access_policy ? [aws_iam_policy.this[0].arn] : []
-}
