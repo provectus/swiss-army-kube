@@ -24,31 +24,24 @@ resource "aws_secretsmanager_secret_version" "rds_password" {
 }
 
 
-resource "aws_iam_role" "external_secrets_mlflow" {
-  count = var.external_secrets_secret_role_arn == "" ? 1 : 0
-  name  = "${var.cluster_name}_${var.namespace}_external-secrets-mlflow"
-  tags  = var.tags
+module "iam_assumable_role" {
+  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
+  version = "~> 3.0"
+  count   = var.external_secrets_secret_role_arn == "" ? 1 : 0
 
-  assume_role_policy = <<EOF
-{
-  "Version": "2012-10-17",
-  "Statement": [
-    {
-      "Effect": "Allow",
-      "Action": "sts:AssumeRole",
-      "Resource": "${var.external_secrets_deployment_role_arn}"
-    }
-  ]
-}
-EOF
+  trusted_role_arns                 = [var.external_secrets_deployment_role_arn]
+  create_role                       = true
+  role_name                         = "${var.cluster_name}_${var.namespace}_external-secrets-mlflow"
+  role_requires_mfa                 = false
+  custom_role_policy_arns           = [aws_iam_policy.this.arn]
+  number_of_custom_role_policy_arns = 1
+  tags = var.tags
 }
 
-resource "aws_iam_role_policy" "external_secrets_access" {
-  
+resource "aws_iam_policy" "this" {
   count = var.external_secrets_secret_role_arn == "" ? 1 : 0
   name  = "${var.cluster_name}_${var.namespace}_external-secrets-mlflow-access"
-  role  = aws_iam_role.external_secrets_mlflow[count.index].id
-  policy = <<-EOF
+  policy = <<-EOT
 {
   "Version": "2012-10-17",
     "Statement": [
@@ -65,11 +58,8 @@ resource "aws_iam_role_policy" "external_secrets_access" {
         }
     ]
 }
-EOF
+EOT
 }
-
-
-
 
 resource local_file mlflow_def {
   content = local.mlflow_def
