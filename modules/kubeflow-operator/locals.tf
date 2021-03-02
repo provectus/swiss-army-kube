@@ -27,14 +27,14 @@ locals {
   
   external_secret_data = [for key, value in local.secret_data: <<EOT
   - key: ${var.cluster_name}/${var.namespace}/${key}
-    name: ${key}   
+    name: ${key}
   EOT
   ]
 
   external_secret_data_string = join("\n",flatten([local.external_secret_data, [local.external_secret_data_rds_password]]))  
 
   external_secret = <<EOT
-  apiVersion: 'kubernetes-client.io/v1'
+apiVersion: 'kubernetes-client.io/v1'
 kind: ExternalSecret
 metadata:
   name: aws-storage-secret"
