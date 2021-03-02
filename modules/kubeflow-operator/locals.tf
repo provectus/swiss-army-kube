@@ -1,6 +1,42 @@
 
 
-locals {
+locals {  
+  secret_data = { 
+    "rds_host" = var.rds_host
+    "rds_port" = var.rds_port
+    "rds_username" = var.rds_username
+    "rds_password" = var.rds_password
+
+    "s3_bucket" = var.s3_bucket_name
+    "s3_region" = var.aws_region
+    
+    "db_name_cache" = var.db_names.cache
+    "db_name_pipelines" = var.db_names.pipelines
+    "db_name_metadata" = var.db_names.metadata
+    "db_name_katib" = var.db_names.katib
+  }
+
+
+  external_secret_data = join("\n",[for key, value in secret_data: <<EOT
+    - key: ${var.cluster_name}/${var.namespace}/${key}
+    name: ${key}   
+  EOT
+  ])
+
+  external_secret = <<EOT
+  apiVersion: 'kubernetes-client.io/v1'
+kind: ExternalSecret
+metadata:
+  name: aws-storage-secret"
+  namespace: ${var.namespace}
+spec:
+  backendType: secretsManager
+  roleArn: ${local.role_to_assume_arn}
+  data:
+    ${local.external_secret_data}
+EOT
+
+
   ingress = var.ingress != null ? var.ingress : yamlencode({
     "apiVersion" = "networking.k8s.io/v1beta1"
     "kind"       = "Ingress"
@@ -40,11 +76,11 @@ locals {
     }
   })
 
-namespace = var.namespace != null ? var.namespace : yamlencode({
+namespace_def = var.namespace_def != null ? var.namespace_def : yamlencode({
     "apiVersion" = "v1"
     "kind"       = "Namespace"
     "metadata" = {
-      "name" = "kubeflow"
+      "name" = var.namespace
       "labels" = {
         "control-plane"   = "kubeflow"
         "istio-injection" = "enabled"
@@ -67,7 +103,7 @@ kfdef = var.kfdef != null ? var.kfdef : yamlencode({
     "apiVersion" = "kfdef.apps.kubeflow.org/v1"
     "kind"       = "KfDef"
     "metadata" = {
-      "namespace" = "kubeflow"
+      "namespace" = var.namespace
       "name"      = "kubeflow"
     }
     "spec" = {
@@ -172,4 +208,160 @@ kfdef = var.kfdef != null ? var.kfdef : yamlencode({
       "version" = "v1.2-branch"
     }
   })  
+
+  configs = <<EOT
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-storage-workflow-controller-config
+  namespace: ${var.namespace}
+data:
+  config: |
+    {
+      executorImage: gcr.io/ml-pipeline/argoexec:v2.7.5-license-compliance,
+      containerRuntimeExecutor: docker,
+      workflowDefaults: {
+          metadata: {annotations: {"iam.amazonaws.com/role": "${var.role_to_assume_arn}"}}
+      },
+      artifactRepository:
+      {
+        archiveLogs: true,
+        s3: {
+            bucket: "${var.s3_bucket_name}",
+            keyPrefix: artifacts,
+            endpoint: s3.amazonaws.com,
+            insecure: false,
+            region: "${var.aws_region}",
+            useSDKCreds: true
+        }
+      }
+    } 
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-storage-ml-pipeline-config
+  namespace: ${var.namespace}
+data:
+  "config.json": |
+    {
+      "DBConfig": {
+          "Host": "${var.rds_host}",
+          "Port": "${var.rds_port}",
+          "DriverName": "mysql",
+          "DataSourceName": "",
+          "DBName": "${var.db_names.pipelines}",
+          "GroupConcatMaxLen": 4194304
+      },
+      "ObjectStoreConfig": {
+          "Host": "s3.amazonaws.com",
+          "Region": "${var.aws_region}",
+          "Secure": true,
+          "BucketName": "${var.s3_bucket_name}",
+          "PipelineFolder": "pipelines",
+          "PipelinePath": "pipelines",
+          "AccessKey": "",
+          "SecretAccessKey": ""
+      },
+      "InitConnectionTimeout": "6m",
+      "DefaultPipelineRunnerServiceAccount": "pipeline-runner"
+    }
+
+  "sample_config.json" = |
+    [
+      {
+          "name": "[Demo] XGBoost - Training with Confusion Matrix",
+          "description": "[source code](https://github.com/kubeflow/pipelines/blob/master/samples/core/xgboost_training_cm) [GCP Permission requirements](https://github.com/kubeflow/pipelines/blob/master/samples/core/xgboost_training_cm#requirements). A trainer that does end-to-end distributed training for XGBoost models.",
+          "file": "/samples/core/xgboost_training_cm/xgboost_training_cm.py.yaml"
+      },
+      {
+          "name": "[Demo] TFX - Taxi Tip Prediction Model Trainer",
+          "description": "[source code](https://console.cloud.google.com/mlengine/notebooks/deploy-notebook?q=download_url%3Dhttps%253A%252F%252Fraw.githubusercontent.com%252Fkubeflow%252Fpipelines%252Fmaster%252Fsamples%252Fcore%252Fparameterized_tfx_oss%252Ftaxi_pipeline_notebook.ipynb) [GCP Permission requirements](https://github.com/kubeflow/pipelines/blob/master/samples/contrib/parameterized_tfx_oss#permission). Example pipeline that does classification with model analysis based on a public tax cab dataset.",
+          "file": "/samples/core/parameterized_tfx_oss/parameterized_tfx_oss.py.yaml"
+      },
+      {
+          "name": "[Tutorial] Data passing in python components",
+          "description": "[source code](https://github.com/kubeflow/pipelines/tree/master/samples/tutorials/Data%20passing%20in%20python%20components) Shows how to pass data between python components.",
+          "file": "/samples/tutorials/Data passing in python components/Data passing in python components - Files.py.yaml"
+      },
+      {
+          "name": "[Tutorial] DSL - Control structures",
+          "description": "[source code](https://github.com/kubeflow/pipelines/tree/master/samples/tutorials/DSL%20-%20Control%20structures) Shows how to use conditional execution and exit handlers. This pipeline will randomly fail to demonstrate that the exit handler gets executed even in case of failure.",
+          "file": "/samples/tutorials/DSL - Control structures/DSL - Control structures.py.yaml"
+      }
+    ]
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-storage-ml-pipeline-ui-config
+  namespace: ${var.namespace}
+data:
+  "viewer-pod-template.json": |
+      {
+        "spec":{
+          "containers":[
+            {
+              "env":[
+                {
+                  "name":"AWS_ACCESS_KEY_ID",
+                  "valueFrom":{
+                    "secretKeyRef":{
+                      "name":"aws-storage-secret",
+                      "key":"s3_access_key"
+                    }
+                  }
+                },
+                {
+                  "name":"AWS_SECRET_ACCESS_KEY",
+                  "valueFrom":{
+                    "secretKeyRef":{
+                      "name":"aws-storage-secret",
+                      "key":"s3_secret_key"
+                    }
+                  }
+                },
+                {
+                  "name":"AWS_REGION",
+                  "valueFrom":{
+                    "secretKeyRef":{
+                      "name":"aws-storage-secret",
+                      "key":"s3_region"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: aws-storage-ml-pipeline-viewer-template
+  namespace: ${var.namespace}
+data:
+  "viewer-tensorboard-template.json": |
+    {
+      "metadata":{
+        "annotations":{
+          "iam.amazonaws.com/role":"${var.role_to_assume_arn}"
+        }
+      },
+      "spec":{
+        "containers":[
+          {
+            "env":[
+              {
+                "name":"AWS_REGION",
+                "value":"${var.aws_region}"
+              }
+            ]
+          }
+        ]
+      }
+    }
+EOT
+
 }

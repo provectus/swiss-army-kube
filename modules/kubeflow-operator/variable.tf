@@ -14,6 +14,18 @@ variable argocd {
   }
 }
 
+
+variable "external_secrets_deployment_role_arn" {
+  type  = string
+  description = "The ARN of the role attached to the external-secret deployment. This is the role that will by default be assumed if roleArn is not specified in the ExternalSecret kubernetes spec"
+}
+
+variable "external_secrets_secret_role_arn" {
+  type  = string
+  default = ""
+  description = "The ARN of the role that should be assumed by the external-secret deployment when creating the MLFlow ExternalSecret. This role must be assumable by the role that has been attached to external-secret deployment's service account. If left blank, a role will be created."
+}
+
 variable ingress_annotations {
   type        = map(string)
   description = "A set of annotations for Kubeflow Ingress"
@@ -33,6 +45,13 @@ variable ref {
 }
 
 variable namespace {
+  type        = string
+  description = "The default name of the namespace to deploy to"
+  default     = "kubeflow"
+}
+
+
+variable namespace_def {
   type        = string
   description = "The Namespace resource definition"
   default     = null //default is constructed dynmaically. See locals.tf
