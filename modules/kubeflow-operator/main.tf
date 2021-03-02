@@ -187,7 +187,7 @@ metadata:
   namespace: = ${var.namespace}
 spec:
   template:
-   metadata:
+    metadata:
       annotations:
         "sidecar.istio.io/inject": "false"
     spec:
