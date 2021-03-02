@@ -112,7 +112,7 @@ resource local_file mlflow {
     }
     "spec" = {
       "destination" = {
-        "namespace" = ${var.namespace}
+        "namespace" = var.namespace
         "server"    = "https://kubernetes.default.svc"
       }
       "project" = "default"
