@@ -24,7 +24,7 @@ locals {
 }
 
 module "network" {
-  source = "../../modules/network"
+  source = "github.com/provectus/sak-vpc"
 
   availability_zones = var.availability_zones
   environment        = local.environment
@@ -35,7 +35,7 @@ module "network" {
 
 module "kubernetes" {
   depends_on = [module.network]
-  source     = "../../modules/kubernetes"
+  source     = "github.com/provectus/sak-kubernetes"
 
   environment        = local.environment
   project            = local.project
@@ -47,7 +47,7 @@ module "kubernetes" {
 
 module "argocd" {
   depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, data.aws_eks_cluster.cluster, data.aws_eks_cluster_auth.cluster]
-  source     = "../../modules/cicd/argo/modules/cd"
+  source     = "github.com/provectus/sak-argocd"
 
   branch       = var.argocd.branch
   owner        = var.argocd.owner
@@ -70,7 +70,7 @@ module "argocd" {
 module "external_dns" {
   depends_on = [module.argocd]
 
-  source       = "../../modules/system/external-dns"
+  source       = "github.com/provectus/sak-external-dns"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
   mainzoneid   = data.aws_route53_zone.this.zone_id
@@ -81,19 +81,19 @@ module "external_dns" {
 module "scaling" {
   depends_on = [module.argocd]
 
-  source       = "../../modules/scaling"
+  source       = "github.com/provectus/sak-scaling"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
 }
 
 
-module "external_secrets" {
-  depends_on     = [module.argocd]
-  source         = "../../modules/system/external-secrets"
-  cluster_output = module.kubernetes.cluster_output
-  argocd         = module.argocd.state
-  tags           = local.tags
-}
+# module "external_secrets" {
+#   depends_on     = [module.argocd]
+#   source         = "../../modules/system/external-secrets"
+#   cluster_output = module.kubernetes.cluster_output
+#   argocd         = module.argocd.state
+#   tags           = local.tags
+# }
 
 module "clusterwide" {
   depends_on = [module.argocd]
@@ -112,7 +112,7 @@ module "clusterwide" {
 
 module "ingress" {
   depends_on   = [module.clusterwide]
-  source       = "../../modules/ingress/nginx"
+  source       = "github.com/provectus/sak-nginx"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
   conf = {
@@ -125,18 +125,18 @@ module "ingress" {
   tags = local.tags
 }
 
-# module "monitoring" {
-#   depends_on = [module.argocd]
-#   source            = "../../modules/monitoring/prometheus"
-#   cluster_name      = module.kubernetes.cluster_name
-#   argocd            = module.argocd.state
-#   domains           = local.domain
-# }
-
-module "victoriametrics_monitoring" {
+module "monitoring" {
   depends_on = [module.argocd]
-  source            = "../../modules/monitoring/victoria-metrics"
+  source            = "github.com/provectus/sak-prometheus"
   cluster_name      = module.kubernetes.cluster_name
   argocd            = module.argocd.state
   domains           = local.domain
 }
+
+# module "victoriametrics_monitoring" {
+#   depends_on = [module.argocd]
+#   source            = "../../modules/monitoring/victoria-metrics"
+#   cluster_name      = module.kubernetes.cluster_name
+#   argocd            = module.argocd.state
+#   domains           = local.domain
+# }
