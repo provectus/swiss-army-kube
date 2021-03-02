@@ -2,7 +2,7 @@
 
 locals {  
 
-  role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? aws_iam_role.external_secrets_mlflow[0].arn : var.external_secrets_secret_role_arn
+  role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].arn : var.external_secrets_secret_role_arn
 
   name = "mlflow"
   namespace_def = var.namespace_def != null ? var.namespace_def : yamlencode({

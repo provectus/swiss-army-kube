@@ -16,8 +16,7 @@ locals {
   }
 
 
-
-  role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? aws_iam_role.external_secrets_kubeflow[0].arn : var.external_secrets_secret_role_arn
+  role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].arn : var.external_secrets_secret_role_arn
 
   external_secret_data_rds_password = <<EOT
     - key: ${var.cluster_name}/${var.namespace}/rds_password

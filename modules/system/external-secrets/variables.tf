@@ -22,9 +22,9 @@ variable "poller_interval" {
   default     = "30000"
 }
 
-variable "cluster_output" {
-  type        = map(string)
-  description = "Cluster output object from Kubernetes module"
+variable "cluster_name" {
+  type        = string
+  description = "Name of the EKS cluster"
 }
 
 variable "chart_repository" {
