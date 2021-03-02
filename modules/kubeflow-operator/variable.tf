@@ -128,3 +128,12 @@ variable db_name_katib {
   default = "katib"
 }
 
+variable tags {
+  type = map(string)
+  default = {}
+}
+
+variable cluster_name {
+  type = string  
+  description = "Name of the EKS cluster"
+}
