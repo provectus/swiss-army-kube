@@ -170,8 +170,8 @@ resource local_file configs {
 }
 
 resource local_file external_secret {
-  content  = local.configs
-  filename = "${path.root}/${var.argocd.path}/kfdefs/external_secret.yaml"
+  content  = local.external_secret
+  filename = "${path.root}/${var.argocd.path}/kfdefs/external-secret.yaml"
 }
 
 
