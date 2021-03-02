@@ -227,28 +227,28 @@ metadata:
   namespace: ${var.namespace}
 data:
   config: |
-  {
-    "executorImage":"gcr.io/ml-pipeline/argoexec:v2.7.5-license-compliance",
-    "containerRuntimeExecutor":"docker",
-    "workflowDefaults":{
-      "metadata":{
-        "annotations":{
-          "iam.amazonaws.com/role":"${var.pipelines_role_to_assume_role_arn}"
+    {
+      "executorImage":"gcr.io/ml-pipeline/argoexec:v2.7.5-license-compliance",
+      "containerRuntimeExecutor":"docker",
+      "workflowDefaults":{
+        "metadata":{
+          "annotations":{
+            "iam.amazonaws.com/role":"${var.pipelines_role_to_assume_role_arn}"
+          }
+        }
+      },
+      "artifactRepository":{
+        "archiveLogs":true,
+        "s3":{
+          "bucket":"${var.s3_bucket_name}",
+          "keyPrefix":"artifacts",
+          "endpoint":"s3.amazonaws.com",
+          "insecure":false,
+          "region":"${data.aws_region.current.name}",
+          "useSDKCreds":true
         }
       }
-    },
-    "artifactRepository":{
-      "archiveLogs":true,
-      "s3":{
-        "bucket":"${var.s3_bucket_name}",
-        "keyPrefix":"artifacts",
-        "endpoint":"s3.amazonaws.com",
-        "insecure":false,
-        "region":"${data.aws_region.current.name}",
-        "useSDKCreds":true
-      }
     }
-  }
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -256,7 +256,7 @@ metadata:
   name: aws-storage-ml-pipeline-config
   namespace: ${var.namespace}
 data:
-  "config.json": |
+  config.json: |
     {
       "DBConfig":{
         "Host":"${var.rds_host}",
@@ -280,7 +280,7 @@ data:
       "DefaultPipelineRunnerServiceAccount":"pipeline-runner"
     }
 
-  "sample_config.json": |
+  sample_config.json: |
     [
       {
         "name":"[Demo] XGBoost - Training with Confusion Matrix",
