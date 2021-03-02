@@ -62,7 +62,7 @@ EOT
 
 resource local_file mlflow_def {
   content = local.mlflow_def
-  filename = "${path.root}/${var.argocd.path}/mlflow-defs/${var.namespace}/mlflow_def.yaml"
+  filename = "${path.root}/${var.argocd.path}/mlflow-defs/${var.namespace}/mlflow-def.yaml"
 }
 
 

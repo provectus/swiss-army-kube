@@ -50,22 +50,23 @@ spec:
       containers:
       - name: create-mlflow-database
         image: kschriek/mysql-db-creator
-      - name: HOST
-        value: ${var.rds_host}
-      - name: PORT
-        value:: ${var.rds_port}
-      - name: USERNAME
-        valueFrom:
-          secretKeyRef:
-            name: mlflow-secret
-            key: rds_username
-      - name: PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: mlflow-secret
-            key: rds_password
-      - name: DATABASE
-        value: ${var.db_name}
+        env:
+        - name: HOST
+          value: ${var.rds_host}
+        - name: PORT
+          value:: ${var.rds_port}
+        - name: USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-secret
+              key: rds_username
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mlflow-secret
+              key: rds_password
+        - name: DATABASE
+          value: ${var.db_name}
 
       restartPolicy: Never
   backoffLimit: 5

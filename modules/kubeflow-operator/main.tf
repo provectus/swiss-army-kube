@@ -194,28 +194,29 @@ spec:
       containers:
       - name: create-${var.namespace}-database
         image: kschriek/mysql-db-creator
-      - name: HOST
-        valueFrom:
-          secretKeyRef:
-            name: aws-storage-secret
-            key: rds_host
-      - name: PORT
-        valueFrom:
-          secretKeyRef:
-            name: aws-storage-secret
-            key: rds_port
-      - name: USERNAME
-        valueFrom:
-          secretKeyRef:
-            name: aws-storage-secret
-            key: rds_username
-      - name: PASSWORD
-        valueFrom:
-          secretKeyRef:
-            name: aws-storage-secret
-            key: rds_password
-      - name: DATABASE
-        value: ${each.key}
+        env:
+        - name: HOST
+          valueFrom:
+            secretKeyRef:
+              name: aws-storage-secret
+              key: rds_host
+        - name: PORT
+          valueFrom:
+            secretKeyRef:
+              name: aws-storage-secret
+              key: rds_port
+        - name: USERNAME
+          valueFrom:
+            secretKeyRef:
+              name: aws-storage-secret
+              key: rds_username
+        - name: PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: aws-storage-secret
+              key: rds_password
+        - name: DATABASE
+          value: ${each.key}
 
       restartPolicy: Never
   backoffLimit: 5
