@@ -36,7 +36,7 @@ resource "aws_iam_role" "external_secrets_mlflow" {
     {
       "Effect": "Allow",
       "Action": "sts:AssumeRole",
-      "Resource": ${var.external_secrets_deployment_role_arn}
+      "Resource": "${var.external_secrets_deployment_role_arn}"
     }
   ]
 }
