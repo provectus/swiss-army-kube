@@ -62,12 +62,6 @@ resource "aws_iam_role_policy" "external_secrets_access" {
                 "secretsmanager:DescribeSecret"
             ],
             "Resource": "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.cluster_name}/${var.namespace}*"
-        },
-        {
-            "Sid": "RoleAssume",
-            "Effect": "Allow",
-            "Action": "sts:AssumeRole",
-            "Resource": "${aws_iam_role.external_secrets_mlflow[count.index].arn}"
         }
     ]
 }
