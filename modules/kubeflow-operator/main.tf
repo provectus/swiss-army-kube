@@ -176,19 +176,14 @@ resource local_file configs {
 
 resource local_file create_databases {
   
-  for_each = {
-    (var.db_names.pipelines) ="kubeflow"
-    (var.db_names.metadata) = "kubeflow"
-    (var.db_names.cache) = "kubeflow"
-    (var.db_names.katib) = "kubeflow"
-  }
+  for_each = toset([var.db_name_pipelines, var.db_name_metadata, var.db_name_cache, var.db_name_katib])
 
   content  = <<EOT
 apiVersion: batch/v1
 kind: Job
 metadata:
   name: create-${each.key}-database
-  namespace: = ${each.value}
+  namespace: = ${var.namespace}
 spec:
   template:
    metadata:
@@ -196,7 +191,7 @@ spec:
         "sidecar.istio.io/inject": "false"
     spec:
       containers:
-      - name: create-${each.key}-database
+      - name: create-${var.namespace}-database
         image: kschriek/mysql-db-creator
       - name: HOST
         valueFrom:

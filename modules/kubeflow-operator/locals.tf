@@ -8,7 +8,7 @@ locals {
     "rds_password" = var.rds_password
 
     "s3_bucket" = var.s3_bucket_name
-    "s3_region" = var.aws_region
+    "s3_region" = data.aws_region.current.name
     
     "db_name_cache" = var.db_name_cache
     "db_name_pipelines" = var.db_name_pipelines
@@ -17,7 +17,10 @@ locals {
   }
 
 
-  external_secret_data = join("\n",[for key, value in secret_data: <<EOT
+
+  role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? aws_iam_role.external_secrets_kubeflow[0].arn : var.external_secrets_secret_role_arn
+
+  external_secret_data = join("\n",[for key, value in local.secret_data: <<EOT
     - key: ${var.cluster_name}/${var.namespace}/${key}
     name: ${key}   
   EOT
@@ -221,7 +224,7 @@ data:
       executorImage: gcr.io/ml-pipeline/argoexec:v2.7.5-license-compliance,
       containerRuntimeExecutor: docker,
       workflowDefaults: {
-          metadata: {annotations: {"iam.amazonaws.com/role": "${var.role_to_assume_arn}"}}
+          metadata: {annotations: {"iam.amazonaws.com/role": "${var.pipelines_role_to_assume_role_arn}"}}
       },
       artifactRepository:
       {
@@ -231,7 +234,7 @@ data:
             keyPrefix: artifacts,
             endpoint: s3.amazonaws.com,
             insecure: false,
-            region: "${var.aws_region}",
+            region: "${data.aws_region.current.name}",
             useSDKCreds: true
         }
       }
@@ -255,7 +258,7 @@ data:
       },
       "ObjectStoreConfig": {
           "Host": "s3.amazonaws.com",
-          "Region": "${var.aws_region}",
+          "Region": "${data.aws_region.current.name}",
           "Secure": true,
           "BucketName": "${var.s3_bucket_name}",
           "PipelineFolder": "pipelines",
@@ -355,7 +358,7 @@ data:
             "env":[
               {
                 "name":"AWS_REGION",
-                "value":"${var.aws_region}"
+                "value":"${data.aws_region.current.name}"
               }
             ]
           }

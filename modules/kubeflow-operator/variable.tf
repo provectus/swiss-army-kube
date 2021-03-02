@@ -15,6 +15,11 @@ variable argocd {
 }
 
 
+variable "pipelines_role_to_assume_role_arn" {
+  type  = string
+  description = "The ARN of the role to be attached to pipelines workflows."
+}
+
 variable "external_secrets_deployment_role_arn" {
   type  = string
   description = "The ARN of the role attached to the external-secret deployment. This is the role that will by default be assumed if roleArn is not specified in the ExternalSecret kubernetes spec"
