@@ -14,7 +14,7 @@ data "aws_region" "current" {}
 
 resource "aws_secretsmanager_secret" "this" {
   for_each = local.secret_data  
-  name = "${var.cluster_name}/${var.namespace}/${each.value}"
+  name = "${var.cluster_name}/${var.namespace}/${each.key}"
 }
 
 resource "aws_secretsmanager_secret_version" "this" {
