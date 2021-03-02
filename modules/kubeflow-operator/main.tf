@@ -44,7 +44,7 @@ module "iam_assumable_role" {
   role_requires_mfa                 = false
   custom_role_policy_arns           = [aws_iam_policy.this[0].arn]
   number_of_custom_role_policy_arns = 1
-  tags = var.tags
+  tags                              = var.tags
 }
 
 resource "aws_iam_policy" "this" {
