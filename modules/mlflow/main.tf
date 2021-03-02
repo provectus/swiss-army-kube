@@ -26,7 +26,7 @@ resource "aws_secretsmanager_secret_version" "rds_password" {
 
 resource "aws_iam_role" "external_secrets_mlflow" {
   count = var.external_secrets_secret_role_arn == "" ? 1 : 0
-  name  = "${local.cluster_name}_${var.namespace}_external-secrets-mlflow"
+  name  = "${var.cluster_name}_${var.namespace}_external-secrets-mlflow"
   tags  = var.tags
 
   assume_role_policy = <<EOF
@@ -46,7 +46,7 @@ EOF
 resource "aws_iam_role_policy" "external_secrets_access" {
   
   count = var.external_secrets_secret_role_arn == "" ? 1 : 0
-  name  = "${local.cluster_name}_${var.namespace}_external-secrets-mlflow-access"
+  name  = "${var.cluster_name}_${var.namespace}_external-secrets-mlflow-access"
   role  = aws_iam_role.external_secrets_mlflow[count.index].id
   policy = <<-EOF
 {
@@ -61,7 +61,7 @@ resource "aws_iam_role_policy" "external_secrets_access" {
                 "secretsmanager:GetResourcePolicy",
                 "secretsmanager:DescribeSecret"
             ],
-            "Resource": "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${local.cluster_name}/${var.namespace}*"
+            "Resource": "arn:aws:secretsmanager:${data.aws_region.current.name}:${data.aws_caller_identity.current.account_id}:secret:${var.cluster_name}/${var.namespace}*"
         },
         {
             "Sid": "RoleAssume",
