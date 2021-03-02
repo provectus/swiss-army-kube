@@ -253,7 +253,7 @@ data:
           "Port": "${var.rds_port}",
           "DriverName": "mysql",
           "DataSourceName": "",
-          "DBName": "${var.db_names.pipelines}",
+          "DBName": "${var.db_name_pipelines}",
           "GroupConcatMaxLen": 4194304
       },
       "ObjectStoreConfig": {
@@ -349,7 +349,7 @@ data:
     {
       "metadata":{
         "annotations":{
-          "iam.amazonaws.com/role":"${var.role_to_assume_arn}"
+          "iam.amazonaws.com/role":"${var.pipelines_role_to_assume_role_arn}"
         }
       },
       "spec":{
