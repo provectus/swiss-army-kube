@@ -4,7 +4,7 @@ locals {
   cluster_name        = var.cluster_name
   aws_region          = var.aws_region == "" ? data.aws_region.current.name : var.aws_region
 
-  create_role = var.chart_values != "" || var.aws_assume_role_arn != "" 
+  create_role = var.chart_values != "" || var.aws_assume_role_arn != "" ? true : false
   create_full_access_policy = local.create_role && var.secret_manager_full_access  
   role_policy_arns = local.create_full_access_policy ? [aws_iam_policy.this[0].arn] : []
   aws_assume_role_arn = local.create_role ? module.iam_assumable_role[0].this_iam_role_arn : var.aws_assume_role_arn
