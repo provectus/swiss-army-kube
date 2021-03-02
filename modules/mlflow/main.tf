@@ -67,7 +67,7 @@ resource "aws_iam_role_policy" "external_secrets_access" {
             "Sid": "RoleAssume",
             "Effect": "Allow",
             "Action": "sts:AssumeRole",
-            "Resource": "${aws_iam_role.external_secrets_mlflow.arn}"
+            "Resource": "${aws_iam_role.external_secrets_mlflow[count.index].arn}"
         }
     ]
 }
