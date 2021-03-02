@@ -24,12 +24,9 @@ resource "aws_iam_role" "external_secrets" {
 EOF
 }
 
-resource "aws_iam_role_policy" "external_secrets_access" {
-  count = var.chart_values != "" || var.aws_assume_role_arn != "" ? 0 : 1
-  name  = "external-secrets-${local.cluster_name}-access"
-  role  = aws_iam_role.external_secrets[count.index].id
 
-  policy = <<-EOF
+locals {
+  full_access_policy = <<-EOF
 {
   "Version": "2012-10-17",
     "Statement": [
@@ -52,6 +49,26 @@ resource "aws_iam_role_policy" "external_secrets_access" {
         }
     ]
 }
-  EOF
+  EOF 
+
+  restricted_access_policy = <<-EOF
+{
+  "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "RoleAssume",
+            "Effect": "Allow",
+            "Action": "sts:AssumeRole",
+            "Resource": "${aws_iam_role.external_secrets[count.index].arn}"
+        }
+    ]
+}
+  EOF 
+}
+resource "aws_iam_role_policy" "external_secrets_access" {
+  count = var.chart_values != "" || var.aws_assume_role_arn != "" ? 0 : 1
+  name  = "${local.cluster_name}-external-secrets-full-access"
+  role  = aws_iam_role.external_secrets[count.index].id
+  policy = var.secret_manager_full_access ? local.full_access_policy : local.restricted_access_policy
 }
 

@@ -1,6 +1,9 @@
 
 
 locals {  
+
+  role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? aws_iam_role.external_secrets_mlflow[0].arn : var.external_secrets_secret_role_arn
+
   name = "mlflow"
   namespace_def = var.namespace_def != null ? var.namespace_def : yamlencode({
       "apiVersion" = "v1"
@@ -26,11 +29,11 @@ metadata:
   namespace: ${var.namespace}
 spec:
   backendType: secretsManager
-  roleArn: ${var.external_secrets_role_arn}
+  roleArn: ${local.role_to_assume_arn}
   data:
-    - key: ${var.cluster_name}/mlflow/rds_username
+    - key: ${var.cluster_name}/${var.namespace}/rds_username
       name: rds_username    
-    - key: ${var.cluster_name}/mlflow/rds_password
+    - key: ${var.cluster_name}/${var.namespace}/rds_password
       name: rds_password
 ---
 apiVersion: apps/v1
