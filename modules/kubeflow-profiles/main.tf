@@ -24,7 +24,7 @@ resource local_file profile_application {
     }
     "spec" = {
       "destination" = {
-        "namespace" = "profile"
+        "namespace" = "kubeflow"
         "server"    = "https://kubernetes.default.svc"
       }
       "project" = "default"
