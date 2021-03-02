@@ -169,6 +169,12 @@ resource local_file configs {
   filename = "${path.root}/${var.argocd.path}/kfdefs/configs.yaml"
 }
 
+resource local_file external_secret {
+  content  = local.configs
+  filename = "${path.root}/${var.argocd.path}/kfdefs/external_secret.yaml"
+}
+
+
 resource local_file create_databases {
   
   for_each = toset([var.db_name_pipelines, var.db_name_metadata, var.db_name_cache, var.db_name_katib])

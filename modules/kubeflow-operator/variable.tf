@@ -109,6 +109,14 @@ variable s3_bucket_name {
   description = "Bucket where Kubeflow Pipelines artifacts will be stored"
 }
 
+variable s3_user_access_key {
+  type = map(string)
+  default = {
+    id: "" 
+    secret: ""
+  }
+}
+
 variable db_name_pipelines {
   type = string
   description = "Name of the database on the RDS instance that is used for pipelines"

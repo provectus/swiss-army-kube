@@ -7,7 +7,9 @@ locals {
     "rds_username" = var.rds_username
 
     "s3_bucket" = var.s3_bucket_name
-    "s3_region" = data.aws_region.current.name
+    "s3_region" = data.aws_region.current.name    
+    "s3_access_key" = var.s3_user_access_key.id
+    "s3_secret_key" = var.s3_user_access_key.secret
     
     "db_name_cache" = var.db_name_cache
     "db_name_pipelines" = var.db_name_pipelines
@@ -29,8 +31,7 @@ locals {
   EOT
   ]
 
-  external_secret_data_string = join("\n",flatten([local.external_secret_data, [local.external_secret_data_rds_password]]))
-  
+  external_secret_data_string = join("\n",flatten([local.external_secret_data, [local.external_secret_data_rds_password]]))  
 
   external_secret = <<EOT
   apiVersion: 'kubernetes-client.io/v1'
