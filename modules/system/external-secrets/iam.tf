@@ -3,7 +3,7 @@ module "iam_assumable_role" {
   version                       = "~> v3.6.0"
   count                         = local.create_role ? 1 : 0
   create_role                   = true
-  name                          = "${local.cluster_name}_external-secrets"
+  role_name                          = "${local.cluster_name}_external-secrets"
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
   role_policy_arns              = local.role_policy_arns
   oidc_fully_qualified_subjects = ["system:serviceaccount:${var.namespace}:*"] //TODO dynamically get service account name and set it here. Currently all service accounts in kube-system will be able to assume this role
