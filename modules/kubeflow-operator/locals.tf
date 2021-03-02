@@ -1,7 +1,7 @@
 
 
 locals {  
-  params = { 
+  secret_data = { 
     "rds_host" = var.rds_host
     "rds_port" = var.rds_port
     "rds_username" = var.rds_username
@@ -19,8 +19,8 @@ locals {
 
 
   role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? aws_iam_role.external_secrets_kubeflow[0].arn : var.external_secrets_secret_role_arn
-
-  external_secret_data = join("\n",[for key, value in local.params: <<EOT
+  
+  external_secret_data = join("\n",[for key, value in local.secret_data: <<EOT
     - key: ${var.cluster_name}/${var.namespace}/${key}
     name: ${key}   
   EOT
