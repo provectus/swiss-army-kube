@@ -16,7 +16,7 @@ resource "aws_secretsmanager_secret_version" "rds_username" {
   secret_string = var.rds_username
 }
 resource "aws_secretsmanager_secret" "rds_password" {
-  name = "${var.cluster_name}/${var.namespace}_rds_password"
+  name = "${var.cluster_name}/${var.namespace}/rds_password"
 }
 resource "aws_secretsmanager_secret_version" "rds_password" {
   secret_id     = aws_secretsmanager_secret.rds_password.id
