@@ -8,6 +8,10 @@ data "aws_ami" "eks_gpu_worker" {
   owners      = ["602401143452"] // The ID of the owner of the official AWS EKS AMIs.
 }
 
+resource "aws_kms_key" "eks" {
+  count = var.enable_secret_encryption ? 1 : 0
+  tags = var.tags
+}
 
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
@@ -25,6 +29,14 @@ module "eks" {
   map_roles = var.aws_auth_role_mapping
 
   tags = local.tags
+
+  cluster_encryption_config = var.enable_secret_encryption ? [
+    {
+      provider_key_arn = aws_kms_key.eks[0].arn
+      resources        = ["secrets"]
+    }
+  ] : []
+
 
   workers_additional_policies = flatten(
     [
