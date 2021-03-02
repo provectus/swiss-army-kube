@@ -14,9 +14,9 @@ locals {
           "control-plane"   = "kubeflow"
           "istio-injection" = "enabled"
         }
-        "annotations" = {
-          "iam.amazonaws.com/permitted" = var.external_secrets_role_arn //restrict this namespace to only being able to assume this arn (wildcards are also possible, e.g. iam.amazonaws.com/permitted: "arn:aws:iam::123456789012:role/.*")
-        }
+        # "annotations" = {
+        #   "iam.amazonaws.com/permitted" = var.external_secrets_role_arn //restrict this namespace to only being able to assume this arn (wildcards are also possible, e.g. iam.amazonaws.com/permitted: "arn:aws:iam::123456789012:role/.*")
+        # }
       }
     })
 
