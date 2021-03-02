@@ -36,6 +36,40 @@ spec:
     - key: ${var.cluster_name}/${var.namespace}/rds_password
       name: rds_password
 ---
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: create-mlflow-database
+  namespace: = ${var.namespace}
+spec:
+  template:
+   metadata:
+      annotations:
+        "sidecar.istio.io/inject": "false"
+    spec:
+      containers:
+      - name: create-mlflow-database
+        image: kschriek/mysql-db-creator
+      - name: HOST
+        value: ${var.rds_host}
+      - name: PORT
+        value:: ${var.rds_port}
+      - name: USERNAME
+        valueFrom:
+          secretKeyRef:
+            name: mlflow-secret
+            key: rds_username
+      - name: PASSWORD
+        valueFrom:
+          secretKeyRef:
+            name: mlflow-secret
+            key: rds_password
+      - name: DATABASE
+        value: ${var.db_name}
+
+      restartPolicy: Never
+  backoffLimit: 5
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
