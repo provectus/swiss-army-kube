@@ -68,7 +68,7 @@ resource local_file mlflow_def {
 
 resource local_file namespace {
   content = local.namespace_def
-  filename = "${path.root}/${var.argocd.path}/mlflow-namespace-${var.namespace}.yaml"
+  filename = "${path.root}/${var.argocd.path}/mlflow-defs/${var.namespace}/mlflow-namespace.yaml"
 }
 
 
@@ -89,7 +89,7 @@ resource local_file mlflow {
       "source" = {
         "repoURL"        = var.argocd.repository
         "targetRevision" = var.argocd.branch
-        "path"           = "${var.argocd.full_path}/${var.namespace}/mlflow-defs"
+        "path"           = "${var.argocd.full_path}/mlflow-defs/${var.namespace}"
       }
       "syncPolicy" = {
         "syncOptions" = [
