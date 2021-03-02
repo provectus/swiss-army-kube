@@ -40,7 +40,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: create-mlflow-database
-  namespace: = ${var.namespace}
+  namespace: ${var.namespace}
 spec:
   template:
     metadata:
