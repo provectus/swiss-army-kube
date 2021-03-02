@@ -43,7 +43,7 @@ spec:
   backendType: secretsManager
   roleArn: ${local.role_to_assume_arn}
   data:
-  ${local.external_secret_data_string}
+${local.external_secret_data_string}
 EOT
 
 

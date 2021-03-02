@@ -184,7 +184,7 @@ apiVersion: batch/v1
 kind: Job
 metadata:
   name: create-${each.key}-database
-  namespace: = ${var.namespace}
+  namespace: ${var.namespace}
 spec:
   template:
     metadata:
