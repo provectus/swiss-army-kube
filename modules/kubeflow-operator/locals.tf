@@ -10,10 +10,10 @@ locals {
     "s3_bucket" = var.s3_bucket_name
     "s3_region" = var.aws_region
     
-    "db_name_cache" = var.db_names.cache
-    "db_name_pipelines" = var.db_names.pipelines
-    "db_name_metadata" = var.db_names.metadata
-    "db_name_katib" = var.db_names.katib
+    "db_name_cache" = var.db_name_cache
+    "db_name_pipelines" = var.db_name_pipelines
+    "db_name_metadata" = var.db_name_metadata
+    "db_name_katib" = var.db_name_katib
   }
 
 

@@ -22,6 +22,13 @@ variable "external_secrets_secret_role_arn" {
 }
 
 
+
+variable db_name {
+  type = string
+  description = "Name of the database on the RDS instance that is used for mlflow"
+  default = "mlflow"
+}
+
 variable namespace {
   type = string  
   description = "Namespace where MLFlow should be rolled out"
@@ -71,11 +78,6 @@ variable rds_host {
 variable rds_port {
   type = string
   description = "Endpoint of the RDS database that MLFlow uses as its backend"
-}
-
-variable db_name {
-  type = string
-  description = "Name of the DB on the RDS instance"
 }
 
 variable s3_bucket_name {

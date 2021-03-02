@@ -77,7 +77,27 @@ variable kfdef {
 }
 
 
-  
+variable db_name_pipelines {
+  type = string
+  description = "Name of the database on the RDS instance that is used for pipelines"
+  default = "mlpipeline"
+}
 
+variable db_name_cache{
+  type = string
+  description = "Name of the database on the RDS instance that is used for cache"
+  default = "cachedb"
+}
 
-  
+variable db_name_metadata {
+  type = string
+  description = "Name of the database on the RDS instance that is used for metadata"
+  default = "metadb"
+}
+
+variable db_name_katib {
+  type = string
+  description = "Name of the database on the RDS instance that is used for katib"
+  default = "katib"
+}
+
