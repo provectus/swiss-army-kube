@@ -26,6 +26,9 @@ EOF
 
 
 locals {
+
+  created_role_arn = var.chart_values != "" || var.aws_assume_role_arn != "" ? "" : aws_iam_role.external_secrets[0].arn
+
   full_access_policy = <<-EOF
 {
   "Version": "2012-10-17",
@@ -45,7 +48,7 @@ locals {
             "Sid": "RoleAssume",
             "Effect": "Allow",
             "Action": "sts:AssumeRole",
-            "Resource": "${aws_iam_role.external_secrets[count.index].arn}"
+            "Resource": "${local.created_role_arn}"
         }
     ]
 }
@@ -59,7 +62,7 @@ locals {
             "Sid": "RoleAssume",
             "Effect": "Allow",
             "Action": "sts:AssumeRole",
-            "Resource": "${aws_iam_role.external_secrets[count.index].arn}"
+            "Resource": "${local.created_role_arn}"
         }
     ]
 }
