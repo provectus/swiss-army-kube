@@ -280,7 +280,7 @@ data:
       "DefaultPipelineRunnerServiceAccount":"pipeline-runner"
     }
 
-  "sample_config.json" = |
+  "sample_config.json": |
     [
       {
         "name":"[Demo] XGBoost - Training with Confusion Matrix",
