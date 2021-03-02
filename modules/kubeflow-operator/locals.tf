@@ -21,12 +21,12 @@ locals {
   role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].this_iam_role_arn : var.external_secrets_secret_role_arn
 
   external_secret_data_rds_password = <<EOT
-    - key: ${var.cluster_name}/${var.namespace}/rds_password
+  - key: ${var.cluster_name}/${var.namespace}/rds_password
     name: rds_password 
   EOT
   
   external_secret_data = [for key, value in local.secret_data: <<EOT
-    - key: ${var.cluster_name}/${var.namespace}/${key}
+  - key: ${var.cluster_name}/${var.namespace}/${key}
     name: ${key}   
   EOT
   ]
@@ -43,7 +43,7 @@ spec:
   backendType: secretsManager
   roleArn: ${local.role_to_assume_arn}
   data:
-    ${local.external_secret_data_string}
+  ${local.external_secret_data_string}
 EOT
 
 
