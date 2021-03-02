@@ -55,7 +55,6 @@ resource "aws_iam_policy" "this" {
   "Version": "2012-10-17",
     "Statement": [
         {
-            "Sid": "SecretsAccess",
             "Effect": "Allow",
             "Action": [
                 "secretsmanager:ListSecretVersionIds",
