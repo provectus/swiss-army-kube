@@ -1,7 +1,7 @@
 locals {
   module_name         = basename(abspath(path.module))
   app_name            = "external-secrets"
-  cluster_name        = var.cluster_output.cluster_id
+  cluster_name        = var.cluster_name
   aws_region          = var.aws_region == "" ? data.aws_region.current.name : var.aws_region
   aws_assume_role_arn = length(module.iam_assumable_role) > 0 && var.aws_assume_role_arn == "" ? module.iam_assumable_role[0].arn : var.aws_assume_role_arn
   template_helm_values = templatefile("${path.module}/values/values.yaml",
