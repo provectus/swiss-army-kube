@@ -8,7 +8,6 @@ data "aws_ami" "eks_gpu_worker" {
   owners      = ["602401143452"] // The ID of the owner of the official AWS EKS AMIs.
 }
 
-
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "v13.2.1"
@@ -31,7 +30,6 @@ module "eks" {
       ["arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"], var.workers_additional_policies
     ]
   )
-  
 
   workers_group_defaults = {
     additional_userdata = "sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm && sudo systemctl enable amazon-ssm-agent && sudo systemctl start amazon-ssm-agent"
@@ -43,7 +41,7 @@ module "eks" {
   #
   #   After that autoscaler is able to see the resources on that ASG.
   #
-  worker_groups_launch_template = concat(local.common, local.cpu, local.gpu)
+  worker_groups_launch_template = var.worker_groups_launch_template
 }
 
 # OIDC cluster EKS settings
