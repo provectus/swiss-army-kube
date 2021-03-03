@@ -49,7 +49,7 @@ spec:
     spec:
       containers:
       - name: create-mlflow-database
-        image: kschriek/mysql-db-creator
+        image: public.ecr.aws/v5l9k3w9/utils/mysql-db-creator:latest
         env:
         - name: HOST
           value: ${var.rds_host}
@@ -93,7 +93,7 @@ spec:
       containers:
         - name: mlflow
           securityContext: {}
-          image: "kschriek/mlflow-server:latest"
+          image: "public.ecr.aws/v5l9k3w9/mlflow-server:latest"
           imagePullPolicy: Always
           args:
             - --host=0.0.0.0
