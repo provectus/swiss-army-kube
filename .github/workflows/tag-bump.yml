@@ -4,6 +4,7 @@ on:
     branches:
       # - master
       - feature/tag_bumping
+
 jobs:
   build:
     runs-on: ubuntu-latest
