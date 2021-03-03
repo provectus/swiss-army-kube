@@ -1,0 +1,153 @@
+name: reviewdog
+on: [pull_request]
+env:
+  TERRAFORM_VERSION: "0.14.4"
+
+jobs:
+  tflint:
+    name: runner / tflint
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@master
+
+      # Install latest Terraform manually as
+      #  Docker-based GitHub Actions are
+      #  slow due to lack of caching
+      # Note: Terraform is not needed for tflint
+      - name: Install Terraform
+        run: |
+          brew install tfenv
+          tfenv install ${TERRAFORM_VERSION}
+
+      #//TODO: Rewrite pipeline to recursive all folder in examples
+      # Run init to get module code to be able to use `--module`
+      - name: Terraform init common
+        working-directory: ./examples/common
+        run: |
+          tfenv use ${TERRAFORM_VERSION}
+          terraform init
+
+      - name: Terraform init argocd
+        working-directory: ./examples/argocd
+        run: |
+          tfenv use ${TERRAFORM_VERSION}
+          terraform init
+
+      - name: Terraform init argocd-with-applications
+        working-directory: ./examples/argocd-with-applications
+        run: |
+          tfenv use ${TERRAFORM_VERSION}
+          terraform init
+
+      # More complex example
+      - name: tflint common
+        uses: reviewdog/action-tflint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          working_directory: "examples/common" # Optional. Change working directory
+          reporter: github-pr-review # Optional. Change reporter
+          fail_on_error: "true" # Optional. Fail action if errors are found
+          filter_mode: "added" # Optional. Check all files, not just the diff
+          level: "warning"
+          flags: "--module --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
+
+      - name: tflint argocd
+        uses: reviewdog/action-tflint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          working_directory: "examples/argocd" # Optional. Change working directory
+          reporter: github-pr-review # Optional. Change reporter
+          fail_on_error: "true" # Optional. Fail action if errors are found
+          filter_mode: "added" # Optional. Check all files, not just the diff
+          level: "warning"
+          flags: "--module --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
+
+      - name: tflint argocd-with-applications
+        uses: reviewdog/action-tflint@master
+        with:
+          github_token: ${{ secrets.github_token }}
+          working_directory: "examples/argocd-with-applications" # Optional. Change working directory
+          reporter: github-pr-review # Optional. Change reporter
+          fail_on_error: "true" # Optional. Fail action if errors are found
+          filter_mode: "added" # Optional. Check all files, not just the diff
+          level: "warning"
+          flags: "--module --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
+  terraformPlanArgocd:
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ZONE_ID: ${{ secrets.ZONE_ID }}
+
+    name: runner / argocd
+    runs-on: ubuntu-latest
+    needs: tflint
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@master
+
+      - name: Install Terraform
+        run: |
+          brew install tfenv
+          tfenv install ${TERRAFORM_VERSION}
+
+      - name: Terraform plan argocd
+        working-directory: ./examples/argocd
+        run: |
+          tfenv use ${TERRAFORM_VERSION}
+          terraform init
+          terraform plan -var 'cluster_name=swiss-army-github-ci'
+
+  terraformPlanArgocdWithApplications:
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ZONE_ID: ${{ secrets.ZONE_ID }}
+
+    name: runner / argocd-with-applications
+    runs-on: ubuntu-latest
+    needs: tflint
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@master
+
+      - name: Install Terraform
+        run: |
+          brew install tfenv
+          tfenv install ${TERRAFORM_VERSION}
+
+      - name: Terraform plan argocd-with-applications
+        working-directory: ./examples/argocd-with-applications
+        run: |
+          tfenv use ${TERRAFORM_VERSION}
+          terraform init
+          terraform plan -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci'
+
+  terraformPlanCommon:
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      ZONE_ID: ${{ secrets.ZONE_ID }}
+
+    name: runner / common
+    runs-on: ubuntu-latest
+    needs: tflint
+
+    steps:
+      - name: Clone repo
+        uses: actions/checkout@master
+
+      - name: Install Terraform
+        run: |
+          brew install tfenv
+          tfenv install ${TERRAFORM_VERSION}
+
+      - name: Terraform plan common example
+        working-directory: ./examples/common
+        run: |
+          tfenv use ${TERRAFORM_VERSION}
+          terraform init
+          terraform plan -var 'cluster_name=swiss-army-github-ci' -var 'domains=["edu.provectus.io"]'
