@@ -55,7 +55,8 @@ module "eks" {
   #
   #   After that autoscaler is able to see the resources on that ASG.
   #
-  worker_groups_launch_template = concat(local.common, local.cpu, local.gpu)
+  worker_groups = var.worker_groups
+  worker_groups_launch_template = var.worker_groups_launch_template
 }
 
 # # OIDC cluster EKS settings
