@@ -67,6 +67,17 @@ variable "aws_auth_role_mapping" {
 }
 
 
+variable enable_secret_encryption {
+  type        = bool
+  description = "Set to true to create a KMS key to be used as a CMK (Cluster Master Key) for secret encryption"
+  default     = false
+}
+variable enable_irsa {
+  type        = bool
+  description = "Set to true to enable IAM Roles for Service Accounts"
+  default     = false
+}
+
 # On-demand instance
 variable "on_demand_common_max_cluster_size" {
   type        = string
