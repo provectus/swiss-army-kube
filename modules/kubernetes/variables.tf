@@ -78,8 +78,14 @@ variable "tags" {
   default     = {}
 }
 
+variable "worker_groups" {
+  description = "A list of maps defining worker group configurations to be defined using AWS Launch Templates. See workers_group_defaults_defaults in https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/local.tf"
+  type        = any
+  default     = []
+}
+
 variable "worker_groups_launch_template" {
-  description = "A list of maps defining worker group configurations to be defined using AWS Launch Templates. See https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/workers_launch_template.tf"
+  description = "A list of maps defining worker group configurations to be defined using AWS Launch Templates. See workers_group_defaults_defaults in https://github.com/terraform-aws-modules/terraform-aws-eks/blob/master/local.tf"
   type        = any
   default     = []
 }

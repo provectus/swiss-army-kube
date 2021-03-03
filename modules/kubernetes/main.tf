@@ -41,6 +41,7 @@ module "eks" {
   #
   #   After that autoscaler is able to see the resources on that ASG.
   #
+  worker_groups = var.worker_groups
   worker_groups_launch_template = var.worker_groups_launch_template
 }
 
