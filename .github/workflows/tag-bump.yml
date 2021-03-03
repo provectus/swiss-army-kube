@@ -2,8 +2,7 @@ name: Bump version
 on:
   push:
     branches:
-      # - master
-      - feature/tag_bumping
+      - master
 
 jobs:
   build:
@@ -18,4 +17,4 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           WITH_V: true
           DEFAULT_BUMP: patch
-          RELEASE_BRANCHES: feature/tag_bumping
+          RELEASE_BRANCHES: master
