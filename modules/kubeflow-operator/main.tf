@@ -193,7 +193,7 @@ spec:
     spec:
       containers:
       - name: create-${each.key}-database
-        image: kschriek/mysql-db-creator
+        image: public.ecr.aws/v5l9k3w9/utils/mysql-db-creator:latest
         env:
         - name: HOST
           valueFrom:
