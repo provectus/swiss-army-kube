@@ -1,3 +1,7 @@
+module "kubernetes" {
+  source = "./../../kubernetes"
+}
+
 module "iam_assumable_role" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v3.6.0"
