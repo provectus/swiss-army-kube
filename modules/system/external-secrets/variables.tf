@@ -27,6 +27,11 @@ variable "cluster_name" {
   description = "Name of the EKS cluster"
 }
 
+variable "cluster_oidc_url" {
+  type        = string
+  description = "oidc issuer url of the eks cluster"
+}
+
 variable "chart_repository" {
   type    = string
   description = "A chart repository"

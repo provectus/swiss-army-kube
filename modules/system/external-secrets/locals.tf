@@ -2,6 +2,7 @@ locals {
   module_name         = basename(abspath(path.module))
   app_name            = "external-secrets"
   cluster_name        = var.cluster_name
+  cluster_oidc_url    = var.cluster_oidc_url
   aws_region          = var.aws_region == "" ? data.aws_region.current.name : var.aws_region
 
   create_role = var.chart_values != "" || var.aws_assume_role_arn != "" ? false : true
