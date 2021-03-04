@@ -1,14 +1,10 @@
-data "aws_eks_cluster" "this" {
-  name = var.cluster_name
-}
-
 module "iam_assumable_role" {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   version                       = "~> v3.6.0"
   count                         = local.create_role ? 1 : 0
   create_role                   = true
   role_name                     = "${local.cluster_name}_external-secrets"
-  provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
+  provider_url                  = replace(var.cluster_oidc_url, "https://", "")
   role_policy_arns              = local.role_policy_arns
   oidc_fully_qualified_subjects = ["system:serviceaccount:${var.namespace}:external_secrets"] //TODO dynamically get service account name and set it here. Currently all service accounts in kube-system will be able to assume this role
   tags                          = var.tags
