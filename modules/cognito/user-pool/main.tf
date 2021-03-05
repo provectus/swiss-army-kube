@@ -81,12 +81,12 @@ provider aws {
 
 # import existing
 resource "tls_private_key" "self_signed_cert" {
-  count = local.create_acm_certificate ? 1 : 0
+  count = local.create_self_signed_acm_certificate ? 1 : 0
   algorithm = "RSA"
 }
 
 resource "tls_self_signed_cert" "self_signed_cert" {
-  count = local.create_acm_certificate ? 1 : 0
+  count = local.create_self_signed_acm_certificate ? 1 : 0
   key_algorithm   = "RSA"
   private_key_pem = tls_private_key.self_signed_cert[0].private_key_pem
 
