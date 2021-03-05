@@ -45,14 +45,20 @@ resource aws_route53_record root {
 
 
 locals {
-  acm_arn = var.acm_arn == "" ? module.acm[0].this_acm_certificate_arn : var.acm_arn
+ 
+  create_acm_certificate = var.acm_arn == "" && !var.self_sign_acm_certificate
+  create_self_signed_acm_certificate = var.acm_arn == "" && var.self_sign_acm_certificate     
+  
+  //if ARN of existing certificate provided, use that. If not either create a normal ACM certificate, or create a self-signed one
+  acm_arn = var.acm_arn != "" ? var.acm_arn : (local.create_acm_certificate ? module.acm[0].this_acm_certificate_arn : aws_acm_certificate.self_signed_cert.arn)
+
 }
 
 module acm {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> v2.0"
 
-  count = var.acm_arn == "" ? 1 : 0 //only create if an existing ACM certificate hasn't been provided
+   count = local.create_acm_certificate ? 1 : 0  //only create if an existing ACM certificate hasn't been provided and not creating a self-signed cert
 
 
   domain_name          = "auth.${var.domain}"
@@ -70,3 +76,36 @@ provider aws {
   alias  = "cognito"
   region = "us-east-1"
 }
+
+
+# import existing
+resource "tls_private_key" "self_signed_cert" {
+  count = local.create_acm_certificate ? 1 : 0
+  algorithm = "RSA"
+}
+
+resource "tls_self_signed_cert" "self_signed_cert" {
+  count = local.create_acm_certificate ? 1 : 0
+  key_algorithm   = "RSA"
+  private_key_pem = tls_private_key.example.private_key_pem
+
+  subject {
+    common_name  = "example.com" //TODO might have to set this
+    organization = "ACME Examples, Inc" //TODO might have to set this
+  }
+
+  validity_period_hours = 24000 //1000 days
+
+  allowed_uses = [
+    "key_encipherment",
+    "digital_signature",
+    "server_auth",
+  ]
+}
+
+resource "aws_acm_certificate" "self_signed_cert" {
+  count = local.create_acm_certificate ? 1 : 0
+  private_key      = tls_private_key.example.private_key_pem
+  certificate_body = tls_self_signed_cert.example.cert_pem
+}
+
