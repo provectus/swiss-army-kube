@@ -52,7 +52,7 @@ locals {
   //if ARN of existing certificate provided, use that. If not either create a normal ACM certificate, or create a self-signed one
   acm_arn = var.acm_arn != "" ? var.acm_arn : (local.create_acm_certificate ? module.acm[0].this_acm_certificate_arn : aws_acm_certificate.self_signed_cert[0].arn)
 
-  depends_on = [aws_acm_certificate]
+  depends_on = [aws_acm_certificate.self_signed_cert]
 }
 
 module acm {
