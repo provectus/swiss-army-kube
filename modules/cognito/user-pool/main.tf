@@ -9,6 +9,16 @@ resource aws_cognito_user_pool this {
   }
   tags = var.tags
 
+  mfa_configuration = var.mfa_configuration
+
+  dynamic "software_token_mfa_configuration" {
+    for_each = var.mfa_configuration == "OFF" ? [] : list(var.mfa_configuration)
+
+    content {
+      enabled = true
+    }
+  }
+
   account_recovery_setting {
     recovery_mechanism {
       name     = "verified_email"
