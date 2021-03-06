@@ -24,7 +24,7 @@ locals {
 }
 
 module "network" {
-  source = "github.com/provectus/sak-vpc"
+  source = "github.com/provectus/sak-vpc" #By default ?ref=HEAD 
 
   availability_zones = var.availability_zones
   environment        = local.environment
