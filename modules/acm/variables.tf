@@ -11,6 +11,12 @@ variable domain_name {
   default     = ""
 }
 
+variable subject_alternative_names {
+  type        = list(string)
+  description = "A list of domains that should be SANs in the issued certificate"
+  default     = []
+}
+
 variable zone_id {
   type = string
 }
