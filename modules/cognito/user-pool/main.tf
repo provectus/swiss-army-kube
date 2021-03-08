@@ -20,7 +20,7 @@ resource aws_cognito_user_pool this {
 
 resource aws_cognito_user_pool_domain this {
   domain          = "auth.${var.domain}"
-  certificate_arn = local.acm_arn
+  certificate_arn = var.loadbalancer_acm_arn
   user_pool_id    = aws_cognito_user_pool.this.id
 }
 
