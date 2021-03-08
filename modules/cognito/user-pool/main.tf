@@ -56,20 +56,15 @@ locals {
 }
 
 module acm {
-  source  = "terraform-aws-modules/acm/aws"
-  version = "~> v2.0"
 
-  count = local.create_acm_certificate ? 1 : 0  //only create if an existing ACM certificate hasn't been provided and not creating a self-signed cert
+  source = "../../acm-certificate"
 
+  create_certificate = local.create_acm_certificate ? true : false  //only create if an existing ACM certificate hasn't been provided and not creating a self-signed cert
   domain_name          = "auth.${var.domain}"
   zone_id              = var.zone_id
   validate_certificate = true
-
-  providers = {
-    aws = aws.cognito
-  }
-
   tags = var.tags
+
 }
 
 provider aws {
