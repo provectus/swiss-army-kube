@@ -30,6 +30,17 @@ variable self_sign_acm_certificate {
   default     = false
 }
 
+variable create_certificate  {
+  type        = bool
+  description = ""
+  default     = false
+}
+
+variable loadbalancer_acm_arn {
+  type = string
+  description = "The ARN of an ACM certificate to attach to the Load Balancer"
+  default = ""
+}
 
 variable invite_template {
   type        = map(string)

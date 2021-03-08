@@ -44,63 +44,28 @@ resource aws_route53_record root {
 }
 
 
-locals {
- 
-  create_self_signed_acm_certificate = var.acm_arn == "" && var.self_sign_acm_certificate
-  create_acm_certificate = !local.create_self_signed_acm_certificate
-
-  //if ARN of existing certificate provided, use that. If not either create a normal ACM certificate, or create a self-signed one
-  acm_arn = var.acm_arn != "" ? var.acm_arn : (local.create_self_signed_acm_certificate ? aws_acm_certificate.self_signed_cert[0].arn : module.acm[0].this_acm_certificate_arn )
-
-  depends_on = [aws_acm_certificate.self_signed_cert[0]]
-}
+//locals {
+//
+//  create_self_signed_acm_certificate = var.acm_arn == "" && var.self_sign_acm_certificate
+//  create_acm_certificate = !local.create_self_signed_acm_certificate
+//
+//  //if ARN of existing certificate provided, use that. If not either create a normal ACM certificate, or create a self-signed one
+//  acm_arn = var.acm_arn != "" ? var.acm_arn : (local.create_self_signed_acm_certificate ? module.acm.aws_acm_certificate.arn : module.acm[0].this_acm_certificate_arn )
+//
+//  depends_on = [module.acm.aws_acm_certificate]
+//}
 
 module acm {
 
   source = "../../acm"
 
-  create_certificate = local.create_acm_certificate ? true : false  //only create if an existing ACM certificate hasn't been provided and not creating a self-signed cert
+  loadbalancer_acm_arn      = var.loadbalancer_acm_arn   # var.loadbalancer_acm_arn
+  self_sign_acm_certificate = var.self_sign_acm_certificate
+  create_certificate   = var.create_certificate # local.create_acm_certificate ? true : false  //only create if an existing ACM certificate hasn't been provided and not creating a self-signed cert
   domain_name          = "auth.${var.domain}"
   zone_id              = var.zone_id
   validate_certificate = true
   tags = var.tags
 
-}
-
-provider aws {
-  alias  = "cognito"
-  region = "us-east-1"
-}
-
-
-# import existing
-resource "tls_private_key" "self_signed_cert" {
-  count = local.create_self_signed_acm_certificate ? 1 : 0
-  algorithm = "RSA"
-}
-
-resource "tls_self_signed_cert" "self_signed_cert" {
-  count = local.create_self_signed_acm_certificate ? 1 : 0
-  key_algorithm   = "RSA"
-  private_key_pem = tls_private_key.self_signed_cert[0].private_key_pem
-
-  subject {
-    common_name  = "example.com" //TODO might have to set this
-    organization = "ACME Examples, Inc" //TODO might have to set this
-  }
-
-  validity_period_hours = 24000 //1000 days
-
-  allowed_uses = [
-    "key_encipherment",
-    "digital_signature",
-    "server_auth",
-  ]
-}
-
-resource "aws_acm_certificate" "self_signed_cert" {
-  count = local.create_self_signed_acm_certificate ? 1 : 0
-  private_key      = tls_private_key.self_signed_cert[0].private_key_pem
-  certificate_body = tls_self_signed_cert.self_signed_cert[0].cert_pem
 }
 
