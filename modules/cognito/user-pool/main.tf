@@ -57,7 +57,7 @@ locals {
 
 module acm {
 
-  source = "../../acm-certificate"
+  source = "../../acm"
 
   create_certificate = local.create_acm_certificate ? true : false  //only create if an existing ACM certificate hasn't been provided and not creating a self-signed cert
   domain_name          = "auth.${var.domain}"
