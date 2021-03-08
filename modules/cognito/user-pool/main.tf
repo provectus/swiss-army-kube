@@ -46,9 +46,9 @@ resource aws_route53_record root {
 
 locals {
  
-  create_acm_certificate = var.acm_arn == "" && !var.self_sign_acm_certificate
-  create_self_signed_acm_certificate = var.acm_arn == "" && var.self_sign_acm_certificate     
-  
+  create_self_signed_acm_certificate = var.acm_arn == "" && var.self_sign_acm_certificate
+  create_acm_certificate = !create_self_signed_acm_certificate
+
   //if ARN of existing certificate provided, use that. If not either create a normal ACM certificate, or create a self-signed one
   acm_arn = var.acm_arn != "" ? var.acm_arn : (local.create_self_signed_acm_certificate ? aws_acm_certificate.self_signed_cert[0].arn : module.acm[0].this_acm_certificate_arn )
 
@@ -59,8 +59,7 @@ module acm {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> v2.0"
 
-   count = local.create_acm_certificate ? 1 : 0  //only create if an existing ACM certificate hasn't been provided and not creating a self-signed cert
-
+  count = local.create_acm_certificate ? 1 : 0  //only create if an existing ACM certificate hasn't been provided and not creating a self-signed cert
 
   domain_name          = "auth.${var.domain}"
   zone_id              = var.zone_id
