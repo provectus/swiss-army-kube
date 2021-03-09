@@ -20,7 +20,7 @@ resource aws_cognito_user_pool this {
 
 resource aws_cognito_user_pool_domain this {
   domain          = "auth.${var.domain}"
-  certificate_arn = module.acm_certificate.arn   #var.acm_arn
+  certificate_arn = var.acm_arn   #module.acm_certificate.arn   #
   user_pool_id    = aws_cognito_user_pool.this.id
 }
 
@@ -50,8 +50,9 @@ module acm_certificate {
   existing_acm_arn          = var.acm_arn   # var.loadbalancer_acm_arn
   self_sign_acm_certificate = var.self_sign_acm_certificate
   domain_name               = "auth.${var.domain}"
+  subject_alternative_names = []
   zone_id                   = var.zone_id
-  validate_certificate      = false # true
+  validate_certificate      = true
   tags                      = var.tags
   aws_region                = "us-east-1"
 

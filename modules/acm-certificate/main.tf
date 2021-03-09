@@ -20,7 +20,7 @@ provider aws {
 # normal acm certificate
 module acm_certificate {
   source  = "terraform-aws-modules/acm/aws"
-  version = "~> v2.0"
+  version = "v2.0"
 
   count                     = local.create_normal_acm_certificate ? 1 : 0
   domain_name               = var.domain_name
