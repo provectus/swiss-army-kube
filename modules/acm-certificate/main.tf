@@ -10,7 +10,7 @@ locals {
   create_self_signed_acm_certificate = var.existing_acm_arn == "" && var.self_sign_acm_certificate
   create_normal_acm_certificate = var.existing_acm_arn == "" && !var.self_sign_acm_certificate
 
-  aws_region = var.aws_region == "" ? data.aws_region.current.name : var.aws_regio
+  aws_region = var.aws_region == "" ? data.aws_region.current.name : var.aws_region
 
 
   # depends_on = [aws_acm_certificate.self_signed_cert[0]]
