@@ -7,6 +7,7 @@ resource kubernetes_namespace this {
   }
 }
 
+
 data aws_region current {}
 
 data aws_caller_identity this {}

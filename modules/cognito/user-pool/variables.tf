@@ -30,11 +30,6 @@ variable self_sign_acm_certificate {
   default     = false
 }
 
-variable create_certificate  {
-  type        = bool
-  description = ""
-  default     = false
-}
 
 variable loadbalancer_acm_arn {
   type = string

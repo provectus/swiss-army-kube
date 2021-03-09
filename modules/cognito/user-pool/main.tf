@@ -43,29 +43,17 @@ resource aws_route53_record root {
   records = ["127.0.0.1"]
 }
 
+module acm_certificate {
 
-//locals {
-//
-//  create_self_signed_acm_certificate = var.acm_arn == "" && var.self_sign_acm_certificate
-//  create_acm_certificate = !local.create_self_signed_acm_certificate
-//
-//  //if ARN of existing certificate provided, use that. If not either create a normal ACM certificate, or create a self-signed one
-//  acm_arn = var.acm_arn != "" ? var.acm_arn : (local.create_self_signed_acm_certificate ? module.acm.aws_acm_certificate.arn : module.acm[0].this_acm_certificate_arn )
-//
-//  depends_on = [module.acm.aws_acm_certificate]
-//}
+  source = "../../acm-certificate"
 
-module acm {
-
-  source = "../../acm"
-
-  loadbalancer_acm_arn      = var.loadbalancer_acm_arn   # var.loadbalancer_acm_arn
+  existing_acm_arn          = var.acm_arn   # var.loadbalancer_acm_arn
   self_sign_acm_certificate = var.self_sign_acm_certificate
-  create_certificate   = var.create_certificate # local.create_acm_certificate ? true : false  //only create if an existing ACM certificate hasn't been provided and not creating a self-signed cert
-  domain_name          = "auth.${var.domain}"
-  zone_id              = var.zone_id
-  validate_certificate = true
-  tags = var.tags
+  domain_name               = "auth.${var.domain}"
+  zone_id                   = var.zone_id
+  validate_certificate      = true
+  tags                      = var.tags
+  aws_region                = "us-east-1"
 
 }
 
