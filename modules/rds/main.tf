@@ -97,6 +97,6 @@ module "db" {
   # For snapshot_identifier to be null
   snapshot_identifier = null
 
-  option_group_use_name_prefix = false
+//  option_group_use_name_prefix = false
 
 }
