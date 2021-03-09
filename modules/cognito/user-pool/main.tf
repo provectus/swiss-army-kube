@@ -16,7 +16,7 @@ resource "aws_iam_role" "cidp" {
           "Condition": {
             "StringEquals": {
               # TODO should this be a secret?
-              "sts:ExternalId": "12345"
+              "sts:ExternalId": "example"
             }
           }
         }
@@ -62,7 +62,7 @@ resource aws_cognito_user_pool this {
     for_each = var.mfa_configuration == "OFF" ? [] : list(var.mfa_configuration)
 
     content {
-      external_id    = "12345"
+      external_id    = "example"
       sns_caller_arn = aws_iam_role.cidp.id
     }
   }
