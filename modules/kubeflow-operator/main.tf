@@ -5,6 +5,7 @@ data "aws_region" "current" {}
 resource "aws_secretsmanager_secret" "this" {
   for_each = local.secret_data  
   name = "${var.cluster_name}/${var.namespace}/${each.key}"
+  recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "this" {
@@ -15,6 +16,7 @@ resource "aws_secretsmanager_secret_version" "this" {
 
 resource "aws_secretsmanager_secret" "password" { //rds_password is a "sensitive" variable. It cannot be included in a for_each
   name = "${var.cluster_name}/${var.namespace}/rds_password"
+  recovery_window_in_days = 0
 }
 
 resource "aws_secretsmanager_secret_version" "password" {

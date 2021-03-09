@@ -4,6 +4,7 @@ data "aws_region" "current" {}
 
 resource "aws_secretsmanager_secret" "rds_username" {
   name = "${var.cluster_name}/${var.namespace}/rds_username"
+  recovery_window_in_days = 0
 }
 resource "aws_secretsmanager_secret_version" "rds_username" {
   secret_id     = aws_secretsmanager_secret.rds_username.id
@@ -11,6 +12,7 @@ resource "aws_secretsmanager_secret_version" "rds_username" {
 }
 resource "aws_secretsmanager_secret" "rds_password" {
   name = "${var.cluster_name}/${var.namespace}/rds_password"
+  recovery_window_in_days = 0
 }
 resource "aws_secretsmanager_secret_version" "rds_password" {
   secret_id     = aws_secretsmanager_secret.rds_password.id
