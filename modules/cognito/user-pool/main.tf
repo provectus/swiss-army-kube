@@ -51,7 +51,7 @@ module acm_certificate {
   self_sign_acm_certificate = var.self_sign_acm_certificate
   domain_name               = "auth.${var.domain}"
   zone_id                   = var.zone_id
-  validate_certificate      = true
+  validate_certificate      = false # true
   tags                      = var.tags
   aws_region                = "us-east-1"
 

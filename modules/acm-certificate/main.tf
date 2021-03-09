@@ -22,7 +22,6 @@ module acm_certificate {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> v2.0"
 
-  
   count                     = local.create_normal_acm_certificate ? 1 : 0
   domain_name               = var.domain_name
   subject_alternative_names = var.subject_alternative_names
