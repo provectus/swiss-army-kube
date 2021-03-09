@@ -1,8 +1,4 @@
-
-
 data aws_region current {}
-
-
 
 locals {
 
@@ -11,9 +7,6 @@ locals {
   create_normal_acm_certificate = var.existing_acm_arn == "" && !var.self_sign_acm_certificate
 
   aws_region = var.aws_region == "" ? data.aws_region.current.name : var.aws_region
-
-
-  # depends_on = [aws_acm_certificate.self_signed_cert[0]]
 
 }
 
@@ -39,6 +32,7 @@ module acm_certificate {
   providers = {
     aws = aws.certificate
   }
+
   tags = var.tags
 }
 
@@ -73,8 +67,7 @@ resource "aws_acm_certificate" "self_signed_cert" {
   count = local.create_self_signed_acm_certificate ? 1 : 0
   private_key      = tls_private_key.self_signed_cert[0].private_key_pem
   certificate_body = tls_self_signed_cert.self_signed_cert[0].cert_pem
-  providers = {
-    aws = aws.certificate
-  }
+
+  provider = aws.certificate
 
 }
