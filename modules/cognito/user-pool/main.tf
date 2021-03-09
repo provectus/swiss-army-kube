@@ -50,7 +50,7 @@ module acm_certificate {
   existing_acm_arn          = var.acm_arn   # var.loadbalancer_acm_arn
   self_sign_acm_certificate = var.self_sign_acm_certificate
   domain_name               = "auth.${var.domain}"
-  subject_alternative_names = ["*.${var.domain}"]
+  subject_alternative_names = ["auth.${var.domain}"]
   zone_id                   = var.zone_id
   validate_certificate      = true
   tags                      = var.tags
