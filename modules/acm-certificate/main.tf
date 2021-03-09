@@ -26,7 +26,7 @@ provider aws {
 
 # normal acm certificate
 module acm_certificate {
-  source  = "terraform-aws-modules/acm/aws-certifate"
+  source  = "terraform-aws-modules/acm/aws"
   version = "~> v2.0"
 
   
