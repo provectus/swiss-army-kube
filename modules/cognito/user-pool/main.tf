@@ -22,6 +22,7 @@ resource "aws_iam_role" "cidp" {
         }
       ]
   })
+}
 
 resource "aws_iam_role_policy" "main" {
   name = "kubeflow_sns_role"
@@ -56,7 +57,7 @@ resource aws_cognito_user_pool this {
 
   mfa_configuration = var.mfa_configuration
   sms_authentication_message = "Your code is {####}"
-  
+
   dynamic "sms_configuration" {
     for_each = var.mfa_configuration == "OFF" ? [] : list(var.mfa_configuration)
 
