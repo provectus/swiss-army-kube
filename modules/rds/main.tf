@@ -42,6 +42,7 @@ module "db" {
   version = "~> 2.20"
 
   identifier = var.rds_instance_name
+  option_group_name = var.rds_instance_name # create an option group using a unique prefix beginning with the name provided
 
   engine               = var.rds_database_engine
   engine_version       = var.rds_database_engine_version
