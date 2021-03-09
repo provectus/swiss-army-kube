@@ -39,7 +39,7 @@ resource "aws_ssm_parameter" "rds_password" {
 module "db" {
 
   source  = "terraform-aws-modules/rds/aws"
-  version = "~> 2.20"
+  version = "~> 2.25"
 
   identifier = var.rds_instance_name
   option_group_name = var.rds_instance_name # create an option group using a unique prefix beginning with the name provided
