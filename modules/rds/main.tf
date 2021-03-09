@@ -39,7 +39,7 @@ resource "aws_ssm_parameter" "rds_password" {
 module "db" {
 
   source  = "terraform-aws-modules/rds/aws"
-  version = "~> 2.20"
+  version = "2.20"
 
   identifier = var.rds_instance_name
 
@@ -96,7 +96,5 @@ module "db" {
 
   # For snapshot_identifier to be null
   snapshot_identifier = null
-
-//  option_group_use_name_prefix = false
 
 }
