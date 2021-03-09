@@ -60,7 +60,7 @@ resource "tls_self_signed_cert" "self_signed_cert" {
     organization = var.domain_name
   }
 
-  validity_period_hours = 24000 //1000 days
+  validity_period_hours = var.self_signed_certificate_validity_period 
 
   allowed_uses = [
     "key_encipherment",
