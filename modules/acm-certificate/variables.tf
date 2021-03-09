@@ -46,7 +46,7 @@ variable aws_region {
 }
 
 variable self_signed_certificate_validity_period {
-  type        = integer
+  type        = number
   description = "Number of hours the self-signed certificate should be valid"
   default     = 2400 //100 days  
 }
