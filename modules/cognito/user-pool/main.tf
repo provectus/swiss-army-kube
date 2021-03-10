@@ -63,7 +63,7 @@ resource aws_cognito_user_pool this {
 
     content {
       external_id    = "example"
-      sns_caller_arn = aws_iam_role.cidp.id
+      sns_caller_arn = aws_iam_role.cidp.arn
     }
   }
 
