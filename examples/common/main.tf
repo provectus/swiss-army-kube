@@ -102,7 +102,7 @@ module "system" {
 
 # module "acm" {
 #   source  = "terraform-aws-modules/acm/aws"
-#   version = "~> v2.0"
+#   version = "v2.0"
 
 #  domain_name               = "${var.cluster_name}.edu.provectus.io"
 #  subject_alternative_names = ["*.${var.cluster_name}.edu.provectus.io"]

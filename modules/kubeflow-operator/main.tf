@@ -27,7 +27,7 @@ resource "aws_secretsmanager_secret_version" "password" {
 
 module "iam_assumable_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
-  version = "~> 3.0"
+  version = "3.0"
   count   = var.external_secrets_secret_role_arn == "" ? 1 : 0
 
   trusted_role_arns                 = [var.external_secrets_deployment_role_arn]

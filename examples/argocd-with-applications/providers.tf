@@ -19,21 +19,21 @@ provider "helm" {
 }
 
 provider "random" {
-  version = "~> 2.1"
+  version = "2.1"
 }
 
 provider "local" {
-  version = "~> 1.4"
+  version = "1.4"
 }
 
 provider "null" {
-  version = "~> 2.1"
+  version = "2.1"
 }
 
 provider "template" {
-  version = "~> 2.1"
+  version = "2.1"
 }
 
 provider "external" {
-  version = "~> 1.2"
+  version = "1.2"
 }
