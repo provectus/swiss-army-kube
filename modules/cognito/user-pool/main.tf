@@ -1,5 +1,5 @@
 ## Role for sending out SMS for Cognito
-resource "aws_iam_role" "cidp" {
+resource aws_iam_role cidp {
   name = "kubeflow_sns_role"
   path = "/service-role/"
 
@@ -24,7 +24,7 @@ resource "aws_iam_role" "cidp" {
   })
 }
 
-resource "aws_iam_role_policy" "main" {
+resource aws_iam_role_policy main {
   name = "kubeflow_sns_role"
   role = aws_iam_role.cidp.id
 
