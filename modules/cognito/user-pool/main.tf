@@ -1,6 +1,6 @@
 ## Role for sending out SMS for Cognito
 resource aws_iam_role cidp {
-  name = "kubeflow_sns_role"
+  name = "${var.cluster_name}.sns_role"
   path = "/service-role/"
 
   assume_role_policy = jsonencode({
@@ -25,7 +25,7 @@ resource aws_iam_role cidp {
 }
 
 resource aws_iam_role_policy main {
-  name = "kubeflow_sns_role"
+  name = "${var.cluster_name}.sns_role"
   role = aws_iam_role.cidp.id
 
   policy = jsonencode({
