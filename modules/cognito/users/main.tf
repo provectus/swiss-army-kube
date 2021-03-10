@@ -19,6 +19,14 @@ locals {
             {
               "Name"= "email_verified"
               "Value"= "true"
+            },
+            { 
+              "Name"= "phone_number"
+              "Value"= user.phone_number
+            },
+            {
+              "Name"= "phone_number_verified"
+              "Value"= "true"
             }
           ],
           "Username" = user.email
