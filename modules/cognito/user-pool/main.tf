@@ -1,3 +1,49 @@
+## Role for sending out SMS for Cognito
+resource aws_iam_role cidp {
+  name = "${var.cluster_name}.sns_role"
+  path = "/service-role/"
+
+  assume_role_policy = jsonencode({
+    "Version": "2012-10-17",
+      "Statement": [
+        {
+          "Sid": "",
+          "Effect": "Allow",
+          "Principal": {
+            "Service": "cognito-idp.amazonaws.com"
+          },
+          "Action": "sts:AssumeRole",
+          "Condition": {
+            "StringEquals": {
+              # TODO should this be a secret?
+              "sts:ExternalId": "allow_sns"
+            }
+          }
+        }
+      ]
+  })
+}
+
+resource aws_iam_role_policy main {
+  name = "${var.cluster_name}.sns_role"
+  role = aws_iam_role.cidp.id
+
+  policy = jsonencode({
+    "Version": "2012-10-17",
+    "Statement": [
+      {
+        "Effect": "Allow",
+        "Action": [
+          "sns:publish"
+        ],
+        "Resource": [
+          "*"
+        ]
+      }
+    ]
+  })
+}
+
 resource aws_cognito_user_pool this {
   name = var.cluster_name
   admin_create_user_config {
@@ -8,6 +54,18 @@ resource aws_cognito_user_pool this {
     }
   }
   tags = var.tags
+
+  mfa_configuration = var.mfa_configuration
+  sms_authentication_message = "Your code is {####}"
+
+  dynamic "sms_configuration" {
+    for_each = var.mfa_configuration == "OFF" ? [] : list(var.mfa_configuration)
+
+    content {
+      external_id    = "allow_sns"
+      sns_caller_arn = aws_iam_role.cidp.arn
+    }
+  }
 
   account_recovery_setting {
     recovery_mechanism {
