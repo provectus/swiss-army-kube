@@ -23,11 +23,6 @@ resource aws_cognito_user_pool_domain this {
   certificate_arn = module.acm_certificate.arn   #var.acm_arn
   user_pool_id    = aws_cognito_user_pool.this.id
 
-  depends_on = [
-    aws_route53_record.root,
-    aws_route53_record.this
-  ]
-
 }
 
 resource aws_route53_record this {
