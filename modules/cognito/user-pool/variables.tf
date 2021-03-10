@@ -17,12 +17,6 @@ variable tags {
   default     = {}
 }
 
-variable self_sign_acm_certificate {
-  type        = bool
-  description = "Set to true in order to create a self-signed ACM certificates instead of letting ACM create and validate them"
-  default     = false
-}
-
 variable acm_arn {
   type = string
   description = "The ARN of an ACM certificate to attach to the Load Balancer"
