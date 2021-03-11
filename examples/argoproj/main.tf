@@ -18,7 +18,7 @@ locals {
 }
 
 module "network" {
-  source = "../../modules/network"
+  source = "github.com/provectus/sak-vpc"
 
   availability_zones = var.availability_zones
   environment        = local.environment
@@ -29,7 +29,7 @@ module "network" {
 #
 module "kubernetes" {
   depends_on = [module.network]
-  source     = "../../modules/kubernetes"
+  source     = "github.com/provectus/sak-kubernetes"
 
   environment        = local.environment
   project            = local.project
@@ -43,7 +43,7 @@ module "kubernetes" {
 
 module "argocd" {
   depends_on = [module.network.vpc_id, module.kubernetes.cluster_name]
-  source     = "../../modules/cicd/argo/modules/cd"
+  source     = "github.com/provectus/sak-argocd"
 
   branch       = var.argocd.branch
   owner        = var.argocd.owner
