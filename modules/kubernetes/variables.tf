@@ -60,6 +60,12 @@ variable "user_arns" {
   default = []
 }
 
+variable "node_registry_mirrors" {
+  type        = list
+  default     = []
+  description = "EC2 node docker registry mirrors (only for EKS-optimized AMIs)"
+}
+
 # On-demand instance
 variable "on_demand_common_max_cluster_size" {
   type        = string
