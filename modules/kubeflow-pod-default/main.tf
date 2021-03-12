@@ -27,7 +27,7 @@ resource "aws_iam_policy" "this" {
             "Effect": "Allow",
             "Action": [
                 "secretsmanager:ListSecretVersionIds",
-                "secretsmanager:GetSecretVagit branchlue",
+                "secretsmanager:GetSecretValue",
                 "secretsmanager:GetResourcePolicy",
                 "secretsmanager:DescribeSecret"
             ],
