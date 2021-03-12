@@ -59,8 +59,7 @@ resource aws_cognito_user_pool this {
   sms_authentication_message = "Your code is {####}"
 
   alias_attributes = [
-    "email",
-    "phone_number",
+    "phone_number"
   ]
 
 
