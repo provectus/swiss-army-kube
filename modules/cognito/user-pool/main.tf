@@ -83,8 +83,14 @@ resource aws_cognito_user_pool this {
   schema {
     attribute_data_type      = "String"
     name                     = "phone_number"
-    required                 = "true"
+    required                 = true
+    
+    string_attribute_constraints {
+      min_length = 0
+      max_length = 2048
+    }
   }
+  
 }
 
 resource aws_cognito_user_pool_domain this {
