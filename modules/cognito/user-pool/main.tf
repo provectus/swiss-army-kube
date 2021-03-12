@@ -58,6 +58,12 @@ resource aws_cognito_user_pool this {
   mfa_configuration = var.mfa_configuration
   sms_authentication_message = "Your code is {####}"
 
+  alias_attributes = [
+    "email",
+    "phone_number",
+  ]
+
+
   dynamic "sms_configuration" {
     for_each = var.mfa_configuration == "OFF" ? [] : list(var.mfa_configuration)
 
@@ -74,6 +80,11 @@ resource aws_cognito_user_pool this {
     }
   }
 
+  schema {
+    attribute_data_type      = "String"
+    name                     = "phone_number"
+    required                 = "true"
+  }
 }
 
 resource aws_cognito_user_pool_domain this {
