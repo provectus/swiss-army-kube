@@ -58,6 +58,27 @@ resource aws_cognito_user_pool this {
   mfa_configuration = var.mfa_configuration
   sms_authentication_message = "Your code is {####}"
 
+  #TODO Jay - additions for MFA SMS
+  alias_attributes = [
+    "phone_number"
+  ]
+
+  schema {
+    attribute_data_type      = "String"
+    name                     = "phone_number"
+    mutable                  = true
+    required                 = true
+    
+    string_attribute_constraints {
+      min_length = 6
+      max_length = 32
+    }
+  }
+
+  user_pool_add_ons {
+    advanced_security_mode = var.advanced_security_mode
+  }
+
   dynamic "sms_configuration" {
     for_each = var.mfa_configuration == "OFF" ? [] : list(var.mfa_configuration)
 

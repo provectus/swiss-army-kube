@@ -1,4 +1,3 @@
-
 variable "external_secrets_deployment_role_arn" {
   type  = string
   description = "The ARN of the role attached to the external-secret deployment. This is the role that will by default be assumed if roleArn is not specified in the ExternalSecret kubernetes spec"
@@ -18,12 +17,14 @@ variable secret_arn {
 
 variable secret_key {
   type  = string
+  default = "Can-SageMaker-Gitlab-Token"
   description = "Key of an external secret to fetch from AWS Secret Manager"  
 }
 
 
 variable name {
   type = string  
+  default = "git_secret"
   description = "How the Secret and PodDefault should be named within Kubernetes"
 }
 
@@ -37,4 +38,3 @@ variable cluster_name {
   type = string  
   description = "Name of the EKS cluster"
 }
-

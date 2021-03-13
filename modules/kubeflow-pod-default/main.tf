@@ -27,7 +27,7 @@ resource "aws_iam_policy" "this" {
             "Effect": "Allow",
             "Action": [
                 "secretsmanager:ListSecretVersionIds",
-                "secretsmanager:GetSecretVagit branchlue",
+                "secretsmanager:GetSecretValue",
                 "secretsmanager:GetResourcePolicy",
                 "secretsmanager:DescribeSecret"
             ],
@@ -44,4 +44,3 @@ resource local_file pod_default_def {
   filename = "${path.root}/${var.argocd.path}/profiles/profile-${var.namespace}-${var.name}.yaml" # TODO, this is a hack to make sure the poddefault is rolled out with the Profiles. Should be improved later!
 
 }
-

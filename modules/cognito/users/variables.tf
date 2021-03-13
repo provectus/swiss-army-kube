@@ -17,7 +17,6 @@ variable users {
   type = list(object({
     username        = string
     email           = string
-    phone_number    = string
     group           = string //TODO current this entry will have no effect. All users are assigned to "default"
     user_hash       = string // a unique has representation of the user. Must be alphanumeric and max 64 chars. For example sha("user@${username}").
     user_group_hash = string // a unique has representation of the user. Must be alphanumeric and max 64 chars. For example sha("user-group@${username}"). Must differ from user_hash as each must be unique
