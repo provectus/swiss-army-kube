@@ -37,3 +37,9 @@ variable tags {
   type = map(string)
   default = {}
 }
+
+variable pod_default_def {
+  type        = string
+  description = "The resource definition for Pod-Default-Def"
+  default = null //default is constructed dynmaically. See main.tf
+}
