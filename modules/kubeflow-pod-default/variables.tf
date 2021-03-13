@@ -17,14 +17,14 @@ variable secret_arn {
 
 variable secret_key {
   type  = string
-  default = "Can-SageMaker-Gitlab-Token"
+  default = "at-test"
   description = "Key of an external secret to fetch from AWS Secret Manager"  
 }
 
 
 variable name {
   type = string  
-  default = "git_secret"
+  default = "at-test000"
   description = "How the Secret and PodDefault should be named within Kubernetes"
 }
 
