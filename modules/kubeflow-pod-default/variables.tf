@@ -11,21 +11,21 @@ variable "external_secrets_secret_role_arn" {
 
 variable key {
   type  = string
-  default = "dev-kaas-32/kubeflow/s3_region"
+  default = ""
   description = "Key of an external secret to fetch from AWS Secret Manager"  
 }
 
 
 variable name {
   type = string  
-  default = "at-test000"
+  default = ""
   description = "How the Secret and PodDefault should be named within Kubernetes"
 }
 
 variable namespace {
   type = string  
   description = "Namespace where PodDefault should be created"
-  default = "juergen-stary"
+  default = ""
 }
 
 variable cluster_name {
