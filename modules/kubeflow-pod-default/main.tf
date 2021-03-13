@@ -31,7 +31,7 @@ resource "aws_iam_policy" "this" {
                 "secretsmanager:GetResourcePolicy",
                 "secretsmanager:DescribeSecret"
             ],
-            "Resource": ${var.secret_arn}
+            "Resource": "*"
         }
     ]
 }
