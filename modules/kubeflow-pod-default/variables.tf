@@ -27,8 +27,3 @@ variable namespace {
   description = "Namespace where PodDefault should be created"
   default = "juergen-stary"
 }
-
-variable cluster_name {
-  type = string  
-  description = "Name of the EKS cluster"
-}
