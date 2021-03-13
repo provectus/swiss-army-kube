@@ -1,4 +1,4 @@
-locals {
+/*locals {
 
 role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].this_iam_role_arn : var.external_secrets_secret_role_arn
 for_each = {for pod-default in var.kubeflow_pod-defaults: pd.name => pd}
@@ -36,3 +36,4 @@ spec:
 EOT
  filename = "${path.root}/${var.argocd.path}/profiles/profile-${each.value.namespace}-${each.value.name}.yaml" # TODO, this is a hack to make sure the poddefault is rolled out with the Profiles. Should be improved later!
 }
+*/

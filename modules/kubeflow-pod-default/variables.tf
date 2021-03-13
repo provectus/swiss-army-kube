@@ -38,11 +38,13 @@ variable tags {
   default = {}
 }
 
+/*
 variable pod_default_def {
   type        = string
   description = "The resource definition for Pod-Default-Def"
   default = null //default is constructed dynmaically. See main.tf
 }
+*/
 
 variable "kubeflow_pod-defaults" {
   description = "Adds values to PodDefaults to individual namespaces"
