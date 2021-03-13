@@ -9,7 +9,7 @@ module "iam_assumable_role" {
 
   trusted_role_arns                 = [var.external_secrets_deployment_role_arn]
   create_role                       = true
-  role_name                         = "${var.cluster_name}_${var.namespace}_external-secret-${var.name}"
+  role_name                         = "${var.cluster_name}_${var.namespace}_external-secret"
   role_requires_mfa                 = false
   custom_role_policy_arns           = [aws_iam_policy.this[0].arn]
   number_of_custom_role_policy_arns = 1
@@ -18,7 +18,7 @@ module "iam_assumable_role" {
 
 resource "aws_iam_policy" "this" {
   count = var.external_secrets_secret_role_arn == "" ? 1 : 0
-  name  = "${var.cluster_name}_${var.namespace}_external-secret--${var.name}"
+  name  = "${var.cluster_name}_${var.namespace}_external-secret"
   policy = <<-EOT
 {
   "Version": "2012-10-17",
