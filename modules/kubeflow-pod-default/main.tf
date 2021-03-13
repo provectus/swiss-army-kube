@@ -52,7 +52,7 @@ metadata:
   namespace: ${each.value.namespace}
 spec:
   backendType: secretsManager
-  roleArn: ${local.role_to_assume_arn}
+  roleArn: ${role_to_assume_arn}
   data:
     - key: ${each.value.secret}
       name: ${each.value.name}    
