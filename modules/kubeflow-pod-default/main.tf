@@ -43,7 +43,7 @@ resource local_file kubeflow_pod-defaults {
 
   
 role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].this_iam_role_arn : var.external_secrets_secret_role_arn
-for_each = {for pod-default in var.kubeflow_pod-defaults: pd.name => pd}
+for_each = {for pd in var.kubeflow_pod-defaults: pd.name => pd}
 content = <<EOT
 
 apiVersion: 'kubernetes-client.io/v1'
