@@ -43,3 +43,9 @@ variable pod_default_def {
   description = "The resource definition for Pod-Default-Def"
   default = null //default is constructed dynmaically. See main.tf
 }
+
+variable "argocd" {
+  type        = map(string)
+  description = "A set of values for enabling deployment through ArgoCD"
+  default     = {}
+}
