@@ -39,7 +39,7 @@ EOT
 }
 
 
-resource local_file pod_default_def {
+resource local_file kubeflow_pod-defaults {
 
   
 role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].this_iam_role_arn : var.external_secrets_secret_role_arn
