@@ -17,7 +17,7 @@ variable secret_arn {
 
 variable secret_key {
   type  = string
-  default = "at-test"
+  default = "dev-kaas-32/kubeflow/s3_region"
   description = "Key of an external secret to fetch from AWS Secret Manager"  
 }
 
@@ -31,7 +31,7 @@ variable name {
 variable namespace {
   type = string  
   description = "Namespace where PodDefault should be created"
-  default = "mlflow"
+  default = "juergen-stary"
 }
 
 variable cluster_name {
