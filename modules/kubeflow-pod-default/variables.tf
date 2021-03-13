@@ -9,6 +9,7 @@ variable "external_secrets_secret_role_arn" {
   description = "The ARN of the role that should be assumed by the external-secret deployment when creating the MLFlow ExternalSecret. This role must be assumable by the role that has been attached to external-secret deployment's service account. If left blank, a role will be created."
 }
 
+/*
 variable key {
   type  = string
   default = ""
@@ -21,6 +22,7 @@ variable name {
   default = ""
   description = "How the Secret and PodDefault should be named within Kubernetes"
 }
+*/
 
 variable namespace {
   type = string  
