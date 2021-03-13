@@ -12,7 +12,7 @@ spec:
   backendType: secretsManager
   roleArn: ${local.role_to_assume_arn}
   data:
-    - key: ${var.secret_key}
+    - key: ${var.key}
       name: ${var.name}    
 ---
 apiVersion: "kubeflow.org/v1alpha1"

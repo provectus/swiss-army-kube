@@ -9,13 +9,7 @@ variable "external_secrets_secret_role_arn" {
   description = "The ARN of the role that should be assumed by the external-secret deployment when creating the MLFlow ExternalSecret. This role must be assumable by the role that has been attached to external-secret deployment's service account. If left blank, a role will be created."
 }
 
-variable secret_arn {
-  type  = string
-  description = "ARN of an external secret to fetch from AWS Secret Manager"  
-}
-
-
-variable secret_key {
+variable key {
   type  = string
   default = "dev-kaas-32/kubeflow/s3_region"
   description = "Key of an external secret to fetch from AWS Secret Manager"  
