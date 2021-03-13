@@ -44,6 +44,16 @@ variable pod_default_def {
   default = null //default is constructed dynmaically. See main.tf
 }
 
+variable "kubeflow_pod-defaults" {
+  description = "Adds values to PodDefaults to individual namespaces"
+  type = list(object({
+    namespace  = string
+    secret = string
+    name   = string
+  }))
+  default = []
+}
+
 variable "argocd" {
   type        = map(string)
   description = "A set of values for enabling deployment through ArgoCD"

@@ -1,8 +1,9 @@
 locals {
 
 role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].this_iam_role_arn : var.external_secrets_secret_role_arn
-  
+#TODO Jay for_each = {for pod-default in var.kubeflow_pod-defaults} write out yamls
 pod_default_def = var.pod_default_def != null ? var.pod_default_def : <<EOT
+
 apiVersion: 'kubernetes-client.io/v1'
 kind: ExternalSecret
 metadata:
