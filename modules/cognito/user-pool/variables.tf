@@ -29,8 +29,6 @@ variable advanced_security_mode {
   default     = "ENFORCED"
 }
 
-advanced_security_mode
-
 variable acm_arn {
   type = string
   description = "The ARN of an ACM certificate to attach to the Load Balancer"
