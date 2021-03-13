@@ -32,5 +32,9 @@ spec:
  - name: git
    secret:
     secretName: ${var.name}
+<<<<<<< HEAD
+=======
+
+>>>>>>> 2059563316d105d63d6cae122f082f76bd3dbe1a
 EOT
 }

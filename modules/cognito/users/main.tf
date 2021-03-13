@@ -20,6 +20,13 @@ locals {
             {
               "Name"= "email_verified"
               "Value"= "true"
+<<<<<<< HEAD
+=======
+            },
+            {
+              "Name"= "phone_verified"
+              "Value"= "true"
+>>>>>>> 2059563316d105d63d6cae122f082f76bd3dbe1a
             }
           ],
           "Username" = user.email

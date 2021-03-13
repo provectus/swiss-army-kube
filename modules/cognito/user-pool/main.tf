@@ -58,11 +58,15 @@ resource aws_cognito_user_pool this {
   mfa_configuration = var.mfa_configuration
   sms_authentication_message = "Your code is {####}"
 
+<<<<<<< HEAD
   #TODO Jay - additions for MFA SMS
+=======
+>>>>>>> 2059563316d105d63d6cae122f082f76bd3dbe1a
   alias_attributes = [
     "phone_number"
   ]
 
+<<<<<<< HEAD
   schema {
     attribute_data_type      = "String"
     name                     = "phone_number"
@@ -78,6 +82,8 @@ resource aws_cognito_user_pool this {
   user_pool_add_ons {
     advanced_security_mode = var.advanced_security_mode
   }
+=======
+>>>>>>> 2059563316d105d63d6cae122f082f76bd3dbe1a
 
   dynamic "sms_configuration" {
     for_each = var.mfa_configuration == "OFF" ? [] : list(var.mfa_configuration)
@@ -95,6 +101,17 @@ resource aws_cognito_user_pool this {
     }
   }
 
+  schema {
+    attribute_data_type      = "String"
+    name                     = "phone_number"
+    required                 = true
+    
+    string_attribute_constraints {
+      min_length = 0
+      max_length = 2048
+    }
+  }
+  
 }
 
 resource aws_cognito_user_pool_domain this {
