@@ -1,26 +1,26 @@
 locals {
 
 role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].this_iam_role_arn : var.external_secrets_secret_role_arn
-#TODO Jay for_each = {for pod-default in var.kubeflow_pod-defaults} write out yamls
-pod_default_def = var.pod_default_def != null ? var.pod_default_def : <<EOT
+for_each = {for pod-default in var.kubeflow_pod-defaults: pd.name => pd}
+content = <<EOT
 
 apiVersion: 'kubernetes-client.io/v1'
 kind: ExternalSecret
 metadata:
-  name: ${var.name}
-  namespace: ${var.namespace}
+  name: ${each.value.name}
+  namespace: ${each.value.namespace}
 spec:
   backendType: secretsManager
   roleArn: ${local.role_to_assume_arn}
   data:
-    - key: ${var.key}
-      name: ${var.name}    
+    - key: ${each.value.secret}
+      name: ${each.value.name}    
 ---
 apiVersion: "kubeflow.org/v1alpha1"
 kind: PodDefault
 metadata:
-  name: ${var.name}
-  namespace: ${var.namespace}
+  name: ${each.value.name}
+  namespace: ${each.value.namespace}
 spec:
  selector:
   matchLabels:
@@ -32,6 +32,7 @@ spec:
  volumes:
  - name: git
    secret:
-    secretName: ${var.name}
+    secretName: ${each.value.name}
 EOT
+ filename = "${path.root}/${var.argocd.path}/profiles/profile-${each.value.namespace}-${each.value.name}.yaml" # TODO, this is a hack to make sure the poddefault is rolled out with the Profiles. Should be improved later!
 }
