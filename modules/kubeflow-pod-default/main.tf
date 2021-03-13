@@ -41,7 +41,7 @@ EOT
 
 resource local_file kubeflow_pod-defaults {
   
-role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].this_iam_role_arn : var.external_secrets_secret_role_arn
+#role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].this_iam_role_arn : var.external_secrets_secret_role_arn
 for_each = {for pd in var.kubeflow_pod-defaults: pd.name => pd}
 content = <<EOT
 
@@ -52,7 +52,7 @@ metadata:
   namespace: ${each.value.namespace}
 spec:
   backendType: secretsManager
-  roleArn: ${role_to_assume_arn}
+  roleArn: ${module.iam_assumable_role[0].this_iam_role_arn}
   data:
     - key: ${each.value.secret}
       name: ${each.value.name}    
