@@ -3,10 +3,10 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 module "iam_assumable_role" {
-  depends_on = [ resource.aws_iam_policy]  
+  depends_on = [ resource.aws_iam_policy.this]  
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
   version = "3.0"
-  
+
   for_each = {for pd in var.kubeflow_pod-defaults: pd.name => pd}
 
   trusted_role_arns                 = [var.external_secrets_deployment_role_arn]
