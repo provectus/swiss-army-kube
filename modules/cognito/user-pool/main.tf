@@ -52,17 +52,21 @@ resource aws_cognito_user_pool this {
       email_subject = var.invite_template.email_subject
       sms_message   = var.invite_template.sms_message
     }
+    allow_admin_create_user_only = true
   }
   tags = var.tags
 
   mfa_configuration = var.mfa_configuration
   sms_authentication_message = "Your code is {####}"
 
-  #TODO Jay - additions for MFA SMS
-  alias_attributes = [
-    "phone_number"
+  auto_verified_attributes = [
+    "email"
   ]
 
+  enable_username_case_sensitivity = false  
+
+  #TODO Jay - additions for MFA SMS
+  
   schema {
     attribute_data_type      = "String"
     name                     = "phone_number"

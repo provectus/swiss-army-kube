@@ -53,9 +53,8 @@ metadata:
 spec:
   backendType: secretsManager
   roleArn: ${module.iam_assumable_role[0].this_iam_role_arn}
-  data:
-    - key: ${each.value.secret}
-      name: ${each.value.name}    
+  dataFrom:
+    - key: ${each.value.secret}  
 ---
 apiVersion: "kubeflow.org/v1alpha1"
 kind: PodDefault
