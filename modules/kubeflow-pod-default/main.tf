@@ -56,7 +56,7 @@ metadata:
   namespace: ${each.value.namespace}
 spec:
   backendType: secretsManager
-  roleArn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}_${var.namespace}_${each.value.name}_ext-secret_pod
+  roleArn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}_${each.value.namespace}_${each.value.name}_ext-secret_pod
   data:
     - key: ${each.value.secret}
       name: ${each.value.name}    
