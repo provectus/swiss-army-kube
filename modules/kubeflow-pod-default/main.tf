@@ -3,13 +3,15 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 module "iam_assumable_role" {
+  depends_on = [ resource.aws_iam_policy] 
+  for_each = {for pd in var.kubeflow_pod-defaults: pd.name => pd}
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
   version = "3.0"
   count   = var.external_secrets_secret_role_arn == "" ? 1 : 0
 
   trusted_role_arns                 = [var.external_secrets_deployment_role_arn]
   create_role                       = true
-  role_name                         = "${var.cluster_name}_${var.namespace}_external-secret_pod-default"
+  role_name                         = "${var.cluster_name}_${each.value.namespace}_${each.value.name}_external-secret_pod-default"
   role_requires_mfa                 = false
   custom_role_policy_arns           = [aws_iam_policy.this[0].arn]
   number_of_custom_role_policy_arns = 1
@@ -17,8 +19,9 @@ module "iam_assumable_role" {
 }
 
 resource "aws_iam_policy" "this" {
+  for_each = {for pd in var.kubeflow_pod-defaults: pd.name => pd}
   count = var.external_secrets_secret_role_arn == "" ? 1 : 0
-  name  = "${var.cluster_name}_${var.namespace}_external-secret_pod-default"
+  name  = "${var.cluster_name}_${each.value.namespace}_${each.value.name}_external-secret_pod-default"
   policy = <<-EOT
 {
   "Version": "2012-10-17",
@@ -40,9 +43,11 @@ EOT
 
 
 resource local_file kubeflow_pod-defaults {
-  
-#role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].this_iam_role_arn : var.external_secrets_secret_role_arn
+depends_on = [ module.iam_assumable_role]  
+
 for_each = {for pd in var.kubeflow_pod-defaults: pd.name => pd}
+#TODO LOOP module iam_assumable_role and inject current namespace each.value.namespace
+role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].this_iam_role_arn : var.external_secrets_secret_role_arn
 content = <<EOT
 
 apiVersion: 'kubernetes-client.io/v1'
@@ -52,7 +57,7 @@ metadata:
   namespace: ${each.value.namespace}
 spec:
   backendType: secretsManager
-  roleArn: ${module.iam_assumable_role[0].this_iam_role_arn}
+  roleArn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}_${var.namespace}_external-secret_pod-default
   data:
     - key: ${each.value.secret}
       name: ${each.value.name}    
