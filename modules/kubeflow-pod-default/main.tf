@@ -21,8 +21,7 @@ module "iam_assumable_role" {
 resource "aws_iam_policy" "this" {
   for_each = {for pd in var.kubeflow_pod-defaults: pd.name => pd}
   name  = "${var.cluster_name}_${each.value.namespace}_${each.value.name}_ext-secret_pod"
-  policy = <<-EOT
-
+  policy = <<EOT
 {
   "Version": "2012-10-17",
     "Statement": [
