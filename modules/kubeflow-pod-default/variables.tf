@@ -27,7 +27,7 @@ variable name {
 variable namespace {
   type = string  
   description = "Namespace where PodDefault should be created"
-  namespace = ""
+  default = ""
 }
 
 variable cluster_name {
