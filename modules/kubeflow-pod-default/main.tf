@@ -11,17 +11,18 @@ module "iam_assumable_role" {
 
   trusted_role_arns                 = [var.external_secrets_deployment_role_arn]
   create_role                       = true
-  role_name                         = "${var.cluster_name}_${each.value.namespace}_${each.value.name}_external-secret_pod-default"
+  role_name                         = "${var.cluster_name}_${each.value.namespace}_${each.value.name}_ext-secret_pod"
   role_requires_mfa                 = false
-  custom_role_policy_arns           = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/${var.cluster_name}_${each.value.namespace}_${each.value.name}_external-secret_pod-default"]
+  custom_role_policy_arns           = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/${var.cluster_name}_${each.value.namespace}_${each.value.name}_ext-secret_pod"]
   number_of_custom_role_policy_arns = 1
   tags = var.tags
 }
 
 resource "aws_iam_policy" "this" {
   for_each = {for pd in var.kubeflow_pod-defaults: pd.name => pd}
-  name  = "${var.cluster_name}_${each.value.namespace}_${each.value.name}_external-secret_pod-default"
+  name  = "${var.cluster_name}_${each.value.namespace}_${each.value.name}_ext-secret_pod"
   policy = <<-EOT
+
 {
   "Version": "2012-10-17",
     "Statement": [
@@ -56,7 +57,7 @@ metadata:
   namespace: ${each.value.namespace}
 spec:
   backendType: secretsManager
-  roleArn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}_${var.namespace}_${each.value.name}_external-secret_pod-default
+  roleArn: arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/${var.cluster_name}_${var.namespace}_${each.value.name}_ext-secret_pod
   data:
     - key: ${each.value.secret}
       name: ${each.value.name}    
