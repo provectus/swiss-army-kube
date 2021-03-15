@@ -3,7 +3,7 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 module "iam_assumable_role" {
-  depends_on = [ resource.aws_iam_policy.this]  
+  depends_on = [ aws_iam_policy.this]  
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
   version = "3.0"
 
@@ -42,7 +42,7 @@ EOT
 
 
 resource local_file kubeflow_pod-defaults {
-depends_on = [ module.iam_assumable_role]  
+depends_on = [ iam_assumable_role]  
 
 for_each = {for pd in var.kubeflow_pod-defaults: pd.name => pd}
 #TODO LOOP module iam_assumable_role and inject current namespace each.value.namespace
