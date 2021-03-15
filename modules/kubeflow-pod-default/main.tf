@@ -77,9 +77,5 @@ spec:
    secret:
     secretName: ${each.value.name}
 EOT
-  filename = "${path.root}/${var.argocd.path}/profiles/profile-${each.value.namespace}-${each.value.name}.yaml" # TODO, this is a hack to make sure the poddefault is rolled out with the Profiles. Should be improved later!
-
-  #content = local.pod_default_def
-  #filename = "${path.root}/${var.argocd.path}/profiles/profile-${var.namespace}-${var.name}.yaml" # TODO, this is a hack to make sure the poddefault is rolled out with the Profiles. Should be improved later!
-
+  filename = "${path.root}/${var.argocd.path}/profiles/profile-${each.value.namespace}-${each.value.name}.yaml"
 }
