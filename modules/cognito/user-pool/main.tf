@@ -75,8 +75,6 @@ resource aws_cognito_user_pool this {
     require_uppercase                = true
     temporary_password_validity_days = 7
   }
-
-  #TODO Jay - additions for MFA SMS
   
   schema {
     attribute_data_type      = "String"

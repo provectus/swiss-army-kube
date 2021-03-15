@@ -45,8 +45,6 @@ resource local_file kubeflow_pod-defaults {
 depends_on = [ module.iam_assumable_role]  
 
 for_each = {for pd in var.kubeflow_pod-defaults: pd.name => pd}
-#TODO LOOP module iam_assumable_role and inject current namespace each.value.namespace
-#role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].this_iam_role_arn : var.external_secrets_secret_role_arn
 content = <<EOT
 
 apiVersion: 'kubernetes-client.io/v1'
