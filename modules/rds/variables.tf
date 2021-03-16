@@ -64,8 +64,7 @@ variable "rds_database_engine_version" {
 
 variable "rds_database_major_engine_version" {
   type        = string
-  description = "Major Database enjine version"
-  default     = "9"
+  description = "Major Database engine version"
 }
 
 variable "rds_database_instance" {
@@ -137,3 +136,37 @@ variable "rds_database_tags" {
   description = "Additional tags for rds instance"
   type        = map(string)
 }
+
+
+
+variable "rds_iam_database_authentication_enabled" {
+  default     = false
+  description = "Set to true to authenticate to RDS using an IAM role"
+  type        = bool
+}
+
+
+variable "rds_enabled_cloudwatch_logs_exports" {
+  default     = []
+  description = "List of cloudwatch log types to enable"
+  type        = list(string)
+}
+variable "rds_instance_name" {
+  description = "Name of the RDS instance"
+  type        = string
+}
+
+
+variable "rds_publicly_accessible" {
+  description = "Set to true to enable accessing the RDS DB from outside the VPC"
+  default = false
+  type    = bool
+}
+
+
+variable worker_security_group_id {
+  description = "ID of the EKS workers' security group"
+  type = string
+
+}
+
