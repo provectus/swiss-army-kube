@@ -1,10 +1,3 @@
-<<<<<<< HEAD
-
-
-resource local_file mlflow_def {
-  content = local.mlflow_def
-  filename = "${path.root}/${var.argocd.path}/mlflow-defs/mlflow_def.yaml"
-=======
 data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
@@ -66,56 +59,33 @@ EOT
 resource local_file mlflow_def {
   content = local.mlflow_def
   filename = "${path.root}/${var.argocd.path}/mlflow-defs/${var.namespace}/mlflow-def.yaml"
->>>>>>> pr/168
 }
 
 
 resource local_file namespace {
-<<<<<<< HEAD
-  content = local.namespace
-  filename = "${path.root}/${var.argocd.path}/mlflow-namespace.yaml"
-}
-
-
-
-
-=======
   content = local.namespace_def
   filename = "${path.root}/${var.argocd.path}/mlflow-defs/${var.namespace}/mlflow-namespace.yaml"
 }
 
 
->>>>>>> pr/168
 resource local_file mlflow {
   content = yamlencode({
     "apiVersion" = "argoproj.io/v1alpha1"
     "kind"       = "Application"
     "metadata" = {
-<<<<<<< HEAD
-      "name"      = "mlflow"
-=======
       "name"      = "${var.namespace}-mlflow"
->>>>>>> pr/168
       "namespace" = var.argocd.namespace
     }
     "spec" = {
       "destination" = {
-<<<<<<< HEAD
-        "namespace" = "mlflow"
-=======
         "namespace" = var.namespace
->>>>>>> pr/168
         "server"    = "https://kubernetes.default.svc"
       }
       "project" = "default"
       "source" = {
         "repoURL"        = var.argocd.repository
         "targetRevision" = var.argocd.branch
-<<<<<<< HEAD
-        "path"           = "${var.argocd.full_path}/mlflow-defs"
-=======
         "path"           = "${var.argocd.full_path}/mlflow-defs/${var.namespace}"
->>>>>>> pr/168
       }
       "syncPolicy" = {
         "syncOptions" = [
@@ -128,9 +98,5 @@ resource local_file mlflow {
       }
     }
   })
-<<<<<<< HEAD
-  filename = "${path.root}/${var.argocd.path}/mlflow.yaml"
-=======
   filename = "${path.root}/${var.argocd.path}/mlflow-${var.namespace}.yaml"
->>>>>>> pr/168
 }

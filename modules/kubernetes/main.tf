@@ -27,14 +27,6 @@ module "eks" {
 
   map_users = var.aws_auth_user_mapping
   map_roles = var.aws_auth_role_mapping
-<<<<<<< HEAD
-
-  tags = local.tags
-
-  workers_additional_policies = [
-    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
-  ]
-=======
 
   tags = local.tags
 
@@ -52,7 +44,6 @@ module "eks" {
     ]
   )
   
->>>>>>> pr/168
 
   workers_group_defaults = {
     additional_userdata = "sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm && sudo systemctl enable amazon-ssm-agent && sudo systemctl start amazon-ssm-agent"
@@ -68,18 +59,9 @@ module "eks" {
   worker_groups_launch_template = var.worker_groups_launch_template
 }
 
-<<<<<<< HEAD
-# OIDC cluster EKS settings
-resource "aws_iam_openid_connect_provider" "cluster" {
-  client_id_list  = ["sts.amazonaws.com"]
-  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da2b0ab7280"]
-  url             = module.eks.cluster_oidc_issuer_url
-}
-=======
 # # OIDC cluster EKS settings
 # resource "aws_iam_openid_connect_provider" "cluster" {
 #   client_id_list  = ["sts.amazonaws.com"]
 #   thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da2b0ab7280"]
 #   url             = module.eks.cluster_oidc_issuer_url
 # }
->>>>>>> pr/168

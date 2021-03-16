@@ -14,8 +14,6 @@ variable argocd {
   }
 }
 
-<<<<<<< HEAD
-=======
 
 variable "pipelines_role_to_assume_role_arn" {
   type  = string
@@ -33,7 +31,6 @@ variable "external_secrets_secret_role_arn" {
   description = "The ARN of the role that should be assumed by the external-secret deployment when creating the MLFlow ExternalSecret. This role must be assumable by the role that has been attached to external-secret deployment's service account. If left blank, a role will be created."
 }
 
->>>>>>> pr/168
 variable ingress_annotations {
   type        = map(string)
   description = "A set of annotations for Kubeflow Ingress"
@@ -54,8 +51,6 @@ variable ref {
 
 variable namespace {
   type        = string
-<<<<<<< HEAD
-=======
   description = "The default name of the namespace to deploy to"
   default     = "kubeflow"
 }
@@ -63,7 +58,6 @@ variable namespace {
 
 variable namespace_def {
   type        = string
->>>>>>> pr/168
   description = "The Namespace resource definition"
   default     = null //default is constructed dynmaically. See locals.tf
 }
@@ -87,13 +81,6 @@ variable kfdef {
   default     = null //default is constructed dynmaically. See locals.tf
 }
 
-<<<<<<< HEAD
-
-  
-
-
-  
-=======
 variable rds_username {
   type = string
   description = "Username of the RDS database that Kubeflow uses as its backend"
@@ -163,4 +150,3 @@ variable cluster_name {
   type = string  
   description = "Name of the EKS cluster"
 }
->>>>>>> pr/168

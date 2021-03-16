@@ -1,8 +1,3 @@
-
-
-<<<<<<< HEAD
-locals {
-=======
 locals {  
   secret_data = { 
     "rds_host" = var.rds_host
@@ -50,7 +45,6 @@ ${local.external_secret_data_string}
 EOT
 
 
->>>>>>> pr/168
   ingress = var.ingress != null ? var.ingress : yamlencode({
     "apiVersion" = "networking.k8s.io/v1beta1"
     "kind"       = "Ingress"
@@ -90,19 +84,11 @@ EOT
     }
   })
 
-<<<<<<< HEAD
-namespace = var.namespace != null ? var.namespace : yamlencode({
-    "apiVersion" = "v1"
-    "kind"       = "Namespace"
-    "metadata" = {
-      "name" = "kubeflow"
-=======
 namespace_def = var.namespace_def != null ? var.namespace_def : yamlencode({
     "apiVersion" = "v1"
     "kind"       = "Namespace"
     "metadata" = {
       "name" = var.namespace
->>>>>>> pr/168
       "labels" = {
         "control-plane"   = "kubeflow"
         "istio-injection" = "enabled"
@@ -125,11 +111,7 @@ kfdef = var.kfdef != null ? var.kfdef : yamlencode({
     "apiVersion" = "kfdef.apps.kubeflow.org/v1"
     "kind"       = "KfDef"
     "metadata" = {
-<<<<<<< HEAD
-      "namespace" = "kubeflow"
-=======
       "namespace" = var.namespace
->>>>>>> pr/168
       "name"      = "kubeflow"
     }
     "spec" = {
@@ -234,8 +216,6 @@ kfdef = var.kfdef != null ? var.kfdef : yamlencode({
       "version" = "v1.2-branch"
     }
   })  
-<<<<<<< HEAD
-=======
 
   configs = <<EOT
 apiVersion: v1
@@ -395,5 +375,4 @@ data:
     }
 EOT
 
->>>>>>> pr/168
 }

@@ -65,41 +65,10 @@ variable "aws_auth_role_mapping" {
   default = []
 }
 
-<<<<<<< HEAD
-
-# On-demand instance
-variable "on_demand_common_max_cluster_size" {
-  type        = string
-  description = "Max number of on demand instances in EKS autoscaling group"
-  default     = "2"
-}
-
-variable "on_demand_common_min_cluster_size" {
-  type        = string
-  description = "Min number of on demand instances in EKS autoscaling group"
-  default     = "1"
-}
-
-variable "on_demand_common_desired_capacity" {
-  type        = string
-  description = "Desired number of on_demand instances in EKS autoscaling group"
-  default     = "1"
-}
-
-variable "on_demand_common_instance_type" {
-  description = "EC2 on_demand Instance type"
-  default     = "m5.large"
-}
-
-variable "on_demand_common_override_instance_types" {
-  description = "EC2 on_demand override instance types"
-  default     = ["m5.large", "m5.xlarge", "m5.2xlarge"]
-=======
 variable enable_secret_encryption {
   type        = bool
   description = "Set to true to create a KMS key to be used as a CMK (Cluster Master Key) for secret encryption"
   default     = false
->>>>>>> pr/168
 }
 
 variable enable_irsa {

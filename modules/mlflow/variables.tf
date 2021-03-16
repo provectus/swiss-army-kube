@@ -9,8 +9,6 @@ variable argocd {
   }
 }
 
-<<<<<<< HEAD
-=======
 
 variable "external_secrets_deployment_role_arn" {
   type  = string
@@ -47,30 +45,18 @@ variable secret_prefix {
   default = "eks/mlflow/"
 
 }
->>>>>>> pr/168
 variable mlflow_def {
   type        = string
   description = "The resource definition for MLFlow"
   default = null //default is constructed dynmaically. See locals.tf
 }
 
-<<<<<<< HEAD
-variable namespace {
-=======
 variable namespace_def {
->>>>>>> pr/168
   type        = string
   description = "The Namespace definition for MLFlow"
   default     = null //default is constructed dynmaically. See locals.tf
 }
 
-<<<<<<< HEAD
-
-  
-
-
-  
-=======
 variable rds_username {
   type = string
   description = "Username of the RDS database that MLFlow uses as its backend"
@@ -105,4 +91,3 @@ variable tags {
 }
 
 
->>>>>>> pr/168

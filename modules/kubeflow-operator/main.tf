@@ -1,5 +1,3 @@
-<<<<<<< HEAD
-=======
 data "aws_caller_identity" "current" {}
 
 data "aws_region" "current" {}
@@ -65,7 +63,6 @@ EOT
 
 
 
->>>>>>> pr/168
 
 
 resource local_file kubeflow_operator {
@@ -140,11 +137,7 @@ resource local_file kubeflow {
 
 
 resource local_file namespace {
-<<<<<<< HEAD
-  content  = local.namespace
-=======
   content  = local.namespace_def
->>>>>>> pr/168
   filename = "${path.root}/${var.argocd.path}/kubeflow-namespace.yaml"
 }
 
@@ -162,8 +155,6 @@ resource local_file issuer {
   content  = local.issuer
   filename = "${path.root}/${var.argocd.path}/kfdefs/issuer.yaml"
 }
-<<<<<<< HEAD
-=======
 
 resource local_file configs {
   content  = local.configs
@@ -226,4 +217,3 @@ spec:
   filename = "${path.root}/${var.argocd.path}/kfdefs/create-database-${each.key}.yaml"
 }
 
->>>>>>> pr/168

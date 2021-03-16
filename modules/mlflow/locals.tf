@@ -1,12 +1,4 @@
 
-<<<<<<< HEAD
-locals {  
-  namespace = var.namespace != null ? var.namespace : yamlencode({
-      "apiVersion" = "v1"
-      "kind"       = "Namespace"
-      "metadata" = {
-        "name" = "mlflow"
-=======
 
 locals {  
 
@@ -18,24 +10,18 @@ locals {
       "kind"       = "Namespace"
       "metadata" = {
         "name" = var.namespace
->>>>>>> pr/168
         "labels" = {
           "control-plane"   = "kubeflow"
           "istio-injection" = "enabled"
         }
-<<<<<<< HEAD
-=======
         # "annotations" = {
         #   "iam.amazonaws.com/permitted" = var.external_secrets_role_arn //restrict this namespace to only being able to assume this arn (wildcards are also possible, e.g. iam.amazonaws.com/permitted: "arn:aws:iam::123456789012:role/.*")
         # }
->>>>>>> pr/168
       }
     })
 
 
   mlflow_def = var.mlflow_def != null ? var.mlflow_def : <<EOT
-<<<<<<< HEAD
-=======
 apiVersion: 'kubernetes-client.io/v1'
 kind: ExternalSecret
 metadata:
@@ -85,18 +71,13 @@ spec:
       restartPolicy: Never
   backoffLimit: 5
 ---
->>>>>>> pr/168
 apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: mlflow
   labels:
     app: mlflow
-<<<<<<< HEAD
-  namespace: mlflow
-=======
   namespace: ${var.namespace}
->>>>>>> pr/168
 spec:
   replicas: 1
   selector:
@@ -112,28 +93,16 @@ spec:
       containers:
         - name: mlflow
           securityContext: {}
-<<<<<<< HEAD
-          image: "kschriek/mlflow-server:latest"
-=======
           image: "public.ecr.aws/v5l9k3w9/mlflow-server:latest"
->>>>>>> pr/168
           imagePullPolicy: Always
           args:
             - --host=0.0.0.0
             - --port=5000
-<<<<<<< HEAD
-            - --backend-store-uri=mysql://$(rds_username):$(rds_password)@$(rds_host):$(rds_port)/mlflow
-            - --default-artifact-root=s3://$(s3_bucket)/modeling/experiments
-          envFrom:         
-          - secretRef:
-              name: aws-storage-secret
-=======
             - --backend-store-uri="mysql://$(rds_username):$(rds_password)@${var.rds_host}:${var.rds_port}/mlflow"
             - --default-artifact-root=s3://${var.s3_bucket_name}/modeling/experiments
           envFrom:         
           - secretRef:
               name: mlflow-secret
->>>>>>> pr/168
           ports:
             - name: http
               containerPort: 5000
@@ -152,11 +121,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: mlflow
-<<<<<<< HEAD
-  namespace: mlflow
-=======
   namespace: ${var.namespace}
->>>>>>> pr/168
 spec:
   selector:
     app: mlflow
@@ -193,11 +158,7 @@ apiVersion: v1
 kind: ServiceAccount
 metadata:
   name: mlflow
-<<<<<<< HEAD
-  namespace: mlflow
-=======
   namespace: ${var.namespace}
->>>>>>> pr/168
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1
 kind: Role
@@ -205,11 +166,7 @@ metadata:
   labels:
     app: mlflow
   name: mlflow
-<<<<<<< HEAD
-  namespace: mlflow
-=======
   namespace: ${var.namespace}
->>>>>>> pr/168
 rules: []
 ---
 apiVersion: rbac.authorization.k8s.io/v1beta1

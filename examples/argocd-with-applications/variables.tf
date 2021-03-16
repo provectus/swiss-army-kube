@@ -17,7 +17,7 @@ variable "availability_zones" {
 }
 
 variable "zone_id" {
-  default     = ""
+  default     = "Z04917561CQAI9UAF27D6"
   type        = string
   description = "Default zone id for root domain"
 }
