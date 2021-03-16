@@ -23,6 +23,34 @@ resource "kubernetes_namespace" "this" {
   depends_on = [
     var.module_depends_on
   ]
+  name          = "prometheus-operator"
+  repository    = "https://charts.helm.sh/stable"
+  chart         = "prometheus-operator"
+  version       = "9.3.1"
+  namespace     = kubernetes_namespace.monitoring.metadata[0].name
+  recreate_pods = true
+  timeout       = 1200
+
+
+  values = [templatefile("${path.module}/values/prometheus.yaml",
+    {
+      alertmanager_enabled         = true
+      alertmanager_ingress_enabled = false
+      alertmanager_host            = "alertmanager.${var.domains[0]}"
+      certmanager_issuer           = "letsencrypt-prod"
+      grafana_enabled              = true
+      grafana_version              = "7.1.1"
+      grafana_pvc_enabled          = true
+      grafana_ingress_enabled      = true
+      grafana_admin_password       = random_password.grafana_password.result
+      grafana_url                  = "grafana.${var.domains[0]}"
+      grafana_google_auth          = var.grafana_google_auth
+      grafana_allowed_domains      = var.grafana_allowed_domains
+      prometheus_enabled           = true
+      prometheus_ingress_enabled   = false
+      prometheus_url               = "prometheus.${var.domains[0]}"
+    })
+  ]
   count = var.namespace == "" ? 1 - local.argocd_enabled : 0
   metadata {
     name = var.namespace_name

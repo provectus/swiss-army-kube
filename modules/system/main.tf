@@ -1,18 +1,26 @@
 data "aws_region" "current" {}
 
-
 data "aws_vpc" "main" {
   id = var.vpc_id
 }
 
-# Wait initial eks
-resource "null_resource" "wait-eks" {
+resource null_resource wait-eks {
   depends_on = [
     var.module_depends_on
   ]
-  provisioner "local-exec" {
+  provisioner local-exec {
     command = "until kubectl --kubeconfig ${path.root}/${var.config_path} -n kube-system get pods >/dev/null 2>&1;do echo 'Waiting for EKS API';sleep 5;done"
   }
+}
+
+resource aws_iam_openid_connect_provider cluster {
+  depends_on = [
+    var.module_depends_on,
+    null_resource.wait-eks
+  ]
+  client_id_list  = ["sts.amazonaws.com"]
+  thumbprint_list = ["9e99a48a9960b14926bb7f3b02e22da2b0ab7280"]
+  url             = var.cluster_oidc_url
 }
 
 # Install NVIDIA gpu support
@@ -37,6 +45,9 @@ resource "helm_release" "nvidia" {
     file("${path.module}/values/nvidia-device-plugin.yaml"),
   ]
 }
+
+# Enabling IAM Roles for Service Accounts
+data "aws_caller_identity" "current" {}
 
 # Route53 hostedzone
 # TODO: need create ns records in main zone
@@ -201,30 +212,6 @@ resource "aws_iam_role_policy_attachment" "cert_manager" {
   policy_arn = aws_iam_policy.cert_manager.arn
 }
 
-# Attach policy external_dns to role external_dns
-resource "aws_iam_role_policy_attachment" "external_dns" {
-  depends_on = [
-    var.module_depends_on,
-    aws_iam_policy.cert_manager,
-    aws_iam_role.external_dns,
-    null_resource.wait-eks
-  ]
-  role       = aws_iam_role.external_dns.name
-  policy_arn = aws_iam_policy.cert_manager.arn
-}
-
-
-# Deploy custom resources for cert-manager
-resource "null_resource" "cert-manager-crd" {
-  depends_on = [
-    null_resource.wait-eks,
-    var.module_depends_on
-  ]
-  provisioner "local-exec" {
-    command = "kubectl --kubeconfig ${var.config_path} apply --validate=false -f https://raw.githubusercontent.com/jetstack/cert-manager/release-0.11/deploy/manifests/00-crds.yaml"
-  }
-}
-
 # Create namespace cert-manager
 resource "kubernetes_namespace" "cert-manager" {
   depends_on = [
@@ -238,37 +225,6 @@ resource "kubernetes_namespace" "cert-manager" {
     }
 
     name = "cert-manager"
-  }
-}
-
-# Deploy external_dns to manage route53 domain zone
-resource "helm_release" "external-dns" {
-  depends_on = [
-    var.module_depends_on,
-    aws_iam_role.cert_manager,
-    null_resource.wait-eks
-  ]
-  repository = "https://charts.bitnami.com/bitnami"
-  name       = "external-dns"
-  chart      = "external-dns"
-  version    = "3.1.0"
-  namespace  = "kube-system"
-  timeout    = 1200
-  values = [
-    file("${path.module}/values/external-dns.yaml"),
-  ]
-
-  dynamic "set" {
-    for_each = var.domains
-    content {
-      name  = "domainFilters[${set.key}]"
-      value = set.value
-    }
-  }
-
-  set {
-    name  = "aws.region"
-    value = data.aws_region.current.name
   }
 }
 
