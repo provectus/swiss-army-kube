@@ -30,3 +30,9 @@ output "workers_launch_template_ids" {
   description = "IDs of the worker launch templates."
   value       = module.eks.workers_launch_template_ids.*
 }
+
+output "worker_security_group_id" {
+  description = "ID of the worker security groups."
+  value       = module.eks.worker_security_group_id
+}
+
