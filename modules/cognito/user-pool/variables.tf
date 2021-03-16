@@ -17,6 +17,27 @@ variable tags {
   default     = {}
 }
 
+<<<<<<< HEAD
+=======
+variable mfa_configuration {
+  type        = string
+  description = "Turn MFA on or off. (Must be on of: ON, OFF, OPTIONAL)"
+  default     = "ON"
+}
+
+variable advanced_security_mode {
+  type        = string
+  description = "Sets Advanced Security for a user pool (OFF, AUDIT, ENFORCED)"
+  default     = "ENFORCED"
+}
+
+variable acm_arn {
+  type = string
+  description = "The ARN of an ACM certificate to attach to the Load Balancer"
+  default = ""
+}
+
+>>>>>>> pr/168
 variable invite_template {
   type        = map(string)
   description = "A template for the invite email with credentials"

@@ -9,15 +9,41 @@ resource kubernetes_namespace this {
   }
 }
 
+
+
+resource kubernetes_secret sync_repo_secret {
+
+  depends_on = [kubernetes_namespace.this]
+
+  metadata {
+    name = local.sync_repo_credentials_secret_name
+    namespace = "argocd"
+    labels = {
+      "app.kubernetes.io/name": local.sync_repo_credentials_secret_name
+      "app.kubernetes.io/part-of": "argocd"
+    }
+  }
+
+
+  data = { 
+    "username" = var.sync_repo_https_username
+    "password" = var.sync_repo_https_password
+    "sshPrivateKey" = var.sync_repo_ssh_private_key
+  }
+
+  type = "kubernetes.io/basic-auth"
+}
+
+
 resource helm_release this {
   depends_on = [
     kubernetes_namespace.this
   ]
 
   name          = local.name
-  repository    = local.repository
-  chart         = local.chart
-  version       = var.chart_version
+  repository    = local.helm_repo
+  chart         = local.helm_chart
+  version       = var.helm_chart_version
   namespace     = kubernetes_namespace.this.metadata[0].name
   recreate_pods = true
   timeout       = 1200
@@ -37,7 +63,7 @@ data aws_eks_cluster this {
 
 module iam_assumable_role_admin {
   source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
-  version                       = "~> v3.0"
+  # version                       = "~> v2.6.0"
   create_role                   = true
   role_name                     = "${var.cluster_name}_argocd"
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
@@ -104,7 +130,7 @@ resource local_file this {
     helm_release.this
   ]
   content  = yamlencode(local.application)
-  filename = "${path.root}/${var.apps_dir}/${local.name}.yaml"
+  filename = "${path.root}/${var.sync_apps_dir}/${local.name}.yaml"
 }
 
 resource random_password this {
@@ -132,27 +158,58 @@ resource aws_kms_ciphertext client_secret {
 }
 
 locals {
-  repoURL    = "https://${var.vcs}/${var.owner}/${var.repository}"
-  repository = "https://argoproj.github.io/argo-helm"
-  name       = "argocd"
-  chart      = "argo-cd"
+  sync_repo_credentials_secret_name  = "argocd-repo-credentials-secret"
+  helm_repo                  = "https://argoproj.github.io/argo-helm"
+  name                       = "argocd"
+  helm_chart                 = "argo-cd"
+
+
+
+  ssh_secrets_conf = <<EOT
+- url: ${var.sync_repo_url}
+  sshPrivateKeySecret:
+    name: ${local.sync_repo_credentials_secret_name}
+    key: sshPrivateKey
+  EOT
+
+  https_secrets_conf = <<EOT
+- url: ${var.sync_repo_url}
+  usernameSecret:
+    name: ${local.sync_repo_credentials_secret_name}
+    key: username
+  passwordSecret:
+    name: ${local.sync_repo_credentials_secret_name}
+    key: password
+  EOT
+
+  secrets_conf = var.sync_repo_ssh_private_key == "" ? local.https_secrets_conf : local.ssh_secrets_conf
+
+
   init_conf = {
     "server.additionalApplications[0].name"                          = "swiss-army-kube"
     "server.additionalApplications[0].namespace"                     = kubernetes_namespace.this.metadata[0].name
     "server.additionalApplications[0].project"                       = "default"
-    "server.additionalApplications[0].source.repoURL"                = local.repoURL
-    "server.additionalApplications[0].source.targetRevision"         = var.branch
-    "server.additionalApplications[0].source.path"                   = "${var.path_prefix}${var.apps_dir}"
+    "server.additionalApplications[0].source.repoURL"                = var.sync_repo_url
+    "server.additionalApplications[0].source.targetRevision"         = var.sync_branch
+    "server.additionalApplications[0].source.path"                   = "${var.sync_path_prefix}${var.sync_apps_dir}"
     "server.additionalApplications[0].source.plugin.name"            = "decryptor"
     "server.additionalApplications[0].destination.server"            = "https://kubernetes.default.svc"
     "server.additionalApplications[0].destination.namespace"         = kubernetes_namespace.this.metadata[0].name
     "server.additionalApplications[0].syncPolicy.automated.prune"    = "true"
     "server.additionalApplications[0].syncPolicy.automated.selfHeal" = "true"
+
   }
+
   conf = {
+    "configs.secret.createSecret" = true
+    "configs.secret.githubSecret" = var.github_secret
+    "configs.secret.gitlabSecret" = var.gitlab_secret
+    "configs.secret.bitbucketServerSecret" = var.bitbucket_server_secret
+    "configs.secret.bitbucketUUID" = var.bitbucket_uuid
+    "configs.secret.gogsSecret" = var.gogs_secret
+
     "installCRDs" = "false"
     "dex.enabled" = "false"
-
     "global.securityContext.fsGroup"                                       = "999"
     "repoServer.env[0].name"                                               = "AWS_DEFAULT_REGION"
     "repoServer.env[0].value"                                              = data.aws_region.current.name
@@ -164,6 +221,8 @@ locals {
     "repoServer.volumes[0].configMap.items[0].path"                        = "decryptor"
     "repoServer.volumeMounts[0].name"                                      = "decryptor"
     "repoServer.volumeMounts[0].mountPath"                                 = "/opt/decryptor/bin"
+
+    "server.config.repositories"                                           = local.secrets_conf
     "server.config.configManagementPlugins" = yamlencode(
       [{
         "name" = "decryptor"
@@ -282,9 +341,9 @@ EOF
       }
       "project" = "default"
       "source" = {
-        "repoURL"        = local.repository
-        "targetRevision" = var.chart_version
-        "chart"          = local.chart
+        "repoURL"        = local.helm_repo
+        "targetRevision" = var.helm_chart_version
+        "chart"          = local.helm_chart
         "helm" = {
           "parameters" = local.values
         }

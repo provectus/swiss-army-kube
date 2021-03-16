@@ -10,3 +10,5 @@ env:
 serviceAccount:
   annotations: 
     eks.amazonaws.com/role-arn: ${aws_assume_role_arn}
+  
+fullnameOverride: external-secrets

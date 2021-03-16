@@ -69,7 +69,7 @@ module "kubernetes" {
 
   on_demand_gpu_instance_type = "g4dn.xlarge"
 }
-#
+
 module "system" {
   depends_on = [module.network.vpc_id, module.kubernetes.cluster_name]
   source            = "../../modules/system"
@@ -84,7 +84,7 @@ module "system" {
   mainzoneid         = var.mainzoneid
   cert_manager_email = var.cert_manager_email
   cluster_oidc_url   = module.kubernetes.cluster_oidc_url
-  cluster_oidc_arn   = module.kubernetes.cluster_output.oidc_provider_arn
+  cluster_oidc_arn   = module.kubernetes.oidc_provider_arn
   cluster_roles      = []
 }
 #
@@ -102,7 +102,7 @@ module "system" {
 
 # module "acm" {
 #   source  = "terraform-aws-modules/acm/aws"
-#   version = "~> v2.0"
+#   version = "v2.0"
 
 #  domain_name               = "${var.cluster_name}.edu.provectus.io"
 #  subject_alternative_names = ["*.${var.cluster_name}.edu.provectus.io"]

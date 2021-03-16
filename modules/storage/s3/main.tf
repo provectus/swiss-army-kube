@@ -84,7 +84,11 @@ EOT
 
 module "s3_role" {
   source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
+<<<<<<< HEAD
   version = "~> 3.0"
+=======
+  version = "3.0"
+>>>>>>> pr/168
 
   trusted_role_arns = var.trusted_role_arns
 

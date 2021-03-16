@@ -1,4 +1,4 @@
-variable chart_version {
+variable helm_chart_version {
   type        = string
   description = "An ArgoCD Helm Chart version"
   default     = "2.7.0"
@@ -16,20 +16,47 @@ variable module_depends_on {
   description = "A dependency list"
 }
 
-variable branch {
+variable sync_branch {
   type        = string
-  description = "A GitHub reference"
+  description = "The branch or tag (ref) from which to sync"
 }
 
-variable repository {
+variable sync_path_prefix {
   type        = string
-  description = "A GitHub repository wich would be used for IaC needs"
+  description = "A path inside a repository"
+  default     = ""
 }
 
-variable owner {
+variable sync_apps_dir {
   type        = string
-  description = "An owner of GitHub repository"
+  description = "A folder for ArgoCD apps"
+  default     = "apps"
 }
+
+variable sync_repo_url {
+  type        = string
+  description = "The URL of the repo to sync from"
+}
+
+variable sync_repo_ssh_private_key {
+  type        = string
+  description = "An SSH key for a private Repo from which to sync"
+  default     = ""
+}
+
+variable sync_repo_https_username {
+  type        = string
+  description = "An HTTPS username for a private Repo from which to sync"
+  default     = ""
+}
+
+
+variable sync_repo_https_password {
+  type        = string
+  description = "An HTTPS password (or token) for a private Repo from which to sync"
+  default     = ""
+}
+
 
 variable cluster_name {
   type        = string
@@ -41,23 +68,10 @@ variable domains {
   description = "A list of domains to use"
 }
 
-variable vcs {
-  type        = string
-  description = ""
-  default     = "github.com"
-}
 
-variable path_prefix {
-  type        = string
-  description = "A path inside a repository"
-  default     = ""
-}
 
-variable apps_dir {
-  type        = string
-  description = "A folder for ArgoCD apps"
-  default     = "apps"
-}
+
+
 
 variable ingress_annotations {
   type        = map(string)
@@ -80,3 +94,40 @@ variable tags {
   type = map(string)
   default = {}
 }
+
+
+
+variable github_secret {
+  type        = string
+  description = "A secret for GitHub Webhooks"
+  default     = ""
+}
+
+
+variable gitlab_secret {
+  type        = string
+  description = "A secret for GitLab Webhooks"
+  default     = ""
+}
+
+
+variable bitbucket_server_secret {
+  type        = string
+  description = "A secret for BitBucket Server Webhooks"
+  default     = ""
+}
+
+
+variable bitbucket_uuid {
+  type        = string
+  description = "A secret for Bitbucket Webhooks"
+  default     = ""
+}
+
+
+variable gogs_secret {
+  type        = string
+  description = "A secret for Gogs Webhooks"
+  default     = ""
+}
+

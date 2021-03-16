@@ -22,9 +22,14 @@ variable "poller_interval" {
   default     = "30000"
 }
 
-variable "cluster_output" {
-  type        = map(string)
-  description = "Cluster output object from Kubernetes module"
+variable "cluster_name" {
+  type        = string
+  description = "Name of the EKS cluster"
+}
+
+variable "cluster_oidc_url" {
+  type        = string
+  description = "oidc issuer url of the eks cluster"
 }
 
 variable "chart_repository" {
@@ -40,7 +45,15 @@ variable "chart_values" {
 
 variable "aws_assume_role_arn" {
   default     = ""
-  description = "A role to assume"
+  description = "A role to assume. If left blank a new role will be created"
+}
+
+variable "secret_manager_full_access" {
+  default     = false
+  description = <<EOT
+  By setting this to true, the assumable role that is created for the Service Account attached to the External-Secrets application will have full access to all AWS Sercret Manager keys prefixed the name of the cluster. 
+  We recommend setting this to false and instead creating roles with fine-granular access policies for each ExternalSecret you define, and allow the role created here to assume those roles.
+  EOT
 }
 
 variable "chart_parameters" {

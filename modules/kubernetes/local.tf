@@ -1,9 +1,13 @@
 locals {
+<<<<<<< HEAD
 
+=======
+>>>>>>> pr/168
   tags = var.tags != null ? var.tags : {
     Environment = var.environment
     Project     = var.project
   }
+<<<<<<< HEAD
 
 
   workers_additional_policies = flatten(
@@ -146,4 +150,12 @@ locals {
       ]
     }
   })
+=======
+
+  workers_additional_policies = flatten(
+    [
+      ["arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"], var.workers_additional_policies
+    ]
+  )
+>>>>>>> pr/168
 }
