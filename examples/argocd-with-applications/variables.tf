@@ -5,21 +5,21 @@ variable "cluster_name" {
 }
 
 variable "region" {
-  default     = "eu-north-1"
+  default     = "eu-central-1"
   type        = string
   description = "Set default region"
 }
 
 variable "availability_zones" {
-  default     = ["eu-north-1a", "eu-north-1b"]
+  default     = ["eu-central-1a", "eu-central-1b"]
   type        = list(any)
-  description = "Availability zones for project"
+  description = "Availability zones for project, minimum 2"
 }
 
 variable "zone_id" {
-  default     = "Z04917561CQAI9UAF27D6"
+  default     = ""
   type        = string
-  description = "Default zone id for root domain"
+  description = "Default zone id for root domain" #like Z04917561CQAI9UAF27D6
 }
 
 variable "environment" {
@@ -35,16 +35,17 @@ variable "project" {
 }
 
 variable "domain_name" {
-  default     = "edu.provectus.io"
+  default     = "example.com"
   type        = string
   description = "Default domain name"
 }
 
+#Argocd sync repository
 variable "argocd" {
   default = {
     repository = "swiss-army-kube"
-    branch     = "feature/kubernetes-1.18"
-    owner      = "gfrntz"
+    branch     = "master"
+    owner      = "provectus"
   }
   type        = map(string)
   description = "A set of values for enabling deployment through ArgoCD"
