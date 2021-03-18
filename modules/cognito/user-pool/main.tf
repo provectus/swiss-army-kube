@@ -1,18 +1,30 @@
-resource "aws_cognito_user_pool" "this" {
+resource aws_cognito_user_pool this {
   name = var.cluster_name
+  admin_create_user_config {
+    invite_message_template {
+      email_message = var.invite_template.email_message
+      email_subject = var.invite_template.email_subject
+      sms_message   = var.invite_template.sms_message
+    }
+  }
+  tags = var.tags
 
-  tags = vat.tags
+  account_recovery_setting {
+    recovery_mechanism {
+      name     = "verified_email"
+      priority = 1
+    }
+  }
+
 }
 
-resource "aws_cognito_user_pool_domain" "this" {
+resource aws_cognito_user_pool_domain this {
   domain          = "auth.${var.domain}"
   certificate_arn = module.cognito_acm.this_acm_certificate_arn
   user_pool_id    = aws_cognito_user_pool.this.id
 }
 
-# Z2FDTNDATAQYW2 is always the hosted zone ID when you create an alias record
-# that routes traffic to a CloudFront distribution.
-resource "aws_route53_record" "this" {
+resource aws_route53_record this {
   name    = aws_cognito_user_pool_domain.this.domain
   type    = "A"
   zone_id = var.zone_id
@@ -23,8 +35,7 @@ resource "aws_route53_record" "this" {
   }
 }
 
-# AWS Cognito expects existing of DNS record that match with Route53 hosted zone
-resource "aws_route53_record" "root" {
+resource aws_route53_record root {
   name    = var.domain
   type    = "A"
   zone_id = var.zone_id
@@ -32,22 +43,22 @@ resource "aws_route53_record" "root" {
   records = ["127.0.0.1"]
 }
 
-module "cognito_acm" {
+module cognito_acm {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> v2.0"
-  providers = {
-    aws = aws.cognito
-  }
 
   domain_name          = "auth.${var.domain}"
   zone_id              = var.zone_id
   validate_certificate = true
-  tags                 = var.tags
+
+  providers = {
+    aws = aws.cognito
+  }
+
+  tags = var.tags
 }
 
-# AWS Cognito uses the N.Virginia region to deploying its own CDN system,
-# that a reason why we should create ACM certificates it that zone
-provider "aws" {
+provider aws {
   alias  = "cognito"
   region = "us-east-1"
 }
