@@ -1,71 +1,53 @@
-variable "namespace" {
-  type        = string
-  default     = ""
-  description = "A name of the existing namespace"
+variable cluster_name {
+  type    = string
+  default = ""
 }
 
-variable "namespace_name" {
-  type        = string
-  default     = "cert-manager"
-  description = "A name of namespace for creating"
+variable domains {
+  type    = list(string)
+  default = []
 }
 
-variable "module_depends_on" {
-  default     = []
-  type        = list(any)
-  description = "A list of explicit dependencies"
+variable email {
+  type    = string
+  default = ""
 }
 
-variable "cluster_name" {
-  type        = string
-  default     = null
-  description = "A name of the Amazon EKS cluster"
+variable environment {
+  type    = string
+  default = ""
 }
 
-variable "chart_version" {
-  type        = string
-  description = "A Helm Chart version"
-  default     = "1.1.0"
+variable module_depends_on {
+  type    = list
+  default = []
 }
 
-variable "aws_private" {
-  type        = bool
-  description = "Set true or false to use private or public infrastructure"
-  default     = false
+variable namespace {
+  type    = string
+  default = "cert-manager"
 }
 
-variable "argocd" {
+variable project {
+  type    = string
+  default = ""
+}
+
+variable vpc_id {
+  type = string
+}
+
+variable zone_id {
+  type = string
+}
+
+variable argocd {
   type        = map(string)
-  description = "A set of values for enabling deployment through ArgoCD"
-  default     = {}
-}
-
-variable "conf" {
-  type        = map(string)
-  description = "A custom configuration for deployment"
-  default     = {}
-}
-
-variable "tags" {
-  type        = map(string)
-  default     = {}
-  description = "A tags for attaching to new created AWS resources"
-}
-
-variable "hostedZoneID" {
-  type        = string
-  default     = "zoneID"
-  description = "Route53 zoneID"
-}
-
-variable "email" {
-  type        = string
-  default     = "email@example.com"
-  description = "Cert-manager email"
-}
-
-variable "domain" {
-  type        = string
-  description = "domain name for ingress"
-  default     = "example.com"
+  description = "A set of variables for enabling ArgoCD"
+  default = {
+    namespace  = ""
+    path       = ""
+    repository = ""
+    branch     = ""
+  }
 }

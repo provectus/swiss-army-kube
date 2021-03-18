@@ -4,12 +4,6 @@ variable "aws_private" {
   default     = false
 }
 
-variable "argocd" {
-  type        = map(string)
-  description = "A set of values for enabling deployment through ArgoCD"
-  default     = {}
-}
-
 variable "conf" {
   type        = map(string)
   description = "A custom configuration for deployment"
@@ -68,4 +62,15 @@ variable "vpc_id" {
   type        = string
   default     = null
   description = "An ID of the existing AWS VPC"
+}
+
+variable argocd {
+  type        = map(string)
+  description = "A set of variables for enabling ArgoCD"
+  default = {
+    namespace  = ""
+    path       = ""
+    repository = ""
+    branch     = ""
+  }
 }
