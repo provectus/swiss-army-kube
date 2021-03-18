@@ -38,8 +38,8 @@ module "kubernetes" {
 }
 
 module "argocd" {
-  depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, data.aws_eks_cluster.cluster, data.aws_eks_cluster_auth.cluster]
-  source     = "github.com/provectus/sak-argocd"
+  depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, data.aws_eks_cluster.cluster]
+  source     = "github.com/provectus/sak-argocd?ref=support_authrepo"
 
   branch       = var.argocd.branch
   owner        = var.argocd.owner
