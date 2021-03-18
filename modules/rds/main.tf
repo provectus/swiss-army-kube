@@ -1,6 +1,3 @@
-data "aws_vpc" "default" {
-  default = true
-}
 
 data "aws_subnet_ids" "all" {
   vpc_id = var.vpc_id
@@ -10,6 +7,28 @@ data "aws_security_group" "default" {
   vpc_id = var.vpc_id
   name   = "default"
 }
+
+
+resource "aws_security_group" "eks_workers" {
+  name = "${var.cluster_name}-rds-access-from-eks"
+  description = "Allow EKS workers access to RDS databases"
+  vpc_id = var.vpc_id
+
+  ingress {
+    from_port = 3306
+    to_port = 3306
+    protocol = "tcp"
+    security_groups = [var.worker_security_group_id]
+  }
+
+  egress {
+    from_port = 0
+    to_port = 0
+    protocol = "tcp"
+    security_groups = [var.worker_security_group_id]
+  }
+}
+
 
 resource "random_password" "rds_password" {
   length           = 16
@@ -26,9 +45,9 @@ resource "aws_ssm_parameter" "rds_password" {
 module "db" {
 
   source  = "terraform-aws-modules/rds/aws"
-  version = "~> 2.0"
+  version = "~> 2.20"
 
-  identifier = var.rds_database_name
+  identifier = var.rds_instance_name
 
   engine               = var.rds_database_engine
   engine_version       = var.rds_database_engine_version
@@ -48,7 +67,7 @@ module "db" {
   password = var.rds_database_password != "" ? var.rds_database_password : random_password.rds_password.result
   port     = lookup(var.rds_port_mapping, var.rds_database_engine)
 
-  vpc_security_group_ids = [data.aws_security_group.default.id]
+  vpc_security_group_ids = [data.aws_security_group.default.id, aws_security_group.eks_workers.id]
 
   maintenance_window = var.rds_maintenance_window
   backup_window      = var.rds_backup_window
@@ -59,22 +78,25 @@ module "db" {
   tags = merge(
     var.rds_database_tags,
     {
-      Owner       = var.project
+      Project     = var.project
       Environment = var.environment
     },
   )
 
-  enabled_cloudwatch_logs_exports = var.rds_database_engine == "postgres" ? ["postgresql", "upgrade"] : ["alert", "audit", "error", "general", "listener", "slowquery"]
+  enabled_cloudwatch_logs_exports = var.rds_enabled_cloudwatch_logs_exports
 
   # DB subnet group
   subnet_ids = var.subnets
 
   # DB parameter group
-  family = var.rds_database_engine == "postgres" ? "postgres9.6" : ""
+  family = "${var.rds_database_engine}${var.rds_database_major_engine_version}"
 
   # Snapshot name upon DB deletion
   final_snapshot_identifier = var.rds_database_name
 
   # Database Deletion Protection
   deletion_protection = var.rds_database_delete_protection
+
+  # Publicly accessible
+  publicly_accessible = var.rds_publicly_accessible
 }

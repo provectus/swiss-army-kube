@@ -8,9 +8,11 @@ The module installs two kind of autoscaler applications:
 
 ``` hcl
 module scaling {
-  source        = "git::https://github.com/provectus/swiss-army-kube.git//modules/scaling"
-  cluster_name  = "testing"
-  namespace     = "kube-system"
+  depends_on = [module.argocd]
+
+  source       = "git::https://github.com/provectus/sak-scaling.git"
+  cluster_name = module.kubernetes.cluster_name
+  argocd       = module.argocd.state
 }
 ```
 
