@@ -212,7 +212,6 @@ resource "aws_iam_role_policy_attachment" "cert_manager" {
 # Create namespace cert-manager
 resource "kubernetes_namespace" "cert-manager" {
   depends_on = [
-    null_resource.cert-manager-crd,
     var.module_depends_on,
     null_resource.wait-eks
   ]
@@ -228,7 +227,6 @@ resource "kubernetes_namespace" "cert-manager" {
 # Deploy clusterissuer with route53 dns challenge
 resource "helm_release" "issuers" {
   depends_on = [
-    null_resource.cert-manager-crd,
     null_resource.wait-eks,
     kubernetes_namespace.cert-manager,
     aws_iam_role.cert_manager,

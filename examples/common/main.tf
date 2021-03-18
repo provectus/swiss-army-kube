@@ -1,7 +1,7 @@
 data "aws_eks_cluster" "cluster" {
   name = module.kubernetes.cluster_name
 }
-
+ 
 data "aws_eks_cluster_auth" "cluster" {
   name = module.kubernetes.cluster_name
 }
@@ -84,7 +84,7 @@ module "system" {
   mainzoneid         = var.mainzoneid
   cert_manager_email = var.cert_manager_email
   cluster_oidc_url   = module.kubernetes.cluster_oidc_url
-  cluster_oidc_arn   = module.kubernetes.oidc_provider_arn
+  cluster_oidc_arn   = module.kubernetes.cluster_output.oidc_provider_arn
   cluster_roles      = []
 }
 #
