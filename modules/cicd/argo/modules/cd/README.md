@@ -46,8 +46,10 @@ module argocd {
 | owner | An owner of GitHub repository | `string` | n/a | yes, in case of enabling native ArgoCD behaviour  |
 | path\_prefix | A path inside a repository,if it redefined then should contain a trailing slash | `string` | n/a | yes, in case of enabling native ArgoCD behaviour |
 | project\_name | A name of the ArgoCD project for deploying SAK | `string` | `"default"` | no |
-| repository | A GitHub repository wich would be used for IaC needs | `string` | n/a | yes, in case of enabling native ArgoCD behaviour  |
-| vcs | A host name of VCS | `string` | `"github.com"` | no |
+| repository | A GitHub repository wich would be used for IaC needs | `string` | n/a | yes, in case of enabling native ArgoCD behaviour |
+| tags | A tags for attaching to new created AWS resources | `map(string)` | `{}` | no |
+| vcs | An URI of VCS | `string` | `"https://github.com"` | no |
+| vcs\_token | Token for accessing private VCS | `string` | `""` | no |
 
 ## Outputs
 
