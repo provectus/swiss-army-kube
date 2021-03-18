@@ -40,7 +40,13 @@ variable "subnets" {
   description = "vpc subnets"
 }
 
-variable "admin_arns" {
+variable "wait_for_cluster_interpreter" {
+  type        = list(string)
+  description = "Interpreter in which to run 'wait for cluster' command"
+  default     = ["/bin/sh", "-c"]
+}
+
+variable "aws_auth_user_mapping" {
   description = "Additional IAM users to add to the aws-auth configmap."
   type = list(object({
     userarn  = string
@@ -50,15 +56,16 @@ variable "admin_arns" {
   default = []
 }
 
-variable "user_arns" {
-  description = "Additional IAM users to add to the aws-auth configmap."
+variable "aws_auth_role_mapping" {
+  description = "Additional IAM ro9les to add to the aws-auth configmap."
   type = list(object({
-    userarn  = string
+    rolearn  = string
     username = string
     groups   = list(string)
   }))
   default = []
 }
+
 
 # On-demand instance
 variable "on_demand_common_max_cluster_size" {
@@ -212,4 +219,16 @@ variable "on_demand_cpu_percentage_above_base_capacity" {
 variable "on_demand_cpu_asg_recreate_on_change" {
   description = "Recreate the autoscaling group when the Launch Template or Launch Configuration change."
   default     = "false"
+}
+
+variable "workers_additional_policies" {
+  type  = list
+  default = []
+  description = "List of ARNs of additional policies to attach to workers"
+}
+
+variable "tags" {
+  type        = map(string)
+  description = "Tags to add to AWS resources"
+  default     = {}
 }
