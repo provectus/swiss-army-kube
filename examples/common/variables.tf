@@ -45,3 +45,21 @@ variable "mainzoneid" {
   type        = string
   description = "An ID of the root Route53 zone for creating sub-domains"
 }
+
+variable "branch" {
+  type        = string
+  default     = ""
+  description = "A GitHub reference"
+}
+
+variable "repository" {
+  type        = string
+  default     = ""
+  description = "A GitHub repository wich would be used for IaC needs"
+}
+
+variable "owner" {
+  type        = string
+  default     = ""
+  description = "An owner of GitHub repository"
+}

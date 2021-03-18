@@ -1,7 +1,7 @@
 data "aws_eks_cluster" "cluster" {
   name = module.kubernetes.cluster_name
 }
-
+ 
 data "aws_eks_cluster_auth" "cluster" {
   name = module.kubernetes.cluster_name
 }
@@ -69,7 +69,7 @@ module "kubernetes" {
 
   on_demand_gpu_instance_type = "g4dn.xlarge"
 }
-#
+
 module "system" {
   depends_on = [module.network.vpc_id, module.kubernetes.cluster_name]
   source            = "../../modules/system"
@@ -102,7 +102,7 @@ module "system" {
 
 # module "acm" {
 #   source  = "terraform-aws-modules/acm/aws"
-#   version = "~> v2.0"
+#   version = "v2.0"
 
 #  domain_name               = "${var.cluster_name}.edu.provectus.io"
 #  subject_alternative_names = ["*.${var.cluster_name}.edu.provectus.io"]

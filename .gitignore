@@ -7,9 +7,11 @@ local
 .cache
 kustomize
 kfctl.yaml
+*.hcl
 
 # use other *.tfvars files for parametrization of config-modules
 terraform.tfvars
 
 # direnv.net config
 .envrc
+*.tfvars

@@ -13,13 +13,18 @@ output "cluster_oidc_url" {
   description = "Oidc issuer url for EKS cluster"
 }
 
-output "cluster_output" {
-  value = {
-    "cluster_oidc_issuer_url" = module.eks.cluster_oidc_issuer_url,
-    "oidc_provider_arn"       = aws_iam_openid_connect_provider.cluster.arn,
-    "cluster_id"              = module.eks.cluster_id
-  }
+output "oidc_provider_arn" {
+  value       = module.eks.oidc_provider_arn
+  description = "oidc provider url for EKS cluster"
 }
+
+# output "cluster_output" {
+#   value = {
+#     "cluster_oidc_issuer_url" = module.eks.cluster_oidc_issuer_url,
+#     "oidc_provider_arn"       = module.eks.oidc_provider_arn,
+#     "cluster_id"              = module.eks.cluster_id
+#   }
+# }
 
 output "this" {
   value       = module.eks
@@ -34,5 +39,10 @@ output "workers_launch_template_ids" {
 output "worker_security_group_id" {
   description = "ID of the worker security groups."
   value       = module.eks.worker_security_group_id
+}
+
+output "worker_iam_role_arn" {
+  description = "default IAM role ARN for EKS worker groups"
+  value       = module.eks.worker_iam_role_arn
 }
 
