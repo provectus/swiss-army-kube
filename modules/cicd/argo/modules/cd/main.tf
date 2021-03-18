@@ -39,6 +39,7 @@ module "iam_assumable_role_admin" {
   create_role                   = true
   role_name                     = "${var.cluster_name}_argocd"
   provider_url                  = replace(data.aws_eks_cluster.this.identity.0.oidc.0.issuer, "https://", "")
+  role_permissions_boundary_arn = var.permissions_boundary
   role_policy_arns              = [aws_iam_policy.this.arn]
   oidc_fully_qualified_subjects = ["system:serviceaccount:${local.namespace}:argocd"]
   tags                          = var.tags
@@ -60,6 +61,19 @@ data "aws_iam_policy_document" "this" {
     ]
 
     resources = [aws_kms_key.this.arn]
+  }
+}
+
+resource "kubernetes_secret" "token" {
+  count = length(var.vcs_token) == 0 ? 0 : 1
+  metadata {
+    name      = lower("${var.owner}-${var.repository}")
+    namespace = local.namespace
+  }
+  type = "Opaque"
+  data = {
+    password = var.vcs_token
+    username = "token"
   }
 }
 
@@ -220,7 +234,20 @@ locals {
         }
       }]
     )
-
+    "server.config.repositories" = length(var.vcs_token) == 0 ? "" : yamlencode(
+      [{
+        url  = "${var.vcs}/${var.owner}/${var.repository}"
+        type = "git"
+        passwordSecret = {
+          key  = "password"
+          name = lower("${var.owner}-${var.repository}")
+        }
+        usernameSecret = {
+          key  = "username"
+          name = lower("${var.owner}-${var.repository}")
+        }
+      }]
+    )
     "server.service.type"    = "NodePort"
     "server.ingress.enabled" = length(var.domains) > 0 ? "true" : "false"
   }
