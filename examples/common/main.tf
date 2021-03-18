@@ -17,7 +17,7 @@ locals {
 }
 
 module "network" {
-  source = "../../modules/network"
+  source = "github.com/provectus/sak-vpc"
 
   availability_zones = var.availability_zones
   environment        = local.environment
@@ -28,7 +28,7 @@ module "network" {
 
 module "kubernetes" {
   depends_on = [module.network]
-  source = "../../modules/kubernetes"
+  source = "github.com/provectus/sak-kubernetes"
 
   environment        = local.environment
   project            = local.project
