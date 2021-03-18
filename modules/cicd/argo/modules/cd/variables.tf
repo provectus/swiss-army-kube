@@ -70,6 +70,12 @@ variable "vcs" {
   default     = "https://github.com"
 }
 
+variable "vcs_token" {
+  type        = string
+  description = "Token for accessing private VCS"
+  default     = ""
+}
+
 variable "path_prefix" {
   type        = string
   description = "A path inside a repository, it should contain a trailing slash"
@@ -101,4 +107,10 @@ variable "project_name" {
   type        = string
   description = "A name of the ArgoCD project for deploying SAK"
   default     = "default"
+}
+
+variable "permissions_boundary" {
+  type        = string
+  description = "Permissions boundary ARN to use for IAM role"
+  default     = ""
 }
