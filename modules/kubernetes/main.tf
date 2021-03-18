@@ -12,6 +12,8 @@ data "aws_ami" "eks_gpu_worker" {
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "v13.2.1"
+  
+  wait_for_cluster_interpreter = var.wait_for_cluster_interpreter
   cluster_version = var.cluster_version
   cluster_name    = var.cluster_name
   kubeconfig_name = var.cluster_name
@@ -19,20 +21,13 @@ module "eks" {
   vpc_id          = var.vpc_id
   enable_irsa     = false
 
-  map_users = concat(var.admin_arns, var.user_arns)
+  map_users = var.aws_auth_user_mapping
+  map_roles = var.aws_auth_role_mapping
 
-  tags = {
-    Environment = var.environment
-    Project     = var.project
-  }
+  tags = local.tags
 
   workers_additional_policies = [
     "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
-    "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess",
-    "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
-    "arn:aws:iam::aws:policy/AmazonRoute53AutoNamingFullAccess",
-    "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess",
   ]
 
   workers_group_defaults = {
