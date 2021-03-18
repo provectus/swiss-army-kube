@@ -99,9 +99,6 @@ resource "aws_route53_zone" "private" {
   }
 }
 
-# Enabling IAM Roles for Service Accounts
-data "aws_caller_identity" "current" {}
-
 data "aws_iam_policy_document" "external_dns_assume_role_policy" {
   statement {
     actions = ["sts:AssumeRoleWithWebIdentity"]
