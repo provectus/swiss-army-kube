@@ -16,7 +16,7 @@ That example is the standard deployment of the SAK cluster with managing applica
 
 ```
 variable "cluster_name" {
-  default = "swiss-army-grusakov"
+  default = "swiss-army-kube"
 }
 
 variable "region" {
@@ -46,8 +46,8 @@ variable "domain_name" {
 variable "argocd" {
   default = {
     repository = "swiss-army-kube"
-    branch     = "feature/kubernetes-1.18"
-    owner      = "gfrntz"
+    branch     = "main"
+    owner      = "provectus"
   }
 }
 ```

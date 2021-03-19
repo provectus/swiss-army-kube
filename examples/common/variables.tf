@@ -1,25 +1,25 @@
+variable "cluster_name" {
+  default     = "swiss-army"
+  type        = string
+  description = "A name of the Amazon EKS cluster"
+}
+
 variable "region" {
-  default     = "eu-north-1"
+  default     = "eu-central-1"
   type        = string
   description = "Set default region"
 }
 
 variable "availability_zones" {
-  default     = ["eu-north-1a", "eu-north-1b"]
+  default     = ["eu-central-1a", "eu-central-1b"]
   type        = list(any)
-  description = "Availability zones for project"
+  description = "Availability zones for project, minimum 2"
 }
 
-variable "domains" {
-  type        = list(string)
-  default     = ["edu.provectus.io"]
-  description = "A list of domains to use for ingresses"
-}
-
-variable "cert_manager_email" {
+variable "zone_id" {
+#  default     = " " #Comment for asking user after terraform apply
   type        = string
-  default     = "test@example.com"
-  description = "Email to cert-manager"
+  description = "Default zone id for root domain" #like Z04917561CQAI9UAF27D6
 }
 
 variable "environment" {
@@ -34,32 +34,8 @@ variable "project" {
   description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
-variable "cluster_name" {
-  default     = "swiss-army"
+variable "domain_name" {
+  default     = "example.com"
   type        = string
-  description = "A name of the Amazon EKS cluster"
-}
-
-variable "mainzoneid" {
-  default     = ""
-  type        = string
-  description = "An ID of the root Route53 zone for creating sub-domains"
-}
-
-variable "branch" {
-  type        = string
-  default     = ""
-  description = "A GitHub reference"
-}
-
-variable "repository" {
-  type        = string
-  default     = ""
-  description = "A GitHub repository wich would be used for IaC needs"
-}
-
-variable "owner" {
-  type        = string
-  default     = ""
-  description = "An owner of GitHub repository"
+  description = "Default domain name"
 }

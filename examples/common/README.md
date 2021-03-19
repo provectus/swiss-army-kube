@@ -1,3 +1,8 @@
+# About
+
+simple installation of EKS and VPC
+
+
 # Prerequisites
 
 #### Helm v3  
