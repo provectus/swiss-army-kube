@@ -150,4 +150,4 @@ jobs:
         run: |
           tfenv use ${TERRAFORM_VERSION}
           terraform init
-          terraform plan -var 'cluster_name=swiss-army-github-ci' -var 'domains=["edu.provectus.io"]'
+          terraform plan -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci'

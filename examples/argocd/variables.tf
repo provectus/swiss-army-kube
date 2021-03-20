@@ -1,5 +1,5 @@
 variable "cluster_name" {
-  default     = "swiss-army-grusakov"
+  default     = "swiss-army-kube"
   type        = string
   description = "A name of the Amazon EKS cluster"
 }
@@ -23,13 +23,13 @@ variable "environment" {
 }
 
 variable "project" {
-  default     = "EDUCATION"
+  default     = "SWISS"
   type        = string
   description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
 
 variable "domain_name" {
-  default     = "edu.provectus.io"
+  default     = "swiss.sak.ninja"
   type        = string
   description = "Default domain name"
 }
@@ -37,8 +37,8 @@ variable "domain_name" {
 variable "argocd" {
   default = {
     repository = "swiss-army-kube"
-    branch     = "feature/kubernetes-1.18"
-    owner      = "gfrntz"
+    branch     = "master"
+    owner      = "provectus"
   }
   type        = map(string)
   description = "A set of values for enabling deployment through ArgoCD"

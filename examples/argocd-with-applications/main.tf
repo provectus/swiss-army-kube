@@ -66,7 +66,7 @@ module "argocd" {
   }
 }
 
-#
+#Apps
 module "external_dns" {
   depends_on = [module.argocd]
 
@@ -105,7 +105,7 @@ module "clusterwide" {
     local.domain[0]
   ]
   zone_id              = module.external_dns.zone_id
-  validate_certificate = true
+  validate_certificate = true #Disable if used private DNS and validate it manually
   wait_for_validation  = false
   tags                 = local.tags
 }
