@@ -37,7 +37,7 @@ variable "domain_name" {
 variable "argocd" {
   default = {
     repository = "swiss-army-kube"
-    branch     = "dkharlamov"
+    branch     = "master"
     owner      = "provectus"
   }
   type        = map(string)
