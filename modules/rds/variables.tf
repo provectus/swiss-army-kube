@@ -159,14 +159,14 @@ variable "rds_instance_name" {
 
 variable "rds_publicly_accessible" {
   description = "Set to true to enable accessing the RDS DB from outside the VPC"
-  default = false
-  type    = bool
+  default     = false
+  type        = bool
 }
 
 
-variable worker_security_group_id {
+variable "worker_security_group_id" {
   description = "ID of the EKS workers' security group"
-  type = string
+  type        = string
 
 }
 

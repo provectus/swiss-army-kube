@@ -3,7 +3,7 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 resource "aws_secretsmanager_secret" "rds_username" {
-  name = "${var.cluster_name}/${var.namespace}/rds_username"
+  name                    = "${var.cluster_name}/${var.namespace}/rds_username"
   recovery_window_in_days = 0
 }
 resource "aws_secretsmanager_secret_version" "rds_username" {
@@ -11,7 +11,7 @@ resource "aws_secretsmanager_secret_version" "rds_username" {
   secret_string = var.rds_username
 }
 resource "aws_secretsmanager_secret" "rds_password" {
-  name = "${var.cluster_name}/${var.namespace}/rds_password"
+  name                    = "${var.cluster_name}/${var.namespace}/rds_password"
   recovery_window_in_days = 0
 }
 resource "aws_secretsmanager_secret_version" "rds_password" {
@@ -31,12 +31,12 @@ module "iam_assumable_role" {
   role_requires_mfa                 = false
   custom_role_policy_arns           = [aws_iam_policy.this[0].arn]
   number_of_custom_role_policy_arns = 1
-  tags = var.tags
+  tags                              = var.tags
 }
 
 resource "aws_iam_policy" "this" {
-  count = var.external_secrets_secret_role_arn == "" ? 1 : 0
-  name  = "${var.cluster_name}_${var.namespace}_external-secrets-mlflow-access"
+  count  = var.external_secrets_secret_role_arn == "" ? 1 : 0
+  name   = "${var.cluster_name}_${var.namespace}_external-secrets-mlflow-access"
   policy = <<-EOT
 {
   "Version": "2012-10-17",
@@ -56,19 +56,19 @@ resource "aws_iam_policy" "this" {
 EOT
 }
 
-resource local_file mlflow_def {
-  content = local.mlflow_def
+resource "local_file" "mlflow_def" {
+  content  = local.mlflow_def
   filename = "${path.root}/${var.argocd.path}/mlflow-defs/${var.namespace}/mlflow-def.yaml"
 }
 
 
-resource local_file namespace {
-  content = local.namespace_def
+resource "local_file" "namespace" {
+  content  = local.namespace_def
   filename = "${path.root}/${var.argocd.path}/mlflow-defs/${var.namespace}/mlflow-namespace.yaml"
 }
 
 
-resource local_file mlflow {
+resource "local_file" "mlflow" {
   content = yamlencode({
     "apiVersion" = "argoproj.io/v1alpha1"
     "kind"       = "Application"

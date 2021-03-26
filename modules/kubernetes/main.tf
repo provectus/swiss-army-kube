@@ -10,20 +10,20 @@ data "aws_ami" "eks_gpu_worker" {
 
 resource "aws_kms_key" "eks" {
   count = var.enable_secret_encryption ? 1 : 0
-  tags = var.tags
+  tags  = var.tags
 }
 
 module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  version         = "v13.2.1"
-  
+  source  = "terraform-aws-modules/eks/aws"
+  version = "v13.2.1"
+
   wait_for_cluster_interpreter = var.wait_for_cluster_interpreter
-  cluster_version = var.cluster_version
-  cluster_name    = var.cluster_name
-  kubeconfig_name = var.cluster_name
-  subnets         = var.subnets
-  vpc_id          = var.vpc_id
-  enable_irsa     = var.enable_irsa
+  cluster_version              = var.cluster_version
+  cluster_name                 = var.cluster_name
+  kubeconfig_name              = var.cluster_name
+  subnets                      = var.subnets
+  vpc_id                       = var.vpc_id
+  enable_irsa                  = var.enable_irsa
 
   map_users = var.aws_auth_user_mapping
   map_roles = var.aws_auth_role_mapping
@@ -43,7 +43,7 @@ module "eks" {
       ["arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore"], var.workers_additional_policies
     ]
   )
-  
+
 
   workers_group_defaults = {
     additional_userdata = "sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm && sudo systemctl enable amazon-ssm-agent && sudo systemctl start amazon-ssm-agent"
@@ -55,7 +55,7 @@ module "eks" {
   #
   #   After that autoscaler is able to see the resources on that ASG.
   #
-  worker_groups = var.worker_groups
+  worker_groups                 = var.worker_groups
   worker_groups_launch_template = var.worker_groups_launch_template
 }
 

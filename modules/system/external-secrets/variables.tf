@@ -33,9 +33,9 @@ variable "cluster_oidc_url" {
 }
 
 variable "chart_repository" {
-  type    = string
+  type        = string
   description = "A chart repository"
-  default = "https://external-secrets.github.io/kubernetes-external-secrets/"
+  default     = "https://external-secrets.github.io/kubernetes-external-secrets/"
 }
 
 variable "chart_values" {

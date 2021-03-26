@@ -49,7 +49,7 @@ resource "aws_route53_record" "ns" {
 }
 
 locals {
-    make_subdomain = var.hosted_zone_subdomain != null
-    zone_id = !local.make_subdomain ? data.aws_route53_zone.domain.zone_id : var.aws_private ? aws_route53_zone.private[0].zone_id : aws_route53_zone.public[0].zone_id
-    domain = !local.make_subdomain ? data.aws_route53_zone.domain.name : var.aws_private ? aws_route53_zone.private[0].name : aws_route53_zone.public[0].name
+  make_subdomain = var.hosted_zone_subdomain != null
+  zone_id        = !local.make_subdomain ? data.aws_route53_zone.domain.zone_id : var.aws_private ? aws_route53_zone.private[0].zone_id : aws_route53_zone.public[0].zone_id
+  domain         = !local.make_subdomain ? data.aws_route53_zone.domain.name : var.aws_private ? aws_route53_zone.private[0].name : aws_route53_zone.public[0].name
 }

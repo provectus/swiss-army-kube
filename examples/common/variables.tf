@@ -17,7 +17,7 @@ variable "availability_zones" {
 }
 
 variable "zone_id" {
-#  default     = " " #Comment for asking user after terraform apply
+  #  default     = " " #Comment for asking user after terraform apply
   type        = string
   description = "Default zone id for root domain" #like Z04917561CQAI9UAF27D6
 }

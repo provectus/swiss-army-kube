@@ -63,7 +63,7 @@ variable "vpc_id" {
   description = "An ID of the existing AWS VPC"
 }
 
-variable argocd {
+variable "argocd" {
   type        = map(string)
   description = "A set of variables for enabling ArgoCD"
   default = {

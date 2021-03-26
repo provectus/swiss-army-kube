@@ -1,4 +1,4 @@
-resource aws_cognito_user_pool this {
+resource "aws_cognito_user_pool" "this" {
   name = var.cluster_name
   admin_create_user_config {
     invite_message_template {
@@ -18,13 +18,13 @@ resource aws_cognito_user_pool this {
 
 }
 
-resource aws_cognito_user_pool_domain this {
+resource "aws_cognito_user_pool_domain" "this" {
   domain          = "auth.${var.domain}"
   certificate_arn = module.cognito_acm.this_acm_certificate_arn
   user_pool_id    = aws_cognito_user_pool.this.id
 }
 
-resource aws_route53_record this {
+resource "aws_route53_record" "this" {
   name    = aws_cognito_user_pool_domain.this.domain
   type    = "A"
   zone_id = var.zone_id
@@ -35,7 +35,7 @@ resource aws_route53_record this {
   }
 }
 
-resource aws_route53_record root {
+resource "aws_route53_record" "root" {
   name    = var.domain
   type    = "A"
   zone_id = var.zone_id
@@ -43,7 +43,7 @@ resource aws_route53_record root {
   records = ["127.0.0.1"]
 }
 
-module cognito_acm {
+module "cognito_acm" {
   source  = "terraform-aws-modules/acm/aws"
   version = "~> v2.0"
 
@@ -58,7 +58,7 @@ module cognito_acm {
   tags = var.tags
 }
 
-provider aws {
+provider "aws" {
   alias  = "cognito"
   region = "us-east-1"
 }

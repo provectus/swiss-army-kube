@@ -1,5 +1,5 @@
 
-locals {  
+locals {
 
 
   kube2iam_def = var.kube2iam_def != null ? var.kube2iam_def : <<EOT

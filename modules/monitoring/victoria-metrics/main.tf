@@ -70,7 +70,7 @@ resource "local_file" "this" {
 
 
 locals {
-  conf       = merge(local.conf_defaults, var.conf)
+  conf = merge(local.conf_defaults, var.conf)
   conf_defaults = {
     "namespace"                          = local.namespace
     "rbac.create"                        = true,

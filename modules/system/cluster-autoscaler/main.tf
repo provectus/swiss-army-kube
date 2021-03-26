@@ -7,7 +7,7 @@ data "aws_eks_cluster" "this" {
 }
 
 module "iam_assumable_role_admin" {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+  source = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   # version                       = "~> v2.6.0"
   create_role                   = true
   role_name                     = "${var.cluster_name}_cluster-autoscaler"
@@ -68,7 +68,7 @@ data "aws_iam_policy_document" "cluster_autoscaler" {
   }
 }
 
-resource kubernetes_namespace this {
+resource "kubernetes_namespace" "this" {
   count = var.namespace == "kube-system" ? 0 : 1
   depends_on = [
     var.module_depends_on
@@ -78,7 +78,7 @@ resource kubernetes_namespace this {
   }
 }
 
-resource local_file this {
+resource "local_file" "this" {
   content  = yamlencode(local.application)
   filename = "${path.root}/${var.argocd.path}/${local.name}.yaml"
 }

@@ -1,47 +1,47 @@
-variable cluster_name {
+variable "cluster_name" {
   type    = string
   default = ""
 }
 
-variable domains {
+variable "domains" {
   type    = list(string)
   default = []
 }
 
-variable email {
+variable "email" {
   type    = string
   default = ""
 }
 
-variable environment {
+variable "environment" {
   type    = string
   default = ""
 }
 
-variable module_depends_on {
-  type    = list
+variable "module_depends_on" {
+  type    = list(any)
   default = []
 }
 
-variable namespace {
+variable "namespace" {
   type    = string
   default = "cert-manager"
 }
 
-variable project {
+variable "project" {
   type    = string
   default = ""
 }
 
-variable vpc_id {
+variable "vpc_id" {
   type = string
 }
 
-variable zone_id {
+variable "zone_id" {
   type = string
 }
 
-variable argocd {
+variable "argocd" {
   type        = map(string)
   description = "A set of variables for enabling ArgoCD"
   default = {

@@ -4,21 +4,21 @@ data "aws_subnet_ids" "all" {
 }
 
 resource "aws_security_group" "eks_workers" {
-  name = "${var.cluster_name}-rds-access-from-eks"
+  name        = "${var.cluster_name}-rds-access-from-eks"
   description = "Allow EKS workers access to RDS databases"
-  vpc_id = var.vpc_id
+  vpc_id      = var.vpc_id
 
   ingress {
-    from_port = 3306
-    to_port = 3306
-    protocol = "tcp"
+    from_port       = 3306
+    to_port         = 3306
+    protocol        = "tcp"
     security_groups = [var.worker_security_group_id]
   }
 
   egress {
-    from_port = 0
-    to_port = 0
-    protocol = "tcp"
+    from_port       = 0
+    to_port         = 0
+    protocol        = "tcp"
     security_groups = [var.worker_security_group_id]
   }
 }

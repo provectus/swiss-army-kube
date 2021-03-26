@@ -1,4 +1,4 @@
-variable argocd {
+variable "argocd" {
   type        = map(string)
   description = "A set of variables for enabling ArgoCD"
   default = {
@@ -9,13 +9,13 @@ variable argocd {
   }
 }
 
-variable kube2iam_def {
+variable "kube2iam_def" {
   type        = string
   description = "The resource definition for kube2iam"
-  default = null //default is constructed dynmaically. See locals.tf
+  default     = null //default is constructed dynmaically. See locals.tf
 }
 
-variable base_role_arn {
+variable "base_role_arn" {
   type        = string
   description = "The ARN of the base role to use for kube2iam"
 }

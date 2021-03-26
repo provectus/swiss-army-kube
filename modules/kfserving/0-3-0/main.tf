@@ -1,20 +1,20 @@
 
 
-resource local_file kfserving_def {
-  content = local.kfserving_def
+resource "local_file" "kfserving_def" {
+  content  = local.kfserving_def
   filename = "${path.root}/${var.argocd.path}/kfserving-defs/kfserving_def.yaml"
 }
 
 
-resource local_file namespace {
-  content = local.namespace
+resource "local_file" "namespace" {
+  content  = local.namespace
   filename = "${path.root}/${var.argocd.path}/kfserving-namespace.yaml"
 }
 
 
 
 
-resource local_file kfserving {
+resource "local_file" "kfserving" {
   content = yamlencode({
     "apiVersion" = "argoproj.io/v1alpha1"
     "kind"       = "Application"

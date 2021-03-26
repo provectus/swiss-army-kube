@@ -61,7 +61,7 @@ variable "aws_private" {
 }
 
 
-variable argocd {
+variable "argocd" {
   type        = map(string)
   description = "A set of variables for enabling ArgoCD"
   default = {

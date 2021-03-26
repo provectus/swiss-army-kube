@@ -65,21 +65,21 @@ variable "aws_auth_role_mapping" {
   default = []
 }
 
-variable enable_secret_encryption {
+variable "enable_secret_encryption" {
   type        = bool
   description = "Set to true to create a KMS key to be used as a CMK (Cluster Master Key) for secret encryption"
   default     = false
 }
 
-variable enable_irsa {
+variable "enable_irsa" {
   type        = bool
   description = "Set to true to enable IAM Roles for Service Accounts"
   default     = false
 }
 
 variable "workers_additional_policies" {
-  type  = list
-  default = []
+  type        = list(any)
+  default     = []
   description = "List of ARNs of additional policies to attach to workers"
 }
 
@@ -102,8 +102,8 @@ variable "worker_groups_launch_template" {
 }
 
 variable "workers_additional_policies" {
-  type  = list
-  default = []
+  type        = list(any)
+  default     = []
   description = "List of ARNs of additional policies to attach to workers"
 }
 

@@ -1,24 +1,24 @@
 
 
-locals {  
+locals {
 
   role_to_assume_arn = var.external_secrets_secret_role_arn == "" ? module.iam_assumable_role[0].this_iam_role_arn : var.external_secrets_secret_role_arn
 
   name = "mlflow"
   namespace_def = var.namespace_def != null ? var.namespace_def : yamlencode({
-      "apiVersion" = "v1"
-      "kind"       = "Namespace"
-      "metadata" = {
-        "name" = var.namespace
-        "labels" = {
-          "control-plane"   = "kubeflow"
-          "istio-injection" = "enabled"
-        }
-        # "annotations" = {
-        #   "iam.amazonaws.com/permitted" = var.external_secrets_role_arn //restrict this namespace to only being able to assume this arn (wildcards are also possible, e.g. iam.amazonaws.com/permitted: "arn:aws:iam::123456789012:role/.*")
-        # }
+    "apiVersion" = "v1"
+    "kind"       = "Namespace"
+    "metadata" = {
+      "name" = var.namespace
+      "labels" = {
+        "control-plane"   = "kubeflow"
+        "istio-injection" = "enabled"
       }
-    })
+      # "annotations" = {
+      #   "iam.amazonaws.com/permitted" = var.external_secrets_role_arn //restrict this namespace to only being able to assume this arn (wildcards are also possible, e.g. iam.amazonaws.com/permitted: "arn:aws:iam::123456789012:role/.*")
+      # }
+    }
+  })
 
 
   mlflow_def = var.mlflow_def != null ? var.mlflow_def : <<EOT
