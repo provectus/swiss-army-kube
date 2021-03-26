@@ -97,7 +97,7 @@ jobs:
         working-directory: ./examples/argocd
         run: |
           tfenv use ${TERRAFORM_VERSION}
-          terraform init
+          terraform init --upgrade
           terraform plan -var 'cluster_name=swiss-army-github-ci'
 
   terraformPlanArgocdWithApplications:
@@ -123,7 +123,7 @@ jobs:
         working-directory: ./examples/argocd-with-applications
         run: |
           tfenv use ${TERRAFORM_VERSION}
-          terraform init
+          terraform init --upgrade
           terraform plan -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci'
 
   terraformPlanCommon:
@@ -149,5 +149,5 @@ jobs:
         working-directory: ./examples/common
         run: |
           tfenv use ${TERRAFORM_VERSION}
-          terraform init
+          terraform init --upgrade
           terraform plan -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci'
