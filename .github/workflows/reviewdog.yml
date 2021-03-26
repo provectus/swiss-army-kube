@@ -27,19 +27,19 @@ jobs:
         working-directory: ./examples/common
         run: |
           tfenv use ${TERRAFORM_VERSION}
-          terraform init
+          terraform init --upgrade
 
       - name: Terraform init argocd
         working-directory: ./examples/argocd
         run: |
           tfenv use ${TERRAFORM_VERSION}
-          terraform init
+          terraform init --upgrade
 
       - name: Terraform init argocd-with-applications
         working-directory: ./examples/argocd-with-applications
         run: |
           tfenv use ${TERRAFORM_VERSION}
-          terraform init
+          terraform init --upgrade
 
       # More complex example
       - name: tflint common
