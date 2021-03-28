@@ -1,4 +1,4 @@
-variable argocd {
+variable "argocd" {
   type        = map(string)
   description = "A set of variables for enabling ArgoCD"
   default = {
@@ -9,20 +9,20 @@ variable argocd {
   }
 }
 
-variable kfserving_def {
+variable "kfserving_def" {
   type        = string
   description = "The resource definition for kfserving"
-  default = null //default is constructed dynmaically. See locals.tf
+  default     = null //default is constructed dynmaically. See locals.tf
 }
 
-variable namespace {
+variable "namespace" {
   type        = string
   description = "The Namespace definition for kfserving"
   default     = null //default is constructed dynmaically. See locals.tf
 }
 
 
-  
 
 
-  
+
+

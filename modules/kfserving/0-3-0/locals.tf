@@ -1,16 +1,16 @@
 
-locals {  
+locals {
   namespace = var.namespace != null ? var.namespace : yamlencode({
-      "apiVersion" = "v1"
-      "kind"       = "Namespace"
-      "metadata" = {
-        "name" = "kfserving"
-        "labels" = {
-          "control-plane"   = "kubeflow"
-          "istio-injection" = "disabled"
-        }
+    "apiVersion" = "v1"
+    "kind"       = "Namespace"
+    "metadata" = {
+      "name" = "kfserving"
+      "labels" = {
+        "control-plane"   = "kubeflow"
+        "istio-injection" = "disabled"
       }
-    })
+    }
+  })
 
 
   kfserving_def = var.kfserving_def != null ? var.kfserving_def : <<EOT

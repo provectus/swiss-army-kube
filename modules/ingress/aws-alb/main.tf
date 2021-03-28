@@ -1,4 +1,4 @@
-resource kubernetes_namespace this {
+resource "kubernetes_namespace" "this" {
   depends_on = [
     var.module_depends_on
   ]
@@ -7,16 +7,16 @@ resource kubernetes_namespace this {
   }
 }
 
-data aws_region current {}
+data "aws_region" "current" {}
 
-data aws_caller_identity this {}
+data "aws_caller_identity" "this" {}
 
-data aws_eks_cluster this {
+data "aws_eks_cluster" "this" {
   name = var.cluster_name
 }
 
-module iam_assumable_role_admin {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+module "iam_assumable_role_admin" {
+  source = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   # version                       = "~> v2.6.0"
   create_role                   = true
   role_name                     = "${var.cluster_name}_${local.name}"
@@ -26,7 +26,7 @@ module iam_assumable_role_admin {
   tags                          = var.tags
 }
 
-resource aws_iam_policy this {
+resource "aws_iam_policy" "this" {
   depends_on = [
     var.module_depends_on
   ]
@@ -35,7 +35,7 @@ resource aws_iam_policy this {
   policy      = data.aws_iam_policy_document.this.json
 }
 
-data aws_iam_policy_document this {
+data "aws_iam_policy_document" "this" {
   statement {
     effect = "Allow"
 
@@ -121,7 +121,7 @@ data aws_iam_policy_document this {
   }
 }
 
-resource local_file this {
+resource "local_file" "this" {
   content  = yamlencode(local.application)
   filename = "${path.root}/${var.argocd.path}/${local.name}.yaml"
 }

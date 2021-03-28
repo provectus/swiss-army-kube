@@ -1,18 +1,18 @@
-locals {  
-  secret_data = { 
-    "rds_host" = var.rds_host
-    "rds_port" = var.rds_port
+locals {
+  secret_data = {
+    "rds_host"     = var.rds_host
+    "rds_port"     = var.rds_port
     "rds_username" = var.rds_username
 
-    "s3_bucket" = var.s3_bucket_name
-    "s3_region" = data.aws_region.current.name    
+    "s3_bucket"     = var.s3_bucket_name
+    "s3_region"     = data.aws_region.current.name
     "s3_access_key" = var.s3_user_access_key.id
     "s3_secret_key" = var.s3_user_access_key.secret
-    
-    "db_name_cache" = var.db_name_cache
+
+    "db_name_cache"     = var.db_name_cache
     "db_name_pipelines" = var.db_name_pipelines
-    "db_name_metadata" = var.db_name_metadata
-    "db_name_katib" = var.db_name_katib
+    "db_name_metadata"  = var.db_name_metadata
+    "db_name_katib"     = var.db_name_katib
   }
 
 
@@ -22,14 +22,14 @@ locals {
   - key: ${var.cluster_name}/${var.namespace}/rds_password
     name: rds_password 
   EOT
-  
-  external_secret_data = [for key, value in local.secret_data: <<EOT
+
+  external_secret_data = [for key, value in local.secret_data : <<EOT
   - key: ${var.cluster_name}/${var.namespace}/${key}
     name: ${key}
   EOT
   ]
 
-  external_secret_data_string = join("\n",flatten([local.external_secret_data, [local.external_secret_data_rds_password]]))  
+  external_secret_data_string = join("\n", flatten([local.external_secret_data, [local.external_secret_data_rds_password]]))
 
   external_secret = <<EOT
 apiVersion: 'kubernetes-client.io/v1'
@@ -84,7 +84,7 @@ EOT
     }
   })
 
-namespace_def = var.namespace_def != null ? var.namespace_def : yamlencode({
+  namespace_def = var.namespace_def != null ? var.namespace_def : yamlencode({
     "apiVersion" = "v1"
     "kind"       = "Namespace"
     "metadata" = {
@@ -96,7 +96,7 @@ namespace_def = var.namespace_def != null ? var.namespace_def : yamlencode({
     }
   })
 
-issuer = var.issuer != null ? var.issuer : yamlencode({
+  issuer = var.issuer != null ? var.issuer : yamlencode({
     "apiVersion" = "cert-manager.io/v1alpha2"
     "kind"       = "ClusterIssuer"
     "metadata" = {
@@ -107,7 +107,7 @@ issuer = var.issuer != null ? var.issuer : yamlencode({
     }
   })
 
-kfdef = var.kfdef != null ? var.kfdef : yamlencode({
+  kfdef = var.kfdef != null ? var.kfdef : yamlencode({
     "apiVersion" = "kfdef.apps.kubeflow.org/v1"
     "kind"       = "KfDef"
     "metadata" = {
@@ -215,7 +215,7 @@ kfdef = var.kfdef != null ? var.kfdef : yamlencode({
       ]
       "version" = "v1.2-branch"
     }
-  })  
+  })
 
   configs = <<EOT
 apiVersion: v1

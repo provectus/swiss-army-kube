@@ -1,4 +1,4 @@
-output state {
+output "state" {
   value = {
     repository = var.sync_repo_url
     branch     = var.sync_branch

@@ -26,12 +26,12 @@ terraform {
     }
     random = {
       source  = "hashicorp/random"
-      version = "2.3.1"
+      version = "3.1.0"
     }
     template = {
       source  = "hashicorp/template"
       version = "2.2.0"
     }
   }
-  required_version = ">= 0.13"
+  required_version = ">= 0.14"
 }

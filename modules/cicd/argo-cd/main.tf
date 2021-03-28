@@ -1,6 +1,6 @@
-data aws_region current {}
+data "aws_region" "current" {}
 
-resource kubernetes_namespace this {
+resource "kubernetes_namespace" "this" {
   depends_on = [
     var.module_depends_on
   ]
@@ -11,23 +11,23 @@ resource kubernetes_namespace this {
 
 
 
-resource kubernetes_secret sync_repo_secret {
+resource "kubernetes_secret" "sync_repo_secret" {
 
   depends_on = [kubernetes_namespace.this]
 
   metadata {
-    name = local.sync_repo_credentials_secret_name
+    name      = local.sync_repo_credentials_secret_name
     namespace = "argocd"
     labels = {
-      "app.kubernetes.io/name": local.sync_repo_credentials_secret_name
-      "app.kubernetes.io/part-of": "argocd"
+      "app.kubernetes.io/name" : local.sync_repo_credentials_secret_name
+      "app.kubernetes.io/part-of" : "argocd"
     }
   }
 
 
-  data = { 
-    "username" = var.sync_repo_https_username
-    "password" = var.sync_repo_https_password
+  data = {
+    "username"      = var.sync_repo_https_username
+    "password"      = var.sync_repo_https_password
     "sshPrivateKey" = var.sync_repo_ssh_private_key
   }
 
@@ -35,7 +35,7 @@ resource kubernetes_secret sync_repo_secret {
 }
 
 
-resource helm_release this {
+resource "helm_release" "this" {
   depends_on = [
     kubernetes_namespace.this
   ]
@@ -48,7 +48,7 @@ resource helm_release this {
   recreate_pods = true
   timeout       = 1200
 
-  dynamic set {
+  dynamic "set" {
     for_each = merge(local.init_conf, local.conf)
     content {
       name  = set.key
@@ -57,12 +57,12 @@ resource helm_release this {
   }
 }
 
-data aws_eks_cluster this {
+data "aws_eks_cluster" "this" {
   name = var.cluster_name
 }
 
-module iam_assumable_role_admin {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+module "iam_assumable_role_admin" {
+  source = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   # version                       = "~> v2.6.0"
   create_role                   = true
   role_name                     = "${var.cluster_name}_argocd"
@@ -72,13 +72,13 @@ module iam_assumable_role_admin {
   tags                          = var.tags
 }
 
-resource aws_iam_policy this {
+resource "aws_iam_policy" "this" {
   name_prefix = "argocd"
   description = "EKS ArgoCD policy for cluster ${data.aws_eks_cluster.this.id}"
   policy      = data.aws_iam_policy_document.this.json
 }
 
-data aws_iam_policy_document this {
+data "aws_iam_policy_document" "this" {
   statement {
     sid    = "ArgoCDOwn"
     effect = "Allow"
@@ -91,7 +91,7 @@ data aws_iam_policy_document this {
   }
 }
 
-resource kubernetes_config_map decryptor {
+resource "kubernetes_config_map" "decryptor" {
   metadata {
     name      = "argocd-decryptor"
     namespace = kubernetes_namespace.this.metadata[0].name
@@ -125,7 +125,7 @@ for file in glob.glob('./*.y*ml'):
   }
 }
 
-resource local_file this {
+resource "local_file" "this" {
   depends_on = [
     helm_release.this
   ]
@@ -133,12 +133,12 @@ resource local_file this {
   filename = "${path.root}/${var.sync_apps_dir}/${local.name}.yaml"
 }
 
-resource random_password this {
+resource "random_password" "this" {
   length  = 20
   special = true
 }
 
-resource aws_ssm_parameter this {
+resource "aws_ssm_parameter" "this" {
   name        = "/${var.cluster_name}/argocd/password"
   type        = "SecureString"
   value       = random_password.this.result
@@ -146,22 +146,22 @@ resource aws_ssm_parameter this {
   tags        = var.tags
 }
 
-resource aws_kms_key this {
+resource "aws_kms_key" "this" {
   description = "ArgoCD key"
   is_enabled  = true
   tags        = var.tags
 }
 
-resource aws_kms_ciphertext client_secret {
+resource "aws_kms_ciphertext" "client_secret" {
   key_id    = aws_kms_key.this.key_id
   plaintext = var.oidc.secret
 }
 
 locals {
-  sync_repo_credentials_secret_name  = "argocd-repo-credentials-secret"
-  helm_repo                  = "https://argoproj.github.io/argo-helm"
-  name                       = "argocd"
-  helm_chart                 = "argo-cd"
+  sync_repo_credentials_secret_name = "argocd-repo-credentials-secret"
+  helm_repo                         = "https://argoproj.github.io/argo-helm"
+  name                              = "argocd"
+  helm_chart                        = "argo-cd"
 
 
 
@@ -201,15 +201,15 @@ locals {
   }
 
   conf = {
-    "configs.secret.createSecret" = true
-    "configs.secret.githubSecret" = var.github_secret
-    "configs.secret.gitlabSecret" = var.gitlab_secret
+    "configs.secret.createSecret"          = true
+    "configs.secret.githubSecret"          = var.github_secret
+    "configs.secret.gitlabSecret"          = var.gitlab_secret
     "configs.secret.bitbucketServerSecret" = var.bitbucket_server_secret
-    "configs.secret.bitbucketUUID" = var.bitbucket_uuid
-    "configs.secret.gogsSecret" = var.gogs_secret
+    "configs.secret.bitbucketUUID"         = var.bitbucket_uuid
+    "configs.secret.gogsSecret"            = var.gogs_secret
 
-    "installCRDs" = "false"
-    "dex.enabled" = "false"
+    "installCRDs"                                                          = "false"
+    "dex.enabled"                                                          = "false"
     "global.securityContext.fsGroup"                                       = "999"
     "repoServer.env[0].name"                                               = "AWS_DEFAULT_REGION"
     "repoServer.env[0].value"                                              = data.aws_region.current.name
@@ -222,7 +222,7 @@ locals {
     "repoServer.volumeMounts[0].name"                                      = "decryptor"
     "repoServer.volumeMounts[0].mountPath"                                 = "/opt/decryptor/bin"
 
-    "server.config.repositories"                                           = local.secrets_conf
+    "server.config.repositories" = local.secrets_conf
     "server.config.configManagementPlugins" = yamlencode(
       [{
         "name" = "decryptor"

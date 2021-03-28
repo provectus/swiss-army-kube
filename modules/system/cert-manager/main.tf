@@ -1,16 +1,16 @@
-data aws_vpc main {
+data "aws_vpc" "main" {
   id = var.vpc_id
 }
 
-data aws_eks_cluster this {
+data "aws_eks_cluster" "this" {
   name = var.cluster_name
 }
 
-data aws_region current {}
+data "aws_region" "current" {}
 
 
-module iam_assumable_role_admin {
-  source                        = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
+module "iam_assumable_role_admin" {
+  source = "terraform-aws-modules/iam/aws//modules/iam-assumable-role-with-oidc"
   # version                       = "~> v2.6.0"
   create_role                   = true
   role_name                     = "${data.aws_eks_cluster.this.id}_${local.name}"
@@ -24,7 +24,7 @@ module iam_assumable_role_admin {
   }
 }
 
-resource aws_iam_policy this {
+resource "aws_iam_policy" "this" {
   depends_on = [
     var.module_depends_on
   ]
@@ -60,7 +60,7 @@ resource aws_iam_policy this {
   )
 }
 
-resource kubernetes_namespace this {
+resource "kubernetes_namespace" "this" {
   depends_on = [
     var.module_depends_on
   ]
@@ -69,7 +69,7 @@ resource kubernetes_namespace this {
   }
 }
 
-resource local_file this {
+resource "local_file" "this" {
   depends_on = [
     var.module_depends_on
   ]
@@ -77,7 +77,7 @@ resource local_file this {
   filename = "${path.root}/${var.argocd.path}/${local.name}.yaml"
 }
 
-resource local_file issuers_bom {
+resource "local_file" "issuers_bom" {
   depends_on = [
     var.module_depends_on
   ]
@@ -85,7 +85,7 @@ resource local_file issuers_bom {
   filename = "${path.root}/${var.argocd.path}/${local.name}-issuers.yaml"
 }
 
-resource local_file issuers {
+resource "local_file" "issuers" {
   for_each = local.issuers
   depends_on = [
     var.module_depends_on

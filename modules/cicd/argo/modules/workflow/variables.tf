@@ -48,7 +48,7 @@ variable "cluster_oidc_url" {
   default     = ""
 }
 
-variable tags {
-  type = map(string)
+variable "tags" {
+  type    = map(string)
   default = {}
 }

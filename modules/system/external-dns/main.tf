@@ -42,13 +42,13 @@ resource "helm_release" "this" {
 }
 
 module "hosted_zone" {
-  source = "./hosted_zone"
-  hosted_zone_domain = var.hosted_zone_domain
+  source                = "./hosted_zone"
+  hosted_zone_domain    = var.hosted_zone_domain
   hosted_zone_subdomain = var.hosted_zone_subdomain
-  aws_private = var.aws_private
-  module_depends_on = var.module_depends_on
-  tags = var.tags
-  vpc_id = var.vpc_id
+  aws_private           = var.aws_private
+  module_depends_on     = var.module_depends_on
+  tags                  = var.tags
+  vpc_id                = var.vpc_id
 }
 
 
@@ -85,7 +85,7 @@ resource "aws_iam_policy" "this" {
             "route53:ChangeResourceRecordSets",
             "route53:ListResourceRecordSets"
           ],
-          Resource = formatlist("arn:aws:route53:::hostedzone/%s",module.hosted_zone.zone_id)
+          Resource = formatlist("arn:aws:route53:::hostedzone/%s", module.hosted_zone.zone_id)
         },
         {
           Effect = "Allow",
@@ -125,7 +125,7 @@ locals {
     "serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn" = module.iam_assumable_role_admin.this_iam_role_arn
     },
     {
-      for i, zone in [module.hosted_zone.domain]:
+      for i, zone in [module.hosted_zone.domain] :
       "domainFilters[${i}]" => zone
     }
   )

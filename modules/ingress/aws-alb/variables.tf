@@ -1,32 +1,32 @@
-variable module_depends_on {
+variable "module_depends_on" {
   default = []
 }
 
-variable cluster_name {
+variable "cluster_name" {
   description = "Name of the kubernetes cluster"
 }
 
-variable domains {
+variable "domains" {
   description = "domain name for ingress"
 }
 
-variable vpc_id {
+variable "vpc_id" {
   description = "domain name for ingress"
 }
 
-variable certificates_arns {
+variable "certificates_arns" {
   type        = list(string)
   description = "List of certificates to attach to ingress"
   default     = []
 }
 
-variable namespace {
+variable "namespace" {
   type        = string
   description = ""
   default     = "ingress-system"
 }
 
-variable argocd {
+variable "argocd" {
   type        = map(string)
   description = "A set of variables for enabling ArgoCD"
   default = {
@@ -37,7 +37,7 @@ variable argocd {
   }
 }
 
-variable tags {
-  type = map(string)
+variable "tags" {
+  type    = map(string)
   default = {}
 }

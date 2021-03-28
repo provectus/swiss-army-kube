@@ -1,31 +1,31 @@
 # For depends_on queqe
-variable module_depends_on {
+variable "module_depends_on" {
   default = []
 }
 
-variable autoscaler_conf {
+variable "autoscaler_conf" {
   default = {}
 }
 
-variable namespace {
+variable "namespace" {
   default = "kube-system"
 }
 
-variable cluster_name {
+variable "cluster_name" {
   type = string
 }
 
-variable chart_version {
+variable "chart_version" {
   type    = string
   default = "1.1.1"
 }
 
-variable image_tag {
+variable "image_tag" {
   type    = string
   default = "1.17.1"
 }
 
-variable argocd {
+variable "argocd" {
   type        = map(string)
   description = "A set of variables for enabling ArgoCD"
   default = {
@@ -36,7 +36,7 @@ variable argocd {
   }
 }
 
-variable tags {
-  type = map(string)
+variable "tags" {
+  type    = map(string)
   default = {}
 }

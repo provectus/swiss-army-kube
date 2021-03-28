@@ -1,4 +1,4 @@
-variable argocd {
+variable "argocd" {
   type        = map(string)
   description = "A set of variables for enabling ArgoCD"
   default = {
@@ -9,11 +9,11 @@ variable argocd {
   }
 }
 
-variable profiles {
-  type        = list
+variable "profiles" {
+  type        = list(any)
   description = "The profiles to be created"
 }
-  
 
 
-  
+
+

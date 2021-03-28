@@ -3,11 +3,11 @@ data "aws_caller_identity" "current" {}
 data "aws_region" "current" {}
 
 module "iam_assumable_role" {
-  depends_on = [ aws_iam_policy.this]  
-  source  = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
-  version = "3.0"
+  depends_on = [aws_iam_policy.this]
+  source     = "terraform-aws-modules/iam/aws//modules/iam-assumable-role"
+  version    = "3.0"
 
-  for_each = {for pd in var.kubeflow_pod-defaults: pd.name => pd}
+  for_each = { for pd in var.kubeflow_pod-defaults : pd.name => pd }
 
   trusted_role_arns                 = [var.external_secrets_deployment_role_arn]
   create_role                       = true
@@ -15,13 +15,13 @@ module "iam_assumable_role" {
   role_requires_mfa                 = false
   custom_role_policy_arns           = ["arn:aws:iam::${data.aws_caller_identity.current.account_id}:policy/${var.cluster_name}_${each.value.namespace}_${each.value.name}_ext-secret_pod"]
   number_of_custom_role_policy_arns = 1
-  tags = var.tags
+  tags                              = var.tags
 }
 
 resource "aws_iam_policy" "this" {
-  for_each = {for pd in var.kubeflow_pod-defaults: pd.name => pd}
-  name  = "${var.cluster_name}_${each.value.namespace}_${each.value.name}_ext-secret_pod"
-  policy = <<EOT
+  for_each = { for pd in var.kubeflow_pod-defaults : pd.name => pd }
+  name     = "${var.cluster_name}_${each.value.namespace}_${each.value.name}_ext-secret_pod"
+  policy   = <<EOT
 {
   "Version": "2012-10-17",
     "Statement": [
@@ -41,11 +41,11 @@ EOT
 }
 
 
-resource local_file kubeflow_pod-defaults {
-depends_on = [ module.iam_assumable_role]  
+resource "local_file" "kubeflow_pod-defaults" {
+  depends_on = [module.iam_assumable_role]
 
-for_each = {for pd in var.kubeflow_pod-defaults: pd.name => pd}
-content = <<EOT
+  for_each = { for pd in var.kubeflow_pod-defaults : pd.name => pd }
+  content  = <<EOT
 
 apiVersion: 'kubernetes-client.io/v1'
 kind: ExternalSecret

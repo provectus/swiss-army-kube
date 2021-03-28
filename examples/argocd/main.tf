@@ -22,7 +22,7 @@ module "network" {
   cluster_name       = local.cluster_name
   network            = 10
 }
-#
+
 module "kubernetes" {
   depends_on = [module.network]
   source     = "github.com/provectus/sak-kubernetes"

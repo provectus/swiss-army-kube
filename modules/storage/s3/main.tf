@@ -1,7 +1,7 @@
 resource "aws_s3_bucket" "kubeflow" {
 
   bucket = var.s3_bucket_name
-  tags = var.tags
+  tags   = var.tags
 
   # lifecycle {
   #   prevent_destroy = false
@@ -90,7 +90,7 @@ module "s3_role" {
 
   create_role = true
 
-  role_name         = "${var.cluster_name}-s3-role" 
+  role_name = "${var.cluster_name}-s3-role"
 
   role_requires_mfa = false
 
@@ -99,7 +99,7 @@ module "s3_role" {
   ]
 
   number_of_custom_role_policy_arns = 1
-  tags = var.tags
+  tags                              = var.tags
 }
 
 

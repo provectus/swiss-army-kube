@@ -4,16 +4,16 @@ data "aws_vpc" "main" {
   id = var.vpc_id
 }
 
-resource null_resource wait-eks {
+resource "null_resource" "wait-eks" {
   depends_on = [
     var.module_depends_on
   ]
-  provisioner local-exec {
+  provisioner "local-exec" {
     command = "until kubectl --kubeconfig ${path.root}/${var.config_path} -n kube-system get pods >/dev/null 2>&1;do echo 'Waiting for EKS API';sleep 5;done"
   }
 }
 
-resource aws_iam_openid_connect_provider cluster {
+resource "aws_iam_openid_connect_provider" "cluster" {
   depends_on = [
     var.module_depends_on,
     null_resource.wait-eks

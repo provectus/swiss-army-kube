@@ -35,7 +35,7 @@ variable "project" {
 }
 
 variable "domain_name" {
-  default     = "example.com"
+  default     = "sak.ninja"
   type        = string
   description = "Default domain name"
 }

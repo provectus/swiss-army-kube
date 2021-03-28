@@ -1,18 +1,18 @@
-variable cloudformation_stack_name {
+variable "cloudformation_stack_name" {
   description = "Unique name for the cloudformation stack that will be managed by terraform"
-  type = string
+  type        = string
 }
-variable pool_id {
+variable "pool_id" {
   description = "ID for cognito user pool to which to add resources"
-  type = string
+  type        = string
 }
 
-variable user_groups {
+variable "user_groups" {
   description = "Cognito user-groups to be created"
-  type = list(string)
+  type        = list(string)
 }
 
-variable users {
+variable "users" {
   description = "A mapping of users to groups, with unique hashes "
   type = list(object({
     username        = string
@@ -25,7 +25,7 @@ variable users {
 }
 
 
-variable tags {
+variable "tags" {
   type        = map(string)
   description = "A set of tags"
   default     = {}
