@@ -35,13 +35,11 @@ module "network" {
 
 module "kubernetes" {
   depends_on = [module.network]
-//  source     = "github.com/provectus/sak-kubernetes"
-  source     = "../../modules/sak-kubernetes"
+  source     = "github.com/provectus/sak-kubernetes"
 
   environment        = local.environment
   project            = local.project
   availability_zones = var.availability_zones
-  customers          = ["common","hydrosphere"]
   cluster_name       = local.cluster_name
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
