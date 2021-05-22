@@ -29,7 +29,7 @@ variable "environment" {
 }
 
 variable "project" {
-  default     = "EDUCATION"
+  default     = "SWISSARMY"
   type        = string
   description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
