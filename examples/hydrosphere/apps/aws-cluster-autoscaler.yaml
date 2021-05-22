@@ -1,0 +1,50 @@
+"apiVersion": "argoproj.io/v1alpha1"
+"kind": "Application"
+"metadata":
+  "name": "aws-cluster-autoscaler"
+  "namespace": "argocd"
+"spec":
+  "destination":
+    "namespace": "scaling"
+    "server": "https://kubernetes.default.svc"
+  "project": "default"
+  "source":
+    "chart": "cluster-autoscaler"
+    "helm":
+      "parameters":
+      - "name": "autoDiscovery.clusterName"
+        "value": "hydro-army"
+      - "name": "autoDiscovery.enabled"
+        "value": "true"
+      - "name": "awsRegion"
+        "value": "eu-central-1"
+      - "name": "cloudProvider"
+        "value": "aws"
+      - "name": "extraArgs.balance-similar-node-groups"
+        "value": "true"
+      - "name": "extraArgs.scale-down-enabled"
+        "value": "true"
+      - "name": "image.repository"
+        "value": "us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler"
+      - "name": "image.tag"
+        "value": "v1.16.6"
+      - "name": "rbac.create"
+        "value": "true"
+      - "name": "rbac.pspEnabled"
+        "value": "true"
+      - "name": "rbac.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"
+        "value": "arn:aws:iam::641456973426:role/hydro-army_cluster-autoscaler"
+      - "name": "resources.limits.cpu"
+        "value": "100m"
+      - "name": "resources.limits.memory"
+        "value": "300Mi"
+      - "name": "resources.requests.cpu"
+        "value": "100m"
+      - "name": "resources.requests.memory"
+        "value": "300Mi"
+    "repoURL": "https://charts.helm.sh/stable"
+    "targetRevision": "7.2.2"
+  "syncPolicy":
+    "automated":
+      "prune": true
+      "selfHeal": true

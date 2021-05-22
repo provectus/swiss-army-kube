@@ -1,0 +1,52 @@
+"apiVersion": "argoproj.io/v1alpha1"
+"kind": "Application"
+"metadata":
+  "name": "serving"
+  "namespace": "argocd"
+"spec":
+  "destination":
+    "namespace": "kube-system"
+    "server": "https://kubernetes.default.svc"
+  "project": "default"
+  "source":
+    "chart": "serving"
+    "helm":
+      "parameters":
+      - "name": "global.registry.ingress.enabled"
+        "value": "true"
+      - "name": "global.registry.ingress.host"
+        "value": "hydro-registry.hydro-army.sak.ninja"
+      - "name": "global.registry.insecure"
+        "value": "false"
+      - "name": "global.ui.ingress.enabled"
+        "value": "true"
+      - "name": "global.ui.ingress.grpchost"
+        "value": "hydro-grpc.hydro-army.sak.ninja"
+      - "name": "global.ui.ingress.host"
+        "value": "hydro-serving.hydro-army.sak.ninja"
+      - "name": "manager.monitoring.enabled"
+        "value": "false"
+      - "name": "rbac.create"
+        "value": "true"
+      - "name": "resources.requests.cpu"
+        "value": "500m"
+      - "name": "resources.requests.memory"
+        "value": "8000Mi"
+      - "forceString": true
+        "name": "ingress.annotations.cert-manager\\.io/cluster-issuer"
+        "value": "letsencrypt-prod"
+      - "forceString": true
+        "name": "ingress.annotations.kubernetes\\.io/ingress\\.class"
+        "value": "nginx"
+      - "forceString": true
+        "name": "ingress.annotations.kubernetes\\.io/tls-acme"
+        "value": "true"
+      - "forceString": true
+        "name": "ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/ssl-redirect"
+        "value": "false"
+    "repoURL": "https://hydrospheredata.github.io/hydro-serving/helm"
+    "targetRevision": "2.4.3"
+  "syncPolicy":
+    "automated":
+      "prune": true
+      "selfHeal": true

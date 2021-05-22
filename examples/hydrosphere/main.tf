@@ -114,68 +114,6 @@ module "nginx-ingress" {
   conf         = {}
   tags         = local.tags
 }
-//Google auth for efk
-module "oauth" {
-  depends_on     = [module.argocd]
-  source         = "github.com/provectus/sak-oauth"
-  cluster_name   = module.kubernetes.cluster_name
-  domains        = local.domain
-  argocd         = module.argocd.state
-  namespace_name = "oauth"
-  client_id      = "googleclientid"
-  client_secret  = "googleclientsecret"
-  cookie_secret  = "OqRS8hOXD6ljqapm+zfl4g=="
-  ingress_annotations = {
-    "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
-    "kubernetes.io/ingress.class"              = "nginx"
-    "kubernetes.io/tls-acme"                   = "true"
-    "cert-manager.io/cluster-issuer"           = "letsencrypt-prod"
-  }
-}
-
-module "prometheus" {
-  depends_on              = [module.argocd]
-  source                  = "github.com/provectus/sak-prometheus"
-  cluster_name            = module.kubernetes.cluster_name
-  argocd                  = module.argocd.state
-  domains                 = local.domain
-  grafana_google_auth     = true
-  grafana_allowed_domains = "provectus.com"
-  grafana_client_id       = "googleclientid"
-  grafana_client_secret   = "googleclientsecret"
-  conf = {
-    "grafana.env.GF_USER_AUTO_ASSIGN_ORG_ROLE" = "EDITOR"
-    "grafana.env.GF_USER_EDITORS_CAN_ADMIN"    = "true"
-  }
-}
-
-module "efk" {
-  depends_on   = [module.argocd]
-  source       = "github.com/provectus/sak-efk"
-  cluster_name = module.kubernetes.cluster_name
-  argocd       = module.argocd.state
-  domains      = local.domain
-  ingress_annotations = {
-    "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
-    "kubernetes.io/ingress.class"              = "nginx"
-    "kubernetes.io/tls-acme"                   = "true"
-    "cert-manager.io/cluster-issuer"           = "letsencrypt-prod"
-    "nginx.ingress.kubernetes.io/auth-url"     = "https://oauth2.${local.domain[0]}/oauth2/auth"
-    "nginx.ingress.kubernetes.io/auth-signin"  = "https://oauth2.${local.domain[0]}/oauth2/sign_in?rd=https://$host$request_uri"
-  }
-  kibana_conf = {}
-  filebeat_conf = {
-    "setup.kibana.host"                              = "https://kibana.${local.domain[0]}:443"
-    "setup.dashboards.enabled"                       = "true"
-    "setup.template.enabled"                         = "true"
-    "setup.template.name"                            = "filebeat"
-    "setup.template.pattern"                         = "filebeat-*"
-    "setup.template.settings.index.number_of_shards" = "1"
-    "setup.ilm.enabled"                              = "auto"
-    "setup.ilm.check_exists"                         = "false"
-    "setup.ilm.overwrite"                            = "true"
-  }
-}
 
 module "hydrosphere" {
   depends_on    = [module.argocd]
@@ -184,6 +122,9 @@ module "hydrosphere" {
   chart_version = "2.4.3"
   argocd        = module.argocd.state
   domains       = local.domain
+  conf          = {
+    "manager.monitoring.enabled" = "false"
+  }
   ingress_annotations = {
     "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
     "kubernetes.io/ingress.class"              = "nginx"
@@ -191,3 +132,67 @@ module "hydrosphere" {
     "cert-manager.io/cluster-issuer"           = "letsencrypt-prod"
   }  
 }
+
+//Optional components
+//Google auth for efk 
+# module "oauth" {
+#   depends_on     = [module.argocd]
+#   source         = "github.com/provectus/sak-oauth"
+#   cluster_name   = module.kubernetes.cluster_name
+#   domains        = local.domain
+#   argocd         = module.argocd.state
+#   namespace_name = "oauth"
+#   client_id      = "googleclientid"
+#   client_secret  = "googleclientsecret"
+#   cookie_secret  = "OqRS8hOXD6ljqapm+zfl4g=="
+#   ingress_annotations = {
+#     "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
+#     "kubernetes.io/ingress.class"              = "nginx"
+#     "kubernetes.io/tls-acme"                   = "true"
+#     "cert-manager.io/cluster-issuer"           = "letsencrypt-prod"
+#   }
+# }
+
+# module "prometheus" {
+#   depends_on              = [module.argocd]
+#   source                  = "github.com/provectus/sak-prometheus"
+#   cluster_name            = module.kubernetes.cluster_name
+#   argocd                  = module.argocd.state
+#   domains                 = local.domain
+#   grafana_google_auth     = true
+#   grafana_allowed_domains = "provectus.com"
+#   grafana_client_id       = "googleclientid"
+#   grafana_client_secret   = "googleclientsecret"
+#   conf = {
+#     "grafana.env.GF_USER_AUTO_ASSIGN_ORG_ROLE" = "EDITOR"
+#     "grafana.env.GF_USER_EDITORS_CAN_ADMIN"    = "true"
+#   }
+# }
+
+# module "efk" {
+#   depends_on   = [module.argocd]
+#   source       = "github.com/provectus/sak-efk"
+#   cluster_name = module.kubernetes.cluster_name
+#   argocd       = module.argocd.state
+#   domains      = local.domain
+#   ingress_annotations = {
+#     "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
+#     "kubernetes.io/ingress.class"              = "nginx"
+#     "kubernetes.io/tls-acme"                   = "true"
+#     "cert-manager.io/cluster-issuer"           = "letsencrypt-prod"
+#     "nginx.ingress.kubernetes.io/auth-url"     = "https://oauth2.${local.domain[0]}/oauth2/auth"
+#     "nginx.ingress.kubernetes.io/auth-signin"  = "https://oauth2.${local.domain[0]}/oauth2/sign_in?rd=https://$host$request_uri"
+#   }
+#   kibana_conf = {}
+#   filebeat_conf = {
+#     "setup.kibana.host"                              = "https://kibana.${local.domain[0]}:443"
+#     "setup.dashboards.enabled"                       = "true"
+#     "setup.template.enabled"                         = "true"
+#     "setup.template.name"                            = "filebeat"
+#     "setup.template.pattern"                         = "filebeat-*"
+#     "setup.template.settings.index.number_of_shards" = "1"
+#     "setup.ilm.enabled"                              = "auto"
+#     "setup.ilm.check_exists"                         = "false"
+#     "setup.ilm.overwrite"                            = "true"
+#   }
+# }

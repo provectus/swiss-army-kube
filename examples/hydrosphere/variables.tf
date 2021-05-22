@@ -1,5 +1,5 @@
 variable "cluster_name" {
-  default     = "swiss-army"
+  default     = "hydro-army"
   type        = string
   description = "A name of the Amazon EKS cluster"
 }
@@ -17,7 +17,7 @@ variable "availability_zones" {
 }
 
 variable "zone_id" {
-  default     = ""
+  default     = "Z04917561CQAI9UAF27D6"
   type        = string
   description = "Default zone id for root domain" #like Z04917561CQAI9UAF27D6
 }
@@ -29,7 +29,7 @@ variable "environment" {
 }
 
 variable "project" {
-  default     = "EDUCATION"
+  default     = "SAK"
   type        = string
   description = "A value that will be used in annotations and tags to identify resources with the `Project` key"
 }
@@ -44,7 +44,7 @@ variable "domain_name" {
 variable "argocd" {
   default = {
     repository = "swiss-army-kube"
-    branch     = "master"
+    branch     = "hydrosphere"
     owner      = "provectus"
   }
   type        = map(string)
