@@ -41,6 +41,7 @@ module "kubernetes" {
   project                             = local.project
   availability_zones                  = var.availability_zones
   cluster_name                        = local.cluster_name
+  cluster_version                     = "1.20"
   vpc_id                              = module.network.vpc_id
   subnets                             = module.network.private_subnets
   //We use ASG group and taint with customer name
@@ -119,7 +120,7 @@ module "hydrosphere" {
   depends_on     = [module.argocd]
   source         = "github.com/provectus/sak-hydrosphere"
   cluster_name   = module.kubernetes.cluster_name
-  chart_version  = "2.4.3"
+  chart_version  = "3.0.0"
   namespace_name = "hydrosphere"
   argocd         = module.argocd.state
   domains        = local.domain
