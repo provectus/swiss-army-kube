@@ -116,13 +116,14 @@ module "nginx-ingress" {
 }
 
 module "hydrosphere" {
-  depends_on    = [module.argocd]
-  source        = "github.com/provectus/sak-hydrosphere"
-  cluster_name  = module.kubernetes.cluster_name
-  chart_version = "2.4.3"
-  argocd        = module.argocd.state
-  domains       = local.domain
-  conf          = {
+  depends_on     = [module.argocd]
+  source         = "github.com/provectus/sak-hydrosphere"
+  cluster_name   = module.kubernetes.cluster_name
+  chart_version  = "2.4.3"
+  namespace_name = "hydrosphere"
+  argocd         = module.argocd.state
+  domains        = local.domain
+  conf           = {
     "manager.monitoring.enabled" = "false"
   }
   ingress_annotations = {
