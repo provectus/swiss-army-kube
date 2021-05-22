@@ -58,8 +58,8 @@ module "argocd" {
   cluster_name = module.kubernetes.cluster_name
   path_prefix  = "examples/hydrosphere/"
   //Private repository and credentials
-  https_username = "exampleuser"
-  https_password = "examplepass"
+  #https_username = "exampleuser"
+  #https_password = "examplepass"
   repo_conf      = "- url: https://github.com/Hydrospheredata/hydro-serving"
   //
   domains = local.domain
