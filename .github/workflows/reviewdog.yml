@@ -1,5 +1,10 @@
 name: reviewdog
-on: [pull_request]
+on:
+  pull_request:
+    paths:
+    - '**.tf'
+    - '**.tfvars'
+    - '**.tfvars.json'
 env:
   TERRAFORM_VERSION: "0.14.4"
 
@@ -74,6 +79,7 @@ jobs:
           filter_mode: "added" # Optional. Check all files, not just the diff
           level: "warning"
           flags: "--module --loglevel=error -c ../../.tflint.hcl" # Optional. Add custom tflint flags
+          
   terraformPlanArgocd:
     env:
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -98,24 +104,7 @@ jobs:
         run: |
           tfenv use ${TERRAFORM_VERSION}
           terraform init --upgrade
-          terraform plan -var 'cluster_name=swiss-army-github-ci' -out argocd.tfplan
-
-      - name: "Terraform show"
-        id: showArgocd
-        run: terraform show -json argocd.tfplan
-        working-directory: ./examples/argocd
-        
-      - name: "Save Plan JSON"
-        run: echo '${{ steps.showArgocd.outputs.stdout }}' > argocd.json # Do not change
-
-      - name: Run infracost diff
-        uses: infracost/infracost-gh-action@master # Use a specific version instead of master if locking is preferred
-        env:
-          INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          entrypoint: /scripts/ci/diff.sh # Do not change
-          path: argocd.json # Do not change
+          terraform plan -var 'cluster_name=swiss-army-github-ci'
 
   terraformPlanArgocdWithApplications:
     env:
@@ -141,24 +130,7 @@ jobs:
         run: |
           tfenv use ${TERRAFORM_VERSION}
           terraform init --upgrade
-          terraform plan -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci' -out argocd-with-applications.tfplan
-
-      - name: "Terraform show"
-        id: showArgocdWithApps
-        run: terraform show -json argocd-with-applications.tfplan
-        working-directory: ./examples/argocd-with-applications
-        
-      - name: "Save Plan JSON"
-        run: echo '${{ steps.showArgocdWithApps.outputs.stdout }}' > argocd-with-applications.json # Do not change
-
-      - name: Run infracost diff
-        uses: infracost/infracost-gh-action@master # Use a specific version instead of master if locking is preferred
-        env:
-          INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          entrypoint: /scripts/ci/diff.sh # Do not change
-          path: argocd-with-applications.json # Do not change
+          terraform plan -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci'
 
   terraformPlanCommon:
     env:
@@ -184,21 +156,56 @@ jobs:
         run: |
           tfenv use ${TERRAFORM_VERSION}
           terraform init --upgrade
-          terraform plan -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci' -out common.tfplan
+          terraform plan -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci'
 
-      - name: "Terraform show"
-        id: showcommon
-        run: terraform show -json common.tfplan
-        working-directory: ./examples/common
-        
-      - name: "Save Plan JSON"
-        run: echo '${{ steps.showcommon.outputs.stdout }}' > common.json # Do not change
+  infracost:
+    runs-on: ubuntu-latest
+    needs: [terraformPlanCommon, terraformPlanArgocdWithApplications, terraformPlanArgocd]
+    name: Show infracost diff
+    steps:
+    - name: Check out repository
+      uses: actions/checkout@v2
+    - name: Run infracost diff common
+      continue-on-error: true
+      uses: infracost/infracost-gh-action@master # Use a specific version instead of master if locking is preferred
+      env:
+        INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Do not change
+        ZONE_ID: ${{ secrets.ZONE_ID }}
+        # See the cloud credentials section for the options
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      with:
+        entrypoint: /scripts/ci/diff.sh # Do not change
+        path: ./examples/common
+        terraform_plan_flags: -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci'
 
-      - name: Run infracost diff
-        uses: infracost/infracost-gh-action@master # Use a specific version instead of master if locking is preferred
-        env:
-          INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          entrypoint: /scripts/ci/diff.sh # Do not change
-          path: common.json # Do not change
+    - name: Run infracost diff argocd
+      continue-on-error: true
+      uses: infracost/infracost-gh-action@master # Use a specific version instead of master if locking is preferred
+      env:
+        INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Do not change
+        # See the cloud credentials section for the options
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      with:
+        entrypoint: /scripts/ci/diff.sh # Do not change
+        path: ./examples/argocd
+        terraform_plan_flags: -var 'cluster_name=swiss-army-github-ci'
+
+    - name: Run infracost diff acgocd-with-applications
+      continue-on-error: true
+      uses: infracost/infracost-gh-action@master # Use a specific version instead of master if locking is preferred
+      env:
+        INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Do not change
+        ZONE_ID: ${{ secrets.ZONE_ID }}
+        # See the cloud credentials section for the options
+        AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      with:
+        entrypoint: /scripts/ci/diff.sh # Do not change
+        path: ./examples/argocd-with-applications
+        terraform_plan_flags: -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci'
+
