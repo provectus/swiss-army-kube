@@ -103,7 +103,24 @@ jobs:
         run: |
           tfenv use ${TERRAFORM_VERSION}
           terraform init --upgrade
-          terraform plan -var 'cluster_name=swiss-army-github-ci'
+          terraform plan -var 'cluster_name=swiss-army-github-ci' -out argocd.tfplan
+
+      - name: "Terraform show"
+        id: showArgocd
+        run: terraform show -json argocd.tfplan
+        working-directory: ./examples/argocd
+        
+      - name: "Save Plan JSON"
+        run: echo '${{ steps.showArgocd.outputs.stdout }}' > argocd.json # Do not change
+
+      - name: Run infracost diff
+        uses: infracost/infracost-gh-action@master # Use a specific version instead of master if locking is preferred
+        env:
+          INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          entrypoint: /scripts/ci/diff.sh # Do not change
+          path: argocd.json # Do not change
 
 
   terraformPlanArgocdWithApplications:
@@ -130,7 +147,24 @@ jobs:
         run: |
           tfenv use ${TERRAFORM_VERSION}
           terraform init --upgrade
-          terraform plan -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci'
+          terraform plan -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci' -out argocd-with-applications.tfplan
+
+      - name: "Terraform show"
+        id: showArgocdWithApps
+        run: terraform show -json argocd-with-applications.tfplan
+        working-directory: ./examples/argocd-with-applications
+        
+      - name: "Save Plan JSON"
+        run: echo '${{ steps.showArgocdWithApps.outputs.stdout }}' > argocd-with-applications.json # Do not change
+
+      - name: Run infracost diff
+        uses: infracost/infracost-gh-action@master # Use a specific version instead of master if locking is preferred
+        env:
+          INFRACOST_API_KEY: ${{ secrets.INFRACOST_API_KEY }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          entrypoint: /scripts/ci/diff.sh # Do not change
+          path: argocd-with-applications.json # Do not change
 
   terraformPlanCommon:
     env:
@@ -208,3 +242,4 @@ jobs:
         entrypoint: /scripts/ci/diff.sh # Do not change
         path: ./examples/argocd-with-applications
         terraform_plan_flags: -var "zone_id=${ZONE_ID}" -var 'cluster_name=swiss-army-github-ci'
+
