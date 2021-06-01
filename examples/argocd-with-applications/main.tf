@@ -41,6 +41,7 @@ module "kubernetes" {
   project            = local.project
   availability_zones = var.availability_zones
   cluster_name       = local.cluster_name
+  cluster_version    = "1.20"
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
 }
@@ -87,27 +88,6 @@ module "scaling" {
 
 }
 
-# module "cognito" {
-#    depends_on = [module.argocd, module.clusterwide]
-
-#   source            = "github.com/provectus/sak-cognito"
-#   cluster_name      = module.kubernetes.cluster_name
-#   domain            = "${local.cluster_name}.${var.domain_name}"
-#   zone_id           = var.zone_id
-#   mfa_configuration = "OPTIONAL"
-#   acm_arn           = module.clusterwide.this_acm_certificate_arn
-#   tags              = local.tags
-# }
-
-module "external_secrets" {
-  depends_on       = [module.argocd]
-  source           = "github.com/provectus/sak-external-secrets"
-  cluster_oidc_url = module.kubernetes.cluster_oidc_url
-  cluster_name     = module.kubernetes.cluster_name
-  argocd           = module.argocd.state
-  tags             = local.tags
-}
-
 module "clusterwide" {
   depends_on = [module.argocd]
   source     = "terraform-aws-modules/acm/aws"
@@ -149,13 +129,13 @@ module "alb-ingress" {
   cluster_oidc_url  = module.kubernetes.cluster_oidc_url
 }
 
-module "prometheus" {
-  depends_on   = [module.argocd]
-  source       = "github.com/provectus/sak-prometheus"
-  cluster_name = module.kubernetes.cluster_name
-  argocd       = module.argocd.state
-  domains      = local.domain
-}
+# module "prometheus" {
+#   depends_on   = [module.argocd]
+#   source       = "github.com/provectus/sak-prometheus"
+#   cluster_name = module.kubernetes.cluster_name
+#   argocd       = module.argocd.state
+#   domains      = local.domain
+# }
 
 # module "victoriametrics" {
 #   depends_on   = [module.argocd]
@@ -165,3 +145,23 @@ module "prometheus" {
 #   domains      = local.domain
 # }
 
+# module "cognito" {
+#    depends_on = [module.argocd, module.clusterwide]
+
+#   source            = "github.com/provectus/sak-cognito"
+#   cluster_name      = module.kubernetes.cluster_name
+#   domain            = "${local.cluster_name}.${var.domain_name}"
+#   zone_id           = var.zone_id
+#   mfa_configuration = "OPTIONAL"
+#   acm_arn           = module.clusterwide.this_acm_certificate_arn
+#   tags              = local.tags
+# }
+
+# module "external_secrets" {
+#   depends_on       = [module.argocd]
+#   source           = "github.com/provectus/sak-external-secrets"
+#   cluster_oidc_url = module.kubernetes.cluster_oidc_url
+#   cluster_name     = module.kubernetes.cluster_name
+#   argocd           = module.argocd.state
+#   tags             = local.tags
+# }
