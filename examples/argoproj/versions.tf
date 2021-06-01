@@ -6,23 +6,23 @@ terraform {
     }
     external = {
       source  = "hashicorp/external"
-      version = "2.1.0"
+      version = "1.2"
     }
     helm = {
       source  = "hashicorp/helm"
-      version = "2.1.2"
+      version = "1.3.2"
     }
     kubernetes = {
       source  = "hashicorp/kubernetes"
-      version = "2.2.0"
+      version = "1.13.3"
     }
     local = {
       source  = "hashicorp/local"
-      version = "2.1.0"
+      version = "1.4"
     }
     null = {
       source  = "hashicorp/null"
-      version = "3.1.0"
+      version = "2.1.2"
     }
     random = {
       source  = "hashicorp/random"
