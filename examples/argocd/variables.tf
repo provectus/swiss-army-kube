@@ -5,13 +5,13 @@ variable "cluster_name" {
 }
 
 variable "region" {
-  default     = "eu-north-1"
+  default     = "eu-central-1"
   type        = string
   description = "Set default region"
 }
 
 variable "availability_zones" {
-  default     = ["eu-north-1a", "eu-north-1b"]
+  default     = ["eu-central-1a", "eu-central-1b"]
   type        = list(any)
   description = "Availability zones for project"
 }
@@ -37,7 +37,7 @@ variable "domain_name" {
 variable "argocd" {
   default = {
     repository = "swiss-army-kube"
-    branch     = "master"
+    branch     = "argocd_3"
     owner      = "provectus"
   }
   type        = map(string)
