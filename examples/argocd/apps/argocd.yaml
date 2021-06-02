@@ -29,6 +29,8 @@
         "value": "false"
       - "name": "configs.secret.argocdServerAdminPassword"
         "value": "$2a$10$5ppQi5S5VXFJyQSSzvN.4OaIi8jeBCh6OUfS2tcC65uVU7q5UU8ty"
+      - "name": "configs.secret.argocdServerAdminPasswordMtime"
+        "value": "2021-01-01T10:11:12Z"
       - "name": "configs.secret.bitbucketServerSecret"
         "value": ""
       - "name": "configs.secret.bitbucketUUID"
