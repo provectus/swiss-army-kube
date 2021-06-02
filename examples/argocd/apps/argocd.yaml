@@ -15,6 +15,8 @@
       - "name": "server.rbacConfig.policy\\.csv"
         "value": |
           g, administrators, role:admin
+      - "name": "kubeVersionOverride"
+        "value": "1.18"
       - "name": "server.ingress.tls[0].hosts[0]"
         "value": "argocd.swiss-army-kube.swiss.sak.ninja"
       - "name": "server.ingress.hosts[0]"
