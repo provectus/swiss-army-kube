@@ -100,7 +100,7 @@
       - "name": "server.service.type"
         "value": "ClusterIP"
     "repoURL": "https://argoproj.github.io/argo-helm"
-    "targetRevision": "3.6.6"
+    "targetRevision": "3.6.5"
   "syncPolicy":
     "automated":
       "prune": true
