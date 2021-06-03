@@ -28,6 +28,7 @@ module "kubernetes" {
   source     = "github.com/provectus/sak-kubernetes"
 
   environment        = local.environment
+  cluster_version    = "1.18"
   project            = local.project
   availability_zones = var.availability_zones
   cluster_name       = local.cluster_name
@@ -39,7 +40,7 @@ module "kubernetes" {
 
 module "argocd" {
   depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, data.aws_eks_cluster.cluster]
-  source     = "github.com/provectus/sak-argocd"
+  source     = "github.com/provectus/sak-argocd?ref=argocd_3"
   chart_version = "3.6.6"
   branch       = var.argocd.branch
   owner        = var.argocd.owner
