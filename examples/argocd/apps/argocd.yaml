@@ -104,6 +104,4 @@
     "repoURL": "https://argoproj.github.io/argo-helm"
     "targetRevision": "3.6.6"
   "syncPolicy":
-    "automated":
-      "prune": true
-      "selfHeal": true
+    "manual":
