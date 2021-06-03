@@ -15,6 +15,9 @@
       - "name": "server.rbacConfig.policy\\.csv"
         "value": |
           g, administrators, role:admin
+      - true
+      - "configs.secret.argocdServerAdminPassword"
+      - "$2a$10$RvXuduIMW5ZibjAXCFn6fO/Mv4ycFSOD3Ls9ow0zMD8yyr/98352a"
       - "name": "server.ingress.tls[0].hosts[0]"
         "value": "argocd.swiss-army-kube.swiss.sak.ninja"
       - "name": "server.ingress.hosts[0]"
@@ -25,8 +28,6 @@
         "value": "nginx"
       - "name": "server.ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/ssl-redirect"
         "value": "false"
-      - "name": "configs.secret.argocdServerAdminPassword"
-        "value": "$2a$10$RvXuduIMW5ZibjAXCFn6fO/Mv4ycFSOD3Ls9ow0zMD8yyr/98352a"
       - "name": "configs.secret.bitbucketServerSecret"
         "value": ""
       - "name": "configs.secret.bitbucketUUID"
