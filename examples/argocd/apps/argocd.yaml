@@ -45,6 +45,8 @@
         "value": "999"
       - "name": "installCRDs"
         "value": "false"
+      - "name": "kubeVersionOverride"
+        "value": "1.18"
       - "name": "repoServer.env[0].name"
         "value": "AWS_DEFAULT_REGION"
       - "name": "repoServer.env[0].value"
