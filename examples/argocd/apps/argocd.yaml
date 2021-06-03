@@ -11,6 +11,10 @@
   "source":
     "chart": "argo-cd"
     "helm":
+      "values": |
+        configs:
+          secret:
+            argocdServerAdminPassword: $2a$10$H1a30nMr9v2QE2nkyz0BoOD2J0I6FQFMtHS0csEg12RBWzfRuuoE6
       "parameters":
       - "name": "server.rbacConfig.policy\\.csv"
         "value": |
@@ -25,8 +29,6 @@
         "value": "nginx"
       - "name": "server.ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/ssl-redirect"
         "value": "false"
-      - "name": "configs.secret.argocdServerAdminPassword"
-        "value": "'$2a$10$H1a30nMr9v2QE2nkyz0BoOD2J0I6FQFMtHS0csEg12RBWzfRuuoE6'"
       - "name": "configs.secret.bitbucketServerSecret"
         "value": ""
       - "name": "configs.secret.bitbucketUUID"
