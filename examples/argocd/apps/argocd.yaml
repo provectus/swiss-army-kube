@@ -11,10 +11,6 @@
   "source":
     "chart": "argo-cd"
     "helm":
-      "values": |
-        configs:
-          secret:
-            argocdServerAdminPassword: $2a$10$H1a30nMr9v2QE2nkyz0BoOD2J0I6FQFMtHS0csEg12RBWzfRuuoE6
       "parameters":
       - "name": "server.rbacConfig.policy\\.csv"
         "value": |
@@ -103,6 +99,10 @@
         "value": "role:readonly"
       - "name": "server.service.type"
         "value": "ClusterIP"
+      "values": |
+        "configs":
+          "secret":
+            "argocdServerAdminPassword": "$2a$10$H1a30nMr9v2QE2nkyz0BoOD2J0I6FQFMtHS0csEg12RBWzfRuuoE6"
     "repoURL": "https://argoproj.github.io/argo-helm"
     "targetRevision": "3.6.6"
   "syncPolicy":
