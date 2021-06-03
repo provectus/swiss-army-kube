@@ -99,9 +99,12 @@
         "value": "role:readonly"
       - "name": "server.service.type"
         "value": "ClusterIP"
-      - "name": "configs.secret.argocdServerAdminPassword"
-        "value": "$2a$10$H1a30nMr9v2QE2nkyz0BoOD2J0I6FQFMtHS0csEg12RBWzfRuuoE6"
+      - "forceString": true
+        "name": "configs.secret.argocdServerAdminPassword"
+        "value": "JDJhJDEwJEgxYTMwbk1yOXYyUUUybmt5ejBCb09EMkowSTZGUUZNdEhTMGNzRWcxMlJCV3pmUnV1b0U2"
     "repoURL": "https://argoproj.github.io/argo-helm"
     "targetRevision": "3.6.6"
   "syncPolicy":
-    "manual":
+    "automated":
+      "prune": true
+      "selfHeal": true
