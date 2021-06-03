@@ -26,7 +26,7 @@
       - "name": "server.ingress.annotations.nginx\\.ingress\\.kubernetes\\.io/ssl-redirect"
         "value": "false"
       - "name": "configs.secret.argocdServerAdminPassword"
-        "value": "$2a$10$5ppQi5S5VXFJyQSSzvN.4OaIi8jeBCh6OUfS2tcC65uVU7q5UU8ty"
+        "value": "$2a$10$RvXuduIMW5ZibjAXCFn6fO/Mv4ycFSOD3Ls9ow0zMD8yyr/98352a"
       - "name": "configs.secret.bitbucketServerSecret"
         "value": ""
       - "name": "configs.secret.bitbucketUUID"
