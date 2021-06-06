@@ -101,15 +101,26 @@ module "cert-manager" {
   domains      = local.domain
 }
 
-module "internal-nginx-ingress" {
+module "nginx-ingress" {
   depends_on   = [module.argocd]
   source       = "github.com/provectus/sak-nginx"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
-  conf = {
+  conf = {}
+  tags = local.tags
+}
+
+module "internal-nginx-ingress" {
+  depends_on     = [module.argocd]
+  source         = "github.com/provectus/sak-nginx"
+  namespace_name = "internal-ingress"
+  internal       = true
+  cluster_name   = module.kubernetes.cluster_name
+  argocd         = module.argocd.state
+  conf           = {
     "controller.service.internal.enabled"                                                        = true
     "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-internal" = "0.0.0.0"
-    "controller.ingressClass" = "internal"
+    "controller.ingressClass"                                                                    = "internal"
   }
   tags = local.tags
 }
