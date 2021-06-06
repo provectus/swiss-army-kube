@@ -130,6 +130,7 @@ module "registry-mirror" {
   source       = "github.com/provectus/sak-incubator//registry-mirror"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
+  storage      = "s3"
   domains      = local.domain
 
   conf = {}
