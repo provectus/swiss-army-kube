@@ -16,7 +16,7 @@
         "value": "https://registry-1.docker.io"
       - "name": "ingress.annotations.cert-manager\\.io/cluster-issuer"
         "value": "letsencrypt-prod"
-      - "name": "ingress.annotations.kubernetes\\.io/ingress.class"
+      - "name": "ingress.annotations.kubernetes\\.io/ingress\\.class"
         "value": "internal"
       - "name": "ingress.annotations.kubernetes\\.io/tls-acme"
         "value": "true"
