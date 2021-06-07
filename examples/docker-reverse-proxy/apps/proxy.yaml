@@ -35,7 +35,7 @@
       - "name": "storage"
         "value": "filesystem"
     "repoURL": "https://helm.twun.io"
-    "targetRevision": "1.10.1"
+    "targetRevision": "1.9.6"
   "syncPolicy":
     "automated":
       "prune": true
