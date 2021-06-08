@@ -1,5 +1,5 @@
 variable "cluster_name" {
-  default     = "reverse"
+  default     = "swiss-army"
   type        = string
   description = "A name of the Amazon EKS cluster"
 }

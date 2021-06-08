@@ -42,7 +42,7 @@ module "kubernetes" {
   availability_zones = var.availability_zones
   cluster_name       = local.cluster_name
   domains            = local.domain
-  cluster_version    = "1.19"
+#  cluster_version    = "1.19"
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
 }
