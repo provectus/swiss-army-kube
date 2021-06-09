@@ -44,11 +44,11 @@ module "kubernetes" {
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
   admin_arns = [
-    {
-      userarn  = "arn:aws:iam::xxxxxxxx:user/username"
-      username = "username"
-      groups   = ["system:masters"]
-    }
+    # {
+    #   userarn  = "arn:aws:iam::xxxxxxxx:user/username"
+    #   username = "username"
+    #   groups   = ["system:masters"]
+    # }
   ]
   user_arns = []
 }

@@ -35,14 +35,13 @@ module "network" {
 
 module "kubernetes" {
   depends_on = [module.network]
-  source     = "github.com/provectus/sak-kubernetes?ref=registry"
+  source     = "github.com/provectus/sak-kubernetes"
 
   environment        = local.environment
   project            = local.project
   availability_zones = var.availability_zones
   cluster_name       = local.cluster_name
   domains            = local.domain
-#  cluster_version    = "1.19"
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
 }
@@ -90,7 +89,7 @@ module "scaling" {
 }
 
 module "cert-manager" {
-  depends_on   = [module.argocd]
+  depends_on = [module.argocd]
 
   source       = "github.com/provectus/sak-cert-manager"
   cluster_name = module.kubernetes.cluster_name
@@ -106,8 +105,8 @@ module "nginx-ingress" {
   source       = "github.com/provectus/sak-nginx"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
-  conf = {}
-  tags = local.tags
+  conf         = {}
+  tags         = local.tags
 }
 
 module "internal-nginx-ingress" {
@@ -117,7 +116,7 @@ module "internal-nginx-ingress" {
   internal       = true
   cluster_name   = module.kubernetes.cluster_name
   argocd         = module.argocd.state
-  conf           = {
+  conf = {
     "controller.service.internal.enabled"                                                        = true
     "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-internal" = "0.0.0.0"
     "controller.ingressClass"                                                                    = "internal"
