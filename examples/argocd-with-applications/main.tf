@@ -41,6 +41,7 @@ module "kubernetes" {
   project            = local.project
   availability_zones = var.availability_zones
   cluster_name       = local.cluster_name
+  domains            = local.domain
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
 }

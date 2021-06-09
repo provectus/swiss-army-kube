@@ -43,6 +43,7 @@ module "kubernetes" {
   cluster_name       = local.cluster_name
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
+  domains            = local.domain
   //We use ASG group and taint with customer name
   customers                           = ["hydrosphere.io"]
   on_demand_customer_max_cluster_size = "10"
