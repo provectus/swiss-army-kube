@@ -41,7 +41,7 @@ module "kubernetes" {
   project            = local.project
   availability_zones = var.availability_zones
   cluster_name       = local.cluster_name
-  cluster_version    = "1.20"
+  domains            = local.domain
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
 }
@@ -118,16 +118,16 @@ module "nginx-ingress" {
   tags = local.tags
 }
 
-module "alb-ingress" {
-  depends_on        = [module.external_dns]
-  source            = "github.com/provectus/sak-alb-controller"
-  cluster_name      = module.kubernetes.cluster_name
-  domains           = local.domain
-  vpc_id            = module.network.vpc_id
-  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
-  certificates_arns = [module.clusterwide.this_acm_certificate_arn]
-  cluster_oidc_url  = module.kubernetes.cluster_oidc_url
-}
+# module "alb-ingress" {
+#   depends_on        = [module.external_dns]
+#   source            = "github.com/provectus/sak-alb-controller"
+#   cluster_name      = module.kubernetes.cluster_name
+#   domains           = local.domain
+#   vpc_id            = module.network.vpc_id
+#   config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
+#   certificates_arns = [module.clusterwide.this_acm_certificate_arn]
+#   cluster_oidc_url  = module.kubernetes.cluster_oidc_url
+# }
 
 # module "prometheus" {
 #   depends_on   = [module.argocd]
