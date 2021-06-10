@@ -64,12 +64,14 @@ Clone this repo if you haven't done it yet:
 ``` 
 git clone https://github.com/provectus/swiss-army-kube.git
 ``` 
-### 2. Go to the examples/common directory
+### 2. Go to the examples/xxx directory
 
 ``` 
 cd swiss-army-kube/examples/common
 ```  
 The `examples/common` directory contains the common project structure. You can use this folder as is or rename it to your project/environment name for convenience. 
+
+You can use any other example, more detailed instructions for each example can be found in the README of the example
 
 ### 3. Configure your EKS cluster 
 
@@ -166,7 +168,7 @@ The Swiss Army Kube repository has three main directories that provide a minimal
 
 The `swiss-army-kube/examples` directory contains project examples that you can use as boilerplates to start your new projects. Pick one, rename it to your project name for convenience, and modify the directory as required. This way you can create as many projects as you need really fast.
 
-To configure your project cluster for deployment, just [include modules](./modules) that you need and [set variables](./examples/CONFIGURE.md) in the `.tf` files before deploying your EKS cluster with Terraform commands. 
+To configure your project cluster for deployment, just [include modules](https://github.com/provectus/sak-incubator) that you need and [set variables](./examples/CONFIGURE.md) in the `.tf` files before deploying your EKS cluster with Terraform commands. 
 
 The `examples/common` directory contains a set of `.tf` files: 
 
@@ -176,6 +178,9 @@ The `examples/common` directory contains a set of `.tf` files:
 The `examples/argocd-with-applications` the folder contains an example of deploying infrastructure in aws and applications for cluster operation (like external-dns, prometheus, cluster-autoscaler, etc.)
 
 The `examples/argocd` the folder contains an example of deploying infrastructure in aws and argo-cd server without any applications.
+
+Read about examples and how to use them in the example's README file.
+
 
 <a name="adddevs"></a>
 ## Adding Developers to Kubernetes Cluster

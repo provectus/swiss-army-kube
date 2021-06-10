@@ -1,11 +1,23 @@
 # About
-That example is the standard deployment of the SAK cluster with managing applications through ArgoCD and setup dockerhub registry proxy to avoid limits.
+That example is the standard deployment of the SAK cluster with managing applications through ArgoCD and internal registry with proxy mode enabled. It help to avoid docker-hub limits and reduce time to download docker images. 
+
+The next modules are supported:
+- [ArgoCD](https://github.com/provectus/sak-argocd)
+- [Scaling](https://github.com/provectus/sak-scaling)
+- [External DNS](https://github.com/provectus/sak-external-dns)
+- [External Secrets](https://github.com/provectus/sak-external-secrets)
+- [Prometheus monitoring](https://github.com/provectus/sak-prometheus)
+- [Nginx Ingress](https://github.com/provectus/sak-nginx)
+- [Registry-mirror](https://github.com/provectus/sak-incubator/tree/main/registry-mirror)
+
 
 # How to use
 
 1. Create user
 
-2. Add variables to variables.tf. See example below
+2. Add variables to variables.tf. See example below:
+
+> :warning: Pay attention to argocd variables repository\branch\owner
 
 ```
 variable "cluster_name" {
@@ -44,6 +56,10 @@ variable "argocd" {
   }
 }
 ```
+
+3. After completed changes, use terraform init --upgrade && terraform apply command. If deployment success a new folder will be created with name apps. You need to commit this folder to the Github repository (see variable "ArgoCD" repository\branch\owner)
+
+4. ArgoCD sync all apps and deploy all manifest. Enjoy!
 
 # Test
 

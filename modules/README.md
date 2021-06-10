@@ -1,1 +1,1 @@
-> :warning: All modules migrate to [sak-incubator](https://github.com/provectus/sak-incubator/tree/main) 
+> :warning: All modules migrate to [sak-incubator](https://github.com/provectus/sak-incubator/tree/main) or have named repository like a https://github.com/provecrus/sak-module_name/tree/main 
