@@ -37,7 +37,7 @@ simple installation of EKS and VPC
   providers.tf - list of providers and their values
 
 # Deploy cluster
-Change terraform.tfvars, choose modules in modules.tf and do the following:
+Change variables.tf, choose modules in main.tf and do the following:
 
 Prepare and download modules
 
