@@ -12,6 +12,8 @@
     "chart": "thanos"
     "helm":
       "parameters":
+      - "name": "fullnameOverride"
+        "value": "thanos"
       - "name": "bucketweb.enabled"
         "value": "false"
       - "name": "compactor.enabled"
