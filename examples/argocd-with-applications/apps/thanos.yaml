@@ -52,7 +52,7 @@
         "value": "true"
       - "name": "queryFrontend.ingress.hostname"
         "value": "thanos.swiss-army.sak.ninja"
-      - "name": "queryFrontend.ingress.secrets[0]name"
+      - "name": "queryFrontend.ingress.secrets[0].name"
         "value": "thanos-local-tls"
       - "name": "queryFrontend.ingress.tls"
         "value": "true"
