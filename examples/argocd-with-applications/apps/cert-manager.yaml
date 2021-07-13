@@ -20,6 +20,12 @@
         "value": "eu-central-1"
       - "name": "domainFilters[0]"
         "value": "swiss-army.sak.ninja"
+      - "name": ingressShim.defaultIssuerName
+        "value": "letsencrypt-prod"
+      - "name": ingressShim.defaultIssuerKind
+        "value": "ClusterIssuer"
+      - "name": ingressShim.defaultIssuerGroup
+        "value": "cert-manager.io"
     "repoURL": "https://charts.jetstack.io"
     "targetRevision": "v0.15.1"
   "syncPolicy":
