@@ -21,16 +21,15 @@
               "datasource": "Prometheus"
               "gnetId": "2"
               "revision": "2"
-      - "name": "datasources"
+      - "name": "datasources.datasources\\.yaml"
         "value": |
-          "datasources\\.yaml":
-            "apiVersion": "1"
-            "datasources":
-            - "access": "proxy"
-              "isDefault": true
-              "name": "Prometheus"
-              "type": "Prometheus"
-              "url": "http://kube-prometheus-prometheus:9090"
+          "apiVersion": "1"
+          "datasources":
+          - "access": "proxy"
+            "isDefault": true
+            "name": "Prometheus"
+            "type": "Prometheus"
+            "url": "http://kube-prometheus-prometheus:9090"
       - "name": "env.GF_AUTH_GOOGLE_ALLOWED_DOMAINS"
         "value": "local"
       - "name": "env.GF_AUTH_GOOGLE_CLIENT_ID"
