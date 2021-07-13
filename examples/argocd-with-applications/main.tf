@@ -88,32 +88,43 @@ module "scaling" {
 
 }
 
-module "clusterwide" {
-  depends_on = [module.argocd]
-  source     = "terraform-aws-modules/acm/aws"
-  version    = "~> v2.12"
+# module "clusterwide" {
+#   depends_on = [module.argocd]
+#   source     = "terraform-aws-modules/acm/aws"
+#   version    = "~> v2.12"
 
-  domain_name = "*.${local.domain[0]}"
-  subject_alternative_names = [
-    local.domain[0]
-  ]
-  zone_id              = module.external_dns.zone_id
-  validate_certificate = true #Disable if used private DNS and validate it manually
-  wait_for_validation  = false
-  tags                 = local.tags
+#   domain_name = "*.${local.domain[0]}"
+#   subject_alternative_names = [
+#     local.domain[0]
+#   ]
+#   zone_id              = module.external_dns.zone_id
+#   validate_certificate = true #Disable if used private DNS and validate it manually
+#   wait_for_validation  = false
+#   tags                 = local.tags
+# }
+
+module "cert-manager" {
+  depends_on   = [module.argocd]
+  source       = "github.com/provectus/sak-cert-manager"
+  cluster_name = module.kubernetes.cluster_name
+  argocd       = module.argocd.state
+  email        = "dkharlamov@provectus.com"
+  zone_id      = data.aws_route53_zone.this.zone_id
+  vpc_id       = module.network.vpc_id
+  domains      = local.domain
 }
 
 module "nginx-ingress" {
-  depends_on   = [module.clusterwide]
+  depends_on   = [module.cert-manager]
   source       = "github.com/provectus/sak-nginx"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
   conf = {
-    "controller.service.targetPorts.http"                                                                = "http"
-    "controller.service.targetPorts.https"                                                               = "http"
-    "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"         = module.clusterwide.this_acm_certificate_arn
-    "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-backend-protocol" = "http"
-    "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-ports"        = "https"
+    # "controller.service.targetPorts.http"                                                                = "http"
+    # "controller.service.targetPorts.https"                                                               = "http"
+    # "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"         = module.clusterwide.this_acm_certificate_arn
+    # "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-backend-protocol" = "http"
+    # "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-ports"        = "https"
   }
   tags = local.tags
 }
