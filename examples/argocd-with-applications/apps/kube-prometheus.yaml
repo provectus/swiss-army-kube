@@ -41,7 +41,7 @@
       - "name": "prometheus.thanos.ingress.certManager"
         "value": "true"
       - "name": "prometheus.thanos.ingress.enabled"
-        "value": "true"
+        "value": "false"
       - "name": "prometheus.thanos.ingress.hosts[0]"
         "value": "thanos-gateway.swiss-army.sak.ninja"
       - "name": "prometheus.thanos.ingress.tls[0].hosts[0]"
