@@ -12,8 +12,6 @@
     "chart": "thanos"
     "helm":
       "parameters":
-      - "name": "fullnameOverride"
-        "value": "thanos"
       - "name": "bucketweb.enabled"
         "value": "false"
       - "name": "compactor.enabled"
@@ -46,6 +44,8 @@
         "value": "thanosquery-local-tls"
       - "name": "query.ingress.tls"
         "value": "true"
+      - "name": "queryFrontend.fullnameOverride"
+        "value": "thanos"
       - "name": "queryFrontend.enabled"
         "value": "true"
       - "name": "queryFrontend.ingress.certManager"
