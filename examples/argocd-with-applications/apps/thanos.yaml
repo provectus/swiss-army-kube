@@ -15,7 +15,7 @@
       - "name": "bucketweb.enabled"
         "value": "false"
       - "name": "compactor.enabled"
-        "value": "true"
+        "value": "false"
       - "name": "compactor.persistence.size"
         "value": "10Gi"
       - "name": "compactor.retentionResolution1h"
