@@ -26,8 +26,6 @@
         "value": "false"
       - "name": "grafana.env.GF_SERVER_ROOT_URL"
         "value": "https://grafana.swiss-army.sak.ninja"
-      - "name": "grafana.ingress.annotations"
-        "value": "{}"
       - "name": "grafana.ingress.enabled"
         "value": "true"
       - "name": "grafana.ingress.hostname"
