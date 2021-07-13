@@ -14,18 +14,18 @@
       "parameters":
       - "name": "installCRDs"
         "value": "true"
+      - "name": "ingressShim.defaultIssuerName"
+        "value": "letsencrypt-prod"
+      - "name": "ingressShim.defaultIssuerKind"
+        "value": "ClusterIssuer"
+      - "name": "ingressShim.defaultIssuerGroup"
+        "value": "cert-manager.io"
       - "name": "rbac.serviceAccountAnnotations.eks\\.amazonaws\\.com/role-arn"
         "value": "arn:aws:iam::641456973426:role/swiss-army_cert-manager"
       - "name": "aws.region"
         "value": "eu-central-1"
       - "name": "domainFilters[0]"
         "value": "swiss-army.sak.ninja"
-      - "name": ingressShim.defaultIssuerName
-        "value": "letsencrypt-prod"
-      - "name": ingressShim.defaultIssuerKind
-        "value": "ClusterIssuer"
-      - "name": ingressShim.defaultIssuerGroup
-        "value": "cert-manager.io"
     "repoURL": "https://charts.jetstack.io"
     "targetRevision": "v1.4.0"
   "syncPolicy":
