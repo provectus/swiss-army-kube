@@ -27,7 +27,7 @@
       - "name": ingressShim.defaultIssuerGroup
         "value": "cert-manager.io"
     "repoURL": "https://charts.jetstack.io"
-    "targetRevision": "v0.15.1"
+    "targetRevision": "v1.4.0"
   "syncPolicy":
     "automated":
       "prune": true
