@@ -14,13 +14,6 @@
       "parameters":
       - "name": "adminPassword"
         "value": "KMS_ENC:AQICAHjqbwPgIOjYuD3KVy6WWY2OVxVq5n+5gRoU0jCVJgrvyAEXxhvJK3lqnYBZ/Ondb+k5AAAAbjBsBgkqhkiG9w0BBwagXzBdAgEAMFgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM3BdeKZn/M/PRJCJeAgEQgCslaO0myfLjDF+Eh7UhuMZb6OROVN45zc8zYyTgx7sXKM5+TBXLM1FGhiOM:"
-      - "name": "dashboards"
-        "value": |
-          "default":
-            "prometheus-stats":
-              "datasource": "Prometheus"
-              "gnetId": "2"
-              "revision": "2"
       - "name": "datasources.datasources\\.yaml"
         "value": |
           "apiVersion": "1"
