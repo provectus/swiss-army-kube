@@ -1,0 +1,52 @@
+"apiVersion": "argoproj.io/v1alpha1"
+"kind": "Application"
+"metadata":
+  "name": "grafana"
+  "namespace": "argocd"
+"spec":
+  "destination":
+    "namespace": "monitoring"
+    "server": "https://kubernetes.default.svc"
+  "project": "default"
+  "source":
+    "chart": "grafana-operator"
+    "helm":
+      "parameters":
+      - "name": "grafana.config.security.admin_password"
+        "value": "KMS_ENC:AQICAHjqbwPgIOjYuD3KVy6WWY2OVxVq5n+5gRoU0jCVJgrvyAEXxhvJK3lqnYBZ/Ondb+k5AAAAbjBsBgkqhkiG9w0BBwagXzBdAgEAMFgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM3BdeKZn/M/PRJCJeAgEQgCslaO0myfLjDF+Eh7UhuMZb6OROVN45zc8zYyTgx7sXKM5+TBXLM1FGhiOM:"
+      - "name": "grafana.enabled"
+        "value": "true"
+      - "name": "grafana.env.GF_AUTH_GOOGLE_ALLOWED_DOMAINS"
+        "value": "local"
+      - "name": "grafana.env.GF_AUTH_GOOGLE_CLIENT_ID"
+        "value": ""
+      - "name": "grafana.env.GF_AUTH_GOOGLE_CLIENT_SECRET"
+        "value": ""
+      - "name": "grafana.env.GF_AUTH_GOOGLE_ENABLED"
+        "value": "false"
+      - "name": "grafana.env.GF_SERVER_ROOT_URL"
+        "value": "https://grafana.swiss-army.sak.ninja"
+      - "name": "grafana.ingress.annotations"
+        "value": "{}"
+      - "name": "grafana.ingress.enabled"
+        "value": "true"
+      - "name": "grafana.ingress.hostname"
+        "value": "grafana.swiss-army.sak.ninja"
+      - "name": "grafana.ingress.tls"
+        "value": "true"
+      - "name": "grafana.ingress.tlsSecret"
+        "value": "grafana-local-tls"
+      - "name": "grafana.persistence.enabled"
+        "value": "true"
+      - "name": "grafana.persistence.size"
+        "value": "10Gi"
+      - "name": "namespace"
+        "value": "monitoring"
+      - "name": "operator.enabled"
+        "value": "true"
+    "repoURL": "https://charts.bitnami.com/bitnami"
+    "targetRevision": "0.7.6"
+  "syncPolicy":
+    "automated":
+      "prune": true
+      "selfHeal": true

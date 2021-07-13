@@ -1,0 +1,50 @@
+"apiVersion": "argoproj.io/v1alpha1"
+"kind": "Application"
+"metadata":
+  "name": "kube-prometheus"
+  "namespace": "argocd"
+"spec":
+  "destination":
+    "namespace": "monitoring"
+    "server": "https://kubernetes.default.svc"
+  "project": "default"
+  "source":
+    "chart": "kube-prometheus"
+    "helm":
+      "parameters":
+      - "name": "alertmanager.enabled"
+        "value": "true"
+      - "name": "namespace"
+        "value": "monitoring"
+      - "name": "operator.enabled"
+        "value": "true"
+      - "name": "prometheus.enabled"
+        "value": "true"
+      - "name": "prometheus.ingress.certManager"
+        "value": "true"
+      - "name": "prometheus.ingress.enabled"
+        "value": "false"
+      - "name": "prometheus.ingress.hostname"
+        "value": "prometheus.swiss-army.sak.ninja"
+      - "name": "prometheus.ingress.tls"
+        "value": "true"
+      - "name": "prometheus.persistence.enabled"
+        "value": "false"
+      - "name": "prometheus.persistence.size"
+        "value": "10Gi"
+      - "name": "prometheus.retention"
+        "value": "10d"
+      - "name": "prometheus.thanos.create"
+        "value": "true"
+      - "name": "prometheus.thanos.ingress.certManager"
+        "value": "true"
+      - "name": "prometheus.thanos.ingress.enabled"
+        "value": "false"
+      - "name": "prometheus.thanos.ingress.hosts[0]"
+        "value": "thanos-gateway.swiss-army.sak.ninja"
+    "repoURL": "https://charts.bitnami.com/bitnami"
+    "targetRevision": "6.1.1"
+  "syncPolicy":
+    "automated":
+      "prune": true
+      "selfHeal": true

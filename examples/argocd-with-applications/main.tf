@@ -129,13 +129,13 @@ module "nginx-ingress" {
 #   cluster_oidc_url  = module.kubernetes.cluster_oidc_url
 # }
 
-# module "prometheus" {
-#   depends_on   = [module.argocd]
-#   source       = "github.com/provectus/sak-prometheus"
-#   cluster_name = module.kubernetes.cluster_name
-#   argocd       = module.argocd.state
-#   domains      = local.domain
-# }
+module "prometheus" {
+  depends_on   = [module.argocd]
+  source       = "github.com/provectus/sak-prometheus?ref=feature_thanos"
+  cluster_name = module.kubernetes.cluster_name
+  argocd       = module.argocd.state
+  domains      = local.domain
+}
 
 # module "victoriametrics" {
 #   depends_on   = [module.argocd]

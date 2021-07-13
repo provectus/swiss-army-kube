@@ -17,7 +17,7 @@ variable "availability_zones" {
 }
 
 variable "zone_id" {
-  default     = ""
+  default     = "Z04917561CQAI9UAF27D6"
   type        = string
   description = "Default zone id for root domain" #like Z04917561CQAI9UAF27D6
 }
@@ -44,7 +44,7 @@ variable "domain_name" {
 variable "argocd" {
   default = {
     repository = "swiss-army-kube"
-    branch     = "master"
+    branch     = "prometheus"
     owner      = "provectus"
   }
   type        = map(string)
