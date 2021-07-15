@@ -14,6 +14,23 @@
       "parameters":
       - "name": "adminPassword"
         "value": "KMS_ENC:AQICAHjqbwPgIOjYuD3KVy6WWY2OVxVq5n+5gRoU0jCVJgrvyAEXxhvJK3lqnYBZ/Ondb+k5AAAAbjBsBgkqhkiG9w0BBwagXzBdAgEAMFgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQM3BdeKZn/M/PRJCJeAgEQgCslaO0myfLjDF+Eh7UhuMZb6OROVN45zc8zYyTgx7sXKM5+TBXLM1FGhiOM:"
+      - "name": "dashboards"
+        "value": |
+          "default":
+            "prometheus-stats":
+              "datasource": "Prometheus"
+              "gnetId": "2"
+              "revision": "2"
+      - "name": "datasources"
+        "value": |
+          "datasources\\.yaml":
+            "apiVersion": "1"
+            "datasources":
+            - "access": "proxy"
+              "isDefault": true
+              "name": "Prometheus"
+              "type": "Prometheus"
+              "url": "http://kube-prometheus-prometheus:9090"
       - "name": "env.GF_AUTH_GOOGLE_ALLOWED_DOMAINS"
         "value": "local"
       - "name": "env.GF_AUTH_GOOGLE_CLIENT_ID"

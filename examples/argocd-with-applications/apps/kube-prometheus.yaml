@@ -22,6 +22,8 @@
         "value": "true"
       - "name": "prometheus.enabled"
         "value": "true"
+      - "name": "prometheus.externalLabels.cluster"
+        "value": "swiss-army"
       - "name": "prometheus.ingress.certManager"
         "value": "true"
       - "name": "prometheus.ingress.enabled"

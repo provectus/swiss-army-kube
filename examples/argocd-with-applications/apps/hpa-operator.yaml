@@ -12,6 +12,8 @@
     "chart": "hpa-operator"
     "helm":
       "parameters":
+      - "name": "metrics-server.enabled"
+        "value": "true"
       - "name": "rbac.create"
         "value": "true"
       - "name": "rbac.pspEnabled"
@@ -25,7 +27,7 @@
       - "name": "resources.requests.memory"
         "value": "30Mi"
     "repoURL": "https://kubernetes-charts.banzaicloud.com"
-    "targetRevision": "0.2.4"
+    "targetRevision": "0.4.0"
   "syncPolicy":
     "automated":
       "prune": true
