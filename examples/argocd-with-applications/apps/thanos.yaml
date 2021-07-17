@@ -61,7 +61,7 @@
       - "name": "receive.enabled"
         "value": "true"
       - "name": "ruler.enabled"
-        "value": "true"
+        "value": "false"
       - "name": "storegateway.enabled"
         "value": "true"
       "values": |
