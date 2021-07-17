@@ -56,9 +56,8 @@
         "value": false
       - "name": "storegateway.enabled"
         "value": true
-      - "name": "stores"
-        "value":
-        - "kube-prometheus-prometheus-thanos:10901"
+      - "name": "stores[0]"
+        "value": "kube-prometheus-prometheus-thanos:10901"
       "values": |
         "objstoreConfig":
           "config":
