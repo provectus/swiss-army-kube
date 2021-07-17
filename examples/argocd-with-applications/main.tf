@@ -142,7 +142,8 @@ module "nginx-ingress" {
 
 module "prometheus" {
   depends_on   = [module.argocd]
-  source       = "github.com/provectus/sak-prometheus?ref=feature_thanos"
+  #source       = "github.com/provectus/sak-prometheus?ref=feature_thanos"
+  source       = "/Users/dmitriy/work/SAK/sak-prometheus"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
   domains      = local.domain
