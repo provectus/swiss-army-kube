@@ -34,15 +34,6 @@
         "value": "randomstring"
       - "name": "namespace"
         "value": "monitoring"
-      - "name": "objstoreConfig"
-        "value": |-
-          "config":
-            "access_key": "randomstring"
-            "bucket": "thanos"
-            "endpoint": "{{ include \"thanos.minio.fullname\" . }}.monitoring.svc.cluster.local:9000"
-            "insecure": "true"
-            "secret_key": "randomstring"
-          "type": "s3"
       - "name": "query.enabled"
         "value": "true"
       - "name": "query.ingress.certManager"
@@ -73,6 +64,15 @@
         "value": "false"
       - "name": "storegateway.enabled"
         "value": "true"
+      "values": |-
+        "objstoreConfig":
+          "config":
+            "access_key": "randomstring"
+            "bucket": "thanos"
+            "endpoint": "{{ include \"thanos.minio.fullname\" . }}.monitoring.svc.cluster.local:9000"
+            "insecure": "true"
+            "secret_key": "randomstring"
+          "type": "s3"
     "repoURL": "https://charts.bitnami.com/bitnami"
     "targetRevision": "5.1.0"
   "syncPolicy":
