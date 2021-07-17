@@ -47,7 +47,7 @@
       - "name": "query.ingress.tls"
         "value": "true"
       - "name": "query.stores[0]"
-        "value": "https://thanos-gateway.swiss-army.sak.ninja"
+        "value": "kube-prometheus-prometheus-thanos:10901"
       - "name": "queryFrontend.enabled"
         "value": "true"
       - "name": "queryFrontend.ingress.certManager"
