@@ -44,7 +44,7 @@
         "value": "true"
       - "name": "prometheus.thanos.ingress.enabled"
         "value": "true"
-      - "name": "prometheus.thanos.ingress.hosts[0]"
+      - "name": "prometheus.thanos.ingress.hosts[0].name"
         "value": "thanos-gateway.swiss-army.sak.ninja"
       - "name": "prometheus.thanos.ingress.tls.hosts[0]"
         "value": "thanos-gateway.swiss-army.sak.ninja"
