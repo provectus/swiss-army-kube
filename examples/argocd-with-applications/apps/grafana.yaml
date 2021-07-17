@@ -56,7 +56,7 @@
                 "isDefault": true
                 "name": "Prometheus"
                 "type": "prometheus"
-                "url": "http://kube-prometheus-prometheus:9090"
+                "url": "http://thanos-query:9090"
     "repoURL": "https://grafana.github.io/helm-charts"
     "targetRevision": "6.13.9"
   "syncPolicy":
