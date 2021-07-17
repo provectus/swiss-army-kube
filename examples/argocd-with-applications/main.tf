@@ -109,7 +109,7 @@ module "cert-manager" {
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
   email        = "dkharlamov@provectus.com"
-  zone_id      = data.aws_route53_zone.this.zone_id
+  zone_id      = module.external_dns.zone_id
   vpc_id       = module.network.vpc_id
   domains      = local.domain
 }
