@@ -55,6 +55,8 @@
         "value": "thanos-query.swiss-army.sak.ninja"
       - "name": "query.ingress.tls"
         "value": "true"
+      - "name": "query.stores"
+        "value": ["https://thanos-gateway.swiss-army.sak.ninja"]
       - "name": "queryFrontend.enabled"
         "value": "true"
       - "name": "queryFrontend.ingress.certManager"
