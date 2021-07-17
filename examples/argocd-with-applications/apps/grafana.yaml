@@ -50,11 +50,13 @@
               "gnetId": "2"
               "revision": "2"
         "datasources":
-          - "access": "proxy"
-            "isDefault": true
-            "name": "Prometheus"
-            "type": "Prometheus"
-            "url": "http://kube-prometheus-prometheus:9090"
+          "datasources\.yaml":
+            "datasources":
+            - "access": "proxy"
+              "isDefault": true
+              "name": "Prometheus"
+              "type": "Prometheus"
+              "url": "http://kube-prometheus-prometheus:9090"
     "repoURL": "https://grafana.github.io/helm-charts"
     "targetRevision": "6.13.9"
   "syncPolicy":
