@@ -13,9 +13,9 @@
     "helm":
       "parameters":
       - "name": "bucketweb.enabled"
-        "value": true
+        "value": "true"
       - "name": "compactor.enabled"
-        "value": true
+        "value": "true"
       - "name": "compactor.persistence.size"
         "value": "10Gi"
       - "name": "compactor.retentionResolution1h"
@@ -25,37 +25,37 @@
       - "name": "compactor.retentionResolutionRaw"
         "value": "30d"
       - "name": "metrics.enabled"
-        "value": true
+        "value": "true"
       - "name": "minio.accessKey.password"
         "value": "randomstring"
       - "name": "minio.enabled"
-        "value": true
+        "value": "true"
       - "name": "minio.secretKey.password"
         "value": "randomstring"
       - "name": "namespace"
         "value": "monitoring"
       - "name": "query.enabled"
-        "value": true
+        "value": "true"
       - "name": "query.ingress.enabled"
-        "value": false
+        "value": "false"
       - "name": "query.ingress.grpc.enabled"
-        "value": false
+        "value": "false"
       - "name": "queryFrontend.enabled"
-        "value": true
+        "value": "true"
       - "name": "queryFrontend.ingress.certManager"
-        "value": true
+        "value": "true"
       - "name": "queryFrontend.ingress.enabled"
-        "value": true
+        "value": "true"
       - "name": "queryFrontend.ingress.hostname"
         "value": "thanos.swiss-army.sak.ninja"
       - "name": "queryFrontend.ingress.tls"
-        "value": true
+        "value": "true"
       - "name": "receive.enabled"
-        "value": true
+        "value": "true"
       - "name": "ruler.enabled"
-        "value": false
+        "value": "false"
       - "name": "storegateway.enabled"
-        "value": true
+        "value": "true"
       - "name": "stores[0]"
         "value": "kube-prometheus-prometheus-thanos:10901"
       "values": |
