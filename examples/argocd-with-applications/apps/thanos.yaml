@@ -64,13 +64,13 @@
         "value": "false"
       - "name": "storegateway.enabled"
         "value": "true"
-      "values": |-
+      "values": |
         "objstoreConfig":
           "config":
             "access_key": "randomstring"
             "bucket": "thanos"
             "endpoint": "{{ include \"thanos.minio.fullname\" . }}.monitoring.svc.cluster.local:9000"
-            "insecure": "true"
+            "insecure": true
             "secret_key": "randomstring"
           "type": "s3"
     "repoURL": "https://charts.bitnami.com/bitnami"
