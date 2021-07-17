@@ -50,7 +50,7 @@
               "gnetId": "2"
               "revision": "2"
         "datasources":
-          "datasources\.yaml":
+          "datasources.yaml":
             "datasources":
               - "access": "proxy"
                 "isDefault": true
