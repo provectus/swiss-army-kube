@@ -24,6 +24,8 @@
         "value": "30d"
       - "name": "compactor.retentionResolutionRaw"
         "value": "30d"
+      - "name": "existingObjstoreSecret"
+        "value": "thanos-objstore-config"
       - "name": "metrics.enabled"
         "value": "true"
       - "name": "minio.accessKey.password"
@@ -40,6 +42,10 @@
         "value": "false"
       - "name": "query.ingress.grpc.enabled"
         "value": "false"
+      - "name": "query.sdConfig"
+        "value": |
+          - "targets":
+            - "kube-prometheus-prometheus-thanos:10901"
       - "name": "queryFrontend.enabled"
         "value": "true"
       - "name": "queryFrontend.ingress.certManager"
@@ -56,17 +62,6 @@
         "value": "false"
       - "name": "storegateway.enabled"
         "value": "true"
-      - "name": "query.sdConfig[0].targets[0]"
-        "value": "kube-prometheus-prometheus-thanos:10901"
-      "values": |
-        "objstoreConfig":
-          "config":
-            "access_key": "randomstring"
-            "bucket": "thanos"
-            "endpoint": "{{ include \"thanos.minio.fullname\" . }}.monitoring.svc.cluster.local:9000"
-            "insecure": true
-            "secret_key": "randomstring"
-          "type": "s3"
     "repoURL": "https://charts.bitnami.com/bitnami"
     "targetRevision": "5.1.0"
   "syncPolicy":
