@@ -18,6 +18,8 @@
         "value": "monitoring"
       - "name": "operator.enabled"
         "value": "true"
+      - "name": "prometheus.disableCompaction"
+        "value": "true"
       - "name": "prometheus.enableAdminAPI"
         "value": "true"
       - "name": "prometheus.enabled"
