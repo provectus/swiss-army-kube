@@ -43,12 +43,14 @@
       - "name": "persistence.size"
         "value": "10Gi"
       "values": |
-        "datasources":
-        - "access": "proxy"
-          "isDefault": true
-          "name": "Prometheus"
-          "type": "prometheus"
-          "url": "http://thanos-query:9090"
+        "datasources.yaml":
+          "apiVersion": "1"
+          "datasources":
+          - "access": "proxy"
+            "isDefault": true
+            "name": "Prometheus"
+            "type": "prometheus"
+            "url": "http://thanos-query:9090"
     "repoURL": "https://grafana.github.io/helm-charts"
     "targetRevision": "6.13.9"
   "syncPolicy":
