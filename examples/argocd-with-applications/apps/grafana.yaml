@@ -43,12 +43,6 @@
       - "name": "persistence.size"
         "value": "10Gi"
       "values": |
-        "dashboards":
-          "default":
-            "prometheus-stats":
-              "datasource": "Prometheus"
-              "gnetId": "2"
-              "revision": "2"
         "datasources":
         - "access": "proxy"
           "isDefault": true
