@@ -94,6 +94,18 @@ module "external_dns" {
   tags         = local.tags
 }
 
+module "cert-manager" {
+  depends_on = [module.argocd]
+
+  source       = "github.com/provectus/sak-cert-manager"
+  cluster_name = module.kubernetes.cluster_name
+  vpc_id       = module.network.vpc_id
+  argocd       = module.argocd.state
+  email        = "dkharlamov@provectus.com"
+  zone_id      = module.external_dns.zone_id
+  domains      = local.domain
+}
+
 module "scaling" {
   depends_on = [module.argocd]
 
@@ -123,13 +135,7 @@ module "nginx-ingress" {
   source       = "github.com/provectus/sak-nginx"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
-  conf = {
-    "controller.service.targetPorts.http"                                                                = "http"
-    "controller.service.targetPorts.https"                                                               = "http"
-    "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-cert"         = module.clusterwide.this_acm_certificate_arn
-    "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-backend-protocol" = "http"
-    "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-ssl-ports"        = "https"
-  }
+  conf = {}
   tags = local.tags
 }
 
