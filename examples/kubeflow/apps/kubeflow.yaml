@@ -9,7 +9,7 @@
     "server": "https://kubernetes.default.svc"
   "project": "default"
   "source":
-    "path": "examples/argocd-with-applications/apps/kfdefs"
+    "path": "examples/kubeflow/apps/kfdefs"
     "repoURL": "https://github.com/provectus/swiss-army-kube"
     "targetRevision": "kubeflow"
   "syncPolicy":

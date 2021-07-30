@@ -56,7 +56,7 @@ module "argocd" {
   owner        = var.argocd.owner
   repository   = var.argocd.repository
   cluster_name = module.kubernetes.cluster_name
-  path_prefix  = "examples/argocd-with-applications/"
+  path_prefix  = "examples/kubeflow/"
   chart_version = "3.11.1"
 
   domains = local.domain
