@@ -12,6 +12,8 @@ data "aws_route53_zone" "this" {
   private_zone = false
 }
 
+data "aws_region" "current" {}
+
 locals {
   environment  = var.environment
   project      = var.project
@@ -55,6 +57,7 @@ module "argocd" {
   repository   = var.argocd.repository
   cluster_name = module.kubernetes.cluster_name
   path_prefix  = "examples/argocd-with-applications/"
+  chart_version = "3.11.1"
 
   domains = local.domain
   ingress_annotations = {
@@ -157,23 +160,99 @@ module "nginx-ingress" {
 #   domains      = local.domain
 # }
 
-# module "cognito" {
-#    depends_on = [module.argocd, module.clusterwide]
+module "cognito" {
+  source            = "github.com/provectus/sak-cognito"
+  cluster_name      = module.kubernetes.cluster_name
+  domain            = "${local.cluster_name}.${var.domain_name}"
+  zone_id           = module.external_dns.zone_id
+  mfa_configuration = "OPTIONAL"
+  acm_arn           = module.clusterwide.this_acm_certificate_arn
+  tags              = local.tags
+}
 
-#   source            = "github.com/provectus/sak-cognito"
-#   cluster_name      = module.kubernetes.cluster_name
-#   domain            = "${local.cluster_name}.${var.domain_name}"
-#   zone_id           = var.zone_id
-#   mfa_configuration = "OPTIONAL"
-#   acm_arn           = module.clusterwide.this_acm_certificate_arn
-#   tags              = local.tags
-# }
+module "external_secrets" {
+  depends_on       = [module.argocd]
+  source           = "github.com/provectus/sak-external-secrets"
+  cluster_oidc_url = module.kubernetes.cluster_oidc_url
+  cluster_name     = module.kubernetes.cluster_name
+  argocd           = module.argocd.state
+  tags             = local.tags
+}
 
-# module "external_secrets" {
-#   depends_on       = [module.argocd]
-#   source           = "github.com/provectus/sak-external-secrets"
-#   cluster_oidc_url = module.kubernetes.cluster_oidc_url
-#   cluster_name     = module.kubernetes.cluster_name
-#   argocd           = module.argocd.state
-#   tags             = local.tags
-# }
+
+
+module kubeflow {
+  source = "git::https://github.com/provectus/swiss-army-kube.git//modules/kubeflow-operator?ref=feature/argocd"
+  ingress_annotations = {
+    "kubernetes.io/ingress.class"               = "alb"
+    "alb.ingress.kubernetes.io/scheme"          = "internet-facing"
+    "alb.ingress.kubernetes.io/certificate-arn" = module.clusterwide.this_acm_certificate_arn
+    "alb.ingress.kubernetes.io/auth-type"       = "cognito"
+    "alb.ingress.kubernetes.io/auth-idp-cognito" = jsonencode({
+      "UserPoolArn"      = module.cognito.pool_arn
+      "UserPoolClientId" = aws_cognito_user_pool_client.kubeflow.id
+      "UserPoolDomain"   = module.cognito.domain
+    })
+    "alb.ingress.kubernetes.io/listen-ports" = jsonencode(
+      [{ "HTTPS" = 443 }]
+    )
+  }
+  domain = "kubeflow.${local.domain[0]}"
+  argocd = module.argocd.state
+}
+
+resource aws_cognito_user_pool_client kubeflow {
+  name                                 = "kubeflow"
+  user_pool_id                         = module.cognito.pool_id
+  callback_urls                        = ["https://kubeflow.${local.domain[0]}/oauth2/idpresponse"]
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_scopes                 = ["email", "openid", "profile", "aws.cognito.signin.user.admin"]
+  allowed_oauth_flows                  = ["code"]
+  supported_identity_providers         = ["COGNITO"]
+  generate_secret                      = true
+}
+
+resource aws_cognito_user_pool_client argocd {
+  name                                 = "argocd"
+  user_pool_id                         = module.cognito.pool_id
+  callback_urls                        = ["https://argocd.${local.domain[0]}/auth/callback"]
+  allowed_oauth_flows_user_pool_client = true
+  allowed_oauth_scopes                 = ["openid", "profile", "email"]
+  allowed_oauth_flows                  = ["code"]
+  supported_identity_providers         = ["COGNITO"]
+  generate_secret                      = true
+}
+
+### Optional step of populating Cognito User Pool
+### will be executed locally, so aws-cli should present on the local machine
+### this is an inelegant way for managing users, suitable only for demo purpose
+
+resource "aws_cognito_user_group" "this" {
+  for_each = toset(distinct(values(
+    {
+      for k, v in var.cognito_users :
+      k => lookup(v, "group", "read-only")
+    }
+  )))
+  name         = each.value
+  user_pool_id = module.cognito.pool_id
+}
+
+resource "null_resource" "cognito_users" {
+  depends_on = [module.cognito.pool_id, aws_cognito_user_group.this]
+  for_each = {
+    for k, v in var.cognito_users :
+    format("%s:%s:%s", data.aws_region.current.name , module.cognito.pool_id, v.username) => v
+
+  }
+  provisioner "local-exec" {
+    command = "aws --region ${element(split(":", each.key), 0)} cognito-idp admin-create-user --user-pool-id ${element(split(":", each.key), 1)} --username ${element(split(":", each.key), 2)} --user-attributes Name=email,Value=${each.value.email}"
+  }
+  provisioner "local-exec" {
+    command = "aws --region ${element(split(":", each.key), 0)} cognito-idp admin-add-user-to-group --user-pool-id ${element(split(":", each.key), 1)} --username ${element(split(":", each.key), 2)} --group-name ${lookup(each.value, "group", "read-only")}"
+  }
+  provisioner "local-exec" {
+    when    = destroy
+    command = "aws --region ${element(split(":", each.key), 0)} cognito-idp admin-delete-user --user-pool-id ${element(split(":", each.key), 1)} --username ${element(split(":", each.key), 2)}"
+  }
+}
