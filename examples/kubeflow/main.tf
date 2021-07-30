@@ -19,6 +19,7 @@ locals {
   project      = var.project
   cluster_name = var.cluster_name
   domain       = ["${local.cluster_name}.${var.domain_name}"]
+  cert_email   = "dkharlamov@provectus.com"
   tags = {
     environment = local.environment
     project     = local.project
@@ -101,7 +102,7 @@ module "cert-manager" {
   cluster_name = module.kubernetes.cluster_name
   vpc_id       = module.network.vpc_id
   argocd       = module.argocd.state
-  email        = "dkharlamov@provectus.com"
+  email        = local.cert_email
   zone_id      = module.external_dns.zone_id
   domains      = local.domain
 }
@@ -136,6 +137,21 @@ module "nginx-ingress" {
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
   conf = {}
+  tags = local.tags
+}
+
+module "internal-nginx-ingress" {
+  depends_on     = [module.argocd]
+  source         = "github.com/provectus/sak-nginx"
+  namespace_name = "internal-ingress"
+  internal       = true
+  cluster_name   = module.kubernetes.cluster_name
+  argocd         = module.argocd.state
+  conf = {
+    "controller.service.internal.enabled"                                                        = true
+    "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-internal" = "0.0.0.0"
+    "controller.ingressClass"                                                                    = "internal"
+  }
   tags = local.tags
 }
 
