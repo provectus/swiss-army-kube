@@ -1,0 +1,18 @@
+"apiVersion": "argoproj.io/v1alpha1"
+"kind": "Application"
+"metadata":
+  "name": "cert-manager-issuers"
+  "namespace": "argocd"
+"spec":
+  "destination":
+    "namespace": "cert-manager"
+    "server": "https://kubernetes.default.svc"
+  "project": "default"
+  "source":
+    "path": "examples/kubeflow/apps/issuers"
+    "repoURL": "https://github.com/provectus/swiss-army-kube"
+    "targetRevision": "kubeflow"
+  "syncPolicy":
+    "automated":
+      "prune": true
+      "selfHeal": true

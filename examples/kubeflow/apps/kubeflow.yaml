@@ -1,0 +1,20 @@
+"apiVersion": "argoproj.io/v1alpha1"
+"kind": "Application"
+"metadata":
+  "name": "kubeflow"
+  "namespace": "argocd"
+"spec":
+  "destination":
+    "namespace": "kubeflow"
+    "server": "https://kubernetes.default.svc"
+  "project": "default"
+  "source":
+    "path": "examples/kubeflow/apps/kfdefs"
+    "repoURL": "https://github.com/provectus/swiss-army-kube"
+    "targetRevision": "kubeflow"
+  "syncPolicy":
+    "automated":
+      "prune": true
+      "selfHeal": true
+    "syncOptions":
+    - "CreateNamespace=false"
