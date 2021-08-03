@@ -53,11 +53,11 @@ module "argocd" {
   depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, data.aws_eks_cluster.cluster, data.aws_eks_cluster_auth.cluster]
   source     = "github.com/provectus/sak-argocd"
 
-  branch       = var.argocd.branch
-  owner        = var.argocd.owner
-  repository   = var.argocd.repository
-  cluster_name = module.kubernetes.cluster_name
-  path_prefix  = "examples/kubeflow/"
+  branch        = var.argocd.branch
+  owner         = var.argocd.owner
+  repository    = var.argocd.repository
+  cluster_name  = module.kubernetes.cluster_name
+  path_prefix   = "examples/kubeflow/"
   chart_version = "3.11.1"
 
   domains = local.domain
@@ -136,8 +136,8 @@ module "nginx-ingress" {
   source       = "github.com/provectus/sak-nginx"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
-  conf = {}
-  tags = local.tags
+  conf         = {}
+  tags         = local.tags
 }
 
 module "internal-nginx-ingress" {
@@ -155,32 +155,15 @@ module "internal-nginx-ingress" {
   tags = local.tags
 }
 
-# module "alb-ingress" {
-#   depends_on        = [module.external_dns]
-#   source            = "github.com/provectus/sak-alb-controller"
-#   cluster_name      = module.kubernetes.cluster_name
-#   domains           = local.domain
-#   vpc_id            = module.network.vpc_id
-#   config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
-#   certificates_arns = [module.clusterwide.this_acm_certificate_arn]
-#   cluster_oidc_url  = module.kubernetes.cluster_oidc_url
-# }
-
-# module "prometheus" {
-#   depends_on   = [module.argocd]
-#   source       = "github.com/provectus/sak-prometheus"
-#   cluster_name = module.kubernetes.cluster_name
-#   argocd       = module.argocd.state
-#   domains      = local.domain
-# }
-
-# module "victoriametrics" {
-#   depends_on   = [module.argocd]
-#   source       = "github.com/provectus/sak-victoria-metrics"
-#   cluster_name = module.kubernetes.cluster_name
-#   argocd       = module.argocd.state
-#   domains      = local.domain
-# }
+module "prometheus" {
+  depends_on     = [module.argocd]
+#  source         = "github.com/provectus/sak-prometheus"
+  source         = "../../../sak-prometheus"
+  cluster_name   = module.kubernetes.cluster_name
+  argocd         = module.argocd.state
+  domains        = local.domain
+  thanos_enabled = false
+}
 
 module "cognito" {
   source            = "github.com/provectus/sak-cognito"
@@ -203,7 +186,7 @@ module "external_secrets" {
 
 
 
-module kubeflow {
+module "kubeflow" {
   source = "git::https://github.com/provectus/swiss-army-kube.git//modules/kubeflow-operator?ref=feature/argocd"
   ingress_annotations = {
     "kubernetes.io/ingress.class"               = "alb"
@@ -223,7 +206,7 @@ module kubeflow {
   argocd = module.argocd.state
 }
 
-resource aws_cognito_user_pool_client kubeflow {
+resource "aws_cognito_user_pool_client" "kubeflow" {
   name                                 = "kubeflow"
   user_pool_id                         = module.cognito.pool_id
   callback_urls                        = ["https://kubeflow.${local.domain[0]}/oauth2/idpresponse"]
@@ -234,7 +217,7 @@ resource aws_cognito_user_pool_client kubeflow {
   generate_secret                      = true
 }
 
-resource aws_cognito_user_pool_client argocd {
+resource "aws_cognito_user_pool_client" "argocd" {
   name                                 = "argocd"
   user_pool_id                         = module.cognito.pool_id
   callback_urls                        = ["https://argocd.${local.domain[0]}/auth/callback"]
@@ -264,7 +247,7 @@ resource "null_resource" "cognito_users" {
   depends_on = [module.cognito.pool_id, aws_cognito_user_group.this]
   for_each = {
     for k, v in var.cognito_users :
-    format("%s:%s:%s", data.aws_region.current.name , module.cognito.pool_id, v.username) => v
+    format("%s:%s:%s", data.aws_region.current.name, module.cognito.pool_id, v.username) => v
 
   }
   provisioner "local-exec" {

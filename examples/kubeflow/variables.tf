@@ -19,6 +19,7 @@ variable "availability_zones" {
 variable "zone_id" {
   type        = string
   description = "Default zone id for root domain" #like Z04917561CQAI9UAF27D6
+  default     = "Z02149423PVQ0YMP19F13"
 }
 
 variable "environment" {
@@ -50,7 +51,7 @@ variable "argocd" {
   description = "A set of values for enabling deployment through ArgoCD"
 }
 
-variable cognito_users {
+variable "cognito_users" {
   type    = list(map(string))
   default = []
 }
