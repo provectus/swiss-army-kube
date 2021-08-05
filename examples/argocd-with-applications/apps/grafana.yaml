@@ -1,0 +1,59 @@
+"apiVersion": "argoproj.io/v1alpha1"
+"kind": "Application"
+"metadata":
+  "name": "grafana"
+  "namespace": "argocd"
+"spec":
+  "destination":
+    "namespace": "edu_prometheus_issue_N144"
+    "server": "https://kubernetes.default.svc"
+  "project": "default"
+  "source":
+    "chart": "grafana"
+    "helm":
+      "parameters":
+      - "name": "adminPassword"
+        "value": "KMS_ENC:AQICAHjBO3yoqbnEnTJlcE0sHE5xWM1f61Xf82zLfWRHLgjyaQFdoKJZ/lC2Jb5MY8WqwLv3AAAAbjBsBgkqhkiG9w0BBwagXzBdAgEAMFgGCSqGSIb3DQEHATAeBglghkgBZQMEAS4wEQQMbg0nGmpvJswY/4lcAgEQgCumWg418uq4tWSBngDfdLvm6R1KCbEYzwz3h74SDY0suUjWQKUfWHJz1f5v:"
+      - "name": "env.GF_AUTH_GOOGLE_ALLOWED_DOMAINS"
+        "value": "local"
+      - "name": "env.GF_AUTH_GOOGLE_CLIENT_ID"
+        "value": ""
+      - "name": "env.GF_AUTH_GOOGLE_CLIENT_SECRET"
+        "value": ""
+      - "name": "env.GF_AUTH_GOOGLE_ENABLED"
+        "value": "false"
+      - "name": "env.GF_SERVER_ROOT_URL"
+        "value": "https://grafana.swiss-army-szotov.sak.ninja"
+      - "name": "ingress.annotations"
+        "value": "{ kubernetes.io/tls-acme: 'true' }"
+      - "name": "ingress.enabled"
+        "value": "true"
+      - "name": "ingress.hosts[0]"
+        "value": "grafana.swiss-army-szotov.sak.ninja"
+      - "name": "ingress.ingressClassName"
+        "value": "nginx"
+      - "name": "ingress.tls[0].hosts[0]"
+        "value": "grafana.swiss-army-szotov.sak.ninja"
+      - "name": "ingress.tls[0].secretName"
+        "value": "grafana-tls"
+      - "name": "namespace"
+        "value": "edu_prometheus_issue_N144"
+      - "name": "persistence.enabled"
+        "value": "true"
+      - "name": "persistence.size"
+        "value": "10Gi"
+      "values": |
+        "datasources.yaml":
+          "apiVersion": "1"
+          "datasources":
+          - "access": "proxy"
+            "isDefault": true
+            "name": "Prometheus"
+            "type": "prometheus"
+            "url": "http://thanos-query:9090"
+    "repoURL": "https://grafana.github.io/helm-charts"
+    "targetRevision": "6.13.9"
+  "syncPolicy":
+    "automated":
+      "prune": true
+      "selfHeal": true
