@@ -36,7 +36,7 @@ module "network" {
 module "kubernetes" {
   depends_on = [module.network]
   # source     = "github.com/provectus/sak-kubernetes"
-  source     = "./sak-kubernetes-temporrary"
+  source     = "../../../sak-kubernetes-temporrary"
 
   environment        = local.environment
   project            = local.project
