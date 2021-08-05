@@ -35,13 +35,15 @@ module "network" {
 
 module "kubernetes" {
   depends_on = [module.network]
-  source     = "github.com/provectus/sak-kubernetes"
+  # source     = "github.com/provectus/sak-kubernetes"
+  source     = "./sak-kubernetes-temporrary"
 
   environment        = local.environment
   project            = local.project
   availability_zones = var.availability_zones
   cluster_name       = local.cluster_name
-  cluster_version    = "1.20"
+  # cluster_version    = "1.20"
+  domains            = local.domain
   vpc_id             = module.network.vpc_id
   subnets            = module.network.private_subnets
 }
@@ -118,24 +120,25 @@ module "nginx-ingress" {
   tags = local.tags
 }
 
-module "alb-ingress" {
-  depends_on        = [module.external_dns]
-  source            = "github.com/provectus/sak-alb-controller"
-  cluster_name      = module.kubernetes.cluster_name
-  domains           = local.domain
-  vpc_id            = module.network.vpc_id
-  config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
-  certificates_arns = [module.clusterwide.this_acm_certificate_arn]
-  cluster_oidc_url  = module.kubernetes.cluster_oidc_url
-}
-
-# module "prometheus" {
-#   depends_on   = [module.argocd]
-#   source       = "github.com/provectus/sak-prometheus"
-#   cluster_name = module.kubernetes.cluster_name
-#   argocd       = module.argocd.state
-#   domains      = local.domain
+# module "alb-ingress" {
+#   depends_on        = [module.external_dns]
+#   source            = "github.com/provectus/sak-alb-controller"
+#   cluster_name      = module.kubernetes.cluster_name
+#   domains           = local.domain
+#   vpc_id            = module.network.vpc_id
+#   config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
+#   certificates_arns = [module.clusterwide.this_acm_certificate_arn]
+#   cluster_oidc_url  = module.kubernetes.cluster_oidc_url
 # }
+
+module "prometheus" {
+  depends_on   = [module.argocd]
+  # source       = "github.com/provectus/sak-prometheus"
+  source       = "../../../prometheus/sak-prometheus"
+  cluster_name = module.kubernetes.cluster_name
+  argocd       = module.argocd.state
+  domains      = local.domain
+}
 
 # module "victoriametrics" {
 #   depends_on   = [module.argocd]

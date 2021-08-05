@@ -1,23 +1,26 @@
 variable "cluster_name" {
-  default     = "swiss-army"
+  # default     = "swiss-army"
+  default     = "swiss-army-szotov"
   type        = string
   description = "A name of the Amazon EKS cluster"
 }
 
 variable "region" {
-  default     = "eu-central-1"
+  # default     = "eu-central-1"
+  default     = "eu-south-1"
   type        = string
   description = "Set default region"
 }
 
 variable "availability_zones" {
-  default     = ["eu-central-1a", "eu-central-1b"]
+  # default     = ["eu-central-1a", "eu-central-1b"]
+  default     = ["eu-south-1a", "eu-south-1b"]
   type        = list(any)
   description = "Availability zones for project, minimum 2"
 }
 
 variable "zone_id" {
-  default     = ""
+  default     = "Z04917561CQAI9UAF27D6"
   type        = string
   description = "Default zone id for root domain" #like Z04917561CQAI9UAF27D6
 }
