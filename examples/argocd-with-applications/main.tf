@@ -36,7 +36,8 @@ module "network" {
 module "kubernetes" {
   depends_on = [module.network]
   # source     = "github.com/provectus/sak-kubernetes"
-  source     = "../../../sak-kubernetes-temporrary"
+  # source     = "../../../sak-kubernetes-temporrary"
+  source     = "github.com/AlexSonar/sak-kubernetes"
 
   environment        = local.environment
   project            = local.project
@@ -134,7 +135,8 @@ module "nginx-ingress" {
 module "prometheus" {
   depends_on   = [module.argocd]
   # source       = "github.com/provectus/sak-prometheus"
-  source       = "../../../prometheus/sak-prometheus"
+  # source       = "../../../prometheus/sak-prometheus"
+  source       = "https://github.com/AlexSonar/sak-prometheus.git"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
   domains      = local.domain
