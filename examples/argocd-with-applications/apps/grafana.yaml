@@ -5,7 +5,7 @@
   "namespace": "argocd"
 "spec":
   "destination":
-    "namespace": "edu_prometheus_issue_N144"
+    "namespace": "edu_prometheus_issue"
     "server": "https://kubernetes.default.svc"
   "project": "default"
   "source":
@@ -37,7 +37,7 @@
       - "name": "ingress.tls[0].secretName"
         "value": "grafana-tls"
       - "name": "namespace"
-        "value": "edu_prometheus_issue_N144"
+        "value": "edu_prometheus_issue"
       - "name": "persistence.enabled"
         "value": "true"
       - "name": "persistence.size"

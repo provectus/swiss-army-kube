@@ -42,12 +42,14 @@ variable "domain_name" {
   type        = string
   description = "Default domain name"
 }
-
+# !!!
 #Argocd sync repository
 variable "argocd" {
   default = {
-    repository = "swiss-army-kube"
-    branch     = "master"
+    # repository = "swiss-army-kube"
+    repository = "https://github.com/AlexSonar/swiss-army-kube"
+    # branch     = "master"
+    branch     = "feature/Improve_Prometheus_stack"
     owner      = "provectus"
   }
   type        = map(string)
