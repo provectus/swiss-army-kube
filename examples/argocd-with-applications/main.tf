@@ -136,7 +136,7 @@ module "prometheus" {
   depends_on   = [module.argocd]
   # source       = "github.com/provectus/sak-prometheus"
   # source       = "../../../prometheus/sak-prometheus"
-  source       = "https://github.com/AlexSonar/sak-prometheus.git"
+  source       = "github.com/AlexSonar/sak-prometheus"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
   domains      = local.domain
