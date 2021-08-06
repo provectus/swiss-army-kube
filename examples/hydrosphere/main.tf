@@ -135,7 +135,8 @@ module "oauth" {
 
 module "prometheus" {
   depends_on              = [module.argocd]
-  source                  = "github.com/provectus/sak-prometheus"
+  # source                  = "github.com/provectus/sak-prometheus"
+  source                  = "github.com/AlexSonar/sak-prometheus"
   cluster_name            = module.kubernetes.cluster_name
   argocd                  = module.argocd.state
   domains                 = local.domain
