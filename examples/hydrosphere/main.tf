@@ -35,7 +35,8 @@ module "network" {
 
 module "kubernetes" {
   depends_on = [module.network]
-  source     = "github.com/provectus/sak-kubernetes?ref=hydrosphere"
+  # source     = "github.com/provectus/sak-kubernetes?ref=hydrosphere"
+  source     = "github.com/AlexSonar/sak-kubernetes?ref=hydrosphere"
 
   environment                         = local.environment
   project                             = local.project
