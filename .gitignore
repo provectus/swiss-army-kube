@@ -15,3 +15,10 @@ terraform.tfvars
 # direnv.net config
 .envrc
 *.tfvars
+
+examples/argocd-with-applications/apps/
+swiss-army-kube/examples/argocd-with-applications/apps
+examples/argocd-with-applications/.terraform
+examples/argocd-with-applications/terraform.tfstate
+examples/argocd-with-applications/terraform.tfstate.backup
+examples/argocd-with-applications/kubeconfig_swiss-army-szotov
