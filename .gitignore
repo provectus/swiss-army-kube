@@ -16,7 +16,7 @@ terraform.tfvars
 .envrc
 *.tfvars
 
-examples/argocd-with-applications/apps/
+# examples/argocd-with-applications/apps/
 swiss-army-kube/examples/argocd-with-applications/apps
 examples/argocd-with-applications/.terraform
 examples/argocd-with-applications/.terraform.lock.hcl

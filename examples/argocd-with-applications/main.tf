@@ -21,7 +21,24 @@ locals {
     environment = local.environment
     project     = local.project
   }
+  repository = "swiss-army-kube"
+  branch     = "feature/Improve_Prometheus_stack"
+  owner      = "AlexSonar"
 }
+
+#Argocd sync repository
+# variable "argocd" {
+#   default = {
+#     repository = "swiss-army-kube"
+#     # repository = "github.com/AlexSonar/swiss-army-kube"
+#     branch     = "master"
+#     # branch     = "feature/Improve_Prometheus_stack"
+#     owner      = "provectus"
+#   }
+#   type        = map(string)
+#   description = "A set of values for enabling deployment through ArgoCD"
+# }
+
 
 module "network" {
   source = "github.com/provectus/sak-vpc" #By default ?ref=HEAD 
@@ -53,9 +70,12 @@ module "argocd" {
   depends_on = [module.network.vpc_id, module.kubernetes.cluster_name, data.aws_eks_cluster.cluster, data.aws_eks_cluster_auth.cluster]
   source     = "github.com/provectus/sak-argocd"
 
-  branch       = var.argocd.branch
-  owner        = var.argocd.owner
-  repository   = var.argocd.repository
+  # branch       = var.argocd.branch
+  # owner        = var.argocd.owner
+  # repository   = var.argocd.repository
+  branch       = local.branch
+  owner        = local.owner
+  repository   = local.repository
   cluster_name = module.kubernetes.cluster_name
   path_prefix  = "examples/argocd-with-applications/"
 
