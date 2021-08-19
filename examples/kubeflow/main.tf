@@ -156,8 +156,8 @@ module "internal-nginx-ingress" {
 }
 
 module "prometheus" {
-  depends_on     = [module.argocd]
-#  source         = "github.com/provectus/sak-prometheus"
+  depends_on = [module.argocd]
+  #  source         = "github.com/provectus/sak-prometheus"
   source         = "../../../sak-prometheus"
   cluster_name   = module.kubernetes.cluster_name
   argocd         = module.argocd.state
