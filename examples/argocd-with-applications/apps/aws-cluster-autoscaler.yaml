@@ -42,7 +42,7 @@
         "value": "100m"
       - "name": "resources.requests.memory"
         "value": "500Mi"
-    "repoURL": "https://charts.helm.sh/stable"
+    "repoURL": "https://kubernetes.github.io/autoscaler"
     "targetRevision": "9.10.3"
   "syncPolicy":
     "automated":
