@@ -13,12 +13,14 @@ jobs:
       - uses: Naturalclar/issue-action@v2.0.2
         with:
           title-or-body: "title"
-          parameters: > 
+          parameters: >
             [
             {"keywords": ["bug", "error"], "labels": ["BUG"], "assignees": [""]},
+            {"keywords": ["issue"], "labels": ["issue"], "assignees": [""]},
             {"keywords": ["help", "guidance"], "labels": ["help-wanted"], "assignees": [""]},
             {"keywords": ["feature", "enhancement", "feat"], "labels": ["enhancement"], "assignees": [""]},
             {"keywords": ["docs", "Docs"], "labels": ["docs"], "assignees": [""]},
+            {"keywords": ["cicd"], "labels": ["cicd"], "assignees": [""]},
             {"keywords": ["chore", "skip"], "labels": ["skip-changelog"], "assignees": [""]},
             {"keywords": ["argocd", "argo-cd"], "labels": ["sak-argocd"], "assignees": [""]},
             {"keywords": ["albcontroller", "alb-controller"], "labels": ["sak-alb"], "assignees": [""]},
