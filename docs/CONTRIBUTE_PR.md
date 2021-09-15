@@ -151,9 +151,13 @@ What will make your PR more likely to get accepted:
 
 A PR title should describe what has changed. A PR comment should describe why and what/where. If your changes relate to a particular issue, a PR comment should contain an issue number. Please keep PR comments below 80 characters for readability.
 
+PR title rules:
+  1. Min/Max length 5-100
+  2. Must start with prefix  (Allowed prefixes: feature,fix,issue,bug,docs,cicd)
+
 PR title example:
 ```
-Kubernetes: added 2 sections and notification. System: new structure, description, minor fixes.
+issue: added 2 sections and notification. System: new structure, description, minor fixes.
 ```
 
 PR comment example:
