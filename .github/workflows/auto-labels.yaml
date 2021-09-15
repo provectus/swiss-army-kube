@@ -13,7 +13,7 @@ jobs:
       - uses: Naturalclar/issue-action@v2.0.2
         with:
           title-or-body: "title"
-          parameters: > 
+          parameters: >
             [
             {"keywords": ["bug", "error"], "labels": ["BUG"], "assignees": [""]},
             {"keywords": ["help", "guidance"], "labels": ["help-wanted"], "assignees": [""]},
@@ -35,5 +35,6 @@ jobs:
             {"keywords": ["vpc"], "labels": ["sak-vpc"], "assignees": [""]}
             ]
           github-token: "${{ secrets.GITHUB_TOKEN }}"
+          checkNotification: Simple
 
 #{"keywords": ["help", "guidance"], "labels": ["help-wanted"], "assignees": ["username"]}
