@@ -4,7 +4,6 @@
     "color": "EEEEEE"
   },
   "CHECKS": {
-    "prefixes": ["fix: ", "feat: "],
     "regexp": ".*test_labels*",
     "ignoreLabels" : ["dont-check-PRs-with-this-label", "meta"]
   }
