@@ -35,6 +35,5 @@ jobs:
             {"keywords": ["vpc"], "labels": ["sak-vpc"], "assignees": [""]}
             ]
           github-token: "${{ secrets.GITHUB_TOKEN }}"
-          checkNotification: Simple
 
 #{"keywords": ["help", "guidance"], "labels": ["help-wanted"], "assignees": ["username"]}
