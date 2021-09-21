@@ -1,0 +1,20 @@
+{
+  "title": [
+    {
+      "pattern": "^(feature|fix|issue|bug|docs|cicd|refactor|test):\\s",
+      "message": "Your title needs to be prefixed with a topic. Allowed prefixes: feature,fix,issue,bug,docs,cicd,refactor,test"
+    }
+  ],
+ "body": [
+    {
+      "pattern": ".{1,}",
+      "message": "You need literally anything in your description"
+    }
+  ],
+  "assignee.login": [
+    {
+      "pattern": ".+",
+      "message": "You need to assign someone"
+    }
+  ]
+}
