@@ -1,0 +1,47 @@
+# Determines if we search the title (optional). Defaults to true.
+matchTitle: true
+
+# Determines if we search the body (optional). Defaults to true.
+matchBody: true
+
+# Determines if label matching is case sensitive (optional). Defaults to true.
+caseSensitive: false
+
+# Explicit keyword mappings to labels. Form of match:label. Required.
+labelMappings:
+  "[WIP]": WIP
+  cicd: cicd
+  issue: issue
+  bug: BUG
+  error: BUG
+  help: help-wanted
+  guidance: help-wanted
+  feature: enhancement
+  enhancement: enhancement
+  feat: enhancement
+  docs: docs
+  chore: skip-changelog
+  skip: skip-changelog
+  argocd: sak-argocd
+  argo-cd: sak-argocd
+  albcontroller: sak-alb
+  alb-controller: sak-alb
+  cognito: sak-cognito
+  certificate: sak-cert-manager
+  letsencrypt: sak-cert-manager
+  efk: sak-efk
+  kibana: sak-efk
+  elastic: sak-efk
+  external-dns: sak-external-dns
+  externaldns: sak-external-dns
+  kubeflow: sak-kubeflow
+  eks: sak-kubernetes
+  kubernetes: sak-kubernetes
+  nginx: sak-nginx
+  ingress: sak-nginx
+  monitoring: sak-prometheus
+  prometheus: sak-prometheus
+  asg: sak-scaling
+  scaling: sak-scaling
+  oauth: sak-oauth
+  vpc: sak-vpc
