@@ -20,7 +20,6 @@ labelMappings:
   enhancement: enhancement
   feat: enhancement
   docs: docs
-  Docs: docs
   chore: skip-changelog
   skip: skip-changelog
   argocd: sak-argocd
@@ -28,7 +27,6 @@ labelMappings:
   albcontroller: sak-alb
   alb-controller: sak-alb
   cognito: sak-cognito
-  Cognito: sak-cognito
   certificate: sak-cert-manager
   letsencrypt: sak-cert-manager
   efk: sak-efk
