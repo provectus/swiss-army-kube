@@ -155,7 +155,6 @@ A PR title should describe what has changed. A PR comment should describe why an
 PR title rules (This rules will be checked by bot):
   1. Must start with prefix.  (Allowed prefixes: feature,fix,issue,bug,docs,cicd,refactor,test)
   2. Description must not be empty.
-  3. Assign at least 1 reviewer.
 
 PR title example:
 ```

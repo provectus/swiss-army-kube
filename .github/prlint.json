@@ -10,11 +10,5 @@
       "pattern": ".{1,}",
       "message": "You need literally anything in your description"
     }
-  ],
-  "assignee.login": [
-    {
-      "pattern": ".+",
-      "message": "You need to assign someone"
-    }
   ]
 }
