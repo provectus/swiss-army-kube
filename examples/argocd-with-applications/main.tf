@@ -100,21 +100,6 @@ module "cert-manager" {
   domains      = local.domain
 }
 
-# module "clusterwide" {
-#   depends_on = [module.argocd]
-#   source     = "terraform-aws-modules/acm/aws"
-#   version    = "~> v2.12"
-
-#   domain_name = "*.${local.domain[0]}"
-#   subject_alternative_names = [
-#     local.domain[0]
-#   ]
-#   zone_id              = module.external_dns.zone_id
-#   validate_certificate = true #Disable if used private DNS and validate it manually
-#   wait_for_validation  = false
-#   tags                 = local.tags
-# }
-
 module "nginx-ingress" {
   depends_on   = [module.cert-manager]
   source       = "github.com/provectus/sak-nginx"
@@ -130,17 +115,6 @@ module "nginx-ingress" {
   tags = local.tags
 }
 
-# module "alb-ingress" {
-#   depends_on        = [module.external_dns]
-#   source            = "github.com/provectus/sak-alb-controller"
-#   cluster_name      = module.kubernetes.cluster_name
-#   domains           = local.domain
-#   vpc_id            = module.network.vpc_id
-#   config_path       = "${path.module}/kubeconfig_${var.cluster_name}"
-#   certificates_arns = [module.clusterwide.this_acm_certificate_arn]
-#   cluster_oidc_url  = module.kubernetes.cluster_oidc_url
-# }
-
 module "prometheus" {
   depends_on   = [module.argocd]
   source       = "github.com/provectus/sak-prometheus"
@@ -149,31 +123,3 @@ module "prometheus" {
   domains      = local.domain
 }
 
-# module "victoriametrics" {
-#   depends_on   = [module.argocd]
-#   source       = "github.com/provectus/sak-victoria-metrics"
-#   cluster_name = module.kubernetes.cluster_name
-#   argocd       = module.argocd.state
-#   domains      = local.domain
-# }
-
-# module "cognito" {
-#    depends_on = [module.argocd, module.clusterwide]
-
-#   source            = "github.com/provectus/sak-cognito"
-#   cluster_name      = module.kubernetes.cluster_name
-#   domain            = "${local.cluster_name}.${var.domain_name}"
-#   zone_id           = var.zone_id
-#   mfa_configuration = "OPTIONAL"
-#   acm_arn           = module.clusterwide.this_acm_certificate_arn
-#   tags              = local.tags
-# }
-
-# module "external_secrets" {
-#   depends_on       = [module.argocd]
-#   source           = "github.com/provectus/sak-external-secrets"
-#   cluster_oidc_url = module.kubernetes.cluster_oidc_url
-#   cluster_name     = module.kubernetes.cluster_name
-#   argocd           = module.argocd.state
-#   tags             = local.tags
-# }

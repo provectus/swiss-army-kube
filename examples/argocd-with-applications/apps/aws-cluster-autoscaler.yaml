@@ -1,0 +1,50 @@
+"apiVersion": "argoproj.io/v1alpha1"
+"kind": "Application"
+"metadata":
+  "name": "aws-cluster-autoscaler"
+  "namespace": "argocd"
+"spec":
+  "destination":
+    "namespace": "scaling"
+    "server": "https://kubernetes.default.svc"
+  "project": "default"
+  "source":
+    "chart": "cluster-autoscaler"
+    "helm":
+      "parameters":
+      - "name": "autoDiscovery.clusterName"
+        "value": "swiss-army-dkharlamov"
+      - "name": "autoDiscovery.enabled"
+        "value": "true"
+      - "name": "awsRegion"
+        "value": "eu-central-1"
+      - "name": "cloudProvider"
+        "value": "aws"
+      - "name": "extraArgs.balance-similar-node-groups"
+        "value": "true"
+      - "name": "extraArgs.scale-down-enabled"
+        "value": "true"
+      - "name": "image.repository"
+        "value": "us.gcr.io/k8s-artifacts-prod/autoscaling/cluster-autoscaler"
+      - "name": "image.tag"
+        "value": "v1.19.1"
+      - "name": "rbac.create"
+        "value": "true"
+      - "name": "rbac.pspEnabled"
+        "value": "true"
+      - "name": "rbac.serviceAccount.annotations.eks\\.amazonaws\\.com/role-arn"
+        "value": "arn:aws:iam::641456973426:role/swiss-army-dkharlamov_cluster-autoscaler"
+      - "name": "resources.limits.cpu"
+        "value": "200m"
+      - "name": "resources.limits.memory"
+        "value": "500Mi"
+      - "name": "resources.requests.cpu"
+        "value": "100m"
+      - "name": "resources.requests.memory"
+        "value": "500Mi"
+    "repoURL": "https://kubernetes.github.io/autoscaler"
+    "targetRevision": "9.10.3"
+  "syncPolicy":
+    "automated":
+      "prune": true
+      "selfHeal": true
