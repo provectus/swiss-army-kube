@@ -6,7 +6,7 @@ on:
     - '**.tfvars'
     - '**.tfvars.json'
 env:
-  TERRAFORM_VERSION: "0.14.4"
+  TERRAFORM_VERSION: "0.15.4"
 
 jobs:
   tflint:
