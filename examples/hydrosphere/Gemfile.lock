@@ -1,7 +1,7 @@
 GEM
   remote: https://rubygems.org/
   specs:
-    addressable (2.7.0)
+    addressable (2.8.0)
       public_suffix (>= 2.0.2, < 5.0)
     aws-eventstream (1.1.0)
     aws-partitions (1.413.0)
@@ -1060,7 +1060,7 @@ GEM
     hcl-checker (1.5.0)
     ipaddress (0.8.3)
     jmespath (1.4.0)
-    public_suffix (4.0.6)
+    public_suffix (4.0.7)
     rspec (3.10.0)
       rspec-core (~> 3.10.0)
       rspec-expectations (~> 3.10.0)
