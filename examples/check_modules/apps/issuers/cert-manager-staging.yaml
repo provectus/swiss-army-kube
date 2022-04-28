@@ -1,0 +1,15 @@
+"apiVersion": "cert-manager.io/v1alpha2"
+"kind": "ClusterIssuer"
+"metadata":
+  "name": "letsencrypt-staging"
+"spec":
+  "acme":
+    "email": "dlazarenko@provectus.com"
+    "privateKeySecretRef":
+      "name": "letsencrypt-staging"
+    "server": "https://acme-staging-v02.api.letsencrypt.org/directory"
+    "solvers":
+    - "dns01":
+        "route53":
+          "hostedZoneID": "Z03492991IS239RSB03RC"
+          "region": "us-west-1"
