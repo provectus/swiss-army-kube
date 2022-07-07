@@ -1059,7 +1059,7 @@ GEM
     dry-inflector (0.2.0)
     hcl-checker (1.5.0)
     ipaddress (0.8.3)
-    jmespath (1.4.0)
+    jmespath (1.6.1)
     public_suffix (4.0.6)
     rspec (3.10.0)
       rspec-core (~> 3.10.0)
