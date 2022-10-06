@@ -1,0 +1,34 @@
+"apiVersion": "argoproj.io/v1alpha1"
+"kind": "Application"
+"metadata":
+  "name": "ingress-nginx"
+  "namespace": "argocd"
+"spec":
+  "destination":
+    "namespace": "ingress-system"
+    "server": "https://kubernetes.default.svc"
+  "project": "default"
+  "source":
+    "chart": "ingress-nginx"
+    "helm":
+      "parameters":
+      - "name": "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-additional-resource-tags"
+        "value": ""
+      - "name": "controller.service.annotations.service\\.beta\\.kubernetes\\.io/aws-load-balancer-type"
+        "value": "nlb"
+      - "name": "rbac.create"
+        "value": "true"
+      - "name": "resources.limits.cpu"
+        "value": "100m"
+      - "name": "resources.limits.memory"
+        "value": "300Mi"
+      - "name": "resources.requests.cpu"
+        "value": "100m"
+      - "name": "resources.requests.memory"
+        "value": "300Mi"
+    "repoURL": "https://kubernetes.github.io/ingress-nginx"
+    "targetRevision": "2.16.0"
+  "syncPolicy":
+    "automated":
+      "prune": true
+      "selfHeal": true
