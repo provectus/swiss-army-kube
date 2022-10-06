@@ -1,5 +1,5 @@
 variable "cluster_name" {
-  default     = "swiss-army-kube"
+  default     = "swiss-army-kube-sub2zero"
   type        = string
   description = "A name of the Amazon EKS cluster"
 }
@@ -37,8 +37,8 @@ variable "domain_name" {
 variable "argocd" {
   default = {
     repository = "swiss-army-kube"
-    branch     = "master"
-    owner      = "provectus"
+    branch     = "testLab"
+    owner      = "sub2zero"
   }
   type        = map(string)
   description = "A set of values for enabling deployment through ArgoCD"
