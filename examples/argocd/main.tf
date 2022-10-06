@@ -59,7 +59,7 @@ module "argocd" {
   }
 }
 module "nginx" {
-  source       = "git::https://github.com/provectus/sak-nginx.git"
+  source       = "../../../sak-nginx" //"git::https://github.com/provectus/sak-nginx.git"
   cluster_name = module.kubernetes.cluster_name
   argocd       = module.argocd.state
   conf = {}
