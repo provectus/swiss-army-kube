@@ -1,4 +1,4 @@
-[![Maintenance](https://img.shields.io/maintenance/yes/2021?style=for-the-badge)]()
+[![Maintenance](https://img.shields.io/maintenance/yes/2022?style=for-the-badge)]()
 [![Apache2](https://img.shields.io/badge/license-Apache2-green.svg?style=for-the-badge)](https://www.apache.org/licenses/LICENSE-2.0)
 [![GitHub contributors](https://img.shields.io/github/contributors/provectus/swiss-army-kube?style=for-the-badge)](https://github.com/provectus/swiss-army-kube/graphs/contributors)
 ![GitHub release (latest SemVer)](https://img.shields.io/github/v/release/provectus/swiss-army-kube?style=for-the-badge)
