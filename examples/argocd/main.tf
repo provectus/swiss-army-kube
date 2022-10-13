@@ -66,9 +66,9 @@ module "nginx" {
   tags = {}
 }
 
-# module external_secrets {
-#   source         = "../../../sak-external-secrets"
-#   argocd         = module.argocd.state
-#   cluster_name   = module.kubernetes.cluster_name
-#   cluster_oidc_url  = module.kubernetes.cluster_oidc_url
-# }
+module external_secrets {
+  source         = "../../../sak-external-secrets"
+  argocd         = module.argocd.state
+  cluster_name   = module.kubernetes.cluster_name
+  cluster_oidc_url  = module.kubernetes.cluster_oidc_url
+}
