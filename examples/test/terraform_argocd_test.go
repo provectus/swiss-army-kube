@@ -6,7 +6,7 @@ import (
         "github.com/gruntwork-io/terratest/modules/terraform"
 )
 
-func TestVpcApp(t *testing.T) {
+func TestArgoCDApp(t *testing.T) {
         // Run this test in parallel with all the others
         t.Parallel()
 
