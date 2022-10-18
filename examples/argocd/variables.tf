@@ -66,36 +66,10 @@ variable "container_runtime" {
   }
 }
 
-
-# variable "subnets" {
-#   type        = list(any)
-#   description = "vpc subnets"
-# }
-
 variable "domains" {
   type        = list(string)
   default     = []
   description = "A list of domains to use for ingresses"
-}
-
-variable "admin_arns" {
-  description = "Additional IAM users to add to the aws-auth configmap."
-  type = list(object({
-    userarn  = string
-    username = string
-    groups   = list(string)
-  }))
-  default = []
-}
-
-variable "user_arns" {
-  description = "Additional IAM users to add to the aws-auth configmap."
-  type = list(object({
-    userarn  = string
-    username = string
-    groups   = list(string)
-  }))
-  default = []
 }
 
 # On-demand instance

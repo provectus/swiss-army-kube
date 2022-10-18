@@ -1,7 +1,7 @@
-output "kubeconfig_filename" {
-  value       = module.eks.kubeconfig_filename
-  description = "kubectl config file contents for this EKS cluster."
-}
+# output "kubeconfig_filename" {
+#   value       = module.eks.kubeconfig_filename
+#   description = "kubectl config file contents for this EKS cluster."
+# }
 
 output "cluster_name" {
   value       = module.eks.cluster_id
@@ -26,7 +26,7 @@ output "this" {
   description = "TBD"
 }
 
-output "workers_launch_template_ids" {
-  description = "IDs of the worker launch templates."
-  value       = module.eks.workers_launch_template_ids.*
-}
+# output "workers_launch_template_ids" {
+#   description = "IDs of the worker launch templates."
+#   value       = module.eks.workers_launch_template_ids.*
+# }
