@@ -149,23 +149,23 @@ resource "aws_iam_openid_connect_provider" "cluster" {
 }
 
 
-module "argocd" {
-  depends_on = [module.vpc.vpc_id, module.eks.cluster_id, data.aws_eks_cluster.cluster]
-  source     = "github.com/provectus/sak-argocd"
+# module "argocd" {
+#   depends_on = [module.vpc.vpc_id, module.eks.cluster_id, data.aws_eks_cluster.cluster]
+#   source     = "github.com/provectus/sak-argocd"
 
-  branch       = var.argocd.branch
-  owner        = var.argocd.owner
-  repository   = var.argocd.repository
-  cluster_name = module.eks.cluster_id
-  path_prefix  = "examples/argocd/"
+#   branch       = var.argocd.branch
+#   owner        = var.argocd.owner
+#   repository   = var.argocd.repository
+#   cluster_name = module.eks.cluster_id
+#   path_prefix  = "examples/argocd/"
 
-  domains = local.domain
-  ingress_annotations = {
-    "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
-    "kubernetes.io/ingress.class"              = "nginx"
-  }
-  conf = {
-    "server.service.type"     = "ClusterIP"
-    "server.ingress.paths[0]" = "/"
-  }
-}
+#   domains = local.domain
+#   ingress_annotations = {
+#     "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
+#     "kubernetes.io/ingress.class"              = "nginx"
+#   }
+#   conf = {
+#     "server.service.type"     = "ClusterIP"
+#     "server.ingress.paths[0]" = "/"
+#   }
+# }
