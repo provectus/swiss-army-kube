@@ -6,6 +6,50 @@ data "aws_eks_cluster_auth" "cluster" {
   name = module.eks.cluster_id
 }
 
+data "aws_availability_zones" "available" {}
+
+module "vpc" {
+  source  = "terraform-aws-modules/vpc/aws"
+  version = "v2.64.0"
+
+  name = "${local.environment}-${local.cluster_name}"
+
+  cidr = local.cidr
+
+  azs             = local.zones
+  private_subnets = local.private
+  public_subnets  = local.public
+
+  enable_nat_gateway = true
+  single_nat_gateway = var.single_nat
+
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+
+  public_subnet_tags = {
+    Name                                        = "${local.environment}-${local.cluster_name}-public"
+    KubernetesCluster                           = local.cluster_name
+    Environment                                 = local.environment
+    Project                                     = local.project
+    "kubernetes.io/role/elb"                    = "1"
+    "kubernetes.io/cluster/${local.cluster_name}" = "owned"
+    "kubernetes.io/cluster/${local.cluster_name}" = "shared"
+  }
+
+  private_subnet_tags = {
+    Name                                        = "${local.environment}-${local.cluster_name}-private"
+    "kubernetes.io/role/elb-internal"           = "1"
+    "kubernetes.io/cluster/${local.cluster_name}" = "owned"
+  }
+
+  tags = {
+    Name        = "${local.environment}-${local.cluster_name}"
+    Environment = local.environment
+    Project     = local.project
+    Terraform   = "true"
+  }
+}
+
 data "aws_ami" "eks_gpu_worker" {
   filter {
     name   = "name"
@@ -16,15 +60,7 @@ data "aws_ami" "eks_gpu_worker" {
   owners      = ["602401143452"] #// The ID of the owner of the official AWS EKS AMIs.
 }
 
-module "network" {
-  source = "github.com/provectus/sak-vpc"
 
-  availability_zones = var.availability_zones
-  environment        = local.environment
-  project            = local.project
-  cluster_name       = local.cluster_name
-  network            = 10
-}
 module "eks" {
   source          = "terraform-aws-modules/eks/aws"
   version         = "18.30.2"
@@ -38,7 +74,7 @@ module "eks" {
   cluster_security_group_description = "EKS cluster security group."
 
   subnet_ids         = local.subnets
-  vpc_id          = module.network.vpc_id
+  vpc_id          = module.vpc.vpc_id
   enable_irsa     = false
 
 
@@ -114,7 +150,7 @@ resource "aws_iam_openid_connect_provider" "cluster" {
 
 
 module "argocd" {
-  depends_on = [module.network.vpc_id, module.eks.cluster_id, data.aws_eks_cluster.cluster]
+  depends_on = [module.vpc.vpc_id, module.eks.cluster_id, data.aws_eks_cluster.cluster]
   source     = "github.com/provectus/sak-argocd"
 
   branch       = var.argocd.branch

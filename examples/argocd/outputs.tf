@@ -1,7 +1,18 @@
-# output "kubeconfig_filename" {
-#   value       = module.eks.kubeconfig_filename
-#   description = "kubectl config file contents for this EKS cluster."
-# }
+output "vpc_id" {
+  value = module.vpc.vpc_id
+}
+
+output "private_subnets" {
+  value = module.vpc.private_subnets
+}
+
+output "private_subnets_cidr_blocks" {
+  value = module.vpc.private_subnets_cidr_blocks
+}
+
+output "vpc" {
+  value = module.vpc
+}
 
 output "cluster_name" {
   value       = module.eks.cluster_id
@@ -25,8 +36,3 @@ output "this" {
   value       = module.eks
   description = "TBD"
 }
-
-# output "workers_launch_template_ids" {
-#   description = "IDs of the worker launch templates."
-#   value       = module.eks.workers_launch_template_ids.*
-# }

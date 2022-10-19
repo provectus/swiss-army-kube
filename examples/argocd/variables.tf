@@ -1,3 +1,27 @@
+variable "cidr" {
+  type        = string
+  description = "TBD"
+  default     = null
+}
+
+variable "network_delimiter" {
+  type        = string
+  description = "TBD"
+  default     = "8"
+}
+
+variable "network" {
+  type        = string
+  description = "Number would be used to template CIDR 10.X.0.0/16."
+  default     = "10"
+}
+
+variable "single_nat" {
+  type        = bool
+  description = "Use single Nat gateway or separeta for all AZ"
+  default     = true
+}
+
 variable "cluster_name" {
   default     = "swiss-army-kube-sub2zero"
   type        = string
