@@ -27,18 +27,18 @@ module "vpc" {
   enable_dns_support   = true
 
   public_subnet_tags = {
-    Name                                        = "${local.environment}-${local.cluster_name}-public"
-    KubernetesCluster                           = local.cluster_name
-    Environment                                 = local.environment
-    Project                                     = local.project
-    "kubernetes.io/role/elb"                    = "1"
+    Name                                          = "${local.environment}-${local.cluster_name}-public"
+    KubernetesCluster                             = local.cluster_name
+    Environment                                   = local.environment
+    Project                                       = local.project
+    "kubernetes.io/role/elb"                      = "1"
     "kubernetes.io/cluster/${local.cluster_name}" = "owned"
     "kubernetes.io/cluster/${local.cluster_name}" = "shared"
   }
 
   private_subnet_tags = {
-    Name                                        = "${local.environment}-${local.cluster_name}-private"
-    "kubernetes.io/role/elb-internal"           = "1"
+    Name                                          = "${local.environment}-${local.cluster_name}-private"
+    "kubernetes.io/role/elb-internal"             = "1"
     "kubernetes.io/cluster/${local.cluster_name}" = "owned"
   }
 
@@ -50,20 +50,10 @@ module "vpc" {
   }
 }
 
-data "aws_ami" "eks_gpu_worker" {
-  filter {
-    name   = "name"
-    values = ["amazon-eks-gpu-node-${var.cluster_version}-*"]
-  }
-
-  most_recent = true
-  owners      = ["602401143452"] #// The ID of the owner of the official AWS EKS AMIs.
-}
-
 
 module "eks" {
-  source          = "terraform-aws-modules/eks/aws"
-  version         = "18.30.2"
+  source  = "terraform-aws-modules/eks/aws"
+  version = "18.30.2"
 
   cluster_version = var.cluster_version
   cluster_name    = local.cluster_name
@@ -73,16 +63,16 @@ module "eks" {
   cluster_security_group_name        = local.cluster_name
   cluster_security_group_description = "EKS cluster security group."
 
-  subnet_ids         = local.subnets
-  vpc_id          = module.vpc.vpc_id
-  enable_irsa     = false
+  subnet_ids  = local.subnets
+  vpc_id      = module.vpc.vpc_id
+  enable_irsa = false
 
 
   manage_aws_auth_configmap = true
   create_aws_auth_configmap = true
   # NOTE:
   #  enable cloudwatch logging
-  cluster_enabled_log_types     = var.cloudwatch_logging_enabled ? var.cloudwatch_cluster_log_types : []
+  cluster_enabled_log_types              = var.cloudwatch_logging_enabled ? var.cloudwatch_cluster_log_types : []
   cloudwatch_log_group_retention_in_days = var.cloudwatch_logging_enabled ? var.cloudwatch_cluster_log_retention_days : 90
 
   tags = {
@@ -94,13 +84,13 @@ module "eks" {
   self_managed_node_group_defaults = {
     update_launch_template_default_version = true
     iam_role_additional_policies = [
-    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
-    "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess",
-    "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
-    "arn:aws:iam::aws:policy/AmazonRoute53AutoNamingFullAccess",
-    "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess",
-    "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess",
-  ]
+      "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+      "arn:aws:iam::aws:policy/ElasticLoadBalancingFullAccess",
+      "arn:aws:iam::aws:policy/AmazonRoute53FullAccess",
+      "arn:aws:iam::aws:policy/AmazonRoute53AutoNamingFullAccess",
+      "arn:aws:iam::aws:policy/AmazonElasticFileSystemFullAccess",
+      "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess",
+    ]
     additional_userdata  = "sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm && sudo systemctl enable amazon-ssm-agent && sudo systemctl start amazon-ssm-agent"
     bootstrap_extra_args = (var.container_runtime == "containerd") ? "--container-runtime containerd" : "--docker-config-json ${local.docker_config_json}"
   }
@@ -149,23 +139,23 @@ resource "aws_iam_openid_connect_provider" "cluster" {
 }
 
 
-# module "argocd" {
-#   depends_on = [module.vpc.vpc_id, module.eks.cluster_id, data.aws_eks_cluster.cluster]
-#   source     = "github.com/provectus/sak-argocd"
+module "argocd" {
+  depends_on = [module.vpc.vpc_id, module.eks.cluster_id, data.aws_eks_cluster.cluster]
+  source     = "github.com/provectus/sak-argocd"
 
-#   branch       = var.argocd.branch
-#   owner        = var.argocd.owner
-#   repository   = var.argocd.repository
-#   cluster_name = module.eks.cluster_id
-#   path_prefix  = "examples/argocd/"
+  branch       = var.argocd.branch
+  owner        = var.argocd.owner
+  repository   = var.argocd.repository
+  cluster_name = module.eks.cluster_id
+  path_prefix  = "examples/argocd/"
 
-#   domains = local.domain
-#   ingress_annotations = {
-#     "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
-#     "kubernetes.io/ingress.class"              = "nginx"
-#   }
-#   conf = {
-#     "server.service.type"     = "ClusterIP"
-#     "server.ingress.paths[0]" = "/"
-#   }
-# }
+  domains = local.domain
+  ingress_annotations = {
+    "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
+    "kubernetes.io/ingress.class"              = "nginx"
+  }
+  conf = {
+    "server.service.type"     = "ClusterIP"
+    "server.ingress.paths[0]" = "/"
+  }
+}
