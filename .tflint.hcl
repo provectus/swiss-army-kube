@@ -1,13 +1,12 @@
 plugin "aws" {
-  enabled = true
+  enabled    = true
   deep_check = true
 }
 
-config {
-  module = true
-  deep_check = false
-  force = false
-  disabled_by_default = false
+plugin "aws" {
+  enabled = true
+  version = "0.17.1"
+  source  = "github.com/terraform-linters/tflint-ruleset-aws"
 }
 
 rule "aws_instance_invalid_type" {
