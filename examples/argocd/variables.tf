@@ -23,7 +23,7 @@ variable "single_nat" {
 }
 
 variable "cluster_name" {
-  default     = "swiss-army-kube-sub2zero"
+  default     = "swiss-army-kube"
   type        = string
   description = "A name of the Amazon EKS cluster"
 }
