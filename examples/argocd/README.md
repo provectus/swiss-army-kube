@@ -1,5 +1,10 @@
 # About
 That example demonstrates how to configure the EKS cluster with the ArgoCD application. A general idea of the usage of ArgoCD is managing all Kubernetes resources with it. ArgoCD provides us with a way of implementing the GitOps methodology for Kubernetes applications.
+
+## Used modules
+- terraform-aws-modules/vpc/aws
+- terraform-aws-modules/eks/aws
+- github.com/provectus/sak-argocd, curentrul does not work with k8s with 1.22, need to update helm chart
 ## Implementation
 First of all, you execute Terraform commands as it were for `common` example (please follow these instructions to understand how to use SAK). At this step, you will generate all required AWS resources such as EC2 instances, EKS cluster, IAM roles, etc. Also, Terraform will generate a few local files with ArgoCD applications. 
 
