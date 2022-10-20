@@ -61,8 +61,8 @@ variable "domain_name" {
 variable "argocd" {
   default = {
     repository = "swiss-army-kube"
-    branch     = "testLab"
-    owner      = "sub2zero"
+    branch     = "master"
+    owner      = "provectus"
   }
   type        = map(string)
   description = "A set of values for enabling deployment through ArgoCD"

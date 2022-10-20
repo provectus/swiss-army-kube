@@ -18,7 +18,7 @@ aws --region <your-region> ssm get-parameter  --with-decryption --name /<your-cl
 
 ### ArgoCD
 to get current password:
-for the first time use init password ```get secrets argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -D```
+for the first time use init password ```kubectl get secrets argocd-initial-admin-secret -n argocd -o jsonpath="{.data.password}" | base64 -D```
 
 after deploy helm chart:
 
