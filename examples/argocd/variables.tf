@@ -71,7 +71,7 @@ variable "argocd" {
 variable "cluster_version" {
   type        = string
   description = "EKS cluster version"
-  default     = "1.21"
+  default     = "1.22"
 }
 
 
