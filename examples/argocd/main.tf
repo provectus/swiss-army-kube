@@ -102,8 +102,9 @@ module "eks" {
   #   After that autoscaler is able to see the resources on that ASG.
   #
   self_managed_node_groups = {
-    one = {
-      name         = "mixed-1"
+    memory-optimized = {
+      # expected length of name to be in the range (1 - 38)
+      name         = "${local.environment}-${local.cluster_name}-memory"
       max_size     = 3
       desired_size = 1
 
