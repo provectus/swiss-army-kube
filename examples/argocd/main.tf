@@ -153,7 +153,6 @@ module "argocd" {
   domains = local.domain
   ingress_annotations = {
     "nginx.ingress.kubernetes.io/ssl-redirect" = "false"
-    "kubernetes.io/ingress.class"              = "nginx"
   }
   conf = {
     "server.service.type"     = "ClusterIP"
