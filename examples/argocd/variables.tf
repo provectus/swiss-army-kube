@@ -62,7 +62,7 @@ variable "argocd" {
   default = {
     repository = "swiss-army-kube"
     branch     = "master"
-    owner      = "provectus"
+    owner      = "pvlbnkl"
   }
   type        = map(string)
   description = "A set of values for enabling deployment through ArgoCD"
