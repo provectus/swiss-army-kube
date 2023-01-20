@@ -159,3 +159,10 @@ module "argocd" {
     "server.ingress.paths[0]" = "/"
   }
 }
+
+module external_dns {
+  source       = "github.com/provectus/sak-external-dns"
+  cluster_name = module.eks.cluster_id
+  argocd       = module.argocd.state
+  hostedzones  = ["bunakalia.xyz"]     # Provide your hosted zones (description in Input section)
+}
