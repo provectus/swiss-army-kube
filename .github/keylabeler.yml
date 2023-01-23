@@ -35,8 +35,6 @@ labelMappings:
   external-dns: sak-external-dns
   externaldns: sak-external-dns
   kubeflow: sak-kubeflow
-  eks: sak-kubernetes
-  kubernetes: sak-kubernetes
   nginx: sak-nginx
   ingress: sak-nginx
   monitoring: sak-prometheus
@@ -44,4 +42,3 @@ labelMappings:
   asg: sak-scaling
   scaling: sak-scaling
   oauth: sak-oauth
-  vpc: sak-vpc
