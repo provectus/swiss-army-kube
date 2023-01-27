@@ -19,5 +19,5 @@ locals {
     {
       "\"registry-mirrors\"" = ["\"${local.registry}\""]
   })
-
+  default_bootstrap_extra_args = (var.container_runtime == "containerd") ? "--container-runtime containerd" : "--docker-config-json ${local.docker_config_json}"
 }

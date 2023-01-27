@@ -92,7 +92,11 @@ module "eks" {
       "arn:aws:iam::aws:policy/AmazonEC2ContainerRegistryFullAccess",
     ]
     additional_userdata  = "sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm && sudo systemctl enable amazon-ssm-agent && sudo systemctl start amazon-ssm-agent"
-    bootstrap_extra_args = (var.container_runtime == "containerd") ? "--container-runtime containerd" : "--docker-config-json ${local.docker_config_json}"
+    bootstrap_extra_args = local.default_bootstrap_extra_args
+    metadata_options = {
+      http_endpoint               = "enabled"
+      http_tokens                 = "optional"
+    }
   }
 
   # Note:
@@ -102,11 +106,13 @@ module "eks" {
   #   After that autoscaler is able to see the resources on that ASG.
   #
   self_managed_node_groups = {
-    memory-optimized = {
+    general = {
       # expected length of name to be in the range (1 - 38)
-      name         = "${local.environment}-${local.cluster_name}-memory"
+      name         = "${local.environment}-${local.cluster_name}"
       max_size     = 3
       desired_size = 1
+
+      bootstrap_extra_args = "${local.default_bootstrap_extra_args} --kubelet-extra-args \"--node-labels=node-type=general,node.kubernetes.io/lifecycle=`curl -s http://169.254.169.254/latest/meta-data/instance-life-cycle`\""
 
       use_mixed_instances_policy = true
       mixed_instances_policy = {
@@ -131,7 +137,6 @@ module "eks" {
     # worker_group = concat(local.common, local.cpu, local.gpu)
   }
 }
-
 # OIDC cluster EKS settings
 resource "aws_iam_openid_connect_provider" "cluster" {
   client_id_list  = ["sts.amazonaws.com"]
