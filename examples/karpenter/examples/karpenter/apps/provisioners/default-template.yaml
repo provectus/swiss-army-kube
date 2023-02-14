@@ -1,0 +1,14 @@
+"apiVersion": "karpenter.k8s.aws/v1alpha1"
+"kind": "AWSNodeTemplate"
+"metadata":
+  "name": "default"
+"spec":
+  "amiFamily": "AL2"
+  "detailedMonitoring": false
+  "metadataOptions": {}
+  "securityGroupSelector":
+    "karpenter.sh/discovery": "sak-dmiroshnik"
+  "subnetSelector":
+    "karpenter.sh/discovery": "true"
+  "tags":
+    "karpenter.sh/discovery": "sak-dmiroshnik"
