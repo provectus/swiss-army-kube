@@ -8,7 +8,7 @@
     "server": "https://kubernetes.default.svc"
   "project": "default"
   "source":
-    "path": "examples/argocd/apps/provisioners"
+    "path": "examples/karpenter/apps/provisioners"
     "repoURL": "https://github.com/provectus/swiss-army-kube"
     "targetRevision": "test_karpenter_pr"
   "syncPolicy":
