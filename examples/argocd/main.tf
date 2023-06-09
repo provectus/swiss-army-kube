@@ -94,8 +94,8 @@ module "eks" {
     additional_userdata  = "sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm && sudo systemctl enable amazon-ssm-agent && sudo systemctl start amazon-ssm-agent"
     bootstrap_extra_args = local.default_bootstrap_extra_args
     metadata_options = {
-      http_endpoint               = "enabled"
-      http_tokens                 = "optional"
+      http_endpoint = "enabled"
+      http_tokens   = "optional"
     }
   }
 
