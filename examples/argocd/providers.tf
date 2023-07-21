@@ -2,9 +2,9 @@ provider "aws" {
   region = var.region
   default_tags {
     tags = {
-      Environment = "dev"
+      Environment = var.environment
       Owner       = "infra-team"
-      Project     = "swiss-army-kube"
+      Project     = var.project
       CostCenter  = "infrastructure"
     }
   }

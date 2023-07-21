@@ -67,19 +67,12 @@ module "eks" {
   vpc_id      = module.vpc.vpc_id
   enable_irsa = false
 
-
   manage_aws_auth_configmap = true
   create_aws_auth_configmap = true
   # NOTE:
   #  enable cloudwatch logging
   cluster_enabled_log_types              = var.cloudwatch_logging_enabled ? var.cloudwatch_cluster_log_types : []
   cloudwatch_log_group_retention_in_days = var.cloudwatch_logging_enabled ? var.cloudwatch_cluster_log_retention_days : 90
-
-  tags = {
-    Environment = local.environment
-    Project     = local.project
-  }
-
 
   self_managed_node_group_defaults = {
     update_launch_template_default_version = true
