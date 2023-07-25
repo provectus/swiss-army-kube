@@ -10,7 +10,7 @@ data "aws_availability_zones" "available" {}
 
 module "vpc" {
   source  = "terraform-aws-modules/vpc/aws"
-  version = "v2.64.0"
+  version = "v5.1.0"
 
   name = "${local.environment}-${local.cluster_name}"
 
