@@ -67,19 +67,12 @@ module "eks" {
   vpc_id      = module.vpc.vpc_id
   enable_irsa = false
 
-
   manage_aws_auth_configmap = true
   create_aws_auth_configmap = true
   # NOTE:
   #  enable cloudwatch logging
   cluster_enabled_log_types              = var.cloudwatch_logging_enabled ? var.cloudwatch_cluster_log_types : []
   cloudwatch_log_group_retention_in_days = var.cloudwatch_logging_enabled ? var.cloudwatch_cluster_log_retention_days : 90
-
-  tags = {
-    Environment = local.environment
-    Project     = local.project
-  }
-
 
   self_managed_node_group_defaults = {
     update_launch_template_default_version = true
@@ -94,8 +87,8 @@ module "eks" {
     additional_userdata  = "sudo yum install -y https://s3.amazonaws.com/ec2-downloads-windows/SSMAgent/latest/linux_amd64/amazon-ssm-agent.rpm && sudo systemctl enable amazon-ssm-agent && sudo systemctl start amazon-ssm-agent"
     bootstrap_extra_args = local.default_bootstrap_extra_args
     metadata_options = {
-      http_endpoint               = "enabled"
-      http_tokens                 = "optional"
+      http_endpoint = "enabled"
+      http_tokens   = "optional"
     }
   }
 

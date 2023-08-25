@@ -1,5 +1,11 @@
 provider "aws" {
   region = var.region
+  default_tags {
+    Environment = var.environment
+    Owner       = "infra-team"
+    Project     = var.project
+    CostCenter  = "infrastructure"
+  }
 }
 
 provider "kubernetes" {
